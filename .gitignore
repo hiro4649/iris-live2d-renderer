@@ -1,0 +1,4 @@
+
+.env.local
+vendor/live2d/
+assets/models/
