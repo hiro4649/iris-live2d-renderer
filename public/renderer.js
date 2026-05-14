@@ -8,6 +8,7 @@ const rendererState = {
   sceneLoaded: false,
   lastAppliedCueStatusHash: "",
   lastCueApplyStatus: "not_ready",
+  model3ManifestAvailable: false,
 };
 
 startRendererLoop();
@@ -26,8 +27,9 @@ async function refreshStatus() {
   rendererState.modelId = status.model_id || "";
   rendererState.sceneId = status.scene_id || "";
   rendererState.cubismRuntimeLoaded = Boolean(globalThis.Live2DCubismCore);
-  rendererState.model3Loaded = false;
-  rendererState.sceneLoaded = false;
+  rendererState.model3ManifestAvailable = Boolean(status.renderer_health?.model3_manifest_available);
+  rendererState.model3Loaded = rendererState.cubismRuntimeLoaded && rendererState.model3ManifestAvailable;
+  rendererState.sceneLoaded = rendererState.model3Loaded && Boolean(rendererState.modelId && rendererState.sceneId);
 }
 
 async function pollCueQueue() {
