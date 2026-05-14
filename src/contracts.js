@@ -32,6 +32,7 @@ export function createBoundaryPolicy() {
     no_secret_values: true,
     no_endpoint_values: true,
     no_raw_cue_body: true,
+    no_raw_model_path: true,
     no_commands: true,
     renderer_ready_requires_real_model_scene_capability_heartbeat: true,
   };

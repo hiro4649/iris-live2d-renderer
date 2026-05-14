@@ -24,6 +24,19 @@ export function createLive2dRendererServer({ state = createRendererState(), publ
         response.end(html);
         return;
       }
+      if (request.method === "GET" && url.pathname === "/renderer.js") {
+        const script = await readFile(join(publicDir, "renderer.js"), "utf8");
+        response.writeHead(200, { "content-type": "application/javascript; charset=utf-8" });
+        response.end(script);
+        return;
+      }
+      if (request.method === "GET" && url.pathname === "/renderer/cues") {
+        return sendJson(response, 200, state.readBrowserCues());
+      }
+      if (request.method === "POST" && url.pathname === "/renderer/heartbeat") {
+        const payload = await readJson(request);
+        return sendJson(response, 200, state.acceptBrowserHeartbeat(payload));
+      }
       if (request.method === "POST" && url.pathname === "/live2d-engine") {
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptCue(payload, "live2d-engine"));
@@ -75,6 +88,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const state = createRendererState({
     modelId: process.env.IRIS_LOCAL_LIVE2D_MODEL_ID ?? "",
     sceneId: process.env.IRIS_LOCAL_LIVE2D_SCENE_ID ?? "",
+    model3JsonPath: process.env.IRIS_LIVE2D_MODEL3_JSON ?? "",
+    heartbeatMaxAgeMs: Number(process.env.IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS || 5000),
   });
   const server = createLive2dRendererServer({ state });
   const host = process.env.IRIS_LIVE2D_RENDERER_HOST || "127.0.0.1";
@@ -89,11 +104,14 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       port_env_name: "IRIS_LIVE2D_RENDERER_PORT",
     },
     routes: ["GET /health", "GET /status", "POST /live2d-engine", "POST /cue"],
+    browser_routes: ["GET /renderer/cues", "POST /renderer/heartbeat"],
     configured_env: [
       "IRIS_LIVE2D_RENDERER_ENDPOINT",
       "IRIS_LIVE2D_RENDERER_HEALTH_ENDPOINT",
       "IRIS_LOCAL_LIVE2D_MODEL_ID",
       "IRIS_LOCAL_LIVE2D_SCENE_ID",
+      "IRIS_LIVE2D_MODEL3_JSON",
+      "IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS",
     ],
     renderer_ready: state.status().renderer_ready,
     boundary_policy: {

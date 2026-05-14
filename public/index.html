@@ -9,13 +9,16 @@
       main { min-height: 100%; display: grid; place-items: center; }
       .surface { width: min(100vw, 1280px); aspect-ratio: 16 / 9; display: grid; place-items: center; border: 1px solid #30343d; }
       .status { font-size: 14px; color: #b8c0cc; }
+      canvas { width: 100%; height: 100%; display: block; }
     </style>
   </head>
   <body>
     <main>
       <section class="surface" aria-label="Live2D render surface">
-        <p class="status">Live2D renderer scaffold: model runtime not loaded</p>
+        <canvas id="live2d-surface" aria-label="Live2D canvas"></canvas>
+        <p class="status">Live2D renderer waiting for Cubism runtime</p>
       </section>
     </main>
+    <script type="module" src="/renderer.js"></script>
   </body>
 </html>
