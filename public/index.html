@@ -1,0 +1,21 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IRIS Live2D Renderer</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #101114; color: #f5f7fb; font-family: system-ui, sans-serif; }
+      main { min-height: 100%; display: grid; place-items: center; }
+      .surface { width: min(100vw, 1280px); aspect-ratio: 16 / 9; display: grid; place-items: center; border: 1px solid #30343d; }
+      .status { font-size: 14px; color: #b8c0cc; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="surface" aria-label="Live2D render surface">
+        <p class="status">Live2D renderer scaffold: model runtime not loaded</p>
+      </section>
+    </main>
+  </body>
+</html>
