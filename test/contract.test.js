@@ -9,7 +9,9 @@ const tmpDir = join(process.cwd(), ".tmp-live2d-renderer-contract");
 await rm(tmpDir, { recursive: true, force: true });
 await mkdir(tmpDir, { recursive: true });
 const model3Path = join(tmpDir, "model3.json");
+const sdkCorePath = join(tmpDir, "live2dcubismcore.js");
 await writeFile(model3Path, JSON.stringify({ Version: 3, FileReferences: { Moc: "safe_model.moc3" } }));
+await writeFile(sdkCorePath, "globalThis.Live2DCubismCore = { Version: 'contract' };\n");
 
 try {
   const missing = await startHarness(createRendererState({
@@ -33,6 +35,11 @@ try {
   assert.equal(statusBefore.last_cue_received_at, null);
   assert.equal(statusBefore.cue_capability.live2d_engine_request, true);
   assertSafe(JSON.stringify(statusBefore));
+
+  const missingRuntimeConfig = await missing.getJson("/renderer/runtime-config");
+  assert.equal(missingRuntimeConfig.cubism_sdk.available, false);
+  assert.equal(missingRuntimeConfig.model3.available, false);
+  assertSafe(JSON.stringify(missingRuntimeConfig));
 
   const sdkMissingHeartbeat = await missing.postJson("/renderer/heartbeat", browserHeartbeat({
     cubism_runtime_loaded: false,
@@ -134,14 +141,48 @@ try {
 
   await missing.close();
 
-  const ready = await startHarness(createRendererState({
+  const modelOnly = await startHarness(createRendererState({
     modelId: "iris_default",
     sceneId: "main_scene",
     model3JsonPath: model3Path,
     heartbeatMaxAgeMs: 2_000,
     now: () => nowMs,
   }));
+  const modelOnlyCue = await modelOnly.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "nod" },
+    },
+  });
+  const modelOnlyHeartbeat = await modelOnly.postJson("/renderer/heartbeat", browserHeartbeat({
+    last_applied_cue_status_hash: modelOnlyCue.cue_summary.status_hash,
+    last_cue_applied_at_ms: nowMs,
+    last_cue_apply_status: "applied",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(modelOnlyHeartbeat.renderer_ready, false);
+  assert.equal(modelOnlyHeartbeat.renderer_health.cubism_sdk_available, false);
+  assertSafe(JSON.stringify(modelOnlyHeartbeat));
+  await modelOnly.close();
+
+  const ready = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    cubismCoreJsPath: sdkCorePath,
+    model3JsonPath: model3Path,
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  const readyRuntimeConfig = await ready.getJson("/renderer/runtime-config");
+  assert.equal(readyRuntimeConfig.cubism_sdk.available, true);
+  assert.equal(readyRuntimeConfig.model3.available, true);
+  assertSafe(JSON.stringify(readyRuntimeConfig));
+  const sdkScript = await ready.getText("/renderer/cubism-core.js");
+  assert.equal(sdkScript.includes("Live2DCubismCore"), true);
+
   const readyStatusBeforeCue = await ready.getJson("/status");
+  assert.equal(readyStatusBeforeCue.renderer_health.cubism_sdk_available, true);
   assert.equal(readyStatusBeforeCue.renderer_health.model3_manifest_available, true);
   assert.equal(readyStatusBeforeCue.renderer_ready, false);
   assertSafe(JSON.stringify(readyStatusBeforeCue));
@@ -175,6 +216,7 @@ try {
   const noAppliedAtState = createRendererState({
     modelId: "iris_default",
     sceneId: "main_scene",
+    cubismCoreJsPath: sdkCorePath,
     model3JsonPath: model3Path,
     heartbeatMaxAgeMs: 2_000,
     now: () => nowMs,
@@ -216,6 +258,9 @@ try {
       "browser_cue_route",
       "redaction",
       "mock_health_false",
+      "runtime_config_safe",
+      "sdk_script_route",
+      "sdk_missing_blocks_ready",
       "model3_available",
       "cue_apply_ready_candidate",
       "last_cue_applied_at_guard",
@@ -256,6 +301,11 @@ async function startHarness(state) {
       const response = await fetch(`${baseUrl}${path}`);
       assert.equal(response.ok, true);
       return response.json();
+    },
+    async getText(path) {
+      const response = await fetch(`${baseUrl}${path}`);
+      assert.equal(response.ok, true);
+      return response.text();
     },
     async postJson(path, body) {
       const response = await fetch(`${baseUrl}${path}`, {

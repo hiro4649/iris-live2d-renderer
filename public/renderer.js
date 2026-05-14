@@ -10,6 +10,7 @@ const rendererState = {
   lastCueAppliedAt: null,
   lastCueApplyStatus: "not_ready",
   model3ManifestAvailable: false,
+  cubismRuntimeLoadAttempted: false,
 };
 
 startRendererLoop();
@@ -24,13 +25,32 @@ async function startRendererLoop() {
 }
 
 async function refreshStatus() {
-  const status = await getJson("/status");
-  rendererState.modelId = status.model_id || "";
-  rendererState.sceneId = status.scene_id || "";
-  rendererState.cubismRuntimeLoaded = Boolean(globalThis.Live2DCubismCore);
-  rendererState.model3ManifestAvailable = Boolean(status.renderer_health?.model3_manifest_available);
+  const config = await getJson("/renderer/runtime-config");
+  rendererState.modelId = config.model_id || "";
+  rendererState.sceneId = config.scene_id || "";
+  rendererState.cubismRuntimeLoaded = await ensureCubismRuntimeLoaded(config);
+  rendererState.model3ManifestAvailable = Boolean(config.model3?.available);
   rendererState.model3Loaded = rendererState.cubismRuntimeLoaded && rendererState.model3ManifestAvailable;
   rendererState.sceneLoaded = rendererState.model3Loaded && Boolean(rendererState.modelId && rendererState.sceneId);
+}
+
+async function ensureCubismRuntimeLoaded(config) {
+  if (globalThis.Live2DCubismCore) return true;
+  if (!config.cubism_sdk?.available || rendererState.cubismRuntimeLoadAttempted) return false;
+  rendererState.cubismRuntimeLoadAttempted = true;
+  await loadScript("/renderer/cubism-core.js");
+  return Boolean(globalThis.Live2DCubismCore);
+}
+
+function loadScript(src) {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.head.appendChild(script);
+  });
 }
 
 async function pollCueQueue() {

@@ -7,6 +7,7 @@ export function createHeartbeatStatus({
   maxAgeMs = DEFAULT_HEARTBEAT_MAX_AGE_MS,
   expectedModelId,
   expectedSceneId,
+  cubismSdkAvailable,
   model3ManifestAvailable,
   lastCueStatusHash,
 } = {}) {
@@ -41,7 +42,8 @@ export function createHeartbeatStatus({
   const modelLoaded = heartbeat?.model3_loaded === true || heartbeat?.model_loaded === true;
   const sceneLoaded = heartbeat?.scene_loaded === true;
   const rendererReady = Boolean(
-    model3ManifestAvailable &&
+    cubismSdkAvailable &&
+      model3ManifestAvailable &&
       cubismRuntimeLoaded &&
       modelLoaded &&
       sceneLoaded &&
@@ -56,6 +58,7 @@ export function createHeartbeatStatus({
     heartbeat_present: Boolean(heartbeat),
     heartbeat_fresh: freshHeartbeat,
     heartbeat_age_ms: ageMs,
+    cubism_sdk_available: Boolean(cubismSdkAvailable),
     cubism_runtime_loaded: cubismRuntimeLoaded,
     model_loaded: modelLoaded,
     scene_loaded: sceneLoaded,

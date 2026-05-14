@@ -33,6 +33,19 @@ export function createLive2dRendererServer({ state = createRendererState(), publ
       if (request.method === "GET" && url.pathname === "/renderer/cues") {
         return sendJson(response, 200, state.readBrowserCues());
       }
+      if (request.method === "GET" && url.pathname === "/renderer/runtime-config") {
+        return sendJson(response, 200, state.browserRuntimeConfig());
+      }
+      if (request.method === "GET" && url.pathname === "/renderer/cubism-core.js") {
+        const cubismCoreJsPath = state.cubismCoreJsPath();
+        if (!cubismCoreJsPath) {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        const script = await readFile(cubismCoreJsPath, "utf8");
+        response.writeHead(200, { "content-type": "application/javascript; charset=utf-8" });
+        response.end(script);
+        return;
+      }
       if (request.method === "POST" && url.pathname === "/renderer/heartbeat") {
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptBrowserHeartbeat(payload));
@@ -88,6 +101,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const state = createRendererState({
     modelId: process.env.IRIS_LOCAL_LIVE2D_MODEL_ID ?? "",
     sceneId: process.env.IRIS_LOCAL_LIVE2D_SCENE_ID ?? "",
+    cubismCoreJsPath: process.env.IRIS_LIVE2D_CUBISM_CORE_JS ?? "",
     model3JsonPath: process.env.IRIS_LIVE2D_MODEL3_JSON ?? "",
     heartbeatMaxAgeMs: Number(process.env.IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS || 5000),
   });
@@ -104,12 +118,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       port_env_name: "IRIS_LIVE2D_RENDERER_PORT",
     },
     routes: ["GET /health", "GET /status", "POST /live2d-engine", "POST /cue"],
-    browser_routes: ["GET /renderer/cues", "POST /renderer/heartbeat"],
+    browser_routes: ["GET /renderer/cues", "GET /renderer/runtime-config", "GET /renderer/cubism-core.js", "POST /renderer/heartbeat"],
     configured_env: [
       "IRIS_LIVE2D_RENDERER_ENDPOINT",
       "IRIS_LIVE2D_RENDERER_HEALTH_ENDPOINT",
       "IRIS_LOCAL_LIVE2D_MODEL_ID",
       "IRIS_LOCAL_LIVE2D_SCENE_ID",
+      "IRIS_LIVE2D_CUBISM_CORE_JS",
       "IRIS_LIVE2D_MODEL3_JSON",
       "IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS",
     ],

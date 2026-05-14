@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { assertSafeInput, assertSafePublicObject, createBoundaryPolicy, safeText } from "./contracts.js";
-import { createBrowserCueEnvelope, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
+import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
 
 const MAX_BROWSER_CUE_QUEUE = 20;
@@ -8,6 +8,7 @@ const MAX_BROWSER_CUE_QUEUE = 20;
 export function createRendererState({
   modelId = "",
   sceneId = "",
+  cubismCoreJsPath = "",
   model3JsonPath = "",
   heartbeatMaxAgeMs = DEFAULT_HEARTBEAT_MAX_AGE_MS,
   now = () => Date.now(),
@@ -15,12 +16,17 @@ export function createRendererState({
   const cubismConfig = createCubismRendererConfig({
     modelId,
     sceneId,
+    cubismCoreJsPath,
     model3JsonPath,
     heartbeatMaxAgeMs,
   });
   const state = {
     modelId: cubismConfig.model_id,
     sceneId: cubismConfig.scene_id,
+    cubismSdkConfigured: cubismConfig.cubism_sdk_configured,
+    cubismSdkAvailable: cubismConfig.cubism_sdk_available,
+    cubismSdkStatus: cubismConfig.cubism_sdk_status,
+    cubismCoreJsPath: cubismConfig.cubism_core_js_path,
     model3ManifestConfigured: cubismConfig.model3_manifest_configured,
     model3ManifestAvailable: cubismConfig.model3_manifest_available,
     model3ManifestStatus: cubismConfig.model3_manifest_status,
@@ -53,6 +59,9 @@ export function createRendererState({
         renderer_health: {
           process_alive: true,
           browser_heartbeat_seen: heartbeatStatus.heartbeat_present,
+          cubism_sdk_configured: state.cubismSdkConfigured,
+          cubism_sdk_available: state.cubismSdkAvailable,
+          cubism_sdk_status: state.cubismSdkStatus,
           cubism_sdk_loaded: heartbeatStatus.cubism_runtime_loaded,
           model3_manifest_configured: state.model3ManifestConfigured,
           model3_manifest_available: state.model3ManifestAvailable,
@@ -90,6 +99,7 @@ export function createRendererState({
         model_id: status.model_id,
         scene_id: status.scene_id,
         model3_manifest_available: status.renderer_health.model3_manifest_available,
+        cubism_sdk_available: status.renderer_health.cubism_sdk_available,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -148,6 +158,25 @@ export function createRendererState({
       return response;
     },
 
+    browserRuntimeConfig() {
+      const response = createBrowserRuntimeConfig({
+        modelId: state.modelId,
+        sceneId: state.sceneId,
+        cubismSdkConfigured: state.cubismSdkConfigured,
+        cubismSdkAvailable: state.cubismSdkAvailable,
+        cubismSdkStatus: state.cubismSdkStatus,
+        model3ManifestConfigured: state.model3ManifestConfigured,
+        model3ManifestAvailable: state.model3ManifestAvailable,
+        model3ManifestStatus: state.model3ManifestStatus,
+      });
+      assertSafePublicObject(response, "browser runtime config");
+      return response;
+    },
+
+    cubismCoreJsPath() {
+      return state.cubismSdkAvailable ? state.cubismCoreJsPath : "";
+    },
+
     acceptBrowserHeartbeat(payload) {
       assertSafeInput(payload, "browser heartbeat");
       state.lastHeartbeat = payload;
@@ -159,6 +188,7 @@ export function createRendererState({
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         renderer_health: {
           cubism_sdk_loaded: heartbeatStatus.cubism_runtime_loaded,
+          cubism_sdk_available: heartbeatStatus.cubism_sdk_available,
           model_loaded: heartbeatStatus.model_loaded,
           scene_loaded: heartbeatStatus.scene_loaded,
           fresh_heartbeat: heartbeatStatus.heartbeat_fresh,
@@ -183,6 +213,7 @@ function getHeartbeatStatus(state, nowMs) {
     maxAgeMs: state.heartbeatMaxAgeMs,
     expectedModelId: state.modelId,
     expectedSceneId: state.sceneId,
+    cubismSdkAvailable: state.cubismSdkAvailable,
     model3ManifestAvailable: state.model3ManifestAvailable,
     lastCueStatusHash: state.lastCueHash,
   });
