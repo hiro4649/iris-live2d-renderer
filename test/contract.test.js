@@ -160,15 +160,42 @@ try {
 
   const readyHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
     last_applied_cue_status_hash: acceptedReadyCue.cue_summary.status_hash,
+    last_cue_applied_at_ms: nowMs,
     last_cue_apply_status: "applied",
     heartbeat_timestamp_ms: nowMs,
   }));
   assert.equal(readyHeartbeat.renderer_ready, true);
+  assert.equal(readyHeartbeat.renderer_health.last_cue_applied_at, nowMs);
   assertSafe(JSON.stringify(readyHeartbeat));
 
   const readyHealth = await ready.getJson("/health");
   assert.equal(readyHealth.renderer_ready, true);
   assertSafe(JSON.stringify(readyHealth));
+
+  const noAppliedAtState = createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    model3JsonPath: model3Path,
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  });
+  const noAppliedAt = await startHarness(noAppliedAtState);
+  const noAppliedAtCue = await noAppliedAt.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "nod" },
+    },
+  });
+  const noAppliedAtHeartbeat = await noAppliedAt.postJson("/renderer/heartbeat", browserHeartbeat({
+    last_applied_cue_status_hash: noAppliedAtCue.cue_summary.status_hash,
+    last_cue_apply_status: "applied",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(noAppliedAtHeartbeat.renderer_ready, false);
+  assert.equal(noAppliedAtHeartbeat.renderer_health.last_cue_applied_at, null);
+  assertSafe(JSON.stringify(noAppliedAtHeartbeat));
+  await noAppliedAt.close();
 
   nowMs += 10_000;
   const staleReadyHealth = await ready.getJson("/health");
@@ -191,6 +218,7 @@ try {
       "mock_health_false",
       "model3_available",
       "cue_apply_ready_candidate",
+      "last_cue_applied_at_guard",
     ],
   }));
 } finally {

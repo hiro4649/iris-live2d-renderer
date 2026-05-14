@@ -29,10 +29,13 @@ export function createHeartbeatStatus({
       cueCapabilities.model_motion_update
   );
   const recoveryCueSupport = Boolean(cueCapabilities.recovery_cue_support);
+  const cueAppliedAtMs = Number(heartbeat?.last_cue_applied_at_ms);
+  const hasCueAppliedAt = Number.isFinite(cueAppliedAtMs) && cueAppliedAtMs <= nowMs + HEARTBEAT_FUTURE_SKEW_MS;
   const lastCueApplied = Boolean(
     lastCueStatusHash &&
       heartbeat?.last_applied_cue_status_hash === lastCueStatusHash &&
-      heartbeat?.last_cue_apply_status === "applied"
+      heartbeat?.last_cue_apply_status === "applied" &&
+      hasCueAppliedAt
   );
   const cubismRuntimeLoaded = heartbeat?.cubism_runtime_loaded === true;
   const modelLoaded = heartbeat?.model3_loaded === true || heartbeat?.model_loaded === true;
@@ -61,6 +64,7 @@ export function createHeartbeatStatus({
     cue_capability_confirmed: cueCapabilityConfirmed,
     recovery_cue_support: recoveryCueSupport,
     last_cue_applied: lastCueApplied,
+    last_cue_applied_at: lastCueApplied ? cueAppliedAtMs : null,
     renderer_ready_candidate: rendererReady,
   };
 }

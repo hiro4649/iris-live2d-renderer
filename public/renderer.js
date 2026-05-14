@@ -7,6 +7,7 @@ const rendererState = {
   model3Loaded: false,
   sceneLoaded: false,
   lastAppliedCueStatusHash: "",
+  lastCueAppliedAt: null,
   lastCueApplyStatus: "not_ready",
   model3ManifestAvailable: false,
 };
@@ -45,6 +46,7 @@ function applyCue(cue) {
     return;
   }
   rendererState.lastAppliedCueStatusHash = cue.status_hash || "";
+  rendererState.lastCueAppliedAt = Date.now();
   rendererState.lastCueApplyStatus = "applied";
 }
 
@@ -66,6 +68,7 @@ async function postHeartbeat() {
         recovery_cue_support: rendererState.cubismRuntimeLoaded,
       },
       last_applied_cue_status_hash: rendererState.lastAppliedCueStatusHash,
+      last_cue_applied_at_ms: rendererState.lastCueAppliedAt,
       last_cue_apply_status: rendererState.lastCueApplyStatus,
       heartbeat_timestamp_ms: Date.now(),
     }),

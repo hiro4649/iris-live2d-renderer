@@ -63,6 +63,7 @@ export function createRendererState({
           model_matches: heartbeatStatus.model_matches,
           scene_matches: heartbeatStatus.scene_matches,
           last_cue_applied: heartbeatStatus.last_cue_applied,
+          last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
         },
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
@@ -165,6 +166,7 @@ export function createRendererState({
           scene_matches: heartbeatStatus.scene_matches,
           cue_capability_confirmed: heartbeatStatus.cue_capability_confirmed,
           last_cue_applied: heartbeatStatus.last_cue_applied,
+          last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
         },
         boundary_policy: createBoundaryPolicy(),
       };
