@@ -1,8 +1,20 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v0.3.1",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v0.4.0",
   "profile": "iris-live2d-renderer",
   "packageDirs": ["."],
   "missingScript": "skip",
+  "allowedPaths": [],
+  "blockedPaths": [".env", ".env.*", "**/*.pem", "**/*.p12", "**/*.pfx"],
+  "highRiskPaths": ["src/", "test/", "package.json", "package-lock.json"],
+  "diffScope": {
+    "outOfScope": "fail",
+    "blocked": "fail",
+    "highRisk": "warn"
+  },
+  "riskKeywords": {
+    "R3": ["Live2D", "renderer_ready", "safe output", "secret", "execution"],
+    "R2": ["config", "workflow", "script", "dependency"]
+  },
   "checks": [
     {
       "name": "npm test",
