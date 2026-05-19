@@ -1,5 +1,5 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v0.6.5",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v0.6.6",
   "profile": "iris-live2d-renderer",
   "packageDirs": [
     "."
@@ -577,6 +577,39 @@
       "Does this change weaken verification evidence?",
       "Is the remote quality evidence current?",
       "Should this PR be split before review?"
+    ]
+  },
+  "manualConfirmationPolicy": {
+    "requiredForRiskLevels": [
+      "R3"
+    ],
+    "allowedSources": [
+      "githubReview",
+      "prBody",
+      "prComment",
+      "localFile"
+    ],
+    "requireHeadSha": true,
+    "requireRole": true,
+    "requireReviewedItems": true,
+    "requiredReviewedItems": [
+      "Live2D cue schema",
+      "renderer boundary",
+      "adapter handoff",
+      "public summary",
+      "engine response normalization",
+      "secret/auth",
+      "renderer behavior",
+      "quality gate policy",
+      "test expectation",
+      "env sample"
+    ],
+    "cannotOverride": [
+      "secretScanFailure",
+      "blockedPaths",
+      "highConfidenceSecret",
+      "implementationHarnessMixing",
+      "profileRequiredFailure"
     ]
   }
 }

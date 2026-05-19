@@ -1,4 +1,4 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v0.6.5 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v0.6.6 -->
 # Skill: Renderer Readiness Reviewer
 
 Use for Live2D renderer readiness, status, health, cue, and model changes.
