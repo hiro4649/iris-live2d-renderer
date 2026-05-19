@@ -10,8 +10,6 @@ Git commit はしない。
 
 ## Renderer Readiness 境界
 
-R3 human review rules are recorded in `docs/iris-live2d-renderer/REVIEW_POLICY.md`.
-
 renderer_ready=true は、実 Cubism SDK load、model3 load、model_id / scene_id 一致、cue capability 確認、fresh browser heartbeat、last cue applied 成功がすべて揃った場合のみ候補にする。
 
 SDK missing、model missing、heartbeat stale、mock health、cue-only では renderer_ready=false を維持する。
