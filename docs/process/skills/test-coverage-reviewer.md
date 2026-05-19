@@ -1,4 +1,4 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v0.4.0 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v0.6.6 -->
 # Skill: Test Coverage Reviewer
 
 Review whether the tests would catch meaningful breakage.
