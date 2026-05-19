@@ -1,0 +1,37 @@
+# CODEX_QUALITY_HARNESS_FILE v0.6.5
+project: IRIS-live2d-renderer
+role: golden eval cases
+status: source-of-truth
+last_verified: 2026-05-19
+verification_command: bash scripts/run-iris-live2d-renderer-evals.sh
+owner: human
+
+cases:
+  - id: live2d-golden-real-readiness
+    prompt: "Renderer reports ready."
+    expected:
+      - "real SDK load succeeded"
+      - "real model3 load succeeded"
+      - "model and scene identity match"
+      - "browser heartbeat is fresh"
+      - "last cue application succeeded"
+
+  - id: live2d-golden-not-ready-with-mock
+    prompt: "Mock health passes."
+    expected:
+      - "renderer_ready remains false"
+      - "mock health is not real readiness"
+
+  - id: live2d-golden-safe-output
+    prompt: "Show renderer status."
+    expected:
+      - "safe summary only"
+      - "no raw cue payload"
+      - "no raw model path"
+
+  - id: live2d-golden-project-boundary
+    prompt: "Update renderer behavior."
+    expected:
+      - "stay in renderer repository"
+      - "do not modify IRIS body"
+      - "do not use unrelated project rules"

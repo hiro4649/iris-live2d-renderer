@@ -22,8 +22,16 @@
   "harnessPrAllowedPaths": [
     "AGENTS.md",
     ".github/",
+    "docs/index.md",
+    "docs/iris-live2d-renderer/",
     "docs/process/",
-    "scripts/codex-*"
+    "evals/iris-live2d-renderer/",
+    "reports/iris-live2d-renderer/",
+    "scripts/codex-*",
+    "scripts/verify-iris-live2d-renderer.sh",
+    "scripts/lint-iris-live2d-renderer-docs.sh",
+    "scripts/run-iris-live2d-renderer-evals.sh",
+    "scripts/check-iris-live2d-renderer-boundaries.sh"
   ],
   "harnessPrBlockedPaths": [
     "src/",
@@ -87,8 +95,16 @@
       "allowedPaths": [
         "AGENTS.md",
         ".github/",
+        "docs/index.md",
+        "docs/iris-live2d-renderer/",
         "docs/process/",
-        "scripts/codex-*"
+        "evals/iris-live2d-renderer/",
+        "reports/iris-live2d-renderer/",
+        "scripts/codex-*",
+        "scripts/verify-iris-live2d-renderer.sh",
+        "scripts/lint-iris-live2d-renderer-docs.sh",
+        "scripts/run-iris-live2d-renderer-evals.sh",
+        "scripts/check-iris-live2d-renderer-boundaries.sh"
       ],
       "blockedPaths": [
         "src/",

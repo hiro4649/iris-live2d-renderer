@@ -1,0 +1,33 @@
+# CODEX_QUALITY_HARNESS_FILE v0.6.5
+project: IRIS-live2d-renderer
+role: regression eval cases
+status: source-of-truth
+last_verified: 2026-05-19
+verification_command: bash scripts/run-iris-live2d-renderer-evals.sh
+owner: human
+
+cases:
+  - id: live2d-regression-false-ready-from-fixture
+    failure: "Fixture health is reported as renderer_ready=true."
+    expected:
+      - "renderer_ready remains false"
+      - "real SDK and model evidence are required"
+
+  - id: live2d-regression-stale-heartbeat
+    failure: "Heartbeat is stale but readiness remains true."
+    expected:
+      - "renderer_ready remains false"
+      - "safe reason label identifies stale heartbeat"
+
+  - id: live2d-regression-raw-cue-leak
+    failure: "Raw cue payload or raw model path appears in output."
+    expected:
+      - "safe summary only"
+      - "no raw cue payload"
+      - "no raw model path"
+
+  - id: live2d-regression-cross-project-drift
+    failure: "Renderer task edits IRIS body or imports unrelated project authority."
+    expected:
+      - "stop at repository boundary"
+      - "record unresolved shared interface questions"
