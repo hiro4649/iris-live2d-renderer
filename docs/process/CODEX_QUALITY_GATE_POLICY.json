@@ -1,5 +1,5 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v0.6.7",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v0.6.8",
   "profile": "iris-live2d-renderer",
   "packageDirs": [
     "."
@@ -189,6 +189,25 @@
         "test-coverage-reviewer"
       ],
       "requiresHumanReview": false,
+      "allowPackageChanges": false,
+      "allowLockfileChanges": false,
+      "allowImplementationChanges": false,
+      "companionTestPaths": [],
+      "testFixtureCompanionPaths": [],
+      "highRiskPaths": []
+    },
+    "fixture-contract-repair": {
+      "allowedPaths": [],
+      "blockedPaths": [],
+      "requiredChecks": [],
+      "requiredReviewerSkills": [
+        "test-coverage-reviewer"
+      ],
+      "requiredReviewers": [
+        "test-coverage-reviewer"
+      ],
+      "requiresHumanReview": true,
+      "riskLevel": "R3",
       "allowPackageChanges": false,
       "allowLockfileChanges": false,
       "allowImplementationChanges": false,
@@ -631,5 +650,23 @@
     ]
   },
   "implementationCompanionTestPaths": [],
-  "testFixtureCompanionPaths": []
+  "testFixtureCompanionPaths": [],
+  "fixtureContractRepairPaths": [],
+  "fixtureContractRepairRules": {
+    "allowApprovedFixtureContractRepair": true,
+    "forbidTestWeakening": true,
+    "forbidSkipTodoOnly": true,
+    "forbidNegativeCaseWeakening": true,
+    "requireManualConfirmation": true,
+    "requireSafeSummary": true,
+    "requiredManualConfirmationItems": [
+      "validator non-weakening",
+      "negative cases maintained",
+      "fixture repair only",
+      "raw memory not exposed",
+      "safe summary maintained",
+      "full run residual failures are not treated as PASS",
+      "non-overridable failures are not overridden"
+    ]
+  }
 }
