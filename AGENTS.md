@@ -33,7 +33,7 @@ GET /health、GET /status、POST /live2d-engine、POST /cue は safe summary の
 最終報告は原則 1 行で、変更ファイル / 検証結果 / 残リスク のみ返す。
 
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-<!-- CODEX_QUALITY_HARNESS_FILE v0.6.7 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v0.6.8 -->
 ## Codex Quality Harness
 
 Use the repo-local harness files in `docs/process/` and `scripts/codex-*`.
