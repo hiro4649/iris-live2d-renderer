@@ -33,13 +33,16 @@ GET /health、GET /status、POST /live2d-engine、POST /cue は safe summary の
 最終報告は原則 1 行で、変更ファイル / 検証結果 / 残リスク のみ返す。
 
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-<!-- CODEX_QUALITY_HARNESS_FILE v0.7.0 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v0.7.1 -->
 ## Codex Quality Harness
 
 Use the repo-local harness files in `docs/process/` and `scripts/codex-*`.
 Run the secret scan and local quality gate before reporting merge readiness.
 R3 or human-review-required changes need manual confirmation for the current head.
 Manual confirmation cannot override secret scan failures, blocked paths, high-confidence secrets, implementation/harness mixing, or profile-required failures.
+Production, release, merge-ready, or go/no-go claims require local/remote evidence, residual risks, rollback or merge-after verification, and current-head human confirmation when required.
+Keep outputs safe-summary-only: no raw diff, raw logs, raw payload, endpoint value, secret value, private path, production data, or personal data.
+Root harness version and profile template version are separate; keep compatible profile-template files at v0.7.0 unless the source profile explicitly changes.
 
 ## IRIS Live2D Renderer Readiness Rule
 
