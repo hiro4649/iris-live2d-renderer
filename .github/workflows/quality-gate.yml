@@ -58,10 +58,14 @@ jobs:
           CODEX_REQUIRE_NPM: "1"
         run: |
           set -euo pipefail
+          set +e
           node scripts/codex-local-quality-gate.mjs > "$RUNNER_TEMP/codex-source-gate.json"
-          node - "$RUNNER_TEMP/codex-source-gate.json" <<'NODE'
+          gate_exit="$?"
+          set -e
+          node - "$RUNNER_TEMP/codex-source-gate.json" "$gate_exit" <<'NODE'
           const fs = require('fs');
           const file = process.argv[2];
+          const gateExit = Number(process.argv[3] || 0);
           const report = JSON.parse(fs.readFileSync(file, 'utf8'));
 
           const requiredPass = [
@@ -142,6 +146,9 @@ jobs:
 
           if (!['pass', 'manual_confirmation_required'].includes(report.status)) {
             failures.push(`report.status=${report.status}`);
+          }
+          if (gateExit !== 0 && report.status === 'pass') {
+            failures.push(`localGateExit=${gateExit}`);
           }
 
           const unsafe = [
