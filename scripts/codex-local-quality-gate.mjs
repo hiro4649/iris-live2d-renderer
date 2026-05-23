@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v0.7.0
+// CODEX_QUALITY_HARNESS_FILE v0.7.2
 import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -12,6 +12,11 @@ import {
 } from './codex-production-readiness-gate.mjs';
 import { buildEvidenceIntegrityReport } from './codex-evidence-integrity-gate.mjs';
 import { buildHermesInvariantReport } from './codex-hermes-invariant-gate.mjs';
+import { buildEvidencePackReport } from './codex-evidence-pack-validate.mjs';
+import { buildHumanConfirmationObjectReport } from './codex-human-confirmation-validate.mjs';
+import { buildSafeOutputScanReport } from './codex-safe-output-scan.mjs';
+import { buildCiReplayReport, buildGithubReplayContextAsync } from './codex-ci-replay.mjs';
+import { buildPrBodyLintReport } from './codex-pr-body-lint.mjs';
 
 process.chdir(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'));
 
@@ -23,7 +28,7 @@ const agentMemoryPolicyPath = path.join('docs', 'process', 'CODEX_AGENT_MEMORY_P
 const skillLifecyclePolicyPath = path.join('docs', 'process', 'CODEX_SKILL_LIFECYCLE_POLICY.json');
 const selfEvolutionPolicyPath = path.join('docs', 'process', 'CODEX_HARNESS_SELF_EVOLUTION_POLICY.json');
 const openaiMethodPolicyPath = path.join('docs', 'process', 'CODEX_OPENAI_CODEX_METHOD_POLICY.json');
-const HARNESS_VERSION = '0.7.1';
+const HARNESS_VERSION = '0.7.2';
 const PROFILE_TEMPLATE_VERSION = '0.7.0';
 const marker = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
 const SOURCE_REPO_MODE = process.env.CODEX_HARNESS_SOURCE_REPO === '1';
@@ -535,6 +540,14 @@ const report = {
   hermesInvariantStatus: { status: 'not_run' },
   humanConfirmationStatus: { status: 'not_run' },
   v071SelfTestStatus: { status: 'not_run' },
+  evidencePackStatus: { status: 'not_run' },
+  humanConfirmationObjectStatus: { status: 'not_run' },
+  safeOutputScanStatus: { status: 'not_run' },
+  ciReplayStatus: { status: 'not_run' },
+  prBodyLintStatus: { status: 'not_run' },
+  failureReasonCatalogStatus: { status: 'not_run' },
+  remoteContextStatus: { status: 'not_run' },
+  v072SelfTestStatus: { status: 'not_run' },
   qualityScoreStatus: { status: 'not_run' },
   outputSizeBudget: { topFindings: 5, rootCauses: 5, safeSummary: true },
   recommendedNextAction: 'run quality gate',
@@ -3115,6 +3128,38 @@ function applyOpenAIMethodGateStatus(status) {
     addFailure('methodSupportStatus.failed', 'OpenAI Codex Method support file validation failed.');
   }
 }
+function isPullRequestContext(env = process.env) {
+  return env.CODEX_EVENT_NAME === 'pull_request' ||
+    Boolean(env.CODEX_PR_NUMBER) ||
+    Boolean(env.GITHUB_REF && env.GITHUB_REF.includes('/pull/'));
+}
+async function resolveRemoteGateContext(env = process.env) {
+  const args = {
+    repo: env.CODEX_REPOSITORY || env.GITHUB_REPOSITORY || '',
+    pr: env.CODEX_PR_NUMBER || '',
+    head: env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || '',
+    base: env.CODEX_PR_BASE_SHA || '',
+  };
+  if (!isPullRequestContext(env) || !args.repo || !args.pr || !args.head) {
+    return {
+      env: {},
+      status: 'not_applicable',
+      reasonCodes: ['ci_replay_not_requested'],
+      prBodySource: 'not_applicable',
+      confirmationSource: 'not_applicable',
+      safeSummaryOnly: true,
+    };
+  }
+  const context = await buildGithubReplayContextAsync(args, env);
+  return {
+    env: context.status === 'pass' ? context.env : {},
+    status: context.status,
+    reasonCodes: context.reasonCodes || [],
+    prBodySource: context.prBodySource || 'missing',
+    confirmationSource: context.confirmationSource || 'missing',
+    safeSummaryOnly: true,
+  };
+}
 function runV071SelfTestGate() {
   const script = path.join('scripts', 'codex-v071-self-test.mjs');
   if (!fs.existsSync(script)) {
@@ -3148,6 +3193,39 @@ function runV071SelfTestGate() {
     };
   }
 }
+function runV072SelfTestGate() {
+  const script = path.join('scripts', 'codex-v072-self-test.mjs');
+  if (!fs.existsSync(script)) {
+    return {
+      status: 'not_applicable',
+      labels: ['v072_self_test_script_missing'],
+      safeSummaryOnly: true,
+    };
+  }
+  const result = spawnSync(process.execPath, [script], {
+    encoding: 'utf8',
+    env: { ...process.env, CODEX_V072_SELF_TEST_REPORT: 'json' },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
+  const output = String(result.stdout || '').trim();
+  if (!output) {
+    return {
+      status: 'fail',
+      labels: ['v072_self_test_no_output'],
+      safeSummaryOnly: true,
+    };
+  }
+  try {
+    const parsed = JSON.parse(output);
+    return parsed.v072SelfTestStatus || { status: 'fail', labels: ['v072_self_test_missing_status'], safeSummaryOnly: true };
+  } catch {
+    return {
+      status: 'fail',
+      labels: ['v072_self_test_parse_failed'],
+      safeSummaryOnly: true,
+    };
+  }
+}
 function applyV071Status(name, status) {
   const value = status?.status || 'missing';
   if (value === 'fail' || value === 'missing') {
@@ -3170,7 +3248,14 @@ function computeQualityScoreStatus() {
     ['evidenceIntegrityStatus', report.evidenceIntegrityStatus],
     ['hermesInvariantStatus', report.hermesInvariantStatus],
     ['humanConfirmationStatus', report.humanConfirmationStatus],
+    ['evidencePackStatus', report.evidencePackStatus],
+    ['humanConfirmationObjectStatus', report.humanConfirmationObjectStatus],
+    ['safeOutputScanStatus', report.safeOutputScanStatus],
+    ['ciReplayStatus', report.ciReplayStatus],
+    ['prBodyLintStatus', report.prBodyLintStatus],
+    ['failureReasonCatalogStatus', report.failureReasonCatalogStatus],
     ['v071SelfTestStatus', report.v071SelfTestStatus],
+    ['v072SelfTestStatus', report.v072SelfTestStatus],
     ['safeArtifactValidation', report.safeArtifactValidation],
     ['outputShapeStatus', report.outputShapeStatus],
   ];
@@ -3204,7 +3289,7 @@ function computeOutputShapeStatus() {
     /\b(?:gh[pousr]_|sk-|AKIA)[A-Za-z0-9_-]{8,}\b/,
     /-----BEGIN [^-]+PRIVATE KEY-----/i,
   ];
-  const requiredFields = ['qualityReportSchemaVersion', 'codeAuditSchemaVersion', 'harnessVersion', 'profile', 'riskLevel', 'manualConfirmationStatus', 'rootCauseGroups', 'blockingFindings', 'warningFindings', 'agentMemoryPolicyStatus', 'skillLifecyclePolicyStatus', 'selfEvolutionPolicyStatus', 'curatorSuggestionStatus', 'sourceHarnessValidationStatus', 'profileTemplateCompatibilityStatus', 'openaiCodexMethodStatus', 'methodSupportStatus', 'productionReadinessStatus', 'evidenceIntegrityStatus', 'hermesInvariantStatus', 'humanConfirmationStatus', 'v071SelfTestStatus', 'qualityScoreStatus', 'safeArtifactValidation', 'faultInjectionBenchmark', 'semanticImpact', 'testSufficiency', 'specTestMismatch', 'minimalPrPlan', 'ciRiskPrediction', 'decisionTrace', 'defectTaxonomy', 'ciParity', 'oracleLimits', 'auditGrade', 'oracleValidation', 'decisionSimulator', 'acceptanceCriteria', 'confusionRisk', 'temporalConsistency', 'deploymentBoundary', 'mutationBenchmark', 'adversarialPrSimulator', 'auditBypass', 'realWorldCanarySet', 'specBoundaryMutation', 'testAuditMutation', 'dependencyAdversarial', 'ciParityAdversarial', 'evidenceIntegrity', 'policyLint', 'auditEffectiveness', 'fixOutcome', 'postFixVerificationPlan', 'repairQuality', 'splitEffectiveness', 'noiseControl', 'auditLearningRecommendation', 'decisionRetrospective', 'rolloutScore', 'freshness', 'riskAcceptanceWorkflow', 'reviewerAssignmentQuality', 'verificationCompleteness', 'skippedCheckJustification', 'auditModeRecommendation', 'auditConflict', 'maturityScore'];
+  const requiredFields = ['qualityReportSchemaVersion', 'codeAuditSchemaVersion', 'harnessVersion', 'profile', 'riskLevel', 'manualConfirmationStatus', 'rootCauseGroups', 'blockingFindings', 'warningFindings', 'agentMemoryPolicyStatus', 'skillLifecyclePolicyStatus', 'selfEvolutionPolicyStatus', 'curatorSuggestionStatus', 'sourceHarnessValidationStatus', 'profileTemplateCompatibilityStatus', 'openaiCodexMethodStatus', 'methodSupportStatus', 'productionReadinessStatus', 'evidenceIntegrityStatus', 'hermesInvariantStatus', 'humanConfirmationStatus', 'evidencePackStatus', 'humanConfirmationObjectStatus', 'safeOutputScanStatus', 'ciReplayStatus', 'prBodyLintStatus', 'failureReasonCatalogStatus', 'v071SelfTestStatus', 'v072SelfTestStatus', 'qualityScoreStatus', 'safeArtifactValidation', 'faultInjectionBenchmark', 'semanticImpact', 'testSufficiency', 'specTestMismatch', 'minimalPrPlan', 'ciRiskPrediction', 'decisionTrace', 'defectTaxonomy', 'ciParity', 'oracleLimits', 'auditGrade', 'oracleValidation', 'decisionSimulator', 'acceptanceCriteria', 'confusionRisk', 'temporalConsistency', 'deploymentBoundary', 'mutationBenchmark', 'adversarialPrSimulator', 'auditBypass', 'realWorldCanarySet', 'specBoundaryMutation', 'testAuditMutation', 'dependencyAdversarial', 'ciParityAdversarial', 'evidenceIntegrity', 'policyLint', 'auditEffectiveness', 'fixOutcome', 'postFixVerificationPlan', 'repairQuality', 'splitEffectiveness', 'noiseControl', 'auditLearningRecommendation', 'decisionRetrospective', 'rolloutScore', 'freshness', 'riskAcceptanceWorkflow', 'reviewerAssignmentQuality', 'verificationCompleteness', 'skippedCheckJustification', 'auditModeRecommendation', 'auditConflict', 'maturityScore'];
   const missing = requiredFields.filter((field) => report[field] === undefined);
   return {
     status: missing.length || forbidden.some((pattern) => pattern.test(serialized)) ? 'fail' : 'pass',
@@ -5186,7 +5271,14 @@ function computeSafeArtifactValidation() {
     evidenceIntegrityStatus: report.evidenceIntegrityStatus,
     hermesInvariantStatus: report.hermesInvariantStatus,
     humanConfirmationStatus: report.humanConfirmationStatus,
+    evidencePackStatus: report.evidencePackStatus,
+    humanConfirmationObjectStatus: report.humanConfirmationObjectStatus,
+    safeOutputScanStatus: report.safeOutputScanStatus,
+    ciReplayStatus: report.ciReplayStatus,
+    prBodyLintStatus: report.prBodyLintStatus,
+    failureReasonCatalogStatus: report.failureReasonCatalogStatus,
     v071SelfTestStatus: report.v071SelfTestStatus,
+    v072SelfTestStatus: report.v072SelfTestStatus,
     qualityScoreStatus: report.qualityScoreStatus,
   };
   const unsafe = Object.entries(artifacts).filter(([, value]) => safeForbiddenArtifactHit(value)).map(([name]) => name);
@@ -5214,6 +5306,12 @@ function enforceFinalValidationStatuses() {
     ['evidenceIntegrityStatus', report.evidenceIntegrityStatus],
     ['hermesInvariantStatus', report.hermesInvariantStatus],
     ['humanConfirmationStatus', report.humanConfirmationStatus],
+    ['evidencePackStatus', report.evidencePackStatus],
+    ['humanConfirmationObjectStatus', report.humanConfirmationObjectStatus],
+    ['safeOutputScanStatus', report.safeOutputScanStatus],
+    ['ciReplayStatus', report.ciReplayStatus],
+    ['prBodyLintStatus', report.prBodyLintStatus],
+    ['failureReasonCatalogStatus', report.failureReasonCatalogStatus],
     ['v071SelfTestStatus', report.v071SelfTestStatus],
     ['qualityScoreStatus', report.qualityScoreStatus],
     ['safeArtifactValidation', report.safeArtifactValidation],
@@ -5278,6 +5376,13 @@ function computeEvidenceSummary() {
     hermesInvariantStatus: report.hermesInvariantStatus?.status || 'unknown',
     humanConfirmationStatus: report.humanConfirmationStatus?.status || 'unknown',
     v071SelfTestStatus: report.v071SelfTestStatus?.status || 'unknown',
+    v072SelfTestStatus: report.v072SelfTestStatus?.status || 'unknown',
+    evidencePackStatus: report.evidencePackStatus?.status || 'unknown',
+    humanConfirmationObjectStatus: report.humanConfirmationObjectStatus?.status || 'unknown',
+    safeOutputScanStatus: report.safeOutputScanStatus?.status || 'unknown',
+    ciReplayStatus: report.ciReplayStatus?.status || 'unknown',
+    prBodyLintStatus: report.prBodyLintStatus?.status || 'unknown',
+    failureReasonCatalogStatus: report.failureReasonCatalogStatus?.status || 'unknown',
     qualityScoreStatus: report.qualityScoreStatus?.status || 'unknown',
     diffScope: {
       outOfScope: report.changedPathsSummary.outOfScope.length,
@@ -6106,16 +6211,44 @@ report.selfEvolutionPolicyStatus = validateSelfEvolutionPolicy();
 applyGovernancePolicyStatus(report.selfEvolutionPolicyStatus, 'selfEvolutionPolicy.failed', 'Self-evolution policy governance failed.');
 report.openaiCodexMethodStatus = runOpenAICodexMethodGate();
 applyOpenAIMethodGateStatus(report.openaiCodexMethodStatus);
-report.productionReadinessStatus = buildProductionReadinessReport(process.env).productionReadinessStatus;
-report.evidenceIntegrityStatus = buildEvidenceIntegrityReport(process.env).evidenceIntegrityStatus;
-report.hermesInvariantStatus = buildHermesInvariantReport(process.env).hermesInvariantStatus;
-report.humanConfirmationStatus = buildHumanConfirmationStatus(process.env).humanConfirmationStatus;
+const remoteGateContext = await resolveRemoteGateContext(process.env);
+const gateEnv = { ...process.env, ...remoteGateContext.env };
+report.remoteContextStatus = {
+  status: remoteGateContext.status,
+  reasonCodes: remoteGateContext.reasonCodes || [],
+  prBodySource: remoteGateContext.prBodySource || 'missing',
+  confirmationSource: remoteGateContext.confirmationSource || 'missing',
+  safeSummaryOnly: true,
+};
+report.productionReadinessStatus = buildProductionReadinessReport(gateEnv).productionReadinessStatus;
+report.evidenceIntegrityStatus = buildEvidenceIntegrityReport(gateEnv).evidenceIntegrityStatus;
+report.hermesInvariantStatus = buildHermesInvariantReport(gateEnv).hermesInvariantStatus;
+report.humanConfirmationStatus = buildHumanConfirmationStatus(gateEnv).humanConfirmationStatus;
+report.evidencePackStatus = buildEvidencePackReport(gateEnv).evidencePackStatus;
+report.humanConfirmationObjectStatus = buildHumanConfirmationObjectReport(gateEnv).humanConfirmationObjectStatus;
+report.safeOutputScanStatus = buildSafeOutputScanReport({
+  harnessVersion: report.harnessVersion,
+  profile: report.profile,
+  status: report.status,
+  safeSummaryOnly: true,
+}, gateEnv).safeOutputScanStatus;
+report.ciReplayStatus = buildCiReplayReport(['node', 'codex-ci-replay.mjs', '--json'], gateEnv).ciReplayStatus;
+report.prBodyLintStatus = buildPrBodyLintReport(gateEnv, ['node', 'codex-pr-body-lint.mjs', '--json']).prBodyLintStatus;
+report.failureReasonCatalogStatus = fs.existsSync(path.join('docs', 'process', 'CODEX_FAILURE_REASON_CATALOG.json')) ? { status: 'pass' } : { status: 'fail', reasonCodes: ['failure_reason_catalog_missing'], safeSummaryOnly: true };
 report.v071SelfTestStatus = runV071SelfTestGate();
+report.v072SelfTestStatus = runV072SelfTestGate();
 applyV071Status('productionReadinessStatus', report.productionReadinessStatus);
 applyV071Status('evidenceIntegrityStatus', report.evidenceIntegrityStatus);
 applyV071Status('hermesInvariantStatus', report.hermesInvariantStatus);
 applyV071Status('humanConfirmationStatus', report.humanConfirmationStatus);
+applyV071Status('evidencePackStatus', report.evidencePackStatus);
+applyV071Status('humanConfirmationObjectStatus', report.humanConfirmationObjectStatus);
+applyV071Status('safeOutputScanStatus', report.safeOutputScanStatus);
+applyV071Status('ciReplayStatus', report.ciReplayStatus);
+applyV071Status('prBodyLintStatus', report.prBodyLintStatus);
+applyV071Status('failureReasonCatalogStatus', report.failureReasonCatalogStatus);
 applyV071Status('v071SelfTestStatus', report.v071SelfTestStatus);
+applyV071Status('v072SelfTestStatus', report.v072SelfTestStatus);
 classifyDiff(policy, knownRisks);
 runDiffAudits(policy, knownRisks, codeAuditBaseline);
 for (const warning of report.warnings) {
