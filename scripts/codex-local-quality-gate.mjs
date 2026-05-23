@@ -6232,7 +6232,19 @@ report.safeOutputScanStatus = buildSafeOutputScanReport({
   status: report.status,
   safeSummaryOnly: true,
 }, gateEnv).safeOutputScanStatus;
-report.ciReplayStatus = buildCiReplayReport(['node', 'codex-ci-replay.mjs', '--json'], gateEnv).ciReplayStatus;
+report.ciReplayStatus = buildCiReplayReport([
+  'node',
+  'codex-ci-replay.mjs',
+  '--json',
+  '--repo',
+  gateEnv.CODEX_REPOSITORY || '',
+  '--pr',
+  gateEnv.CODEX_PR_NUMBER || '',
+  '--head',
+  gateEnv.CODEX_PR_HEAD_SHA || '',
+  '--base',
+  gateEnv.CODEX_PR_BASE_SHA || '',
+], gateEnv).ciReplayStatus;
 report.prBodyLintStatus = buildPrBodyLintReport(gateEnv, ['node', 'codex-pr-body-lint.mjs', '--json']).prBodyLintStatus;
 report.failureReasonCatalogStatus = fs.existsSync(path.join('docs', 'process', 'CODEX_FAILURE_REASON_CATALOG.json')) ? { status: 'pass' } : { status: 'fail', reasonCodes: ['failure_reason_catalog_missing'], safeSummaryOnly: true };
 report.v071SelfTestStatus = runV071SelfTestGate();
