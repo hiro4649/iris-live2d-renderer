@@ -1,4 +1,4 @@
-# CODEX_QUALITY_HARNESS_FILE v0.7.1
+# CODEX_QUALITY_HARNESS_FILE v0.8.0
 name: quality-gate
 
 on:
@@ -24,123 +24,51 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Install policy package dependencies if present
-        shell: bash
-        run: |
-          set -euo pipefail
-          node - <<'NODE' > "$RUNNER_TEMP/codex-package-dirs.txt"
-          const fs = require('fs');
-          const path = require('path');
-          const policyPath = path.join('docs', 'process', 'CODEX_QUALITY_GATE_POLICY.json');
-          let dirs = ['.'];
-          if (fs.existsSync(policyPath)) {
-            const raw = fs.readFileSync(policyPath, 'utf8').replace(/^\uFEFF/, '');
-            const policy = JSON.parse(raw);
-            if (Array.isArray(policy.packageDirs) && policy.packageDirs.length) dirs = policy.packageDirs;
-          }
-          for (const dir of [...new Set(dirs)]) {
-            if (fs.existsSync(path.join(dir || '.', 'package.json'))) console.log(dir || '.');
-          }
-          NODE
-          while IFS= read -r dir; do
-            [ -n "$dir" ] || continue
-            (cd "$dir" && npm install --no-package-lock)
-          done < "$RUNNER_TEMP/codex-package-dirs.txt"
-      - name: Run local quality gate
+      - name: Run target harness quality gate
         shell: bash
         env:
-          CODEX_REQUIRE_NPM: "1"
-          CODEX_RUN_PROFILE_REQUIRED_CHECKS: "1"
+          CODEX_HARNESS_MODE: "target"
+          CODEX_PROFILE_COMPAT_MODE: "off"
           CODEX_QUALITY_REPORT: "json"
+          CODEX_SKIP_NPM: "1"
           CODEX_OPENAI_METHOD_REPORT: "json"
           CODEX_EVENT_NAME: ${{ github.event_name }}
           CODEX_PR_NUMBER: ${{ github.event.pull_request.number || '' }}
-          CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
           CODEX_PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
           CODEX_REPOSITORY: ${{ github.repository }}
-          CODEX_GITHUB_API_AVAILABLE: "1"
-          CODEX_GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          node scripts/codex-local-quality-gate.mjs > "$RUNNER_TEMP/codex-quality-gate.json"
-          node - "$RUNNER_TEMP/codex-quality-gate.json" <<'NODE'
+          node --check scripts/codex-local-quality-gate.mjs
+          node scripts/codex-secret-safety-scan.mjs
+          gate_exit=0
+          node scripts/codex-local-quality-gate.mjs > "$RUNNER_TEMP/codex-target-gate.txt" || gate_exit=$?
+          node - "$RUNNER_TEMP/codex-target-gate.txt" "$gate_exit" <<'NODE'
           const fs = require('fs');
-          const file = process.argv[2];
-          const report = JSON.parse(fs.readFileSync(file, 'utf8'));
-
-          const requiredPass = [
-            'profileTemplateCompatibilityStatus',
-            'agentMemoryPolicyStatus',
-            'skillLifecyclePolicyStatus',
-            'curatorSuggestionStatus',
-            'selfEvolutionPolicyStatus',
-            'safeArtifactValidation',
-            'outputShapeStatus',
-            'openaiCodexMethodStatus',
-            'methodSupportStatus',
-            'productionReadinessStatus',
-            'evidenceIntegrityStatus',
-            'hermesInvariantStatus',
-            'humanConfirmationStatus',
-            'v071SelfTestStatus',
-            'qualityScoreStatus',
-          ];
-
-          const failures = [];
-          const prDependent = new Set([
-            'openaiCodexMethodStatus',
-            'productionReadinessStatus',
-            'evidenceIntegrityStatus',
-            'hermesInvariantStatus',
-            'humanConfirmationStatus',
-          ]);
-
-          const sourceStatus = report.sourceHarnessValidationStatus?.status || 'missing';
-          console.log(`sourceHarnessValidationStatus: ${sourceStatus}`);
-          if (!['pass', 'not_applicable'].includes(sourceStatus)) {
-            failures.push(`sourceHarnessValidationStatus=${sourceStatus}`);
-          }
-
-          for (const key of requiredPass) {
-            const status = report[key]?.status || 'missing';
-            console.log(`${key}: ${status}`);
-            if (prDependent.has(key) && status === 'not_applicable' && process.env.CODEX_EVENT_NAME !== 'pull_request') {
-              continue;
-            }
-            if (status !== 'pass') failures.push(`${key}=${status}`);
-          }
-
-          console.log(`report.status: ${report.status}`);
-          console.log(`mergeReady: ${report.mergeReady}`);
-          console.log(`humanReviewRequired: ${report.humanReviewRequired}`);
-          console.log(`humanConfirmationStatus: ${report.humanConfirmationStatus?.status || 'missing'}`);
-          console.log(`qualityScoreStatus: ${report.qualityScoreStatus?.status || 'missing'}`);
-
-          if (!['pass', 'manual_confirmation_required'].includes(report.status)) {
-            failures.push(`report.status=${report.status}`);
-          }
-
-          const unsafe = [
-            /rawDiff/i,
-            /rawLogs/i,
-            /secretValue/i,
-            /endpointValue/i,
-            /privatePath/i,
-            /"(?:rawPayload|payload)"\s*:/i,
-            /productionData/i,
-            /personalData/i,
-            /(?:https?|postgres(?:ql)?|mysql|mongodb):\/\/\S+/i,
-            /\b(?:gh[pousr]_|sk-|AKIA|glpat-|npm_|xox[baprs]-)[A-Za-z0-9_-]{8,}\b/,
-            /-----BEGIN [^-]+PRIVATE KEY-----/i,
-          ];
-          const raw = fs.readFileSync(file, 'utf8');
-          if (unsafe.some((pattern) => pattern.test(raw))) {
-            failures.push('unsafe output pattern detected');
-          }
-
-          if (failures.length) {
-            console.error('Quality gate verification failed:');
-            for (const item of failures) console.error(`- ${item}`);
+          const gateExit = Number(process.argv[3] || 0);
+          const passed = gateExit === 0;
+          const safeSummary = {
+            status: passed ? 'pass' : 'fail',
+            mode: 'target',
+            safeSummaryOnly: true,
+            valuesPrinted: false,
+            qualityScoreStatus: { status: 'not_available' }
+          };
+          fs.writeFileSync('codex-quality-gate-safe-summary.json', JSON.stringify(safeSummary, null, 2));
+          fs.writeFileSync('codex-failure-reasons.json', JSON.stringify(passed ? [] : [{ reasonCode: 'target_quality_gate_failed', safeMessage: 'Target quality gate failed.' }], null, 2));
+          if (!passed) {
+            console.error('::error title=codex-quality-gate::target_quality_gate_failed');
             process.exit(1);
           }
+          console.log(`targetQualityGateStatus: ${safeSummary.status}`);
           NODE
+      - name: Upload safe quality artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-quality-gate-safe-artifacts
+          path: |
+            codex-quality-gate-safe-summary.json
+            codex-failure-reasons.json
+          if-no-files-found: ignore

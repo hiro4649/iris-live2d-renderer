@@ -1,84 +1,82 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v0.7.1 -->
-## Summary
-
-## Why this change is needed
-
-## Scope
-
-## Non-goals
-
-## Risk level
-
-Choose one: R1 low / R2 medium / R3 high
-
-## Acceptance criteria
-
-## Test plan
-
-## Commands run
-
-## Results
-
-## AI review notes
-
-## Human review focus
-
-## Manual confirmation
-
-- riskLevel:
-- headSha:
-- confirmedByRole:
-- reviewedItems:
-- qualityGateNotWeakened:
-- riskLevelNotLowered:
-- residualRisks:
-- manualBranchProtectionAcknowledged:
-
-## Rollback plan
-
-## Known risks
-
-## Preview / evidence
-
-
+<!-- CODEX_QUALITY_HARNESS_FILE v0.8.0 -->
 ## Codex Method Compliance
-
-Goal:
-
-Context:
-
-Files or scope:
-
-Constraints:
-
-Done when:
-
-Plan-first status:
-
-Environment setup:
-
-Testing and review:
-
-Residual risks:
-
-Best of N used or skipped:
 
 Code review status:
 
 Human confirmation needed:
 
-Production Go/No-Go:
+## Goal
 
-Evidence Integrity:
+## Context
 
-Hermes Invariants:
+## Files or scope
 
-Remote/Local Evidence:
+## Risk level
 
-Rollback or Merge-After Verify:
+## Constraints
 
-Stale Evidence Check:
+## Done when
 
-Manual Confirmation Limits:
+## Plan-first status
 
-Do not leave TODO / TBD / N/A without reason.
+## Environment setup
+
+## Testing and review
+
+## Residual risks
+
+## Best of N Evidence
+
+## Code review status
+
+## Human confirmation needed
+
+## Production Go/No-Go
+
+## Evidence Integrity
+
+## Generic Core Status
+
+## AGENTS Context
+
+## Environment Readiness
+
+## Golden Set
+
+## Structured Evidence Pack
+
+## Structured Human Confirmation
+
+## CI Replay
+
+## Safe Output
+
+## Failure Reason Summary
+
+## Hermes Invariants
+
+## Task Queue Lite
+
+## Safe Trace
+
+## Curator Report
+
+## Offline Evolution Proposal
+
+## Test Coverage Evidence
+
+## Performance Evidence
+
+## Remote/Local Evidence
+
+## Rollback or Merge-After Verify
+
+## Stale Evidence Check
+
+## Manual Confirmation Limits
+
+## Change Summary
+
+## Not Changed
+
+## Verification Summary
