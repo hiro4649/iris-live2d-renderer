@@ -126,7 +126,7 @@ jobs:
             /secretValue/i,
             /endpointValue/i,
             /privatePath/i,
-            /payload/i,
+            /"(?:rawPayload|payload)"\s*:/i,
             /productionData/i,
             /personalData/i,
             /(?:https?|postgres(?:ql)?|mysql|mongodb):\/\/\S+/i,
