@@ -109,6 +109,7 @@ jobs:
           CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
           CODEX_PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
           CODEX_REPOSITORY: ${{ github.repository }}
+          CODEX_RISK_LEVEL: "R3"
           CODEX_LIFEBOAT_PATH: ${{ runner.temp }}/codex-minimal-safe-failure.json
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -129,7 +130,62 @@ jobs:
           else
             export CODEX_HARNESS_MODE=target
             export CODEX_PROFILE_COMPAT_MODE=off
-            export CODEX_SKIP_NPM="${CODEX_SKIP_NPM:-1}"
+            export CODEX_SKIP_NPM="${CODEX_SKIP_NPM:-0}"
+          fi
+          if [ "${CODEX_HARNESS_MODE:-}" = "target" ] && [ -f package.json ]; then
+            product_result=pass
+            if ! npm test; then
+              product_result=fail
+            fi
+            export CODEX_PRODUCT_VERIFICATION_COMMANDS="npm test"
+            export CODEX_PRODUCT_VERIFICATION_RESULT="$product_result"
+            export CODEX_PRODUCT_VERIFICATION_SOURCE=remote
+          fi
+          if [ "${CODEX_HARNESS_MODE:-}" = "target" ] && [ "${CODEX_EVENT_NAME:-}" = "pull_request" ] && [ -n "${CODEX_PR_BASE_SHA:-}" ]; then
+            baseline_result=pass
+            baseline_known_failures='[]'
+            baseline_dir="$RUNNER_TEMP/codex-product-baseline"
+            rm -rf "$baseline_dir"
+            if git worktree add --detach "$baseline_dir" "$CODEX_PR_BASE_SHA" >/dev/null 2>&1; then
+              if [ -f "$baseline_dir/package.json" ]; then
+                if ! (cd "$baseline_dir" && npm install --no-package-lock >/dev/null 2>&1 && npm test); then
+                  baseline_result=fail
+                  baseline_known_failures='["baseline_product_verification_failed"]'
+                fi
+              fi
+              git worktree remove --force "$baseline_dir" >/dev/null 2>&1 || true
+            else
+              baseline_result=fail
+              baseline_known_failures='["baseline_worktree_unavailable"]'
+            fi
+            export CODEX_REMOTE_PRODUCT_BASELINE_JSON="$(
+              BASELINE_RESULT="$baseline_result" BASELINE_KNOWN_FAILURES="$baseline_known_failures" node -e '
+                const now = new Date();
+                const expires = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+                let knownFailures = [];
+                try {
+                  knownFailures = JSON.parse(process.env.BASELINE_KNOWN_FAILURES || "[]");
+                } catch {
+                  knownFailures = ["baseline_summary_invalid"];
+                }
+                process.stdout.write(JSON.stringify({
+                  schemaVersion: "0.8.3",
+                  harnessVersion: "0.9.4",
+                  repository: process.env.CODEX_REPOSITORY || "",
+                  baseSha: process.env.CODEX_PR_BASE_SHA || "",
+                  baselineType: "product_verification",
+                  commands: ["npm test"],
+                  result: process.env.BASELINE_RESULT === "pass" ? "pass" : "fail",
+                  date: now.toISOString(),
+                  source: "github_actions",
+                  safeSummary: "remote product baseline safe summary",
+                  knownFailures,
+                  expiresAt: expires.toISOString(),
+                  rawValuesStored: false,
+                  safeSummaryOnly: true,
+                }));
+              '
+            )"
           fi
           node scripts/codex-workflow-preflight.mjs > "$RUNNER_TEMP/codex-workflow-preflight.json"
           gate_exit=0
