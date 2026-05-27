@@ -82,6 +82,23 @@ jobs:
           CODEX_LIFEBOAT_PATH: ${{ runner.temp }}/codex-minimal-safe-failure.json
         run: |
           node scripts/codex-artifact-lifeboat.mjs > "$RUNNER_TEMP/codex-artifact-lifeboat.json" || true
+      - name: Prepare target PR context
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
+          CODEX_PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          set -euo pipefail
+          changed_files=""
+          if [ -n "${CODEX_PR_BASE_SHA:-}" ] && [ -n "${CODEX_PR_HEAD_SHA:-}" ]; then
+            changed_files="$(git diff --name-only "$CODEX_PR_BASE_SHA" "$CODEX_PR_HEAD_SHA" | tr -d '\r')"
+          fi
+          {
+            echo "CODEX_CHANGED_FILES<<CODEX_EOF"
+            printf '%s\n' "$changed_files"
+            echo "CODEX_EOF"
+          } >> "$GITHUB_ENV"
       - name: Run Codex quality gate
         shell: bash
         env:
