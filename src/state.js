@@ -37,7 +37,10 @@ export function createRendererState({
     lastCueReceivedAt: null,
     lastCueSchema: "",
     lastCueHash: "",
+    lastCueDeliveredHash: "",
+    lastCueDeliveredAt: null,
     lastHeartbeat: null,
+    realModelLoadSupported: false,
   };
 
   return {
@@ -54,6 +57,7 @@ export function createRendererState({
           renderer_cue_delivery: true,
           browser_polling_delivery: true,
           recovery_cue_support: heartbeatStatus.recovery_cue_support,
+          claimed_capability: heartbeatStatus.cue_capability_claimed,
           real_capability_confirmed: heartbeatStatus.cue_capability_confirmed,
         },
         renderer_health: {
@@ -63,14 +67,18 @@ export function createRendererState({
           cubism_sdk_available: state.cubismSdkAvailable,
           cubism_sdk_status: state.cubismSdkStatus,
           cubism_sdk_loaded: heartbeatStatus.cubism_runtime_loaded,
+          real_model_load_supported: heartbeatStatus.real_model_load_supported,
           model3_manifest_configured: state.model3ManifestConfigured,
           model3_manifest_available: state.model3ManifestAvailable,
           model3_manifest_status: state.model3ManifestStatus,
           model_loaded: heartbeatStatus.model_loaded,
           scene_loaded: heartbeatStatus.scene_loaded,
+          model_loaded_claimed: heartbeatStatus.model_loaded_claimed,
+          scene_loaded_claimed: heartbeatStatus.scene_loaded_claimed,
           fresh_heartbeat: heartbeatStatus.heartbeat_fresh,
           model_matches: heartbeatStatus.model_matches,
           scene_matches: heartbeatStatus.scene_matches,
+          browser_cue_delivery_ready: heartbeatStatus.browser_cue_delivery_ready,
           last_cue_applied: heartbeatStatus.last_cue_applied,
           last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
         },
@@ -80,7 +88,8 @@ export function createRendererState({
         received_cue_count: state.cueCount,
         browser_delivery: {
           pending_cue_count: state.cueQueue.length,
-          last_delivery_status: state.lastCueHash ? "queued_for_browser" : "waiting_for_cue",
+          last_delivery_status: browserDeliveryStatus(state, heartbeatStatus),
+          last_delivered_at: state.lastCueDeliveredAt,
         },
         boundary_policy: createBoundaryPolicy(),
       };
@@ -100,6 +109,7 @@ export function createRendererState({
         scene_id: status.scene_id,
         model3_manifest_available: status.renderer_health.model3_manifest_available,
         cubism_sdk_available: status.renderer_health.cubism_sdk_available,
+        real_model_load_supported: status.renderer_health.real_model_load_supported,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -146,12 +156,21 @@ export function createRendererState({
     },
 
     readBrowserCues() {
-      const cues = state.cueQueue.splice(0, state.cueQueue.length);
+      const heartbeatStatus = getHeartbeatStatus(state, now());
+      const cues = heartbeatStatus.browser_cue_delivery_ready
+        ? state.cueQueue.splice(0, state.cueQueue.length)
+        : [];
+      if (cues.length > 0) {
+        state.lastCueDeliveredHash = cues[cues.length - 1].status_hash;
+        state.lastCueDeliveredAt = now();
+      }
       const response = {
         ok: true,
         schema: "iris_live2d_browser_cue_queue_v1",
         cues,
         pending_cue_count: state.cueQueue.length,
+        delivery_ready: heartbeatStatus.browser_cue_delivery_ready,
+        delivery_status: browserDeliveryStatus(state, heartbeatStatus),
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser cue queue");
@@ -189,11 +208,15 @@ export function createRendererState({
         renderer_health: {
           cubism_sdk_loaded: heartbeatStatus.cubism_runtime_loaded,
           cubism_sdk_available: heartbeatStatus.cubism_sdk_available,
+          real_model_load_supported: heartbeatStatus.real_model_load_supported,
           model_loaded: heartbeatStatus.model_loaded,
           scene_loaded: heartbeatStatus.scene_loaded,
+          model_loaded_claimed: heartbeatStatus.model_loaded_claimed,
+          scene_loaded_claimed: heartbeatStatus.scene_loaded_claimed,
           fresh_heartbeat: heartbeatStatus.heartbeat_fresh,
           model_matches: heartbeatStatus.model_matches,
           scene_matches: heartbeatStatus.scene_matches,
+          browser_cue_delivery_ready: heartbeatStatus.browser_cue_delivery_ready,
           cue_capability_confirmed: heartbeatStatus.cue_capability_confirmed,
           last_cue_applied: heartbeatStatus.last_cue_applied,
           last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
@@ -215,8 +238,17 @@ function getHeartbeatStatus(state, nowMs) {
     expectedSceneId: state.sceneId,
     cubismSdkAvailable: state.cubismSdkAvailable,
     model3ManifestAvailable: state.model3ManifestAvailable,
-    lastCueStatusHash: state.lastCueHash,
+    realModelLoadSupported: state.realModelLoadSupported,
+    lastDeliveredCueStatusHash: state.lastCueDeliveredHash,
   });
+}
+
+function browserDeliveryStatus(state, heartbeatStatus) {
+  if (!state.lastCueHash) return "waiting_for_cue";
+  if (state.cueQueue.length === 0) {
+    return state.lastCueDeliveredHash ? "delivered_to_browser" : "waiting_for_cue";
+  }
+  return heartbeatStatus.browser_cue_delivery_ready ? "ready_for_browser_delivery" : "waiting_for_browser_ready";
 }
 
 function resolveCueObject(payload) {

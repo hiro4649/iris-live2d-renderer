@@ -8,7 +8,12 @@ import { createRendererState } from "./state.js";
 const MAX_BODY_BYTES = 256_000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export function createLive2dRendererServer({ state = createRendererState(), publicDir = join(__dirname, "..", "public") } = {}) {
+export function createLive2dRendererServer({
+  state = createRendererState(),
+  publicDir = join(__dirname, "..", "public"),
+  rendererApiKey = "",
+} = {}) {
+  const requiredApiKey = String(rendererApiKey ?? "").trim();
   return createServer(async (request, response) => {
     try {
       const url = new URL(request.url, "http://127.0.0.1");
@@ -51,16 +56,18 @@ export function createLive2dRendererServer({ state = createRendererState(), publ
         return sendJson(response, 200, state.acceptBrowserHeartbeat(payload));
       }
       if (request.method === "POST" && url.pathname === "/live2d-engine") {
+        assertAuthorizedWrite(request, requiredApiKey);
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptCue(payload, "live2d-engine"));
       }
       if (request.method === "POST" && url.pathname === "/cue") {
+        assertAuthorizedWrite(request, requiredApiKey);
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptCue(payload, "cue"));
       }
       return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
     } catch (error) {
-      const status = error instanceof ContractError ? (error.code === "invalid_json" ? 400 : 400) : 500;
+      const status = statusForError(error);
       return sendJson(response, status, createSafeError(error, status));
     }
   });
@@ -97,6 +104,23 @@ function sendJson(response, status, body) {
   response.end(JSON.stringify(body));
 }
 
+function assertAuthorizedWrite(request, requiredApiKey) {
+  if (!requiredApiKey) return;
+  const authorization = String(request.headers.authorization ?? "");
+  const bearerToken = authorization.match(/^Bearer\s+(.+)$/iu)?.[1] ?? "";
+  const explicitApiKey = String(request.headers["x-api-key"] ?? "");
+  if (bearerToken === requiredApiKey || explicitApiKey === requiredApiKey) return;
+  throw new ContractError("auth required", "auth_required");
+}
+
+function statusForError(error) {
+  if (error instanceof ContractError) {
+    if (error.code === "auth_required") return 401;
+    return 400;
+  }
+  return 500;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const state = createRendererState({
     modelId: process.env.IRIS_LOCAL_LIVE2D_MODEL_ID ?? "",
@@ -105,7 +129,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     model3JsonPath: process.env.IRIS_LIVE2D_MODEL3_JSON ?? "",
     heartbeatMaxAgeMs: Number(process.env.IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS || 5000),
   });
-  const server = createLive2dRendererServer({ state });
+  const server = createLive2dRendererServer({
+    state,
+    rendererApiKey: process.env.IRIS_LIVE2D_RENDERER_API_KEY || process.env.IRIS_LOCAL_ENGINE_API_KEY || "",
+  });
   const host = process.env.IRIS_LIVE2D_RENDERER_HOST || "127.0.0.1";
   const port = Number(process.env.IRIS_LIVE2D_RENDERER_PORT || 9130);
   await listen(server, { host, port });
@@ -126,6 +153,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       "IRIS_LOCAL_LIVE2D_SCENE_ID",
       "IRIS_LIVE2D_CUBISM_CORE_JS",
       "IRIS_LIVE2D_MODEL3_JSON",
+      "IRIS_LIVE2D_RENDERER_API_KEY",
+      "IRIS_LOCAL_ENGINE_API_KEY",
       "IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS",
     ],
     renderer_ready: state.status().renderer_ready,
