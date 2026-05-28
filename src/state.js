@@ -12,6 +12,7 @@ export function createRendererState({
   cubismCoreJsPath = "",
   model3JsonPath = "",
   heartbeatMaxAgeMs = DEFAULT_HEARTBEAT_MAX_AGE_MS,
+  realModelLoadSupported = false,
   now = () => Date.now(),
 } = {}) {
   const cubismConfig = createCubismRendererConfig({
@@ -41,7 +42,7 @@ export function createRendererState({
     lastCueDeliveredHash: "",
     lastCueDeliveredAt: null,
     lastHeartbeat: null,
-    realModelLoadSupported: false,
+    realModelLoadSupported: realModelLoadSupported === true,
   };
 
   return {
@@ -57,6 +58,7 @@ export function createRendererState({
           live2d_engine_request: true,
           renderer_cue_delivery: true,
           browser_polling_delivery: true,
+          browser_event_stream_delivery: true,
           recovery_cue_support: heartbeatStatus.recovery_cue_support,
           claimed_capability: heartbeatStatus.cue_capability_claimed,
           real_capability_confirmed: heartbeatStatus.cue_capability_confirmed,

@@ -10,6 +10,7 @@ import {
   createInitialRendererState,
   enqueueBrowserCues,
   flushPendingCues,
+  handleCueEventMessage,
 } from "../public/renderer.js";
 
 let nowMs = 1_800_000_000_000;
@@ -77,6 +78,26 @@ try {
   assert.equal(appliedFlush.pending_cue_count, 0);
   assert.equal(browserState.lastAppliedCueStatusHash, "browser_pending_hash");
 
+  const eventStreamBrowserState = createInitialRendererState();
+  applyRuntimeConfig(eventStreamBrowserState, {
+    model_id: "iris_default",
+    scene_id: "main_scene",
+    cubism_sdk: { available: true },
+    model3: { available: true, manifest_available: true, browser_load_supported: false },
+  }, true);
+  const eventStreamPending = handleCueEventMessage(eventStreamBrowserState, {
+    data: JSON.stringify({ cues: [{ status_hash: "event_stream_pending_hash" }] }),
+  });
+  assert.equal(eventStreamPending.applied_count, 0);
+  assert.equal(eventStreamPending.pending_cue_count, 1);
+  assert.equal(eventStreamBrowserState.lastCueApplyStatus, "queued_until_ready");
+  eventStreamBrowserState.realModelLoadSupported = true;
+  eventStreamBrowserState.model3Loaded = true;
+  eventStreamBrowserState.sceneLoaded = true;
+  const eventStreamApplied = flushPendingCues(eventStreamBrowserState, () => nowMs);
+  assert.equal(eventStreamApplied.applied_count, 1);
+  assert.equal(eventStreamBrowserState.lastAppliedCueStatusHash, "event_stream_pending_hash");
+
   const sdkMissingHeartbeat = await missing.postJson("/renderer/heartbeat", browserHeartbeat({
     cubism_runtime_loaded: false,
     model3_loaded: true,
@@ -129,6 +150,16 @@ try {
   assert.equal(browserCueQueue.pending_cue_count, 1);
   assert.equal(browserCueQueue.delivery_status, "waiting_for_browser_ready");
   assertSafe(JSON.stringify(browserCueQueue));
+
+  const waitingSse = await readSseEvents(missing.baseUrl, { minEvents: 2, timeoutMs: 500 });
+  assert.equal(waitingSse.contentType.includes("text/event-stream"), true);
+  assert.equal(waitingSse.events.some((event) => event.event === "renderer_status"), true);
+  assert.equal(waitingSse.events.some((event) => event.event === "heartbeat"), true);
+  assert.equal(waitingSse.events.some((event) => event.event === "renderer_cues"), false);
+  assertSafe(JSON.stringify(waitingSse.events));
+  const statusAfterWaitingSse = await missing.getJson("/status");
+  assert.equal(statusAfterWaitingSse.browser_delivery.pending_cue_count, 1);
+  assert.equal(statusAfterWaitingSse.renderer_ready, false);
 
   const cueResponse = await missing.postJson("/cue", {
     schema: "iris_live2d_renderer_cue_delivery_v1",
@@ -569,6 +600,58 @@ try {
   assertSafe(JSON.stringify(staleReadyHealth));
   await ready.close();
 
+  const deliveryReady = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    cubismCoreJsPath: sdkCorePath,
+    model3JsonPath: model3Path,
+    heartbeatMaxAgeMs: 2_000,
+    realModelLoadSupported: true,
+    now: () => nowMs,
+  }));
+  const deliveryReadyHeartbeat = await deliveryReady.postJson("/renderer/heartbeat", browserHeartbeat({
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(deliveryReadyHeartbeat.renderer_ready, false);
+  assert.equal(deliveryReadyHeartbeat.renderer_health.browser_cue_delivery_ready, true);
+  assertSafe(JSON.stringify(deliveryReadyHeartbeat));
+  const sseCue = await deliveryReady.postJson("/cue", rendererCueDelivery({
+    motion: { style: "talk" },
+    timing: { duration_ms: 700 },
+  }));
+  const deliveredSse = await readSseEvents(deliveryReady.baseUrl, { eventName: "renderer_cues", timeoutMs: 1_000 });
+  const cueEvent = deliveredSse.events.find((event) => event.event === "renderer_cues");
+  assert.equal(Boolean(cueEvent), true);
+  assert.equal(cueEvent.data.cues.length, 1);
+  assert.equal(cueEvent.data.cues[0].status_hash, sseCue.cue_summary.status_hash);
+  assert.equal(cueEvent.data.delivery_ready, true);
+  assertSafe(JSON.stringify(deliveredSse.events));
+  const noDuplicateAfterSse = await deliveryReady.getJson("/renderer/cues");
+  assert.equal(noDuplicateAfterSse.cues.length, 0);
+  assert.equal(noDuplicateAfterSse.pending_cue_count, 0);
+  assertSafe(JSON.stringify(noDuplicateAfterSse));
+
+  const pollingCue = await deliveryReady.postJson("/cue", rendererCueDelivery({
+    motion: { style: "idle_breath" },
+    timing: { duration_ms: 500 },
+  }));
+  const pollingFallback = await deliveryReady.getJson("/renderer/cues");
+  assert.equal(pollingFallback.cues.length, 1);
+  assert.equal(pollingFallback.cues[0].status_hash, pollingCue.cue_summary.status_hash);
+  assert.equal(pollingFallback.pending_cue_count, 0);
+  assertSafe(JSON.stringify(pollingFallback));
+  const noDuplicateAfterPolling = await readSseEvents(deliveryReady.baseUrl, { minEvents: 2, timeoutMs: 500 });
+  assert.equal(noDuplicateAfterPolling.events.some((event) => event.event === "renderer_cues"), false);
+  assertSafe(JSON.stringify(noDuplicateAfterPolling.events));
+
+  await assertCueRejected(deliveryReady, cueWithUnsafeField("raw_renderer_payload"), "unsafe_cue_field", "raw_renderer_payload");
+  const rejectedSse = await readSseEvents(deliveryReady.baseUrl, { minEvents: 2, timeoutMs: 500 });
+  assert.equal(rejectedSse.events.some((event) => event.event === "renderer_cues"), false);
+  assertSafe(JSON.stringify(rejectedSse.events));
+  const deliveryReadyStatus = await deliveryReady.getJson("/status");
+  assert.equal(deliveryReadyStatus.renderer_ready, false);
+  await deliveryReady.close();
+
   const authRequired = await startHarness(createRendererState({
     modelId: "iris_default",
     sceneId: "main_scene",
@@ -621,6 +704,8 @@ try {
       "unsafe_cue_safe_reject",
       "strong_motion_recovery_required",
       "iris_bridge_cue_compatibility",
+      "sse_cue_delivery_safe_summary",
+      "sse_polling_no_duplicate_delivery",
     ],
   }));
 } finally {
@@ -764,6 +849,68 @@ async function assertCueRejected(harness, body, expectedKind, forbiddenFragment,
   assert.equal(queueSerialized, JSON.stringify(beforeBrowserQueue));
   assertSafe(queueSerialized);
   assert.equal(queueSerialized.includes("unsafe_fixture_value"), false);
+}
+
+async function readSseEvents(baseUrl, { eventName = "", minEvents = 1, timeoutMs = 500 } = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const response = await fetch(`${baseUrl}/renderer/events`, { signal: controller.signal });
+  assert.equal(response.ok, true);
+  const contentType = response.headers.get("content-type") || "";
+  assert.equal(contentType.includes("text/event-stream"), true);
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const events = [];
+  let buffer = "";
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parsed = parseSseEvents(buffer);
+      buffer = parsed.remainder;
+      events.push(...parsed.events);
+      if (eventName && events.some((event) => event.event === eventName)) break;
+      if (!eventName && events.length >= minEvents) break;
+    }
+  } catch (error) {
+    if (error?.name !== "AbortError") throw error;
+  } finally {
+    clearTimeout(timeout);
+    controller.abort();
+    try {
+      await reader.cancel();
+    } catch {
+      // The client-side abort is the disconnect path under test.
+    }
+  }
+
+  return { contentType, events };
+}
+
+function parseSseEvents(buffer) {
+  const blocks = buffer.split(/\r?\n\r?\n/u);
+  const remainder = blocks.pop() ?? "";
+  return {
+    remainder,
+    events: blocks.map(parseSseEvent).filter(Boolean),
+  };
+}
+
+function parseSseEvent(block) {
+  let event = "message";
+  const dataLines = [];
+  for (const line of block.split(/\r?\n/u)) {
+    if (line.startsWith(":")) continue;
+    if (line.startsWith("event:")) event = line.slice("event:".length).trim();
+    if (line.startsWith("data:")) dataLines.push(line.slice("data:".length).trimStart());
+  }
+  if (dataLines.length === 0) return null;
+  const dataText = dataLines.join("\n");
+  const data = JSON.parse(dataText);
+  assertSafe(dataText);
+  return { event, data };
 }
 
 async function startHarness(state, options = {}) {

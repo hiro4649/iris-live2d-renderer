@@ -1,4 +1,5 @@
 const HEARTBEAT_INTERVAL_MS = 1_000;
+const RENDERER_EVENTS_ROUTE = "/renderer/events";
 const MAX_PENDING_BROWSER_CUES = 20;
 
 export function createInitialRendererState() {
@@ -14,6 +15,9 @@ export function createInitialRendererState() {
     lastCueApplyStatus: "not_ready",
     model3ManifestAvailable: false,
     cubismRuntimeLoadAttempted: false,
+    eventStreamActive: false,
+    eventStreamConnected: false,
+    eventStreamFailed: false,
     pendingCues: [],
   };
 }
@@ -26,6 +30,7 @@ if (typeof document !== "undefined") {
 
 async function startRendererLoop() {
   await refreshStatus();
+  startCueEventStream(rendererState);
   await pollCueQueue();
   await postHeartbeat();
   setInterval(refreshStatus, HEARTBEAT_INTERVAL_MS * 3);
@@ -73,10 +78,53 @@ function loadScript(src) {
 }
 
 async function pollCueQueue() {
+  if (rendererState.eventStreamActive || rendererState.eventStreamConnected) return;
   const result = await getJson("/renderer/cues");
   enqueueBrowserCues(rendererState, result.cues || []);
   flushPendingCues(rendererState);
   updateStatusText(rendererState);
+}
+
+export function startCueEventStream(state = rendererState, EventSourceCtor = globalThis.EventSource) {
+  if (!EventSourceCtor || state.eventStreamActive || state.eventStreamConnected) return false;
+  let source;
+  try {
+    source = new EventSourceCtor(RENDERER_EVENTS_ROUTE);
+  } catch {
+    state.eventStreamFailed = true;
+    return false;
+  }
+  if (!source || typeof source.addEventListener !== "function") {
+    state.eventStreamFailed = true;
+    source?.close?.();
+    return false;
+  }
+  state.eventStreamActive = true;
+  state.eventStreamFailed = false;
+  source.addEventListener("open", () => {
+    state.eventStreamConnected = true;
+    state.eventStreamFailed = false;
+    updateStatusText(state);
+  });
+  source.addEventListener("renderer_cues", (event) => {
+    handleCueEventMessage(state, event);
+  });
+  source.addEventListener("error", () => {
+    state.eventStreamActive = false;
+    state.eventStreamConnected = false;
+    state.eventStreamFailed = true;
+    source.close();
+    updateStatusText(state);
+  });
+  return true;
+}
+
+export function handleCueEventMessage(state, event) {
+  const payload = parseEventJson(event?.data);
+  enqueueBrowserCues(state, payload.cues || []);
+  const result = flushPendingCues(state);
+  updateStatusText(state);
+  return result;
 }
 
 export function enqueueBrowserCues(state, cues) {
@@ -159,9 +207,20 @@ async function getJson(path) {
 }
 
 function updateStatusText(state) {
+  if (typeof document === "undefined") return;
   const status = document.querySelector(".status");
   if (!status) return;
   status.textContent = browserStatusText(state);
+}
+
+function parseEventJson(data) {
+  if (typeof data !== "string") return {};
+  try {
+    const parsed = JSON.parse(data);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
 }
 
 export function browserStatusText(state) {
