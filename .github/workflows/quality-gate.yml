@@ -97,7 +97,6 @@ jobs:
         run: |
           set -euo pipefail
           export CODEX_RISK_LEVEL="${CODEX_RISK_LEVEL:-R3}"
-          export CODEX_SKIP_V085_SELF_TEST="${CODEX_SKIP_V085_SELF_TEST:-1}"
           if [ "${CODEX_EVENT_NAME:-}" = "pull_request" ]; then
             export CODEX_EVIDENCE_PACK_STRICT=1
             export CODEX_HUMAN_CONFIRMATION_STRICT=1
