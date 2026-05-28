@@ -439,6 +439,8 @@ function hasRecoveryEvidence(cue) {
   if (safeString(cue?.recovery_hint)) return true;
   if (safeString(cue?.body_recovery_hint ?? cue?.bodyRecoveryHint)) return true;
   if (safeString(cue?.camera_recovery_hint ?? cue?.cameraRecoveryHint)) return true;
+  // Compatibility fallback only; prefer explicit recovery_plan or recovery_hint in future bridge output.
+  // This text hint is not proof of real recovery capability.
   return safeString(cue?.body?.shoulder_motion).toLowerCase().includes("recover");
 }
 
