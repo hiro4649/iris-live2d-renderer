@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v0.9.4
+// CODEX_QUALITY_HARNESS_FILE v0.9.5
 
 import { fileURLToPath } from 'node:url';
 import { marker, HARNESS_VERSION, scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
@@ -129,4 +129,3 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   writeJsonReport(report, 'CODEX_V093_SELF_TEST_REPORT');
   exitFor(report);
 }
-
