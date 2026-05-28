@@ -162,7 +162,7 @@ jobs:
                 }
                 process.stdout.write(JSON.stringify({
                   schemaVersion: "0.8.3",
-                  harnessVersion: "0.9.4",
+                  harnessVersion: "0.9.5",
                   repository: process.env.CODEX_REPOSITORY || "",
                   baseSha: process.env.CODEX_PR_BASE_SHA || "",
                   baselineType: "product_verification",

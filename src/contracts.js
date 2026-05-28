@@ -40,7 +40,20 @@ export function createBoundaryPolicy() {
 
 export function createSafeError(error, status = 500) {
   const code = error instanceof ContractError ? error.code : "renderer_error";
-  const safeCode = ["auth_required", "invalid_json", "unsafe_payload", "contract_error", "not_found", "renderer_error"].includes(code)
+  const safeCode = [
+    "auth_required",
+    "invalid_json",
+    "unsafe_payload",
+    "contract_error",
+    "not_found",
+    "renderer_error",
+    "unsupported_cue",
+    "unsafe_cue_field",
+    "unsafe_cue_value",
+    "unknown_motion_style",
+    "recovery_required",
+    "invalid_cue_contract",
+  ].includes(code)
     ? code
     : "renderer_error";
   const response = {

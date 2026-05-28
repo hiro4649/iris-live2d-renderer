@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { assertSafeInput, assertSafePublicObject, createBoundaryPolicy, safeText } from "./contracts.js";
 import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
+import { validateRendererCueEnvelope } from "./renderer/cueValidation.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
 
 const MAX_BROWSER_CUE_QUEUE = 20;
@@ -119,13 +120,13 @@ export function createRendererState({
     },
 
     acceptCue(payload, route) {
-      assertSafeInput(payload, `${route} cue`);
-      const cue = resolveCueObject(payload);
+      const validation = validateRendererCueEnvelope(payload);
+      const cue = validation.browserCue;
       const receivedAt = now();
       state.cueCount += 1;
       state.lastCueReceivedAt = receivedAt;
-      state.lastCueSchema = safeText(cue?.schema ?? payload.schema, 160);
-      state.lastCueHash = hashSafePayload(payload);
+      state.lastCueSchema = safeText(validation.cueSchema, 160);
+      state.lastCueHash = hashSafePayload(cue);
       state.cueQueue.push(createBrowserCueEnvelope({
         route,
         receivedAtMs: receivedAt,
@@ -249,13 +250,6 @@ function browserDeliveryStatus(state, heartbeatStatus) {
     return state.lastCueDeliveredHash ? "delivered_to_browser" : "waiting_for_cue";
   }
   return heartbeatStatus.browser_cue_delivery_ready ? "ready_for_browser_delivery" : "waiting_for_browser_ready";
-}
-
-function resolveCueObject(payload) {
-  if (payload.cue && typeof payload.cue === "object" && !Array.isArray(payload.cue)) return payload.cue;
-  if (payload.renderer_cue && typeof payload.renderer_cue === "object" && !Array.isArray(payload.renderer_cue)) return payload.renderer_cue;
-  if (payload.live2d_cue && typeof payload.live2d_cue === "object" && !Array.isArray(payload.live2d_cue)) return payload.live2d_cue;
-  return payload;
 }
 
 function hashSafePayload(payload) {

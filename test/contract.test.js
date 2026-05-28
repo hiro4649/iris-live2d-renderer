@@ -151,6 +151,63 @@ try {
   assert.equal(cueResponse.renderer_ready, false);
   assertSafe(JSON.stringify(cueResponse));
 
+  const irisBridgeCue = createIrisBridgeCueFixture();
+  const irisBridgeCueResponse = await missing.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: irisBridgeCue,
+    boundary_policy: {
+      no_text_payloads: true,
+      no_candidates: true,
+      no_commands: true,
+      no_endpoint_values: true,
+      no_secret_values: true,
+    },
+    adapter_validation_required: true,
+  });
+  assert.equal(irisBridgeCueResponse.accepted, true);
+  assert.equal(irisBridgeCueResponse.renderer_ready, false);
+  assertSafe(JSON.stringify(irisBridgeCueResponse));
+
+  const strongWithRecovery = await missing.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "laugh_big", intensity: "high" },
+      recovery_plan: { type: "breath_recover" },
+      boundary_policy: {
+        renderer_cue_only: true,
+        no_candidates: true,
+        no_commands: true,
+      },
+      adapter_validation_required: true,
+    },
+  });
+  assert.equal(strongWithRecovery.accepted, true);
+  assertSafe(JSON.stringify(strongWithRecovery));
+
+  const cameraCloseupWithRecovery = await missing.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "talk" },
+      camera: {
+        proximity_profile: "close_face",
+        scale: 1.1,
+        face_priority: true,
+        comfort_guard: "bounded_viewer_closeup",
+        recovery_hint: "visibility_restore",
+      },
+      boundary_policy: {
+        renderer_cue_only: true,
+        no_candidates: true,
+        no_commands: true,
+      },
+      adapter_validation_required: true,
+    },
+  });
+  assert.equal(cameraCloseupWithRecovery.accepted, true);
+  assertSafe(JSON.stringify(cameraCloseupWithRecovery));
+
   const mockHealthHeartbeat = await missing.postJson("/renderer/heartbeat", {
     schema: "mock_health_v1",
     ok: true,
@@ -170,10 +227,87 @@ try {
   assert.equal(unsafeBody.ok, false);
   assertSafe(JSON.stringify(unsafeBody));
 
+  await assertCueRejected(missing, {
+    schema: "unsupported_live2d_cue_v1",
+    cue: { schema: "iris_live2d_renderer_cue_v1", motion: { style: "talk" } },
+  }, "unsupported_cue", "unsupported_live2d_cue_v1");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: { schema: "iris_live2d_renderer_cue_v1", motion: { style: "spin_attack" } },
+  }, "unknown_motion_style", "spin_attack");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "talk", gesture_hint: "https://secret.example/motion" },
+    },
+  }, "unsafe_cue_value", "https://secret.example/motion");
+  for (const field of [
+    "world_command",
+    "input_action_candidate",
+    "approved_game_input_action",
+    "candidate",
+    "commit",
+    "write",
+    "raw_renderer_payload",
+    "raw_motion_command",
+    "model_path",
+    "modelPath",
+    "internal_model_path",
+    "internalModelPath",
+    "motion_path",
+    "motionPath",
+    "rawMotionPath",
+    "obs_command",
+    "game_input",
+    "os_command",
+  ]) {
+    await assertCueRejected(missing, cueWithUnsafeField(field), "unsafe_cue_field", field);
+  }
+  for (const field of ["token", "secret", "authorization", "endpoint", "rendererEndpoint", "url", "apiKey"]) {
+    await assertCueRejected(missing, cueWithUnsafeField(field), "unsafe_cue_field", field);
+  }
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "laugh_big" },
+    },
+  }, "recovery_required", "laugh_big");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "surprise_scream" },
+    },
+  }, "recovery_required", "surprise_scream");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "happy_dance" },
+    },
+  }, "recovery_required", "happy_dance");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "talk" },
+      camera: { face_priority: true },
+    },
+  }, "recovery_required", "face_priority");
+  await assertCueRejected(missing, {
+    schema: "iris_local_live2d_engine_request_v1",
+    job_id: "contract_live2d_strong_without_recovery",
+    event_id: "contract_event",
+    motion_style: "laugh_big",
+    timing: { total_duration_ms: 1200 },
+  }, "recovery_required", "laugh_big", "/live2d-engine");
+
   const statusAfter = await missing.getJson("/status");
   assert.equal(statusAfter.renderer_ready, false);
-  assert.equal(statusAfter.received_cue_count, 2);
-  assert.equal(statusAfter.browser_delivery.pending_cue_count, 2);
+  assert.equal(statusAfter.received_cue_count, 5);
+  assert.equal(statusAfter.browser_delivery.pending_cue_count, 5);
   assert.notEqual(statusAfter.last_cue_received_at, null);
   assertSafe(JSON.stringify(statusAfter));
 
@@ -190,7 +324,7 @@ try {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
       schema: "iris_live2d_renderer_cue_v1",
-      motion: { style: "nod" },
+      motion: { style: "talk" },
     },
   });
   const modelOnlyHeartbeat = await modelOnly.postJson("/renderer/heartbeat", browserHeartbeat({
@@ -233,7 +367,7 @@ try {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
       schema: "iris_live2d_renderer_cue_v1",
-      motion: { style: "nod" },
+      motion: { style: "talk" },
       timing: { duration_ms: 700 },
     },
   });
@@ -278,7 +412,7 @@ try {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
       schema: "iris_live2d_renderer_cue_v1",
-      motion: { style: "nod" },
+      motion: { style: "talk" },
     },
   });
   const noAppliedAtHeartbeat = await noAppliedAt.postJson("/renderer/heartbeat", browserHeartbeat({
@@ -345,6 +479,10 @@ try {
       "model3_available",
       "fixture_manifest_blocks_ready",
       "last_cue_applied_at_guard",
+      "cue_allowlist_validation",
+      "unsafe_cue_safe_reject",
+      "strong_motion_recovery_required",
+      "iris_bridge_cue_compatibility",
     ],
   }));
 } finally {
@@ -370,6 +508,98 @@ function browserHeartbeat(overrides = {}) {
     heartbeat_timestamp_ms: nowMs,
     ...overrides,
   };
+}
+
+function createIrisBridgeCueFixture() {
+  return {
+    schema: "iris_live2d_renderer_cue_v1",
+    cue_id: "live2d-cue-fixture",
+    model: {
+      model_configured: true,
+      scene_configured: true,
+    },
+    motion: {
+      style: "surprise_scream",
+      intensity: "high",
+      blend_ms: 80,
+      track_count: 2,
+      body_motion_hint: "shoulder_jump_small_retreat",
+      gesture_hint: "hands_near_chest_startle",
+    },
+    expression: {
+      profile_id: "fixture_expression_scream",
+      expression_key: "wide_eyes_short_scream",
+      blink_rate: 0.2,
+      gaze_hint: "snap_to_screen_then_audience",
+    },
+    body: {
+      state_id: "fixture_body_scream",
+      autonomous_state_id: "surprise_scream",
+      breathing_rate: 0.86,
+      shoulder_motion: "short_jump_then_breath_recover",
+    },
+    camera: {
+      proximity_profile: "camera_face_extreme_closeup",
+      scale: 1.22,
+      offset_x: 0,
+      offset_y: -0.055,
+      face_priority: true,
+      comfort_guard: "bounded_viewer_closeup",
+    },
+    autonomous: {
+      state: "surprise_scream",
+      scream_reaction_enabled: true,
+      happy_motion_enabled: false,
+      vocalise_motion_enabled: false,
+      safety_guard: "visual_expression_only_no_commands",
+    },
+    timing: {
+      duration_ms: 1500,
+      start_delay_ms: 0,
+      sync_policy: "speech_motion_timeline",
+    },
+    boundary_policy: {
+      renderer_cue_only: true,
+      no_text_payloads: true,
+      no_candidates: true,
+      no_commands: true,
+      no_endpoint_values: true,
+      no_secret_values: true,
+    },
+    adapter_validation_required: true,
+  };
+}
+
+function cueWithUnsafeField(field) {
+  return {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "talk" },
+      [field]: "unsafe_fixture_value",
+    },
+  };
+}
+
+async function assertCueRejected(harness, body, expectedKind, forbiddenFragment, path = "/cue") {
+  const before = await harness.getJson("/status");
+  const response = await fetch(`${harness.baseUrl}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const responseBody = await response.json();
+  assert.equal(response.status, 400);
+  assert.equal(responseBody.ok, false);
+  assert.equal(responseBody.error_kind, expectedKind);
+  const serialized = JSON.stringify(responseBody);
+  assertSafe(serialized);
+  assert.equal(serialized.includes(`"${forbiddenFragment}"`), false);
+  assert.equal(serialized.includes("unsafe_fixture_value"), false);
+  const after = await harness.getJson("/status");
+  assert.equal(after.received_cue_count, before.received_cue_count);
+  assert.equal(after.browser_delivery.pending_cue_count, before.browser_delivery.pending_cue_count);
+  assert.equal(after.renderer_ready, false);
 }
 
 async function startHarness(state, options = {}) {
@@ -408,4 +638,13 @@ function assertSafe(serialized) {
   assert.equal(serialized.includes("secret-token"), false);
   assert.equal(serialized.includes("authorization"), false);
   assert.equal(serialized.includes("raw_renderer_payload"), false);
+  assert.equal(serialized.includes("raw_motion_command"), false);
+  assert.equal(serialized.includes("internal_model_path"), false);
+  assert.equal(serialized.includes("motion_path"), false);
+  assert.equal(serialized.includes("world_command"), false);
+  assert.equal(serialized.includes("input_action_candidate"), false);
+  assert.equal(serialized.includes("approved_game_input_action"), false);
+  assert.equal(serialized.includes("obs_command"), false);
+  assert.equal(serialized.includes("game_input"), false);
+  assert.equal(serialized.includes("os_command"), false);
 }
