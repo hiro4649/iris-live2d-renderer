@@ -63,7 +63,9 @@ export function createHeartbeatStatus({
   const modelLoadErrorKind = safeModelLoadErrorKind(heartbeat?.model_load_error_kind);
   const modelAssetRouteAvailable = heartbeat?.model_asset_route_available === true;
   const browserModelLoadSupported = heartbeat?.model_load_supported === true || heartbeat?.real_model_load_supported === true;
-  const realModelCapabilitySupported = Boolean(realModelLoadSupported || browserModelLoadSupported);
+  // Browser model-load support is diagnostic in this phase. A self-asserted
+  // heartbeat must not establish the server-trusted real loader capability.
+  const realModelCapabilitySupported = realModelLoadSupported === true;
   const modelLoadedClaimed = heartbeat?.model3_loaded === true || heartbeat?.model_loaded === true || heartbeat?.real_model_loaded === true;
   const sceneLoadedClaimed = heartbeat?.scene_loaded === true || heartbeat?.real_scene_loaded === true;
   const realModelLoadedClaimed = Boolean(
