@@ -208,6 +208,83 @@ try {
   assert.equal(cameraCloseupWithRecovery.accepted, true);
   assertSafe(JSON.stringify(cameraCloseupWithRecovery));
 
+  const happyLoudSingWithRecovery = await missing.postJson("/cue", rendererCueDelivery({
+    motion: { style: "happy_loud_sing", intensity: "high" },
+    recovery_cue: { style: "idle_breath" },
+  }));
+  assert.equal(happyLoudSingWithRecovery.accepted, true);
+  assertSafe(JSON.stringify(happyLoudSingWithRecovery));
+
+  const cameraScaleWithRecovery = await missing.postJson("/cue", rendererCueDelivery({
+    camera: { scale: 1.06, recovery_hint: "visibility_restore" },
+  }));
+  assert.equal(cameraScaleWithRecovery.accepted, true);
+  assertSafe(JSON.stringify(cameraScaleWithRecovery));
+
+  const rendererCueWrapper = await missing.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    renderer_cue: safeRendererCue({ motion: { style: "talk" } }),
+    boundary_policy: {
+      renderer_cue_only: true,
+      no_candidates: true,
+      no_commands: true,
+    },
+    adapter_validation_required: true,
+  });
+  assert.equal(rendererCueWrapper.accepted, true);
+  assertSafe(JSON.stringify(rendererCueWrapper));
+
+  const live2dCueWrapper = await missing.postJson("/cue", {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    live2d_cue: safeRendererCue({ motion: { style: "idle_breath" } }),
+    boundary_policy: {
+      renderer_cue_only: true,
+      no_candidates: true,
+      no_commands: true,
+    },
+    adapter_validation_required: true,
+  });
+  assert.equal(live2dCueWrapper.accepted, true);
+  assertSafe(JSON.stringify(live2dCueWrapper));
+
+  const motionRecoveryRequired = await missing.postJson("/cue", rendererCueDelivery({
+    motion: { style: "surprise_scream", recovery_required: true },
+  }));
+  assert.equal(motionRecoveryRequired.accepted, true);
+  assertSafe(JSON.stringify(motionRecoveryRequired));
+
+  const bodyRecoveryHint = await missing.postJson("/cue", rendererCueDelivery({
+    motion: { style: "happy_dance", intensity: "high" },
+    body: { recovery_hint: "neutral_reset" },
+  }));
+  assert.equal(bodyRecoveryHint.accepted, true);
+  assertSafe(JSON.stringify(bodyRecoveryHint));
+
+  const cameraRecoveryHint = await missing.postJson("/cue", rendererCueDelivery({
+    camera: { face_priority: true, recovery_hint: "visibility_restore" },
+  }));
+  assert.equal(cameraRecoveryHint.accepted, true);
+  assertSafe(JSON.stringify(cameraRecoveryHint));
+
+  const shoulderMotionRecoverCompatibility = await missing.postJson("/cue", rendererCueDelivery({
+    motion: { style: "surprise_scream" },
+    body: { shoulder_motion: "short_jump_then_breath_recover" },
+  }));
+  assert.equal(shoulderMotionRecoverCompatibility.accepted, true);
+  assertSafe(JSON.stringify(shoulderMotionRecoverCompatibility));
+
+  const localEngineCloseupWithRecovery = await missing.postJson("/live2d-engine", {
+    schema: "iris_local_live2d_engine_request_v1",
+    job_id: "contract_live2d_closeup_with_recovery",
+    event_id: "contract_event",
+    motion_style: "talk",
+    camera_proximity_profile: "close_face",
+    camera_recovery_hint: "visibility_restore",
+    timing: { total_duration_ms: 1200 },
+  });
+  assert.equal(localEngineCloseupWithRecovery.accepted, true);
+  assertSafe(JSON.stringify(localEngineCloseupWithRecovery));
+
   const mockHealthHeartbeat = await missing.postJson("/renderer/heartbeat", {
     schema: "mock_health_v1",
     ok: true,
@@ -242,6 +319,15 @@ try {
       motion: { style: "talk", gesture_hint: "https://secret.example/motion" },
     },
   }, "unsafe_cue_value", "https://secret.example/motion");
+  await assertCueRejected(missing, rendererCueDelivery({
+    motion: { style: "talk", gesture_hint: "wss://secret.example/cue" },
+  }), "unsafe_cue_value", "wss://secret.example/cue");
+  await assertCueRejected(missing, rendererCueDelivery({
+    expression: { expression_key: "avatar.model3.json" },
+  }), "unsafe_cue_value", "avatar.model3.json");
+  await assertCueRejected(missing, rendererCueDelivery({
+    expression: { expression_key: "avatar.moc3" },
+  }), "unsafe_cue_value", "avatar.moc3");
   for (const field of [
     "world_command",
     "input_action_candidate",
@@ -269,6 +355,30 @@ try {
   }
   await assertCueRejected(missing, {
     schema: "iris_live2d_renderer_cue_delivery_v1",
+    renderer_cue: safeRendererCue({ motion: { style: "talk" } }),
+    token: "unsafe_fixture_value",
+  }, "unsafe_cue_field", "token");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    live2d_cue: safeRendererCue({ raw_renderer_payload: "unsafe_fixture_value" }),
+  }, "unsafe_cue_field", "raw_renderer_payload");
+  await assertCueRejected(missing, {
+    schema: "unsupported_live2d_wrapper_v1",
+    renderer_cue: safeRendererCue({ motion: { style: "talk" } }),
+  }, "unsupported_cue", "unsupported_live2d_wrapper_v1");
+  await assertCueRejected(missing, rendererCueDelivery({
+    boundary_policy: { renderer_endpoint: "unsafe_fixture_value" },
+  }), "unsafe_cue_field", "renderer_endpoint");
+  await assertCueRejected(missing, rendererCueDelivery({
+    motion: { style: "laugh_big" },
+    recovery_plan: { type: "shortcut_jump" },
+  }), "invalid_cue_contract", "shortcut_jump");
+  await assertCueRejected(missing, rendererCueDelivery({
+    motion: { style: "laugh_big" },
+    recovery_cue: { style: "shortcut_jump" },
+  }), "invalid_cue_contract", "shortcut_jump");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
       schema: "iris_live2d_renderer_cue_v1",
       motion: { style: "laugh_big" },
@@ -292,10 +402,23 @@ try {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
       schema: "iris_live2d_renderer_cue_v1",
+      motion: { style: "happy_loud_sing" },
+    },
+  }, "recovery_required", "happy_loud_sing");
+  await assertCueRejected(missing, {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: {
+      schema: "iris_live2d_renderer_cue_v1",
       motion: { style: "talk" },
       camera: { face_priority: true },
     },
   }, "recovery_required", "face_priority");
+  await assertCueRejected(missing, rendererCueDelivery({
+    camera: { scale: 1.06 },
+  }), "recovery_required", "scale");
+  await assertCueRejected(missing, rendererCueDelivery({
+    camera: { proximity_profile: "close_face" },
+  }), "recovery_required", "close_face");
   await assertCueRejected(missing, {
     schema: "iris_local_live2d_engine_request_v1",
     job_id: "contract_live2d_strong_without_recovery",
@@ -303,11 +426,26 @@ try {
     motion_style: "laugh_big",
     timing: { total_duration_ms: 1200 },
   }, "recovery_required", "laugh_big", "/live2d-engine");
+  await assertCueRejected(missing, {
+    schema: "iris_local_live2d_engine_request_v1",
+    job_id: "contract_live2d_local_closeup_without_recovery",
+    event_id: "contract_event",
+    motion_style: "talk",
+    camera_proximity_profile: "close_face",
+    timing: { total_duration_ms: 1200 },
+  }, "recovery_required", "close_face", "/live2d-engine");
+  await assertCueRejected(missing, {
+    schema: "iris_local_live2d_engine_request_v1",
+    job_id: "contract_live2d_local_sing_without_recovery",
+    event_id: "contract_event",
+    motion_style: "happy_loud_sing",
+    timing: { total_duration_ms: 1200 },
+  }, "recovery_required", "happy_loud_sing", "/live2d-engine");
 
   const statusAfter = await missing.getJson("/status");
   assert.equal(statusAfter.renderer_ready, false);
-  assert.equal(statusAfter.received_cue_count, 5);
-  assert.equal(statusAfter.browser_delivery.pending_cue_count, 5);
+  assert.equal(statusAfter.received_cue_count, 14);
+  assert.equal(statusAfter.browser_delivery.pending_cue_count, 14);
   assert.notEqual(statusAfter.last_cue_received_at, null);
   assertSafe(JSON.stringify(statusAfter));
 
@@ -570,6 +708,22 @@ function createIrisBridgeCueFixture() {
   };
 }
 
+function safeRendererCue(overrides = {}) {
+  return {
+    schema: "iris_live2d_renderer_cue_v1",
+    motion: { style: "talk" },
+    ...overrides,
+  };
+}
+
+function rendererCueDelivery(cueOverrides = {}, wrapperOverrides = {}) {
+  return {
+    schema: "iris_live2d_renderer_cue_delivery_v1",
+    cue: safeRendererCue(cueOverrides),
+    ...wrapperOverrides,
+  };
+}
+
 function cueWithUnsafeField(field) {
   return {
     schema: "iris_live2d_renderer_cue_delivery_v1",
@@ -583,6 +737,7 @@ function cueWithUnsafeField(field) {
 
 async function assertCueRejected(harness, body, expectedKind, forbiddenFragment, path = "/cue") {
   const before = await harness.getJson("/status");
+  const beforeBrowserQueue = await harness.getJson("/renderer/cues");
   const response = await fetch(`${harness.baseUrl}${path}`, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -599,7 +754,16 @@ async function assertCueRejected(harness, body, expectedKind, forbiddenFragment,
   const after = await harness.getJson("/status");
   assert.equal(after.received_cue_count, before.received_cue_count);
   assert.equal(after.browser_delivery.pending_cue_count, before.browser_delivery.pending_cue_count);
+  assert.equal(after.last_cue_status_hash, before.last_cue_status_hash);
+  assert.equal(after.browser_delivery.last_delivered_at, before.browser_delivery.last_delivered_at);
   assert.equal(after.renderer_ready, false);
+  const afterBrowserQueue = await harness.getJson("/renderer/cues");
+  assert.equal(afterBrowserQueue.pending_cue_count, beforeBrowserQueue.pending_cue_count);
+  assert.equal(afterBrowserQueue.cues.length, beforeBrowserQueue.cues.length);
+  const queueSerialized = JSON.stringify(afterBrowserQueue);
+  assert.equal(queueSerialized, JSON.stringify(beforeBrowserQueue));
+  assertSafe(queueSerialized);
+  assert.equal(queueSerialized.includes("unsafe_fixture_value"), false);
 }
 
 async function startHarness(state, options = {}) {
