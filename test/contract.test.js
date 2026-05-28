@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createLive2dRendererServer, listen } from "../src/server.js";
 import { createRendererState } from "../src/state.js";
@@ -40,6 +40,47 @@ await writeFile(model3Path, JSON.stringify({
 await writeFile(sdkCorePath, "globalThis.Live2DCubismCore = { Version: 'contract' };\n");
 
 try {
+  const loaderPreflightDoc = await readFile(
+    "docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md",
+    "utf8"
+  );
+  const scheduleDoc = await readFile(
+    "docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md",
+    "utf8"
+  );
+  for (const requiredLabel of [
+    "loader_detected_untrusted",
+    "trusted_loader_evidence_candidate",
+    "trusted_loader_ready_future",
+    "model_load_supported",
+    "real_model_load_supported",
+    "runtime_motion_allowlist",
+    "expression_candidate_labels",
+    "K331",
+    "K332",
+    "K333",
+    "K334",
+    "K626",
+    "K627",
+    "K628",
+    "K629",
+    "K806",
+    "K814",
+    "K944",
+  ]) {
+    assert.equal(loaderPreflightDoc.includes(requiredLabel), true);
+  }
+  assert.equal(
+    scheduleDoc.indexOf("LIVE2D-LOADER-INTEGRATION-PREFLIGHT5") >
+      scheduleDoc.indexOf("REAL-MODEL-LOAD4"),
+    true
+  );
+  assert.equal(
+    scheduleDoc.indexOf("LIVE2D-LOADER-INTEGRATION-PREFLIGHT5") <
+      scheduleDoc.indexOf("MICRO-REACTION-PACK5"),
+    true
+  );
+
   const missing = await startHarness(createRendererState({
     modelId: "iris_default",
     sceneId: "main_scene",
@@ -145,6 +186,34 @@ try {
   assert.equal(loaderMissingPayload.real_model_loaded, false);
   assert.equal(loaderMissingPayload.real_scene_loaded, false);
   assertSafe(JSON.stringify(loaderMissingPayload));
+
+  const fakeLoaderState = createInitialRendererState();
+  applyRuntimeConfig(fakeLoaderState, assetRouteConfig, true);
+  assert.equal(detectCubismModelLoader(createFakeLoaderRuntime())?.kind, "cubism_moc_create");
+  await updateModelLoadEvidence(fakeLoaderState, assetRouteConfig, {
+    fetchImpl: createFakeLoaderFetch(),
+    runtimeRoot: createFakeLoaderRuntime(),
+  });
+  assert.equal(fakeLoaderState.modelLoadStatus, "loaded");
+  assert.equal(fakeLoaderState.modelLoadSupported, true);
+  assert.equal(fakeLoaderState.realModelLoadSupported, true);
+  assert.equal(fakeLoaderState.model3Loaded, true);
+  assert.equal(fakeLoaderState.sceneLoaded, true);
+  const fakeLoaderHeartbeatPayload = createHeartbeatPayload(fakeLoaderState, nowMs);
+  assert.equal(fakeLoaderHeartbeatPayload.real_model_load_supported, true);
+  assert.equal(fakeLoaderHeartbeatPayload.real_model_loaded, true);
+  const fakeLoaderHeartbeat = await missing.postJson(
+    "/renderer/heartbeat",
+    fakeLoaderHeartbeatPayload
+  );
+  assert.equal(fakeLoaderHeartbeat.renderer_ready, false);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.real_model_load_supported, false);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.model_load_supported, true);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.model_loaded_claimed, true);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.real_model_loaded_claimed, true);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.scene_loaded, false);
+  assertSafe(JSON.stringify(fakeLoaderHeartbeat));
 
   browserState.realModelLoadSupported = true;
   browserState.model3Loaded = true;
@@ -455,6 +524,9 @@ try {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: { schema: "iris_live2d_renderer_cue_v1", motion: { style: "spin_attack" } },
   }, "unknown_motion_style", "spin_attack");
+  await assertCueRejected(missing, rendererCueDelivery({
+    motion: { style: "surprise_micro" },
+  }), "unknown_motion_style", "surprise_micro");
   await assertCueRejected(missing, {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
@@ -1000,6 +1072,9 @@ try {
       "model_loader_missing_blocks_ready",
       "real_model_load_evidence_required",
       "synthetic_real_model_heartbeat_does_not_make_ready",
+      "trusted_loader_preflight_contract_documented",
+      "fake_loader_detection_is_diagnostic_only",
+      "motion_dataset_boundary_labels_not_runtime_executable",
     ],
   }));
 } finally {
@@ -1117,6 +1192,48 @@ function rendererCueDelivery(cueOverrides = {}, wrapperOverrides = {}) {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: safeRendererCue(cueOverrides),
     ...wrapperOverrides,
+  };
+}
+
+function createFakeLoaderRuntime() {
+  return {
+    CubismMoc: {
+      create() {
+        return {
+          createModel() {
+            return { fixture_model_created: true };
+          },
+        };
+      },
+    },
+  };
+}
+
+function createFakeLoaderFetch() {
+  return async (path) => {
+    if (path === "/renderer/model3") {
+      return {
+        ok: true,
+        json: async () => ({
+          ok: true,
+          manifest: {
+            FileReferences: {
+              Moc: "renderer_model_asset:asset_0123456789abcdef_moc3",
+            },
+          },
+        }),
+      };
+    }
+    if (path === "/renderer/model-asset/asset_0123456789abcdef_moc3") {
+      return {
+        ok: true,
+        arrayBuffer: async () => new ArrayBuffer(8),
+      };
+    }
+    return {
+      ok: false,
+      json: async () => ({}),
+    };
   };
 }
 
