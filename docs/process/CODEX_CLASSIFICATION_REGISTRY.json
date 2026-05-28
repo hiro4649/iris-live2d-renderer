@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.9.5",
-  "marker": "CODEX_QUALITY_HARNESS_FILE v0.9.5",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v0.9.6",
   "harnessVersion": "0.9.5",
   "entries": [
     {
@@ -38,15 +38,6 @@
       "requiresProductVerification": false,
       "allowsFastPath": false,
       "notes": "Harness usage docs."
-    },
-    {
-      "pathPattern": "docs/iris-live2d-renderer/**",
-      "classification": "docs",
-      "surface": "spec",
-      "risk": "R3",
-      "requiresProductVerification": false,
-      "allowsFastPath": false,
-      "notes": "IRIS-live2d-renderer product/specification documents. Runtime behavior is unchanged, but safety/spec changes require explicit review."
     },
     {
       "pathPattern": ".github/workflows/**",
@@ -137,15 +128,6 @@
       "requiresProductVerification": true,
       "allowsFastPath": false,
       "notes": "Contracts and API surfaces."
-    },
-    {
-      "pathPattern": "public/**",
-      "classification": "product_source",
-      "surface": "runtime",
-      "risk": "R3",
-      "requiresProductVerification": true,
-      "allowsFastPath": false,
-      "notes": "Browser-served renderer runtime assets."
     },
     {
       "pathPattern": "tests/**",
