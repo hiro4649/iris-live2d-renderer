@@ -9,6 +9,7 @@
       return {
         browser_surface_available: true,
         cubism_runtime_loaded: false,
+        real_model_load_supported: false,
         model_loaded: false,
         scene_loaded: false,
         fresh_heartbeat: false,

@@ -48,8 +48,11 @@ export function createBrowserRuntimeConfig({
     model3: {
       configured: Boolean(model3ManifestConfigured),
       available: Boolean(model3ManifestAvailable),
+      manifest_available: Boolean(model3ManifestAvailable),
       status: safeText(model3ManifestStatus, 80),
-      load_route: model3ManifestAvailable ? "renderer_model3_manifest" : "not_available",
+      load_route: "not_available",
+      browser_load_supported: false,
+      real_model_loaded: false,
     },
     cue_capability_required: [
       "live2d_engine_request",

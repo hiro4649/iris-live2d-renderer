@@ -1,19 +1,28 @@
 const HEARTBEAT_INTERVAL_MS = 1_000;
+const MAX_PENDING_BROWSER_CUES = 20;
 
-const rendererState = {
-  modelId: "",
-  sceneId: "",
-  cubismRuntimeLoaded: false,
-  model3Loaded: false,
-  sceneLoaded: false,
-  lastAppliedCueStatusHash: "",
-  lastCueAppliedAt: null,
-  lastCueApplyStatus: "not_ready",
-  model3ManifestAvailable: false,
-  cubismRuntimeLoadAttempted: false,
-};
+export function createInitialRendererState() {
+  return {
+    modelId: "",
+    sceneId: "",
+    cubismRuntimeLoaded: false,
+    model3Loaded: false,
+    sceneLoaded: false,
+    realModelLoadSupported: false,
+    lastAppliedCueStatusHash: "",
+    lastCueAppliedAt: null,
+    lastCueApplyStatus: "not_ready",
+    model3ManifestAvailable: false,
+    cubismRuntimeLoadAttempted: false,
+    pendingCues: [],
+  };
+}
 
-startRendererLoop();
+const rendererState = createInitialRendererState();
+
+if (typeof document !== "undefined") {
+  startRendererLoop();
+}
 
 async function startRendererLoop() {
   await refreshStatus();
@@ -28,10 +37,20 @@ async function refreshStatus() {
   const config = await getJson("/renderer/runtime-config");
   rendererState.modelId = config.model_id || "";
   rendererState.sceneId = config.scene_id || "";
-  rendererState.cubismRuntimeLoaded = await ensureCubismRuntimeLoaded(config);
-  rendererState.model3ManifestAvailable = Boolean(config.model3?.available);
-  rendererState.model3Loaded = rendererState.cubismRuntimeLoaded && rendererState.model3ManifestAvailable;
-  rendererState.sceneLoaded = rendererState.model3Loaded && Boolean(rendererState.modelId && rendererState.sceneId);
+  applyRuntimeConfig(rendererState, config, await ensureCubismRuntimeLoaded(config));
+  flushPendingCues(rendererState);
+  updateStatusText(rendererState);
+}
+
+export function applyRuntimeConfig(state, config, cubismRuntimeLoaded = state.cubismRuntimeLoaded) {
+  state.modelId = config?.model_id || state.modelId || "";
+  state.sceneId = config?.scene_id || state.sceneId || "";
+  state.cubismRuntimeLoaded = Boolean(cubismRuntimeLoaded);
+  state.model3ManifestAvailable = Boolean(config?.model3?.manifest_available ?? config?.model3?.available);
+  state.realModelLoadSupported = Boolean(config?.model3?.browser_load_supported);
+  state.model3Loaded = false;
+  state.sceneLoaded = false;
+  return state;
 }
 
 async function ensureCubismRuntimeLoaded(config) {
@@ -55,48 +74,101 @@ function loadScript(src) {
 
 async function pollCueQueue() {
   const result = await getJson("/renderer/cues");
-  for (const cue of result.cues || []) {
-    applyCue(cue);
-  }
+  enqueueBrowserCues(rendererState, result.cues || []);
+  flushPendingCues(rendererState);
+  updateStatusText(rendererState);
 }
 
-function applyCue(cue) {
-  if (!rendererState.cubismRuntimeLoaded || !rendererState.model3Loaded || !rendererState.sceneLoaded) {
-    rendererState.lastCueApplyStatus = "not_ready";
-    return;
+export function enqueueBrowserCues(state, cues) {
+  let queued = 0;
+  for (const cue of Array.isArray(cues) ? cues : []) {
+    if (!cue || typeof cue !== "object" || Array.isArray(cue)) continue;
+    state.pendingCues.push(cue);
+    queued += 1;
+    if (state.pendingCues.length > MAX_PENDING_BROWSER_CUES) state.pendingCues.shift();
   }
-  rendererState.lastAppliedCueStatusHash = cue.status_hash || "";
-  rendererState.lastCueAppliedAt = Date.now();
-  rendererState.lastCueApplyStatus = "applied";
+  if (queued > 0 && !isReadyForCueApply(state)) state.lastCueApplyStatus = "queued_until_ready";
+  return queued;
+}
+
+export function flushPendingCues(state, now = Date.now) {
+  if (!isReadyForCueApply(state)) {
+    state.lastCueApplyStatus = state.pendingCues.length > 0 ? "queued_until_ready" : "not_ready";
+    return { applied_count: 0, pending_cue_count: state.pendingCues.length };
+  }
+  let applied = 0;
+  while (state.pendingCues.length > 0) {
+    const cue = state.pendingCues.shift();
+    state.lastAppliedCueStatusHash = cue.status_hash || "";
+    state.lastCueAppliedAt = now();
+    state.lastCueApplyStatus = "applied";
+    applied += 1;
+  }
+  return { applied_count: applied, pending_cue_count: state.pendingCues.length };
+}
+
+export function isReadyForCueApply(state) {
+  return Boolean(state.cubismRuntimeLoaded && state.model3Loaded && state.sceneLoaded);
 }
 
 async function postHeartbeat() {
-  await fetch("/renderer/heartbeat", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      schema: "iris_live2d_browser_heartbeat_v1",
-      model_id: rendererState.modelId,
-      scene_id: rendererState.sceneId,
-      cubism_runtime_loaded: rendererState.cubismRuntimeLoaded,
-      model3_loaded: rendererState.model3Loaded,
-      scene_loaded: rendererState.sceneLoaded,
-      cue_capability: {
-        live2d_engine_request: true,
-        renderer_cue_delivery: true,
-        model_motion_update: rendererState.cubismRuntimeLoaded,
-        recovery_cue_support: rendererState.cubismRuntimeLoaded,
-      },
-      last_applied_cue_status_hash: rendererState.lastAppliedCueStatusHash,
-      last_cue_applied_at_ms: rendererState.lastCueAppliedAt,
-      last_cue_apply_status: rendererState.lastCueApplyStatus,
-      heartbeat_timestamp_ms: Date.now(),
-    }),
-  });
+  try {
+    await fetch("/renderer/heartbeat", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(createHeartbeatPayload(rendererState)),
+    });
+  } catch {
+    rendererState.lastCueApplyStatus = rendererState.pendingCues.length > 0 ? "queued_until_ready" : "heartbeat_failed";
+  }
+}
+
+export function createHeartbeatPayload(state, nowMs = Date.now()) {
+  const readyForCueApply = isReadyForCueApply(state);
+  return {
+    schema: "iris_live2d_browser_heartbeat_v1",
+    model_id: state.modelId,
+    scene_id: state.sceneId,
+    cubism_runtime_loaded: state.cubismRuntimeLoaded,
+    model3_loaded: state.model3Loaded,
+    model_loaded: state.model3Loaded,
+    real_model_loaded: state.realModelLoadSupported && state.model3Loaded,
+    scene_loaded: state.sceneLoaded,
+    real_scene_loaded: state.realModelLoadSupported && state.sceneLoaded,
+    cue_capability: {
+      live2d_engine_request: true,
+      renderer_cue_delivery: true,
+      model_motion_update: readyForCueApply,
+      recovery_cue_support: true,
+    },
+    last_applied_cue_status_hash: state.lastAppliedCueStatusHash,
+    last_cue_applied_at_ms: state.lastCueAppliedAt,
+    last_cue_apply_status: state.lastCueApplyStatus,
+    heartbeat_timestamp_ms: nowMs,
+  };
 }
 
 async function getJson(path) {
-  const response = await fetch(path, { cache: "no-store" });
-  if (!response.ok) return {};
-  return response.json();
+  try {
+    const response = await fetch(path, { cache: "no-store" });
+    if (!response.ok) return {};
+    return response.json();
+  } catch {
+    return {};
+  }
+}
+
+function updateStatusText(state) {
+  const status = document.querySelector(".status");
+  if (!status) return;
+  status.textContent = browserStatusText(state);
+}
+
+export function browserStatusText(state) {
+  if (state.pendingCues.length > 0 && !isReadyForCueApply(state)) {
+    return "Live2D renderer preserving cue until real model load";
+  }
+  if (!state.cubismRuntimeLoaded) return "Live2D renderer waiting for Cubism runtime";
+  if (!state.model3Loaded || !state.sceneLoaded) return "Live2D renderer waiting for real model load";
+  return "Live2D renderer ready to apply cues";
 }

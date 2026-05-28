@@ -130,6 +130,15 @@
       "notes": "Contracts and API surfaces."
     },
     {
+      "pathPattern": "public/**",
+      "classification": "product_source",
+      "surface": "runtime",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Browser-served renderer runtime assets."
+    },
+    {
       "pathPattern": "tests/**",
       "classification": "test",
       "surface": "test",

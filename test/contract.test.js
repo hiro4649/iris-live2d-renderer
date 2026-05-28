@@ -3,6 +3,14 @@ import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createLive2dRendererServer, listen } from "../src/server.js";
 import { createRendererState } from "../src/state.js";
+import {
+  applyRuntimeConfig,
+  browserStatusText,
+  createHeartbeatPayload,
+  createInitialRendererState,
+  enqueueBrowserCues,
+  flushPendingCues,
+} from "../public/renderer.js";
 
 let nowMs = 1_800_000_000_000;
 const tmpDir = join(process.cwd(), ".tmp-live2d-renderer-contract");
@@ -40,6 +48,34 @@ try {
   assert.equal(missingRuntimeConfig.cubism_sdk.available, false);
   assert.equal(missingRuntimeConfig.model3.available, false);
   assertSafe(JSON.stringify(missingRuntimeConfig));
+
+  const browserState = createInitialRendererState();
+  applyRuntimeConfig(browserState, {
+    model_id: "iris_default",
+    scene_id: "main_scene",
+    cubism_sdk: { available: true },
+    model3: { available: true, manifest_available: true, browser_load_supported: false },
+  }, true);
+  assert.equal(browserState.model3ManifestAvailable, true);
+  assert.equal(browserState.model3Loaded, false);
+  assert.equal(browserState.sceneLoaded, false);
+  assert.equal(enqueueBrowserCues(browserState, [{ status_hash: "browser_pending_hash" }]), 1);
+  const pendingFlush = flushPendingCues(browserState, () => nowMs);
+  assert.equal(pendingFlush.applied_count, 0);
+  assert.equal(pendingFlush.pending_cue_count, 1);
+  assert.equal(browserState.lastCueApplyStatus, "queued_until_ready");
+  assert.equal(browserStatusText(browserState), "Live2D renderer preserving cue until real model load");
+  const browserHeartbeatPayload = createHeartbeatPayload(browserState, nowMs);
+  assert.equal(browserHeartbeatPayload.model3_loaded, false);
+  assert.equal(browserHeartbeatPayload.scene_loaded, false);
+  assert.equal(browserHeartbeatPayload.cue_capability.model_motion_update, false);
+  browserState.realModelLoadSupported = true;
+  browserState.model3Loaded = true;
+  browserState.sceneLoaded = true;
+  const appliedFlush = flushPendingCues(browserState, () => nowMs);
+  assert.equal(appliedFlush.applied_count, 1);
+  assert.equal(appliedFlush.pending_cue_count, 0);
+  assert.equal(browserState.lastAppliedCueStatusHash, "browser_pending_hash");
 
   const sdkMissingHeartbeat = await missing.postJson("/renderer/heartbeat", browserHeartbeat({
     cubism_runtime_loaded: false,
@@ -88,9 +124,10 @@ try {
 
   const browserCueQueue = await missing.getJson("/renderer/cues");
   assert.equal(browserCueQueue.ok, true);
-  assert.equal(browserCueQueue.cues.length, 1);
-  assert.equal(browserCueQueue.cues[0].status_hash, engineResponse.cue_summary.status_hash);
-  assert.equal(browserCueQueue.cues[0].motion_label, "talk");
+  assert.equal(browserCueQueue.delivery_ready, false);
+  assert.equal(browserCueQueue.cues.length, 0);
+  assert.equal(browserCueQueue.pending_cue_count, 1);
+  assert.equal(browserCueQueue.delivery_status, "waiting_for_browser_ready");
   assertSafe(JSON.stringify(browserCueQueue));
 
   const cueResponse = await missing.postJson("/cue", {
@@ -136,6 +173,7 @@ try {
   const statusAfter = await missing.getJson("/status");
   assert.equal(statusAfter.renderer_ready, false);
   assert.equal(statusAfter.received_cue_count, 2);
+  assert.equal(statusAfter.browser_delivery.pending_cue_count, 2);
   assert.notEqual(statusAfter.last_cue_received_at, null);
   assertSafe(JSON.stringify(statusAfter));
 
@@ -177,6 +215,10 @@ try {
   const readyRuntimeConfig = await ready.getJson("/renderer/runtime-config");
   assert.equal(readyRuntimeConfig.cubism_sdk.available, true);
   assert.equal(readyRuntimeConfig.model3.available, true);
+  assert.equal(readyRuntimeConfig.model3.manifest_available, true);
+  assert.equal(readyRuntimeConfig.model3.load_route, "not_available");
+  assert.equal(readyRuntimeConfig.model3.browser_load_supported, false);
+  assert.equal(readyRuntimeConfig.model3.real_model_loaded, false);
   assertSafe(JSON.stringify(readyRuntimeConfig));
   const sdkScript = await ready.getText("/renderer/cubism-core.js");
   assert.equal(sdkScript.includes("Live2DCubismCore"), true);
@@ -199,18 +241,28 @@ try {
   assert.equal(acceptedReadyCue.renderer_ready, false);
   assertSafe(JSON.stringify(acceptedReadyCue));
 
-  const readyHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+  const fixtureOnlyHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
     last_applied_cue_status_hash: acceptedReadyCue.cue_summary.status_hash,
     last_cue_applied_at_ms: nowMs,
     last_cue_apply_status: "applied",
     heartbeat_timestamp_ms: nowMs,
   }));
-  assert.equal(readyHeartbeat.renderer_ready, true);
-  assert.equal(readyHeartbeat.renderer_health.last_cue_applied_at, nowMs);
-  assertSafe(JSON.stringify(readyHeartbeat));
+  assert.equal(fixtureOnlyHeartbeat.renderer_ready, false);
+  assert.equal(fixtureOnlyHeartbeat.renderer_health.real_model_load_supported, false);
+  assert.equal(fixtureOnlyHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(fixtureOnlyHeartbeat.renderer_health.model_loaded_claimed, true);
+  assert.equal(fixtureOnlyHeartbeat.renderer_health.browser_cue_delivery_ready, false);
+  assert.equal(fixtureOnlyHeartbeat.renderer_health.last_cue_applied_at, null);
+  assertSafe(JSON.stringify(fixtureOnlyHeartbeat));
+
+  const fixtureOnlyBrowserCues = await ready.getJson("/renderer/cues");
+  assert.equal(fixtureOnlyBrowserCues.delivery_ready, false);
+  assert.equal(fixtureOnlyBrowserCues.cues.length, 0);
+  assert.equal(fixtureOnlyBrowserCues.pending_cue_count, 1);
+  assertSafe(JSON.stringify(fixtureOnlyBrowserCues));
 
   const readyHealth = await ready.getJson("/health");
-  assert.equal(readyHealth.renderer_ready, true);
+  assert.equal(readyHealth.renderer_ready, false);
   assertSafe(JSON.stringify(readyHealth));
 
   const noAppliedAtState = createRendererState({
@@ -245,6 +297,32 @@ try {
   assertSafe(JSON.stringify(staleReadyHealth));
   await ready.close();
 
+  const authRequired = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }), { rendererApiKey: "fixture-renderer-key" });
+  const unauthorized = await fetch(`${authRequired.baseUrl}/cue`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ schema: "iris_live2d_renderer_cue_delivery_v1", cue: { schema: "iris_live2d_renderer_cue_v1" } }),
+  });
+  const unauthorizedBody = await unauthorized.json();
+  assert.equal(unauthorized.status, 401);
+  assert.equal(unauthorizedBody.error_kind, "auth_required");
+  assertSafe(JSON.stringify(unauthorizedBody));
+  const authorized = await fetch(`${authRequired.baseUrl}/cue`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-api-key": "fixture-renderer-key" },
+    body: JSON.stringify({ schema: "iris_live2d_renderer_cue_delivery_v1", cue: { schema: "iris_live2d_renderer_cue_v1" } }),
+  });
+  const authorizedBody = await authorized.json();
+  assert.equal(authorized.status, 200);
+  assert.equal(authorizedBody.accepted, true);
+  assertSafe(JSON.stringify(authorizedBody));
+  await authRequired.close();
+
   console.log(JSON.stringify({
     ok: true,
     checked: [
@@ -256,13 +334,16 @@ try {
       "model_scene_mismatch",
       "cue_accepted",
       "browser_cue_route",
+      "browser_cue_retention",
       "redaction",
+      "optional_write_auth",
       "mock_health_false",
       "runtime_config_safe",
+      "model3_route_not_exposed",
       "sdk_script_route",
       "sdk_missing_blocks_ready",
       "model3_available",
-      "cue_apply_ready_candidate",
+      "fixture_manifest_blocks_ready",
       "last_cue_applied_at_guard",
     ],
   }));
@@ -291,8 +372,8 @@ function browserHeartbeat(overrides = {}) {
   };
 }
 
-async function startHarness(state) {
-  const server = createLive2dRendererServer({ state });
+async function startHarness(state, options = {}) {
+  const server = createLive2dRendererServer({ state, ...options });
   const address = await listen(server, { host: "127.0.0.1", port: 0 });
   const baseUrl = `http://${address.address}:${address.port}`;
   return {
