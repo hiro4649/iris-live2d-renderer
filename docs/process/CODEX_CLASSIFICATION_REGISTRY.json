@@ -112,6 +112,15 @@
       "notes": "Product source."
     },
     {
+      "pathPattern": "public/**",
+      "classification": "product_source",
+      "surface": "browser_runtime",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Public browser renderer runtime."
+    },
+    {
       "pathPattern": "apps/**",
       "classification": "product_source",
       "surface": "runtime",

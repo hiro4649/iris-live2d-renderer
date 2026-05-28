@@ -8,9 +8,11 @@ import {
   browserStatusText,
   createHeartbeatPayload,
   createInitialRendererState,
+  detectCubismModelLoader,
   enqueueBrowserCues,
   flushPendingCues,
   handleCueEventMessage,
+  updateModelLoadEvidence,
 } from "../public/renderer.js";
 
 let nowMs = 1_800_000_000_000;
@@ -81,6 +83,8 @@ try {
   assert.equal(browserState.model3ManifestAvailable, true);
   assert.equal(browserState.model3Loaded, false);
   assert.equal(browserState.sceneLoaded, false);
+  assert.equal(browserState.model3BrowserLoadSupported, false);
+  assert.equal(browserState.modelLoadStatus, "not_configured");
   assert.equal(enqueueBrowserCues(browserState, [{ status_hash: "browser_pending_hash" }]), 1);
   const pendingFlush = flushPendingCues(browserState, () => nowMs);
   assert.equal(pendingFlush.applied_count, 0);
@@ -90,7 +94,58 @@ try {
   const browserHeartbeatPayload = createHeartbeatPayload(browserState, nowMs);
   assert.equal(browserHeartbeatPayload.model3_loaded, false);
   assert.equal(browserHeartbeatPayload.scene_loaded, false);
+  assert.equal(browserHeartbeatPayload.real_model_loaded, false);
+  assert.equal(browserHeartbeatPayload.model_load_status, "not_configured");
   assert.equal(browserHeartbeatPayload.cue_capability.model_motion_update, false);
+
+  const assetRouteOnlyState = createInitialRendererState();
+  const assetRouteConfig = {
+    model_id: "iris_default",
+    scene_id: "main_scene",
+    cubism_sdk: { available: true },
+    model3: { available: true, manifest_available: true, browser_load_supported: true },
+  };
+  applyRuntimeConfig(assetRouteOnlyState, assetRouteConfig, false);
+  assert.equal(assetRouteOnlyState.modelAssetRouteAvailable, true);
+  assert.equal(assetRouteOnlyState.model3Loaded, false);
+  assert.equal(assetRouteOnlyState.sceneLoaded, false);
+  assert.equal(createHeartbeatPayload(assetRouteOnlyState, nowMs).real_model_loaded, false);
+  await updateModelLoadEvidence(assetRouteOnlyState, assetRouteConfig, {
+    fetchImpl: async () => {
+      throw new Error("fetch_not_expected_for_runtime_missing");
+    },
+    runtimeRoot: {},
+  });
+  assert.equal(assetRouteOnlyState.modelLoadStatus, "runtime_missing");
+  assert.equal(assetRouteOnlyState.realModelLoadSupported, false);
+  assert.equal(assetRouteOnlyState.model3Loaded, false);
+  assert.equal(assetRouteOnlyState.sceneLoaded, false);
+
+  const cubismCoreOnlyState = createInitialRendererState();
+  applyRuntimeConfig(cubismCoreOnlyState, assetRouteConfig, true);
+  assert.equal(detectCubismModelLoader({ Live2DCubismCore: { Version: "contract" } }), null);
+  await updateModelLoadEvidence(cubismCoreOnlyState, assetRouteConfig, {
+    fetchImpl: async () => {
+      throw new Error("fetch_not_expected_for_loader_missing");
+    },
+    runtimeRoot: { Live2DCubismCore: { Version: "contract" } },
+  });
+  assert.equal(cubismCoreOnlyState.cubismRuntimeLoaded, true);
+  assert.equal(cubismCoreOnlyState.modelAssetRouteAvailable, true);
+  assert.equal(cubismCoreOnlyState.modelLoadStatus, "loader_missing");
+  assert.equal(cubismCoreOnlyState.modelLoadErrorKind, "loader_missing");
+  assert.equal(cubismCoreOnlyState.modelLoadSupported, false);
+  assert.equal(cubismCoreOnlyState.modelLoadSucceeded, false);
+  assert.equal(cubismCoreOnlyState.realModelLoadSupported, false);
+  assert.equal(cubismCoreOnlyState.model3Loaded, false);
+  assert.equal(cubismCoreOnlyState.sceneLoaded, false);
+  const loaderMissingPayload = createHeartbeatPayload(cubismCoreOnlyState, nowMs);
+  assert.equal(loaderMissingPayload.model_load_status, "loader_missing");
+  assert.equal(loaderMissingPayload.model_load_error_kind, "loader_missing");
+  assert.equal(loaderMissingPayload.real_model_loaded, false);
+  assert.equal(loaderMissingPayload.real_scene_loaded, false);
+  assertSafe(JSON.stringify(loaderMissingPayload));
+
   browserState.realModelLoadSupported = true;
   browserState.model3Loaded = true;
   browserState.sceneLoaded = true;
@@ -149,6 +204,42 @@ try {
   assert.equal(staleHeartbeat.renderer_ready, false);
   assert.equal(staleHeartbeat.renderer_health.fresh_heartbeat, false);
   assertSafe(JSON.stringify(staleHeartbeat));
+
+  const loaderMissingHeartbeat = await missing.postJson("/renderer/heartbeat", browserHeartbeat({
+    model_asset_route_available: true,
+    model_load_status: "loader_missing",
+    model_load_supported: false,
+    model_load_attempted: false,
+    model_load_succeeded: false,
+    model_load_error_kind: "loader_missing",
+    real_model_load_supported: false,
+    real_model_loaded: false,
+    real_scene_loaded: false,
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(loaderMissingHeartbeat.renderer_ready, false);
+  assert.equal(loaderMissingHeartbeat.renderer_health.model_load_status, "loader_missing");
+  assert.equal(loaderMissingHeartbeat.renderer_health.model_load_supported, false);
+  assert.equal(loaderMissingHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(loaderMissingHeartbeat.renderer_health.scene_loaded, false);
+  assertSafe(JSON.stringify(loaderMissingHeartbeat));
+
+  const runtimeMissingHeartbeat = await missing.postJson("/renderer/heartbeat", browserHeartbeat({
+    cubism_runtime_loaded: false,
+    model_asset_route_available: true,
+    model_load_status: "runtime_missing",
+    model_load_supported: false,
+    model_load_error_kind: "runtime_missing",
+    real_model_load_supported: false,
+    real_model_loaded: false,
+    real_scene_loaded: false,
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(runtimeMissingHeartbeat.renderer_ready, false);
+  assert.equal(runtimeMissingHeartbeat.renderer_health.cubism_sdk_loaded, false);
+  assert.equal(runtimeMissingHeartbeat.renderer_health.model_load_status, "runtime_missing");
+  assert.equal(runtimeMissingHeartbeat.renderer_health.model_loaded, false);
+  assertSafe(JSON.stringify(runtimeMissingHeartbeat));
 
   const engineResponse = await missing.postJson("/live2d-engine", {
     schema: "iris_local_live2d_engine_request_v1",
@@ -623,6 +714,117 @@ try {
   assert.equal(fixtureOnlyBrowserCues.pending_cue_count, 1);
   assertSafe(JSON.stringify(fixtureOnlyBrowserCues));
 
+  const manifestOnlyHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+    model_asset_route_available: true,
+    model_load_status: "asset_route_available",
+    model_load_supported: false,
+    model_load_attempted: false,
+    model_load_succeeded: false,
+    model_load_error_kind: "unknown",
+    real_model_load_supported: false,
+    real_model_loaded: false,
+    real_scene_loaded: false,
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(manifestOnlyHeartbeat.renderer_ready, false);
+  assert.equal(manifestOnlyHeartbeat.renderer_health.model_load_status, "asset_route_available");
+  assert.equal(manifestOnlyHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(manifestOnlyHeartbeat.renderer_health.scene_loaded, false);
+  assertSafe(JSON.stringify(manifestOnlyHeartbeat));
+
+  const modelLoadedWithoutRealFlag = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+    model_asset_route_available: true,
+    model_load_status: "loaded",
+    model_load_supported: true,
+    model_load_attempted: true,
+    model_load_succeeded: true,
+    model_load_error_kind: "unknown",
+    real_model_load_supported: true,
+    real_model_loaded: false,
+    real_scene_loaded: true,
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(modelLoadedWithoutRealFlag.renderer_ready, false);
+  assert.equal(modelLoadedWithoutRealFlag.renderer_health.model_loaded_claimed, true);
+  assert.equal(modelLoadedWithoutRealFlag.renderer_health.real_model_loaded_claimed, false);
+  assert.equal(modelLoadedWithoutRealFlag.renderer_health.model_loaded, false);
+  assertSafe(JSON.stringify(modelLoadedWithoutRealFlag));
+
+  const sceneLoadedWithoutRealFlag = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    real_scene_loaded: false,
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(sceneLoadedWithoutRealFlag.renderer_ready, false);
+  assert.equal(sceneLoadedWithoutRealFlag.renderer_health.model_loaded, false);
+  assert.equal(sceneLoadedWithoutRealFlag.renderer_health.scene_loaded, false);
+  assertSafe(JSON.stringify(sceneLoadedWithoutRealFlag));
+
+  const staleRealModelHeartbeat = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    last_applied_cue_status_hash: acceptedReadyCue.cue_summary.status_hash,
+    last_cue_applied_at_ms: nowMs - 10_000,
+    last_cue_apply_status: "applied",
+    heartbeat_timestamp_ms: nowMs - 10_000,
+  }));
+  assert.equal(staleRealModelHeartbeat.renderer_ready, false);
+  assert.equal(staleRealModelHeartbeat.renderer_health.fresh_heartbeat, false);
+  assert.equal(staleRealModelHeartbeat.renderer_health.model_loaded, false);
+  assertSafe(JSON.stringify(staleRealModelHeartbeat));
+
+  const modelMismatchRealModelHeartbeat = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    model_id: "other_model",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(modelMismatchRealModelHeartbeat.renderer_ready, false);
+  assert.equal(modelMismatchRealModelHeartbeat.renderer_health.model_matches, false);
+  assert.equal(modelMismatchRealModelHeartbeat.renderer_health.model_loaded, false);
+  assertSafe(JSON.stringify(modelMismatchRealModelHeartbeat));
+
+  const sceneMismatchRealModelHeartbeat = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    scene_id: "other_scene",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(sceneMismatchRealModelHeartbeat.renderer_ready, false);
+  assert.equal(sceneMismatchRealModelHeartbeat.renderer_health.scene_matches, false);
+  assert.equal(sceneMismatchRealModelHeartbeat.renderer_health.scene_loaded, false);
+  assertSafe(JSON.stringify(sceneMismatchRealModelHeartbeat));
+
+  const lastCueNotAppliedRealModel = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    last_applied_cue_status_hash: acceptedReadyCue.cue_summary.status_hash,
+    last_cue_apply_status: "not_ready",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(lastCueNotAppliedRealModel.renderer_ready, false);
+  assert.equal(lastCueNotAppliedRealModel.renderer_health.browser_cue_delivery_ready, false);
+  assert.equal(lastCueNotAppliedRealModel.renderer_health.last_cue_applied, false);
+  assertSafe(JSON.stringify(lastCueNotAppliedRealModel));
+
+  const deliveryEvidenceHeartbeat = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(deliveryEvidenceHeartbeat.renderer_ready, false);
+  assert.equal(deliveryEvidenceHeartbeat.renderer_health.browser_cue_delivery_ready, false);
+  assert.equal(deliveryEvidenceHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(deliveryEvidenceHeartbeat.renderer_health.scene_loaded, false);
+  assertSafe(JSON.stringify(deliveryEvidenceHeartbeat));
+  const realEvidenceBrowserCues = await ready.getJson("/renderer/cues");
+  assert.equal(realEvidenceBrowserCues.delivery_ready, false);
+  assert.equal(realEvidenceBrowserCues.cues.length, 0);
+  assert.equal(realEvidenceBrowserCues.pending_cue_count, 1);
+  assertSafe(JSON.stringify(realEvidenceBrowserCues));
+
+  const fullRealEvidenceHeartbeat = await ready.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    last_applied_cue_status_hash: acceptedReadyCue.cue_summary.status_hash,
+    last_cue_applied_at_ms: nowMs,
+    last_cue_apply_status: "applied",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(fullRealEvidenceHeartbeat.renderer_ready, false);
+  assert.equal(fullRealEvidenceHeartbeat.renderer_health.browser_cue_delivery_ready, false);
+  assert.equal(fullRealEvidenceHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(fullRealEvidenceHeartbeat.renderer_health.scene_loaded, false);
+  assert.equal(fullRealEvidenceHeartbeat.renderer_health.last_cue_applied, false);
+  assertSafe(JSON.stringify(fullRealEvidenceHeartbeat));
+
   const readyHealth = await ready.getJson("/health");
   assert.equal(readyHealth.renderer_ready, false);
   assertSafe(JSON.stringify(readyHealth));
@@ -694,43 +896,41 @@ try {
     cubismCoreJsPath: sdkCorePath,
     model3JsonPath: model3Path,
     heartbeatMaxAgeMs: 2_000,
-    realModelLoadSupported: true,
     now: () => nowMs,
   }));
-  const deliveryReadyHeartbeat = await deliveryReady.postJson("/renderer/heartbeat", browserHeartbeat({
+  const deliveryReadyHeartbeat = await deliveryReady.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
     heartbeat_timestamp_ms: nowMs,
   }));
   assert.equal(deliveryReadyHeartbeat.renderer_ready, false);
-  assert.equal(deliveryReadyHeartbeat.renderer_health.browser_cue_delivery_ready, true);
+  assert.equal(deliveryReadyHeartbeat.renderer_health.browser_cue_delivery_ready, false);
   assertSafe(JSON.stringify(deliveryReadyHeartbeat));
   const sseCue = await deliveryReady.postJson("/cue", rendererCueDelivery({
     motion: { style: "talk" },
     timing: { duration_ms: 700 },
   }));
-  const deliveredSse = await readSseEvents(deliveryReady.baseUrl, { eventName: "renderer_cues", timeoutMs: 1_000 });
-  const cueEvent = deliveredSse.events.find((event) => event.event === "renderer_cues");
-  assert.equal(Boolean(cueEvent), true);
-  assert.equal(cueEvent.data.cues.length, 1);
-  assert.equal(cueEvent.data.cues[0].status_hash, sseCue.cue_summary.status_hash);
-  assert.equal(cueEvent.data.delivery_ready, true);
-  assertSafe(JSON.stringify(deliveredSse.events));
-  const noDuplicateAfterSse = await deliveryReady.getJson("/renderer/cues");
-  assert.equal(noDuplicateAfterSse.cues.length, 0);
-  assert.equal(noDuplicateAfterSse.pending_cue_count, 0);
-  assertSafe(JSON.stringify(noDuplicateAfterSse));
+  assert.equal(sseCue.accepted, true);
+  const waitingSseOnly = await readSseEvents(deliveryReady.baseUrl, { minEvents: 2, timeoutMs: 500 });
+  assert.equal(waitingSseOnly.events.some((event) => event.event === "renderer_cues"), false);
+  assertSafe(JSON.stringify(waitingSseOnly.events));
+  const waitingPolling = await deliveryReady.getJson("/renderer/cues");
+  assert.equal(waitingPolling.delivery_ready, false);
+  assert.equal(waitingPolling.cues.length, 0);
+  assert.equal(waitingPolling.pending_cue_count, 1);
+  assertSafe(JSON.stringify(waitingPolling));
 
   const pollingCue = await deliveryReady.postJson("/cue", rendererCueDelivery({
     motion: { style: "idle_breath" },
     timing: { duration_ms: 500 },
   }));
   const pollingFallback = await deliveryReady.getJson("/renderer/cues");
-  assert.equal(pollingFallback.cues.length, 1);
-  assert.equal(pollingFallback.cues[0].status_hash, pollingCue.cue_summary.status_hash);
-  assert.equal(pollingFallback.pending_cue_count, 0);
+  assert.equal(pollingCue.accepted, true);
+  assert.equal(pollingFallback.delivery_ready, false);
+  assert.equal(pollingFallback.cues.length, 0);
+  assert.equal(pollingFallback.pending_cue_count, 2);
   assertSafe(JSON.stringify(pollingFallback));
-  const noDuplicateAfterPolling = await readSseEvents(deliveryReady.baseUrl, { minEvents: 2, timeoutMs: 500 });
-  assert.equal(noDuplicateAfterPolling.events.some((event) => event.event === "renderer_cues"), false);
-  assertSafe(JSON.stringify(noDuplicateAfterPolling.events));
+  const noDeliveryWhileUntrusted = await readSseEvents(deliveryReady.baseUrl, { minEvents: 2, timeoutMs: 500 });
+  assert.equal(noDeliveryWhileUntrusted.events.some((event) => event.event === "renderer_cues"), false);
+  assertSafe(JSON.stringify(noDeliveryWhileUntrusted.events));
 
   await assertCueRejected(deliveryReady, cueWithUnsafeField("raw_renderer_payload"), "unsafe_cue_field", "raw_renderer_payload");
   const rejectedSse = await readSseEvents(deliveryReady.baseUrl, { minEvents: 2, timeoutMs: 500 });
@@ -797,6 +997,9 @@ try {
       "safe_model3_manifest_route",
       "safe_model_asset_route",
       "unsafe_manifest_blocks_browser_load",
+      "model_loader_missing_blocks_ready",
+      "real_model_load_evidence_required",
+      "synthetic_real_model_heartbeat_does_not_make_ready",
     ],
   }));
 } finally {
@@ -822,6 +1025,23 @@ function browserHeartbeat(overrides = {}) {
     heartbeat_timestamp_ms: nowMs,
     ...overrides,
   };
+}
+
+function syntheticRealModelHeartbeat(overrides = {}) {
+  // Self-asserted browser fields are diagnostic fixtures only; they must not
+  // establish trusted real model readiness in this PR.
+  return browserHeartbeat({
+    model_asset_route_available: true,
+    model_load_status: "loaded",
+    model_load_supported: true,
+    model_load_attempted: true,
+    model_load_succeeded: true,
+    model_load_error_kind: "unknown",
+    real_model_load_supported: true,
+    real_model_loaded: true,
+    real_scene_loaded: true,
+    ...overrides,
+  });
 }
 
 function createIrisBridgeCueFixture() {

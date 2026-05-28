@@ -96,6 +96,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          export CODEX_RISK_LEVEL="${CODEX_RISK_LEVEL:-R3}"
           if [ "${CODEX_EVENT_NAME:-}" = "pull_request" ]; then
             export CODEX_EVIDENCE_PACK_STRICT=1
             export CODEX_HUMAN_CONFIRMATION_STRICT=1
@@ -117,6 +118,39 @@ jobs:
           if [ "${CODEX_EVENT_NAME:-}" = "pull_request" ] && [ -n "${CODEX_PR_BASE_SHA:-}" ] && [ -n "${CODEX_PR_HEAD_SHA:-}" ]; then
             export CODEX_CHANGED_FILES="$(git diff --name-only "${CODEX_PR_BASE_SHA}" "${CODEX_PR_HEAD_SHA}" || true)"
             export CODEX_DIFF_NUMSTAT="$(git diff --numstat "${CODEX_PR_BASE_SHA}" "${CODEX_PR_HEAD_SHA}" || true)"
+          fi
+          product_changed=0
+          if printf '%s\n' "${CODEX_CHANGED_FILES:-}" | grep -Eq '^(src/|public/|test/|tests/|package\.json|package-lock\.json)'; then
+            product_changed=1
+          fi
+          if [ "$product_changed" = "1" ]; then
+            export CODEX_SKIP_NPM=0
+            npm test
+            export CODEX_PRODUCT_VERIFICATION_COMMANDS="npm test"
+            export CODEX_PRODUCT_VERIFICATION_RESULT="pass"
+            export CODEX_PRODUCT_VERIFICATION_SOURCE="remote"
+            export CODEX_REMOTE_PRODUCT_BASELINE_JSON="$(node - <<'NODE'
+          const baseSha = process.env.CODEX_PR_BASE_SHA || '';
+          const now = new Date();
+          const expires = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+          process.stdout.write(JSON.stringify({
+            schemaVersion: '0.8.3',
+            harnessVersion: '0.9.6',
+            repository: process.env.CODEX_REPOSITORY || 'hiro4649/iris-live2d-renderer',
+            baseSha,
+            baselineType: 'product_verification',
+            commands: ['npm test'],
+            result: 'pass',
+            date: now.toISOString(),
+            source: 'remote',
+            safeSummary: 'Remote product verification completed with safe summary only.',
+            knownFailures: [],
+            expiresAt: expires.toISOString(),
+            rawValuesStored: false,
+            safeSummaryOnly: true,
+          }));
+          NODE
+          )"
           fi
           node scripts/codex-workflow-preflight.mjs > "$RUNNER_TEMP/codex-workflow-preflight.json"
           gate_exit=0
