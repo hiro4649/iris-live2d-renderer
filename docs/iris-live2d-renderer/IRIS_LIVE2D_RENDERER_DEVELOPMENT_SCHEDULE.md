@@ -47,6 +47,15 @@ production_readiness_claimed: no
 - Goal: model_loaded と scene_loaded を truthfully に enable する。
 - Production: no production readiness claim。
 
+## Inserted Preflight: LIVE2D-LOADER-INTEGRATION-PREFLIGHT5
+
+- Position: between REAL-MODEL-LOAD4 and MICRO-REACTION-PACK5.
+- Scope: define trusted Cubism loader capability classes and future evidence contract.
+- Reason: compatible real Cubism model loader is not bundled yet.
+- Boundary: CubismCore, manifest, asset route, SSE, cue acceptance, fixture, dry-run, stale, or synthetic heartbeat evidence must not become renderer_ready.
+- Motion dataset: runtime_motion_allowlist stays separate from expression_candidate_labels; future micro reaction labels are not executable until implemented and tested.
+- Production: no runtime readiness claim and no production readiness claim.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。
