@@ -14,6 +14,7 @@ export function createInitialRendererState() {
     lastCueAppliedAt: null,
     lastCueApplyStatus: "not_ready",
     model3ManifestAvailable: false,
+    model3BrowserLoadSupported: false,
     cubismRuntimeLoadAttempted: false,
     eventStreamActive: false,
     eventStreamConnected: false,
@@ -52,7 +53,8 @@ export function applyRuntimeConfig(state, config, cubismRuntimeLoaded = state.cu
   state.sceneId = config?.scene_id || state.sceneId || "";
   state.cubismRuntimeLoaded = Boolean(cubismRuntimeLoaded);
   state.model3ManifestAvailable = Boolean(config?.model3?.manifest_available ?? config?.model3?.available);
-  state.realModelLoadSupported = Boolean(config?.model3?.browser_load_supported);
+  state.model3BrowserLoadSupported = Boolean(config?.model3?.browser_load_supported);
+  state.realModelLoadSupported = Boolean(config?.model3?.real_model_load_supported);
   state.model3Loaded = false;
   state.sceneLoaded = false;
   return state;

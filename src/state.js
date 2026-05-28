@@ -3,6 +3,7 @@ import { assertSafeInput, assertSafePublicObject, createBoundaryPolicy, safeText
 import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
 import { validateRendererCueEnvelope } from "./renderer/cueValidation.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
+import { resolveSafeModelAsset } from "./renderer/modelAssets.js";
 
 const MAX_BROWSER_CUE_QUEUE = 20;
 
@@ -32,6 +33,7 @@ export function createRendererState({
     model3ManifestConfigured: cubismConfig.model3_manifest_configured,
     model3ManifestAvailable: cubismConfig.model3_manifest_available,
     model3ManifestStatus: cubismConfig.model3_manifest_status,
+    model3AssetRegistry: cubismConfig.model3_asset_registry,
     heartbeatMaxAgeMs,
     startedAtMs: now(),
     cueCount: 0,
@@ -190,9 +192,28 @@ export function createRendererState({
         model3ManifestConfigured: state.model3ManifestConfigured,
         model3ManifestAvailable: state.model3ManifestAvailable,
         model3ManifestStatus: state.model3ManifestStatus,
+        model3BrowserLoadSupported: state.model3AssetRegistry?.available === true,
       });
       assertSafePublicObject(response, "browser runtime config");
       return response;
+    },
+
+    browserModel3Manifest() {
+      if (!state.model3AssetRegistry?.available) return null;
+      const response = {
+        ok: true,
+        schema: "iris_live2d_safe_model3_manifest_response_v1",
+        load_route: "renderer_model3_manifest",
+        asset_route: "renderer_model_asset",
+        manifest: state.model3AssetRegistry.sanitizedManifest,
+        boundary_policy: createBoundaryPolicy(),
+      };
+      assertSafePublicObject(response, "browser model3 manifest");
+      return response;
+    },
+
+    resolveModelAsset(assetId) {
+      return resolveSafeModelAsset(state.model3AssetRegistry, assetId);
     },
 
     cubismCoreJsPath() {

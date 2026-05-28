@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 import { ContractError, assertSafePublicObject, createBoundaryPolicy, createSafeError } from "./contracts.js";
 import { createRendererState } from "./state.js";
+import { contentTypeForModelAsset } from "./renderer/modelAssets.js";
 
 const MAX_BODY_BYTES = 256_000;
 const SSE_CUE_INTERVAL_MS = 150;
@@ -46,6 +47,32 @@ export function createLive2dRendererServer({
       }
       if (request.method === "GET" && url.pathname === "/renderer/runtime-config") {
         return sendJson(response, 200, state.browserRuntimeConfig());
+      }
+      if (request.method === "GET" && url.pathname === "/renderer/model3") {
+        assertLocalAssetRead(request);
+        const manifest = state.browserModel3Manifest();
+        if (!manifest) {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        return sendJson(response, 200, manifest);
+      }
+      if (request.method === "GET" && url.pathname.startsWith("/renderer/model-asset/")) {
+        assertLocalAssetRead(request);
+        if (url.search) {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        const assetId = safeDecodePathSegment(url.pathname.slice("/renderer/model-asset/".length));
+        const asset = state.resolveModelAsset(assetId);
+        if (!asset) {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        const body = await readFile(asset.filePath);
+        response.writeHead(200, {
+          "content-type": contentTypeForModelAsset(asset),
+          "cache-control": "no-store",
+        });
+        response.end(body);
+        return;
       }
       if (request.method === "GET" && url.pathname === "/renderer/cubism-core.js") {
         const cubismCoreJsPath = state.cubismCoreJsPath();
@@ -106,8 +133,17 @@ async function readJson(request) {
 }
 
 function sendJson(response, status, body) {
-  response.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+  response.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
   response.end(JSON.stringify(body));
+}
+
+function safeDecodePathSegment(segment) {
+  try {
+    const decoded = decodeURIComponent(String(segment ?? ""));
+    return decoded.includes("/") || decoded.includes("\\") ? "" : decoded;
+  } catch {
+    return "";
+  }
 }
 
 function sendRendererEvents(request, response, state) {
@@ -184,6 +220,12 @@ function assertAuthorizedWrite(request, requiredApiKey) {
   throw new ContractError("auth required", "auth_required");
 }
 
+function assertLocalAssetRead(request) {
+  const remoteAddress = String(request.socket?.remoteAddress ?? "");
+  if (remoteAddress === "127.0.0.1" || remoteAddress === "::1" || remoteAddress === "::ffff:127.0.0.1") return;
+  throw new ContractError("not found", "not_found");
+}
+
 function statusForError(error) {
   if (error instanceof ContractError) {
     if (error.code === "auth_required") return 401;
@@ -216,7 +258,15 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       port_env_name: "IRIS_LIVE2D_RENDERER_PORT",
     },
     routes: ["GET /health", "GET /status", "POST /live2d-engine", "POST /cue"],
-    browser_routes: ["GET /renderer/cues", "GET /renderer/events", "GET /renderer/runtime-config", "GET /renderer/cubism-core.js", "POST /renderer/heartbeat"],
+    browser_routes: [
+      "GET /renderer/cues",
+      "GET /renderer/events",
+      "GET /renderer/runtime-config",
+      "GET /renderer/model3",
+      "GET /renderer/model-asset/:asset_id",
+      "GET /renderer/cubism-core.js",
+      "POST /renderer/heartbeat",
+    ],
     configured_env: [
       "IRIS_LIVE2D_RENDERER_ENDPOINT",
       "IRIS_LIVE2D_RENDERER_HEALTH_ENDPOINT",
