@@ -70,6 +70,11 @@ function isSafePolicyFlag(key, path) {
   return path.endsWith("boundary_policy") && (key.startsWith("no_") || key.endsWith("_only") || key.endsWith("_required") || key.endsWith("_summary"));
 }
 
+function isSafeTrustedLoaderEvidenceField(key, path) {
+  return path.endsWith("trusted_loader_evidence") &&
+    key === "safe_moc_asset_token_hash";
+}
+
 function assertNoUnsafeMaterial(value, context, path = "root") {
   if (value === null || value === undefined) return;
   if (typeof value === "string") {
@@ -84,7 +89,9 @@ function assertNoUnsafeMaterial(value, context, path = "root") {
     return;
   }
   for (const [key, child] of Object.entries(value)) {
-    if (UNSAFE_FIELD_PATTERN.test(key) && !isSafePolicyFlag(key, path)) {
+    if (UNSAFE_FIELD_PATTERN.test(key) &&
+      !isSafePolicyFlag(key, path) &&
+      !isSafeTrustedLoaderEvidenceField(key, path)) {
       throw new ContractError(`${context}: unsafe field`, "unsafe_payload");
     }
     assertNoUnsafeMaterial(child, context, `${path}.${key}`);

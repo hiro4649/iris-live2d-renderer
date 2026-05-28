@@ -16,7 +16,7 @@ function env(overrides = {}) {
     CODEX_QUALITY_REPORT: 'json',
     CODEX_HARNESS_MODE: 'target',
     CODEX_PR_BODY: '',
-    CODEX_CHANGED_FILES: '',
+    CODEX_CHANGED_FILES: 'AGENTS.md',
     ...overrides,
   };
 }

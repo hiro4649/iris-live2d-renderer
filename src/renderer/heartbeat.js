@@ -1,3 +1,8 @@
+import {
+  createTrustedLoaderEvidenceSummary,
+  validateTrustedLoaderEvidence,
+} from "./trustedLoaderEvidence.js";
+
 export const DEFAULT_HEARTBEAT_MAX_AGE_MS = 5_000;
 const HEARTBEAT_FUTURE_SKEW_MS = 1_000;
 const MODEL_LOAD_STATUS = new Set([
@@ -62,6 +67,15 @@ export function createHeartbeatStatus({
   const modelLoadStatus = safeModelLoadStatus(heartbeat?.model_load_status);
   const modelLoadErrorKind = safeModelLoadErrorKind(heartbeat?.model_load_error_kind);
   const modelAssetRouteAvailable = heartbeat?.model_asset_route_available === true;
+  const trustedLoaderEvidence = createTrustedLoaderEvidenceSummary(validateTrustedLoaderEvidence(
+    heartbeat?.trusted_loader_evidence,
+    {
+      nowMs,
+      maxAgeMs,
+      expectedModelId,
+      expectedSceneId,
+    }
+  ));
   const browserModelLoadSupported = heartbeat?.model_load_supported === true || heartbeat?.real_model_load_supported === true;
   // Browser model-load support is diagnostic in this phase. A self-asserted
   // heartbeat must not establish the server-trusted real loader capability.
@@ -106,6 +120,11 @@ export function createHeartbeatStatus({
     model_load_attempted: heartbeat?.model_load_attempted === true,
     model_load_succeeded: heartbeat?.model_load_succeeded === true,
     model_load_error_kind: modelLoadErrorKind,
+    trusted_loader_evidence_status: trustedLoaderEvidence.trusted_loader_evidence_status,
+    trusted_loader_kind: trustedLoaderEvidence.trusted_loader_kind,
+    trusted_loader_policy_gate: trustedLoaderEvidence.trusted_loader_policy_gate,
+    trusted_loader_ready_candidate: trustedLoaderEvidence.trusted_loader_ready_candidate,
+    trusted_loader_error_kind: trustedLoaderEvidence.trusted_loader_error_kind,
     model_loaded: modelLoaded,
     scene_loaded: sceneLoaded,
     model_loaded_claimed: modelLoadedClaimed,
