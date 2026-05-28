@@ -2,10 +2,12 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
-import { ContractError, createSafeError } from "./contracts.js";
+import { ContractError, assertSafePublicObject, createBoundaryPolicy, createSafeError } from "./contracts.js";
 import { createRendererState } from "./state.js";
 
 const MAX_BODY_BYTES = 256_000;
+const SSE_CUE_INTERVAL_MS = 150;
+const SSE_HEARTBEAT_INTERVAL_MS = 1_000;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export function createLive2dRendererServer({
@@ -37,6 +39,10 @@ export function createLive2dRendererServer({
       }
       if (request.method === "GET" && url.pathname === "/renderer/cues") {
         return sendJson(response, 200, state.readBrowserCues());
+      }
+      if (request.method === "GET" && url.pathname === "/renderer/events") {
+        sendRendererEvents(request, response, state);
+        return;
       }
       if (request.method === "GET" && url.pathname === "/renderer/runtime-config") {
         return sendJson(response, 200, state.browserRuntimeConfig());
@@ -104,6 +110,71 @@ function sendJson(response, status, body) {
   response.end(JSON.stringify(body));
 }
 
+function sendRendererEvents(request, response, state) {
+  response.writeHead(200, {
+    "content-type": "text/event-stream; charset=utf-8",
+    "cache-control": "no-store",
+    connection: "keep-alive",
+    "x-accel-buffering": "no",
+  });
+  response.flushHeaders?.();
+
+  let closed = false;
+  let cueTimer = null;
+  let heartbeatTimer = null;
+  const closeStream = () => {
+    if (closed) return;
+    closed = true;
+    if (cueTimer) clearInterval(cueTimer);
+    if (heartbeatTimer) clearInterval(heartbeatTimer);
+    if (!response.destroyed && !response.writableEnded) response.end();
+  };
+  const sendEvent = (eventName, payload) => {
+    if (closed) return;
+    try {
+      writeSseEvent(response, eventName, payload);
+    } catch {
+      closeStream();
+    }
+  };
+  const sendCues = () => {
+    const cueBatch = state.readBrowserCues();
+    if (cueBatch.cues.length > 0) sendEvent("renderer_cues", cueBatch);
+  };
+
+  request.on("close", closeStream);
+  response.on("close", closeStream);
+  response.on("error", closeStream);
+
+  response.write(": renderer events connected\n\n");
+  sendEvent("renderer_status", state.status());
+  sendEvent("heartbeat", createRendererEventHeartbeat(state));
+  sendCues();
+  cueTimer = setInterval(sendCues, SSE_CUE_INTERVAL_MS);
+  heartbeatTimer = setInterval(() => sendEvent("heartbeat", createRendererEventHeartbeat(state)), SSE_HEARTBEAT_INTERVAL_MS);
+}
+
+function writeSseEvent(response, eventName, payload) {
+  assertSafePublicObject(payload, `${eventName} event`);
+  response.write(`event: ${eventName}\n`);
+  response.write(`data: ${JSON.stringify(payload)}\n\n`);
+}
+
+function createRendererEventHeartbeat(state) {
+  const status = state.status();
+  const heartbeat = {
+    ok: true,
+    schema: "iris_live2d_renderer_event_heartbeat_v1",
+    renderer_ready: status.renderer_ready,
+    delivery_ready: status.renderer_health.browser_cue_delivery_ready,
+    pending_cue_count: status.browser_delivery.pending_cue_count,
+    delivery_status: status.browser_delivery.last_delivery_status,
+    boundary_policy: createBoundaryPolicy(),
+  };
+  assertSafePublicObject(heartbeat, "renderer event heartbeat");
+  return heartbeat;
+}
+
 function assertAuthorizedWrite(request, requiredApiKey) {
   if (!requiredApiKey) return;
   const authorization = String(request.headers.authorization ?? "");
@@ -145,7 +216,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       port_env_name: "IRIS_LIVE2D_RENDERER_PORT",
     },
     routes: ["GET /health", "GET /status", "POST /live2d-engine", "POST /cue"],
-    browser_routes: ["GET /renderer/cues", "GET /renderer/runtime-config", "GET /renderer/cubism-core.js", "POST /renderer/heartbeat"],
+    browser_routes: ["GET /renderer/cues", "GET /renderer/events", "GET /renderer/runtime-config", "GET /renderer/cubism-core.js", "POST /renderer/heartbeat"],
     configured_env: [
       "IRIS_LIVE2D_RENDERER_ENDPOINT",
       "IRIS_LIVE2D_RENDERER_HEALTH_ENDPOINT",
