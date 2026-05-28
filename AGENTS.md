@@ -15,32 +15,50 @@ source, tests, specs, package files, lockfiles, runtime files, assets, or
 `scripts/run-tests.js` unless the project owner explicitly requests product
 work and required verification evidence is available.
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-CODEX_QUALITY_HARNESS_FILE v0.9.6
+CODEX_QUALITY_HARNESS_FILE v0.9.7
 
-## Codex Target Harness Doctrine
+## Codex Target Harness Boundary
 
-Source harness boundary: this target repository consumes Codex Development Harness v0.9.6 through docs/process/CODEX_HARNESS_MANIFEST.json. Keep AGENTS.md compact: doctrine, routing map, and authority links live here; detailed policy lives in docs/process.
+This target repository consumes Codex Development Harness v0.9.7 through
+`docs/process/CODEX_HARNESS_MANIFEST.json`; do not copy or create
+`CODEX_SOURCE_HARNESS_MANIFEST.json` here. Keep product authority outside this
+block intact.
 
-Authority links: docs/process/CODEX_HARNESS_MANIFEST.json, docs/process/CODEX_AGENTS_DOCTRINE_POLICY.md, docs/process/CODEX_SKILL_ROUTING_POLICY.md, docs/process/CODEX_SKILL_LOAD_BUDGET_POLICY.md, docs/process/CODEX_EVIDENCE_MINIMALITY_POLICY.md, docs/process/CODEX_SAFE_ARTIFACT_NEXT_ACTION_SCHEMA.json, docs/process/CODEX_K_RULE_COVERAGE_POLICY.md, docs/process/CODEX_LIVE2D_SPEC_SYNC_POLICY.md, docs/process/CODEX_RUNTIME_LATENCY_BUDGET_POLICY.md, docs/process/CODEX_FAILURE_TO_REPAIR_PLAN_SCHEMA.json, docs/process/CODEX_HUMAN_REVIEW_DIGEST_SCHEMA.json, docs/process/code_review.md.
+## Target Doctrine And Skill Routing
 
-Routing map:
-- harness_change -> target-harness, evidence-integrity, review-boundary, security-lifecycle.
-- workflow_change -> target-harness, security-lifecycle, evidence-integrity, review-boundary.
-- product_relevant -> product-verification, review-boundary, evidence-integrity, security-lifecycle.
-- runtime_or_tx_relevant -> runtime-safety, state-machine-evidence, receipt-evidence, evidence-integrity.
-- docs_only -> review-boundary and evidence-integrity only when needed.
+Keep AGENTS.md compact: doctrine, routing map, and links only. Put detailed
+policy in `docs/process`. Load only task-needed skills, normally four or fewer
+and never more than five. Use `docs/process/CODEX_AGENTS_DOCTRINE_POLICY.md`,
+`docs/process/CODEX_SKILL_ROUTING_POLICY.md`,
+`docs/process/CODEX_SUBAGENT_GOVERNANCE_POLICY.md`, and related v0.9.5/v0.9.6/v0.9.7 files for detailed rules.
 
-Skill load budget: select only necessary skills, normally four or fewer and never more than five. Do not load raw production traces, raw runtime logs, private paths, endpoints, tokens, secrets, or personal data into skill evidence.
+## Target Safety Rules
 
-Target rollout boundary: harness-only work must stay in harness-managed files. Do not modify renderer source, tests, specs, package files, lockfiles, runtime files, assets, profiles, or scripts/run-tests.js unless the project owner explicitly requests product work and required verification evidence is available.
+Harness-only work must stay in harness-managed files. Do not modify product
+source, product tests, runtime assets, package files, lockfiles, profiles, or
+product config not owned by harness unless the project owner explicitly requests
+product work and required verification evidence is available.
 
-Evidence discipline: use safe summaries, same-head evidence, compact PR bodies, evidence dedup, and safe artifact next actions. Do not treat fixture pass, targetQualityScoreStatus, or a passing harness gate as product runtime readiness.
-Runtime adoption and renderer evidence: K-rule coverage, Live2D spec sync, browser smoke artifacts, migration safety, dataset audit readiness, Game/Tool Adapter fixtures, and beloved avatar audit readiness are harness gates only. Do not start Live2D connection work, browser smoke execution, dataset audit runner work, Game/Tool Adapter implementation, beloved avatar audit runner work, or claim runtime readiness from this rollout.
+Maintain the source harness boundary and profile/core separation. Use a
+plan-first workflow for nontrivial work, keep safe output in evidence artifacts,
+and require manual confirmation before any merge-ready claim. Manual
+confirmation cannot override non-overridable harness failures. Do not print raw
+logs, raw diffs, raw runtime data, raw model paths, secrets, endpoints, private
+paths, production data, or personal data. Do not print raw logs.
+Manual confirmation cannot override non-overridable harness failures.
 
-Plan-first: use a short plan for R3, workflow, product-relevant, security, release, runtime, or ambiguous changes before editing.
-Safe output: reports and artifacts must be safe-summary only. Do not print raw logs, raw diffs, raw payloads, endpoints, private paths, production data, personal data, tokens, or secrets.
-Merge-ready claim: do not claim merge readiness unless current-head target gates, evidence, and required confirmations support it.
-Manual confirmation: R3 or owner-gated changes require current-head project-owner confirmation before merge. Manual confirmation cannot override non-overridable failures.
-Profile/core separation: target mode keeps profile compatibility off unless the project owner explicitly opts in.
+Do not treat targetQualityScoreStatus or a passing harness gate as product
+runtime readiness. Fixture pass, browser smoke pass, dataset audit readiness,
+Game/Tool Adapter fixture pass, and beloved avatar audit readiness are not
+runtime readiness.
+
+Run target quality gates with `CODEX_HARNESS_MODE=target`,
+`CODEX_PROFILE_COMPAT_MODE=off`, and `CODEX_QUALITY_REPORT=json`. Preserve target
+hotfixes and target-specific adaptations during rollout. Require same-head
+evidence for PR evidence, manual confirmation, remote runs, artifact summaries,
+and product-relevant PR context.
+
+Do not treat targetQualityScoreStatus or a passing harness gate as product
+runtime readiness. Fixture pass is not runtime readiness.
 
 <!-- CODEX_QUALITY_HARNESS_END -->
