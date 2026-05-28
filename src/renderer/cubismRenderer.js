@@ -1,5 +1,6 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { safeText } from "../contracts.js";
+import { createSafeModelAssetRegistry } from "./modelAssets.js";
 
 export function createCubismRendererConfig({
   modelId = "",
@@ -9,7 +10,7 @@ export function createCubismRendererConfig({
   heartbeatMaxAgeMs,
 } = {}) {
   const sdk = inspectLocalFile(cubismCoreJsPath);
-  const manifest = inspectModel3Manifest(model3JsonPath);
+  const manifest = createSafeModelAssetRegistry(model3JsonPath);
   return {
     model_id: safeText(modelId, 160),
     scene_id: safeText(sceneId, 160),
@@ -20,6 +21,7 @@ export function createCubismRendererConfig({
     model3_manifest_configured: Boolean(model3JsonPath),
     model3_manifest_available: manifest.available,
     model3_manifest_status: manifest.status,
+    model3_asset_registry: manifest,
     heartbeat_max_age_ms: Number.isFinite(heartbeatMaxAgeMs) ? heartbeatMaxAgeMs : undefined,
   };
 }
@@ -33,7 +35,9 @@ export function createBrowserRuntimeConfig({
   model3ManifestConfigured,
   model3ManifestAvailable,
   model3ManifestStatus,
+  model3BrowserLoadSupported = false,
 }) {
+  const browserLoadSupported = Boolean(model3BrowserLoadSupported);
   const config = {
     ok: true,
     schema: "iris_live2d_browser_runtime_config_v1",
@@ -50,8 +54,9 @@ export function createBrowserRuntimeConfig({
       available: Boolean(model3ManifestAvailable),
       manifest_available: Boolean(model3ManifestAvailable),
       status: safeText(model3ManifestStatus, 80),
-      load_route: "not_available",
-      browser_load_supported: false,
+      load_route: browserLoadSupported ? "renderer_model3_manifest" : "not_available",
+      asset_route: browserLoadSupported ? "renderer_model_asset" : "not_available",
+      browser_load_supported: browserLoadSupported,
       real_model_loaded: false,
     },
     cue_capability_required: [
@@ -74,18 +79,6 @@ export function createBrowserCueEnvelope({ route, receivedAtMs, cueSchema, statu
     expression_label: safeText(cue?.expression?.name ?? cue?.expression_name ?? ""),
     duration_ms: normalizeDuration(cue?.timing?.duration_ms ?? cue?.timing?.total_duration_ms ?? cue?.duration_ms),
   };
-}
-
-function inspectModel3Manifest(model3JsonPath) {
-  const file = inspectLocalFile(model3JsonPath);
-  if (!file.available) return file;
-  try {
-    const parsed = JSON.parse(readFileSync(model3JsonPath, "utf8"));
-    const valid = Boolean(parsed && typeof parsed === "object" && (parsed.Version || parsed.FileReferences));
-    return { available: valid, status: valid ? "available" : "invalid" };
-  } catch {
-    return { available: false, status: "invalid" };
-  }
 }
 
 function inspectLocalFile(path) {

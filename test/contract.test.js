@@ -17,9 +17,24 @@ let nowMs = 1_800_000_000_000;
 const tmpDir = join(process.cwd(), ".tmp-live2d-renderer-contract");
 await rm(tmpDir, { recursive: true, force: true });
 await mkdir(tmpDir, { recursive: true });
-const model3Path = join(tmpDir, "model3.json");
+const model3Path = join(tmpDir, "avatar.model3.json");
 const sdkCorePath = join(tmpDir, "live2dcubismcore.js");
-await writeFile(model3Path, JSON.stringify({ Version: 3, FileReferences: { Moc: "safe_model.moc3" } }));
+await mkdir(join(tmpDir, "textures"), { recursive: true });
+await mkdir(join(tmpDir, "motions"), { recursive: true });
+await mkdir(join(tmpDir, "expressions"), { recursive: true });
+await writeFile(join(tmpDir, "safe_model.moc3"), "fixture-moc");
+await writeFile(join(tmpDir, "textures", "texture_00.png"), "fixture-png");
+await writeFile(join(tmpDir, "motions", "idle.motion3.json"), JSON.stringify({ Version: 3, Meta: {} }));
+await writeFile(join(tmpDir, "expressions", "soft_smile.exp3.json"), JSON.stringify({ Type: "Live2D Expression" }));
+await writeFile(model3Path, JSON.stringify({
+  Version: 3,
+  FileReferences: {
+    Moc: "safe_model.moc3",
+    Textures: ["textures/texture_00.png"],
+    Expressions: [{ Name: "soft_smile", File: "expressions/soft_smile.exp3.json" }],
+    Motions: { Idle: [{ File: "motions/idle.motion3.json" }] },
+  },
+}));
 await writeFile(sdkCorePath, "globalThis.Live2DCubismCore = { Version: 'contract' };\n");
 
 try {
@@ -48,7 +63,13 @@ try {
   const missingRuntimeConfig = await missing.getJson("/renderer/runtime-config");
   assert.equal(missingRuntimeConfig.cubism_sdk.available, false);
   assert.equal(missingRuntimeConfig.model3.available, false);
+  assert.equal(missingRuntimeConfig.model3.load_route, "not_available");
+  assert.equal(missingRuntimeConfig.model3.browser_load_supported, false);
   assertSafe(JSON.stringify(missingRuntimeConfig));
+  const missingModel3 = await fetchJsonStatus(`${missing.baseUrl}/renderer/model3`);
+  assert.equal(missingModel3.status, 404);
+  assert.equal(missingModel3.body.error_kind, "not_found");
+  assertSafe(JSON.stringify(missingModel3.body));
 
   const browserState = createInitialRendererState();
   applyRuntimeConfig(browserState, {
@@ -519,10 +540,47 @@ try {
   assert.equal(readyRuntimeConfig.cubism_sdk.available, true);
   assert.equal(readyRuntimeConfig.model3.available, true);
   assert.equal(readyRuntimeConfig.model3.manifest_available, true);
-  assert.equal(readyRuntimeConfig.model3.load_route, "not_available");
-  assert.equal(readyRuntimeConfig.model3.browser_load_supported, false);
+  assert.equal(readyRuntimeConfig.model3.load_route, "renderer_model3_manifest");
+  assert.equal(readyRuntimeConfig.model3.asset_route, "renderer_model_asset");
+  assert.equal(readyRuntimeConfig.model3.browser_load_supported, true);
   assert.equal(readyRuntimeConfig.model3.real_model_loaded, false);
   assertSafe(JSON.stringify(readyRuntimeConfig));
+  assertNoModelPathLeak(JSON.stringify(readyRuntimeConfig));
+  const safeModel3 = await ready.getJson("/renderer/model3");
+  assert.equal(safeModel3.ok, true);
+  assert.equal(safeModel3.load_route, "renderer_model3_manifest");
+  assert.equal(safeModel3.asset_route, "renderer_model_asset");
+  assert.equal(safeModel3.manifest.FileReferences.Moc.startsWith("renderer_model_asset:"), true);
+  assert.equal(safeModel3.manifest.FileReferences.Textures[0].startsWith("renderer_model_asset:"), true);
+  assert.equal(safeModel3.manifest.FileReferences.Expressions[0].File.startsWith("renderer_model_asset:"), true);
+  assert.equal(safeModel3.manifest.FileReferences.Motions.Idle[0].File.startsWith("renderer_model_asset:"), true);
+  assertSafe(JSON.stringify(safeModel3));
+  assertNoModelPathLeak(JSON.stringify(safeModel3));
+  const mocAssetId = assetIdFromToken(safeModel3.manifest.FileReferences.Moc);
+  const mocAssetResponse = await fetch(`${ready.baseUrl}/renderer/model-asset/${mocAssetId}`);
+  assert.equal(mocAssetResponse.status, 200);
+  assert.equal(mocAssetResponse.headers.get("content-type"), "application/octet-stream");
+  assert.equal(await mocAssetResponse.text(), "fixture-moc");
+  const textureAssetId = assetIdFromToken(safeModel3.manifest.FileReferences.Textures[0]);
+  const textureAssetResponse = await fetch(`${ready.baseUrl}/renderer/model-asset/${textureAssetId}`);
+  assert.equal(textureAssetResponse.status, 200);
+  assert.equal(textureAssetResponse.headers.get("content-type"), "image/png");
+  const motionAssetId = assetIdFromToken(safeModel3.manifest.FileReferences.Motions.Idle[0].File);
+  const motionAssetResponse = await fetch(`${ready.baseUrl}/renderer/model-asset/${motionAssetId}`);
+  assert.equal(motionAssetResponse.status, 200);
+  assert.equal((motionAssetResponse.headers.get("content-type") || "").includes("application/json"), true);
+  const unknownAsset = await fetchJsonStatus(`${ready.baseUrl}/renderer/model-asset/asset_0000000000000000_moc3`);
+  assert.equal(unknownAsset.status, 404);
+  assertSafe(JSON.stringify(unknownAsset.body));
+  const traversalAsset = await fetchJsonStatus(`${ready.baseUrl}/renderer/model-asset/..%2Fsecret`);
+  assert.equal(traversalAsset.status, 404);
+  assertSafe(JSON.stringify(traversalAsset.body));
+  const urlAsset = await fetchJsonStatus(`${ready.baseUrl}/renderer/model-asset/http%3A%2F%2Fexample.invalid%2Fasset.moc3`);
+  assert.equal(urlAsset.status, 404);
+  assertSafe(JSON.stringify(urlAsset.body));
+  const queryAsset = await fetchJsonStatus(`${ready.baseUrl}/renderer/model-asset/${mocAssetId}?raw_path=unsafe`);
+  assert.equal(queryAsset.status, 404);
+  assertSafe(JSON.stringify(queryAsset.body));
   const sdkScript = await ready.getText("/renderer/cubism-core.js");
   assert.equal(sdkScript.includes("Live2DCubismCore"), true);
 
@@ -531,6 +589,7 @@ try {
   assert.equal(readyStatusBeforeCue.renderer_health.model3_manifest_available, true);
   assert.equal(readyStatusBeforeCue.renderer_ready, false);
   assertSafe(JSON.stringify(readyStatusBeforeCue));
+  assertNoModelPathLeak(JSON.stringify(readyStatusBeforeCue));
 
   const acceptedReadyCue = await ready.postJson("/cue", {
     schema: "iris_live2d_renderer_cue_delivery_v1",
@@ -567,6 +626,7 @@ try {
   const readyHealth = await ready.getJson("/health");
   assert.equal(readyHealth.renderer_ready, false);
   assertSafe(JSON.stringify(readyHealth));
+  assertNoModelPathLeak(JSON.stringify(readyHealth));
 
   const noAppliedAtState = createRendererState({
     modelId: "iris_default",
@@ -599,6 +659,34 @@ try {
   assert.equal(staleReadyHealth.renderer_ready, false);
   assertSafe(JSON.stringify(staleReadyHealth));
   await ready.close();
+
+  const unsafeUrlManifestPath = join(tmpDir, "unsafe-url.model3.json");
+  await writeFile(unsafeUrlManifestPath, JSON.stringify({
+    Version: 3,
+    FileReferences: { Moc: "https://example.invalid/model.moc3" },
+  }));
+  await assertManifestUnavailable(unsafeUrlManifestPath);
+
+  const unsafeAbsoluteManifestPath = join(tmpDir, "unsafe-absolute.model3.json");
+  await writeFile(unsafeAbsoluteManifestPath, JSON.stringify({
+    Version: 3,
+    FileReferences: { Moc: "/unsafe/model.moc3" },
+  }));
+  await assertManifestUnavailable(unsafeAbsoluteManifestPath);
+
+  const unsafeTraversalManifestPath = join(tmpDir, "unsafe-traversal.model3.json");
+  await writeFile(unsafeTraversalManifestPath, JSON.stringify({
+    Version: 3,
+    FileReferences: { Moc: "../outside.moc3" },
+  }));
+  await assertManifestUnavailable(unsafeTraversalManifestPath);
+
+  const unsafeExtensionManifestPath = join(tmpDir, "unsafe-extension.model3.json");
+  await writeFile(unsafeExtensionManifestPath, JSON.stringify({
+    Version: 3,
+    FileReferences: { Moc: "asset.txt" },
+  }));
+  await assertManifestUnavailable(unsafeExtensionManifestPath);
 
   const deliveryReady = await startHarness(createRendererState({
     modelId: "iris_default",
@@ -694,7 +782,7 @@ try {
       "optional_write_auth",
       "mock_health_false",
       "runtime_config_safe",
-      "model3_route_not_exposed",
+      "unavailable_model3_route_not_advertised",
       "sdk_script_route",
       "sdk_missing_blocks_ready",
       "model3_available",
@@ -706,6 +794,9 @@ try {
       "iris_bridge_cue_compatibility",
       "sse_cue_delivery_safe_summary",
       "sse_polling_no_duplicate_delivery",
+      "safe_model3_manifest_route",
+      "safe_model_asset_route",
+      "unsafe_manifest_blocks_browser_load",
     ],
   }));
 } finally {
@@ -851,6 +942,38 @@ async function assertCueRejected(harness, body, expectedKind, forbiddenFragment,
   assert.equal(queueSerialized.includes("unsafe_fixture_value"), false);
 }
 
+async function assertManifestUnavailable(model3JsonPath) {
+  const harness = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    model3JsonPath,
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  try {
+    const runtimeConfig = await harness.getJson("/renderer/runtime-config");
+    assert.equal(runtimeConfig.model3.available, false);
+    assert.equal(runtimeConfig.model3.load_route, "not_available");
+    assert.equal(runtimeConfig.model3.browser_load_supported, false);
+    assert.equal(runtimeConfig.model3.real_model_loaded, false);
+    assertSafe(JSON.stringify(runtimeConfig));
+    assertNoModelPathLeak(JSON.stringify(runtimeConfig));
+    const manifest = await fetchJsonStatus(`${harness.baseUrl}/renderer/model3`);
+    assert.equal(manifest.status, 404);
+    assert.equal(manifest.body.error_kind, "not_found");
+    assertSafe(JSON.stringify(manifest.body));
+    const heartbeat = await harness.postJson("/renderer/heartbeat", browserHeartbeat({
+      heartbeat_timestamp_ms: nowMs,
+    }));
+    assert.equal(heartbeat.renderer_ready, false);
+    assert.equal(heartbeat.renderer_health.model_loaded, false);
+    assert.equal(heartbeat.renderer_health.scene_loaded, false);
+    assertSafe(JSON.stringify(heartbeat));
+  } finally {
+    await harness.close();
+  }
+}
+
 async function readSseEvents(baseUrl, { eventName = "", minEvents = 1, timeoutMs = 500 } = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -913,6 +1036,22 @@ function parseSseEvent(block) {
   return { event, data };
 }
 
+async function fetchJsonStatus(target) {
+  const response = await fetch(target);
+  return {
+    status: response.status,
+    body: await response.json(),
+  };
+}
+
+function assetIdFromToken(token) {
+  const text = String(token ?? "");
+  assert.equal(text.startsWith("renderer_model_asset:"), true);
+  const assetId = text.slice("renderer_model_asset:".length);
+  assert.match(assetId, /^asset_[a-f0-9]{16}_[a-z0-9]+$/u);
+  return assetId;
+}
+
 async function startHarness(state, options = {}) {
   const server = createLive2dRendererServer({ state, ...options });
   const address = await listen(server, { host: "127.0.0.1", port: 0 });
@@ -958,4 +1097,21 @@ function assertSafe(serialized) {
   assert.equal(serialized.includes("obs_command"), false);
   assert.equal(serialized.includes("game_input"), false);
   assert.equal(serialized.includes("os_command"), false);
+}
+
+function assertNoModelPathLeak(serialized) {
+  for (const fragment of [
+    tmpDir,
+    "avatar.model3.json",
+    "safe_model.moc3",
+    "textures/texture_00.png",
+    "motions/idle.motion3.json",
+    "expressions/soft_smile.exp3.json",
+    "https://example.invalid",
+    "/unsafe/model.moc3",
+    "../outside.moc3",
+    "asset.txt",
+  ]) {
+    assert.equal(serialized.includes(fragment), false);
+  }
 }
