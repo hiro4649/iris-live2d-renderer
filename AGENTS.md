@@ -15,13 +15,13 @@ source, tests, specs, package files, lockfiles, runtime files, assets, or
 `scripts/run-tests.js` unless the project owner explicitly requests product
 work and required verification evidence is available.
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-CODEX_QUALITY_HARNESS_FILE v0.9.5
+CODEX_QUALITY_HARNESS_FILE v0.9.6
 
 ## Codex Target Harness Doctrine
 
-Source harness boundary: this target repository consumes Codex Development Harness v0.9.5 through docs/process/CODEX_HARNESS_MANIFEST.json. Keep AGENTS.md compact: doctrine, routing map, and authority links live here; detailed policy lives in docs/process.
+Source harness boundary: this target repository consumes Codex Development Harness v0.9.6 through docs/process/CODEX_HARNESS_MANIFEST.json. Keep AGENTS.md compact: doctrine, routing map, and authority links live here; detailed policy lives in docs/process.
 
-Authority links: docs/process/CODEX_HARNESS_MANIFEST.json, docs/process/CODEX_AGENTS_DOCTRINE_POLICY.md, docs/process/CODEX_SKILL_ROUTING_POLICY.md, docs/process/CODEX_SKILL_LOAD_BUDGET_POLICY.md, docs/process/CODEX_EVIDENCE_MINIMALITY_POLICY.md, docs/process/CODEX_SAFE_ARTIFACT_NEXT_ACTION_SCHEMA.json, docs/process/code_review.md.
+Authority links: docs/process/CODEX_HARNESS_MANIFEST.json, docs/process/CODEX_AGENTS_DOCTRINE_POLICY.md, docs/process/CODEX_SKILL_ROUTING_POLICY.md, docs/process/CODEX_SKILL_LOAD_BUDGET_POLICY.md, docs/process/CODEX_EVIDENCE_MINIMALITY_POLICY.md, docs/process/CODEX_SAFE_ARTIFACT_NEXT_ACTION_SCHEMA.json, docs/process/CODEX_K_RULE_COVERAGE_POLICY.md, docs/process/CODEX_LIVE2D_SPEC_SYNC_POLICY.md, docs/process/CODEX_RUNTIME_LATENCY_BUDGET_POLICY.md, docs/process/CODEX_FAILURE_TO_REPAIR_PLAN_SCHEMA.json, docs/process/CODEX_HUMAN_REVIEW_DIGEST_SCHEMA.json, docs/process/code_review.md.
 
 Routing map:
 - harness_change -> target-harness, evidence-integrity, review-boundary, security-lifecycle.
@@ -35,6 +35,7 @@ Skill load budget: select only necessary skills, normally four or fewer and neve
 Target rollout boundary: harness-only work must stay in harness-managed files. Do not modify renderer source, tests, specs, package files, lockfiles, runtime files, assets, profiles, or scripts/run-tests.js unless the project owner explicitly requests product work and required verification evidence is available.
 
 Evidence discipline: use safe summaries, same-head evidence, compact PR bodies, evidence dedup, and safe artifact next actions. Do not treat fixture pass, targetQualityScoreStatus, or a passing harness gate as product runtime readiness.
+Runtime adoption and renderer evidence: K-rule coverage, Live2D spec sync, browser smoke artifacts, migration safety, dataset audit readiness, Game/Tool Adapter fixtures, and beloved avatar audit readiness are harness gates only. Do not start Live2D connection work, browser smoke execution, dataset audit runner work, Game/Tool Adapter implementation, beloved avatar audit runner work, or claim runtime readiness from this rollout.
 
 Plan-first: use a short plan for R3, workflow, product-relevant, security, release, runtime, or ambiguous changes before editing.
 Safe output: reports and artifacts must be safe-summary only. Do not print raw logs, raw diffs, raw payloads, endpoints, private paths, production data, personal data, tokens, or secrets.
