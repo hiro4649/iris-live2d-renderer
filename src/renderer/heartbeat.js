@@ -1,5 +1,24 @@
 export const DEFAULT_HEARTBEAT_MAX_AGE_MS = 5_000;
 const HEARTBEAT_FUTURE_SKEW_MS = 1_000;
+const MODEL_LOAD_STATUS = new Set([
+  "not_configured",
+  "asset_route_available",
+  "runtime_missing",
+  "loader_missing",
+  "loading",
+  "loaded",
+  "failed",
+]);
+const MODEL_LOAD_ERROR_KIND = new Set([
+  "not_configured",
+  "asset_route_unavailable",
+  "runtime_missing",
+  "loader_missing",
+  "load_failed",
+  "invalid_manifest",
+  "unsupported_runtime",
+  "unknown",
+]);
 
 export function createHeartbeatStatus({
   heartbeat,
@@ -40,11 +59,22 @@ export function createHeartbeatStatus({
       hasCueAppliedAt
   );
   const cubismRuntimeLoaded = heartbeat?.cubism_runtime_loaded === true;
+  const modelLoadStatus = safeModelLoadStatus(heartbeat?.model_load_status);
+  const modelLoadErrorKind = safeModelLoadErrorKind(heartbeat?.model_load_error_kind);
+  const modelAssetRouteAvailable = heartbeat?.model_asset_route_available === true;
+  const browserModelLoadSupported = heartbeat?.model_load_supported === true || heartbeat?.real_model_load_supported === true;
+  const realModelCapabilitySupported = Boolean(realModelLoadSupported || browserModelLoadSupported);
   const modelLoadedClaimed = heartbeat?.model3_loaded === true || heartbeat?.model_loaded === true || heartbeat?.real_model_loaded === true;
   const sceneLoadedClaimed = heartbeat?.scene_loaded === true || heartbeat?.real_scene_loaded === true;
-  const modelLoaded = Boolean(realModelLoadSupported && modelLoadedClaimed);
-  const sceneLoaded = Boolean(realModelLoadSupported && sceneLoadedClaimed);
-  const cueCapabilityConfirmed = Boolean(realModelLoadSupported && cueCapabilityClaimed);
+  const realModelLoadedClaimed = Boolean(
+    heartbeat?.real_model_loaded === true &&
+      heartbeat?.model_load_succeeded === true &&
+      modelLoadStatus === "loaded"
+  );
+  const realSceneLoadedClaimed = Boolean(heartbeat?.real_scene_loaded === true && realModelLoadedClaimed);
+  const modelLoaded = Boolean(realModelCapabilitySupported && realModelLoadedClaimed);
+  const sceneLoaded = Boolean(realModelCapabilitySupported && realSceneLoadedClaimed);
+  const cueCapabilityConfirmed = Boolean(realModelCapabilitySupported && cueCapabilityClaimed);
   const browserCueDeliveryReady = Boolean(
     cubismSdkAvailable &&
       model3ManifestAvailable &&
@@ -66,12 +96,20 @@ export function createHeartbeatStatus({
     heartbeat_fresh: freshHeartbeat,
     heartbeat_age_ms: ageMs,
     cubism_sdk_available: Boolean(cubismSdkAvailable),
-    real_model_load_supported: Boolean(realModelLoadSupported),
+    real_model_load_supported: realModelCapabilitySupported,
     cubism_runtime_loaded: cubismRuntimeLoaded,
+    model_asset_route_available: modelAssetRouteAvailable,
+    model_load_status: modelLoadStatus,
+    model_load_supported: browserModelLoadSupported,
+    model_load_attempted: heartbeat?.model_load_attempted === true,
+    model_load_succeeded: heartbeat?.model_load_succeeded === true,
+    model_load_error_kind: modelLoadErrorKind,
     model_loaded: modelLoaded,
     scene_loaded: sceneLoaded,
     model_loaded_claimed: modelLoadedClaimed,
     scene_loaded_claimed: sceneLoadedClaimed,
+    real_model_loaded_claimed: realModelLoadedClaimed,
+    real_scene_loaded_claimed: realSceneLoadedClaimed,
     model_matches: modelMatches,
     scene_matches: sceneMatches,
     browser_cue_delivery_ready: browserCueDeliveryReady,
@@ -82,4 +120,15 @@ export function createHeartbeatStatus({
     last_cue_applied_at: lastCueApplied ? cueAppliedAtMs : null,
     renderer_ready_candidate: rendererReady,
   };
+}
+
+function safeModelLoadStatus(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return "not_configured";
+  return MODEL_LOAD_STATUS.has(text) ? text : "failed";
+}
+
+function safeModelLoadErrorKind(value) {
+  const text = String(value ?? "").trim();
+  return MODEL_LOAD_ERROR_KIND.has(text) ? text : "unknown";
 }

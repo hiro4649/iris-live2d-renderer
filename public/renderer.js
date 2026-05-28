@@ -1,6 +1,25 @@
 const HEARTBEAT_INTERVAL_MS = 1_000;
 const RENDERER_EVENTS_ROUTE = "/renderer/events";
 const MAX_PENDING_BROWSER_CUES = 20;
+const MODEL_LOAD_STATUS = new Set([
+  "not_configured",
+  "asset_route_available",
+  "runtime_missing",
+  "loader_missing",
+  "loading",
+  "loaded",
+  "failed",
+]);
+const MODEL_LOAD_ERROR_KIND = new Set([
+  "not_configured",
+  "asset_route_unavailable",
+  "runtime_missing",
+  "loader_missing",
+  "load_failed",
+  "invalid_manifest",
+  "unsupported_runtime",
+  "unknown",
+]);
 
 export function createInitialRendererState() {
   return {
@@ -15,6 +34,13 @@ export function createInitialRendererState() {
     lastCueApplyStatus: "not_ready",
     model3ManifestAvailable: false,
     model3BrowserLoadSupported: false,
+    modelAssetRouteAvailable: false,
+    modelLoadAttempted: false,
+    modelLoadStatus: "not_configured",
+    modelLoadErrorKind: "not_configured",
+    modelLoadSupported: false,
+    modelLoadSucceeded: false,
+    modelRuntime: null,
     cubismRuntimeLoadAttempted: false,
     eventStreamActive: false,
     eventStreamConnected: false,
@@ -44,6 +70,7 @@ async function refreshStatus() {
   rendererState.modelId = config.model_id || "";
   rendererState.sceneId = config.scene_id || "";
   applyRuntimeConfig(rendererState, config, await ensureCubismRuntimeLoaded(config));
+  await updateModelLoadEvidence(rendererState, config);
   flushPendingCues(rendererState);
   updateStatusText(rendererState);
 }
@@ -54,10 +81,145 @@ export function applyRuntimeConfig(state, config, cubismRuntimeLoaded = state.cu
   state.cubismRuntimeLoaded = Boolean(cubismRuntimeLoaded);
   state.model3ManifestAvailable = Boolean(config?.model3?.manifest_available ?? config?.model3?.available);
   state.model3BrowserLoadSupported = Boolean(config?.model3?.browser_load_supported);
-  state.realModelLoadSupported = Boolean(config?.model3?.real_model_load_supported);
+  state.modelAssetRouteAvailable = state.model3BrowserLoadSupported;
+  state.realModelLoadSupported = false;
   state.model3Loaded = false;
   state.sceneLoaded = false;
   return state;
+}
+
+export async function updateModelLoadEvidence(
+  state,
+  config,
+  {
+    fetchImpl = globalThis.fetch,
+    runtimeRoot = globalThis,
+  } = {}
+) {
+  state.modelAssetRouteAvailable = Boolean(config?.model3?.browser_load_supported);
+
+  if (!state.modelAssetRouteAvailable) {
+    clearModelLoadSuccess(state);
+    setModelLoadStatus(state, "not_configured", "asset_route_unavailable");
+    return state;
+  }
+  if (!state.cubismRuntimeLoaded) {
+    clearModelLoadSuccess(state);
+    setModelLoadStatus(state, "runtime_missing", "runtime_missing");
+    return state;
+  }
+
+  const loader = detectCubismModelLoader(runtimeRoot);
+  if (!loader) {
+    clearModelLoadSuccess(state);
+    setModelLoadStatus(state, "loader_missing", "loader_missing");
+    return state;
+  }
+  if (state.modelLoadStatus === "loaded" && state.modelRuntime) {
+    state.realModelLoadSupported = true;
+    state.modelLoadSupported = true;
+    state.modelLoadSucceeded = true;
+    state.model3Loaded = true;
+    state.sceneLoaded = true;
+    return state;
+  }
+  if (state.modelLoadAttempted && state.modelLoadStatus === "failed") {
+    clearModelLoadSuccess(state);
+    return state;
+  }
+
+  state.modelLoadAttempted = true;
+  clearModelLoadSuccess(state);
+  setModelLoadStatus(state, "loading", "unknown");
+  const result = await tryLoadCubismModel({ fetchImpl, loader });
+  if (result.ok) {
+    state.modelRuntime = result.runtime;
+    state.realModelLoadSupported = true;
+    state.modelLoadSupported = true;
+    state.modelLoadSucceeded = true;
+    state.model3Loaded = true;
+    state.sceneLoaded = true;
+    setModelLoadStatus(state, "loaded", "unknown");
+    return state;
+  }
+  clearModelLoadSuccess(state);
+  setModelLoadStatus(state, "failed", result.error_kind || "load_failed");
+  return state;
+}
+
+export function detectCubismModelLoader(runtimeRoot = globalThis) {
+  const framework =
+    runtimeRoot?.Live2DCubismFramework?.Live2DCubismFramework ??
+    runtimeRoot?.Live2DCubismFramework ??
+    runtimeRoot?.CubismFramework ??
+    {};
+  const cubismMoc = framework.CubismMoc ?? runtimeRoot?.CubismMoc;
+  if (cubismMoc && typeof cubismMoc.create === "function") {
+    return {
+      kind: "cubism_moc_create",
+      create: cubismMoc.create.bind(cubismMoc),
+    };
+  }
+  return null;
+}
+
+async function tryLoadCubismModel({ fetchImpl, loader }) {
+  if (typeof fetchImpl !== "function") return { ok: false, error_kind: "unsupported_runtime" };
+  const manifestResponse = await safeFetchJson(fetchImpl, "/renderer/model3");
+  if (!manifestResponse.ok) return { ok: false, error_kind: "invalid_manifest" };
+  const mocToken = manifestResponse.body?.manifest?.FileReferences?.Moc;
+  const mocRoute = assetRouteForToken(mocToken);
+  if (!mocRoute) return { ok: false, error_kind: "invalid_manifest" };
+  try {
+    const response = await fetchImpl(mocRoute, { cache: "no-store" });
+    if (!response?.ok || typeof response.arrayBuffer !== "function") {
+      return { ok: false, error_kind: "load_failed" };
+    }
+    const mocBuffer = await response.arrayBuffer();
+    const moc = loader.create(mocBuffer);
+    if (!moc || typeof moc.createModel !== "function") {
+      return { ok: false, error_kind: "unsupported_runtime" };
+    }
+    const model = moc.createModel();
+    if (!model) return { ok: false, error_kind: "load_failed" };
+    return { ok: true, runtime: { moc, model } };
+  } catch {
+    return { ok: false, error_kind: "load_failed" };
+  }
+}
+
+async function safeFetchJson(fetchImpl, path) {
+  try {
+    const response = await fetchImpl(path, { cache: "no-store" });
+    if (!response?.ok || typeof response.json !== "function") return { ok: false, body: null };
+    const body = await response.json();
+    return { ok: true, body };
+  } catch {
+    return { ok: false, body: null };
+  }
+}
+
+function assetRouteForToken(token) {
+  const text = String(token ?? "");
+  const prefix = "renderer_model_asset:";
+  if (!text.startsWith(prefix)) return "";
+  const assetId = text.slice(prefix.length);
+  if (!/^asset_[a-f0-9]{16}_[a-z0-9]+$/u.test(assetId)) return "";
+  return `/renderer/model-asset/${assetId}`;
+}
+
+function setModelLoadStatus(state, status, errorKind) {
+  state.modelLoadStatus = MODEL_LOAD_STATUS.has(status) ? status : "failed";
+  state.modelLoadErrorKind = MODEL_LOAD_ERROR_KIND.has(errorKind) ? errorKind : "unknown";
+}
+
+function clearModelLoadSuccess(state) {
+  state.realModelLoadSupported = false;
+  state.modelLoadSupported = false;
+  state.modelLoadSucceeded = false;
+  state.model3Loaded = false;
+  state.sceneLoaded = false;
+  state.modelRuntime = null;
 }
 
 async function ensureCubismRuntimeLoaded(config) {
@@ -180,8 +342,15 @@ export function createHeartbeatPayload(state, nowMs = Date.now()) {
     model_id: state.modelId,
     scene_id: state.sceneId,
     cubism_runtime_loaded: state.cubismRuntimeLoaded,
+    model_asset_route_available: state.modelAssetRouteAvailable,
+    model_load_status: state.modelLoadStatus,
+    model_load_supported: state.modelLoadSupported,
+    model_load_attempted: state.modelLoadAttempted,
+    model_load_succeeded: state.modelLoadSucceeded,
+    model_load_error_kind: state.modelLoadErrorKind,
     model3_loaded: state.model3Loaded,
     model_loaded: state.model3Loaded,
+    real_model_load_supported: state.realModelLoadSupported,
     real_model_loaded: state.realModelLoadSupported && state.model3Loaded,
     scene_loaded: state.sceneLoaded,
     real_scene_loaded: state.realModelLoadSupported && state.sceneLoaded,
@@ -230,6 +399,9 @@ export function browserStatusText(state) {
     return "Live2D renderer preserving cue until real model load";
   }
   if (!state.cubismRuntimeLoaded) return "Live2D renderer waiting for Cubism runtime";
+  if (state.modelLoadStatus === "loader_missing") return "Live2D renderer waiting for model loader";
+  if (state.modelLoadStatus === "loading") return "Live2D renderer loading model";
+  if (state.modelLoadStatus === "failed") return "Live2D renderer waiting for valid model load";
   if (!state.model3Loaded || !state.sceneLoaded) return "Live2D renderer waiting for real model load";
   return "Live2D renderer ready to apply cues";
 }

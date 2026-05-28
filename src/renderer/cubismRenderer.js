@@ -57,7 +57,10 @@ export function createBrowserRuntimeConfig({
       load_route: browserLoadSupported ? "renderer_model3_manifest" : "not_available",
       asset_route: browserLoadSupported ? "renderer_model_asset" : "not_available",
       browser_load_supported: browserLoadSupported,
+      real_model_load_supported: false,
       real_model_loaded: false,
+      loader_required: true,
+      model_load_status: browserLoadSupported ? "asset_route_available" : "not_configured",
     },
     cue_capability_required: [
       "live2d_engine_request",
