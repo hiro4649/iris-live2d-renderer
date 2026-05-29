@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v0.9.9
+// CODEX_QUALITY_HARNESS_FILE v1.0.0
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
@@ -399,11 +399,6 @@ function buildFastPathExplainabilityStatus(fastPathStatus = {}) {
   };
 }
 
-function remoteEvidencePendingAfterPush(env = process.env) {
-  return ['remote_evidence_required_after_push', 'remote_evidence_pending_before_push']
-    .includes(String(env.CODEX_REMOTE_EVIDENCE_PHASE || ''));
-}
-
 function buildOneScreenDashboardStatus(parts) {
   const blocking = [
     ['bugfix', parts.bugfixEvidenceStatus],
@@ -414,25 +409,18 @@ function buildOneScreenDashboardStatus(parts) {
     ['task_mode', parts.taskDisciplineStatus],
     ['runtime_risk', parts.runtimeRiskRegisterStatus],
   ].find(([, value]) => value?.status === 'manual_confirmation_required' || value?.status === 'warning');
-  const productPendingRemoteEvidence = Boolean(
-    remoteEvidencePendingAfterPush(parts.env) &&
-    (parts.classificationStatus?.productRelevantChanged ||
-      parts.classificationStatus?.packageOrLockfileChanged ||
-      parts.classificationStatus?.runtimeReadinessClaimed),
-  );
   return {
     status: 'pass',
     mode: isSourceHarnessMode(parts.env) ? 'source' : 'target',
-    mergeReady: !blocking && !manual && !productPendingRemoteEvidence,
-    targetMergeReady: !blocking && !manual && !productPendingRemoteEvidence,
+    mergeReady: !blocking && !manual,
+    targetMergeReady: !blocking && !manual,
     topBlockingReason: blocking?.[0] || '',
-    topNextAction: blocking ? 'fix_blocking_v085_evidence' : manual ? 'add_manual_confirmation_or_safe_summary' : productPendingRemoteEvidence ? 'wait_for_same_head_remote_pass' : 'ready_for_review',
+    topNextAction: blocking ? 'fix_blocking_v085_evidence' : manual ? 'add_manual_confirmation_or_safe_summary' : 'ready_for_review',
     fastPathDecision: parts.fastPathExplainabilityStatus.decision,
     productEvidenceSummary: parts.productEvidenceExplainStatus.nextBestFix,
     runtimeRiskSummary: parts.runtimeRiskRegisterStatus.status,
     importSmokeSummary: parts.importSmokeMicroStatus.status,
     prProfileHintSummary: parts.prProfileAssistStatus.status,
-    reasonCodes: productPendingRemoteEvidence ? ['remote_evidence_pending_after_push'] : [],
     safeSummaryOnly: true,
   };
 }
@@ -451,7 +439,6 @@ export async function buildV085StabilityReport(env = process.env) {
   const fastPathExplainabilityStatus = buildFastPathExplainabilityStatus(fastPathStatus);
   const oneScreenDashboardStatus = buildOneScreenDashboardStatus({
     env,
-    classificationStatus,
     taskDisciplineStatus,
     bugfixEvidenceStatus,
     prProfileAssistStatus,

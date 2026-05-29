@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v0.9.9
+// CODEX_QUALITY_HARNESS_FILE v1.0.0
 import { fileURLToPath } from 'node:url';
 import {
   HARNESS_VERSION,
@@ -84,10 +84,6 @@ function validateBaseline(input, env = process.env) {
   };
 }
 
-function remoteEvidenceDeferred(env = process.env) {
-  return ['remote_evidence_required_after_push', 'remote_evidence_pending_before_push'].includes(String(env.CODEX_REMOTE_EVIDENCE_PHASE || ''));
-}
-
 export function buildRemoteProductBaselineReport(env = process.env) {
   const classified = classifyChange(changedFiles(env), env);
   const c = classified.classification || {};
@@ -106,13 +102,6 @@ export function buildRemoteProductBaselineReport(env = process.env) {
 
   const input = baselineInput(env);
   if (!input || input.__missing) {
-    if (remoteEvidenceDeferred(env)) {
-      return simpleStatus('remoteProductBaselineStatus', 'warning', {
-        baselineRequired: true,
-        reasonCodes: [],
-        warnings: ['remote_product_baseline_pending_after_push'],
-      });
-    }
     return simpleStatus('remoteProductBaselineStatus', isPrContext(env) ? 'fail' : 'manual_confirmation_required', {
       baselineRequired: true,
       reasonCodes: ['remote_product_baseline_missing'],
