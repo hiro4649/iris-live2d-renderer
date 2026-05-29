@@ -56,6 +56,15 @@ production_readiness_claimed: no
 - Motion dataset: runtime_motion_allowlist stays separate from expression_candidate_labels; future micro reaction labels are not executable until implemented and tested.
 - Production: no runtime readiness claim and no production readiness claim.
 
+## Inserted Preflight: LIVE2D-CUBISM-LOADER-INTEGRATION7
+
+- Position: after trusted loader evidence gate and before MICRO-REACTION-PACK5.
+- Scope: select `cubism_framework_model_loader_v1` as the future real loader path and keep `cubism_moc_create` diagnostic-only.
+- Dependency: if compatible framework loader files are absent, report `missing_dependency` or `operator_attention_required` safely.
+- Boundary: loader-shaped objects, fixture loaders, safe asset routes, manifest availability, SSE, polling, and cue acceptance must not become renderer_ready.
+- Allowlist: trusted loader allowlist remains disabled until owner-confirmed real loader evidence is available.
+- Production: no runtime readiness claim and no production readiness claim.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。

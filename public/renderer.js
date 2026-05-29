@@ -15,11 +15,30 @@ const MODEL_LOAD_ERROR_KIND = new Set([
   "asset_route_unavailable",
   "runtime_missing",
   "loader_missing",
+  "missing_dependency",
+  "operator_attention_required",
   "load_failed",
   "invalid_manifest",
   "unsupported_runtime",
   "unknown",
 ]);
+const LOADER_CAPABILITY_CLASS = new Set([
+  "no_runtime",
+  "cubism_core_only",
+  "loader_detected_untrusted",
+  "loader_contract_candidate",
+  "trusted_loader_evidence_candidate",
+  "trusted_loader_ready_future",
+]);
+const LOADER_DEPENDENCY_STATUS = new Set([
+  "not_configured",
+  "missing_dependency",
+  "operator_attention_required",
+  "candidate_detected",
+  "unsupported_runtime",
+]);
+const SELECTED_CUBISM_LOADER_KIND = "cubism_framework_model_loader_v1";
+const FALLBACK_CUBISM_LOADER_KIND = "cubism_moc_create";
 
 export function createInitialRendererState() {
   return {
@@ -41,6 +60,10 @@ export function createInitialRendererState() {
     modelLoadSupported: false,
     modelLoadSucceeded: false,
     modelRuntime: null,
+    loaderCapabilityClass: "no_runtime",
+    loaderDependencyStatus: "not_configured",
+    loaderCandidateKind: "none",
+    trustedLoaderEvidence: null,
     cubismRuntimeLoadAttempted: false,
     eventStreamActive: false,
     eventStreamConnected: false,
@@ -85,6 +108,10 @@ export function applyRuntimeConfig(state, config, cubismRuntimeLoaded = state.cu
   state.realModelLoadSupported = false;
   state.model3Loaded = false;
   state.sceneLoaded = false;
+  state.loaderCapabilityClass = cubismRuntimeLoaded ? "cubism_core_only" : "no_runtime";
+  state.loaderDependencyStatus = cubismRuntimeLoaded ? "missing_dependency" : "not_configured";
+  state.loaderCandidateKind = "none";
+  state.trustedLoaderEvidence = null;
   return state;
 }
 
@@ -100,11 +127,13 @@ export async function updateModelLoadEvidence(
 
   if (!state.modelAssetRouteAvailable) {
     clearModelLoadSuccess(state);
+    setLoaderDiagnostic(state, "no_runtime", "not_configured", "none");
     setModelLoadStatus(state, "not_configured", "asset_route_unavailable");
     return state;
   }
   if (!state.cubismRuntimeLoaded) {
     clearModelLoadSuccess(state);
+    setLoaderDiagnostic(state, "no_runtime", "missing_dependency", "none");
     setModelLoadStatus(state, "runtime_missing", "runtime_missing");
     return state;
   }
@@ -112,7 +141,15 @@ export async function updateModelLoadEvidence(
   const loader = detectCubismModelLoader(runtimeRoot);
   if (!loader) {
     clearModelLoadSuccess(state);
-    setModelLoadStatus(state, "loader_missing", "loader_missing");
+    setLoaderDiagnostic(state, "cubism_core_only", "missing_dependency", "none");
+    setModelLoadStatus(state, "loader_missing", "missing_dependency");
+    return state;
+  }
+  if (loader.diagnostic_only || loader.kind !== SELECTED_CUBISM_LOADER_KIND) {
+    clearModelLoadSuccess(state);
+    setLoaderDiagnostic(state, "loader_detected_untrusted", "operator_attention_required", loader.kind);
+    state.trustedLoaderEvidence = createTrustedLoaderEvidenceCandidate(state, loader.kind);
+    setModelLoadStatus(state, "loader_missing", "operator_attention_required");
     return state;
   }
   if (state.modelLoadStatus === "loaded" && state.modelRuntime) {
@@ -156,7 +193,9 @@ export function detectCubismModelLoader(runtimeRoot = globalThis) {
   const cubismMoc = framework.CubismMoc ?? runtimeRoot?.CubismMoc;
   if (cubismMoc && typeof cubismMoc.create === "function") {
     return {
-      kind: "cubism_moc_create",
+      kind: FALLBACK_CUBISM_LOADER_KIND,
+      selected_kind: SELECTED_CUBISM_LOADER_KIND,
+      diagnostic_only: true,
       create: cubismMoc.create.bind(cubismMoc),
     };
   }
@@ -213,6 +252,31 @@ function setModelLoadStatus(state, status, errorKind) {
   state.modelLoadErrorKind = MODEL_LOAD_ERROR_KIND.has(errorKind) ? errorKind : "unknown";
 }
 
+function setLoaderDiagnostic(state, capabilityClass, dependencyStatus, loaderKind) {
+  state.loaderCapabilityClass = LOADER_CAPABILITY_CLASS.has(capabilityClass) ? capabilityClass : "loader_detected_untrusted";
+  state.loaderDependencyStatus = LOADER_DEPENDENCY_STATUS.has(dependencyStatus) ? dependencyStatus : "operator_attention_required";
+  state.loaderCandidateKind = safeLoaderKind(loaderKind);
+  if (state.loaderCandidateKind === "none") state.trustedLoaderEvidence = null;
+}
+
+function createTrustedLoaderEvidenceCandidate(state, loaderKind, nowMs = Date.now()) {
+  return {
+    loader_kind: safeLoaderKind(loaderKind),
+    loader_version: "operator_supplied_loader_required",
+    model_load_session_id: "diagnostic_session",
+    safe_manifest_status_hash: "safe_manifest_route_available",
+    safe_moc_asset_token_hash: "safe_moc_asset_hash_pending",
+    model_id: safeLoaderLabel(state.modelId) || "model_not_configured",
+    scene_id: safeLoaderLabel(state.sceneId) || "scene_not_configured",
+    loaded_at_ms: nowMs,
+    fresh_heartbeat_timestamp_ms: nowMs,
+    scene_binding_result: "not_bound",
+    cue_capability_result: "not_confirmed",
+    last_cue_applied_result: "not_applied",
+    server_trusted_policy_gate: false,
+  };
+}
+
 function clearModelLoadSuccess(state) {
   state.realModelLoadSupported = false;
   state.modelLoadSupported = false;
@@ -220,6 +284,16 @@ function clearModelLoadSuccess(state) {
   state.model3Loaded = false;
   state.sceneLoaded = false;
   state.modelRuntime = null;
+}
+
+function safeLoaderKind(value) {
+  const text = String(value ?? "").trim();
+  return /^[a-z0-9_]{1,80}$/u.test(text) ? text : "none";
+}
+
+function safeLoaderLabel(value) {
+  const text = String(value ?? "").trim();
+  return /^[a-zA-Z0-9_.:-]{1,160}$/u.test(text) ? text : "";
 }
 
 async function ensureCubismRuntimeLoaded(config) {
@@ -348,6 +422,10 @@ export function createHeartbeatPayload(state, nowMs = Date.now()) {
     model_load_attempted: state.modelLoadAttempted,
     model_load_succeeded: state.modelLoadSucceeded,
     model_load_error_kind: state.modelLoadErrorKind,
+    loader_capability_class: state.loaderCapabilityClass,
+    loader_dependency_status: state.loaderDependencyStatus,
+    loader_candidate_kind: state.loaderCandidateKind,
+    trusted_loader_evidence: state.trustedLoaderEvidence || undefined,
     model3_loaded: state.model3Loaded,
     model_loaded: state.model3Loaded,
     real_model_load_supported: state.realModelLoadSupported,
