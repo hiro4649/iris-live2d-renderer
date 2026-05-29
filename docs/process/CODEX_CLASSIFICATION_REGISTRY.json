@@ -1,6 +1,6 @@
 {
   "schemaVersion": "0.9.5",
-  "marker": "CODEX_QUALITY_HARNESS_FILE v0.9.9",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v1.0.0",
   "harnessVersion": "0.9.5",
   "entries": [
     {
@@ -38,15 +38,6 @@
       "requiresProductVerification": false,
       "allowsFastPath": false,
       "notes": "Harness usage docs."
-    },
-    {
-      "pathPattern": "docs/iris-live2d-renderer/**",
-      "classification": "docs",
-      "surface": "docs",
-      "risk": "R2",
-      "requiresProductVerification": false,
-      "allowsFastPath": false,
-      "notes": "Live2D renderer product planning and safety docs."
     },
     {
       "pathPattern": ".github/workflows/**",

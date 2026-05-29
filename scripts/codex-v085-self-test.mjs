@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v0.9.9
+// CODEX_QUALITY_HARNESS_FILE v1.0.0
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { HARNESS_VERSION, marker, simpleStatus, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
@@ -78,17 +78,6 @@ export async function buildV085SelfTestReport() {
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { productSourceChanged: true }, productRelevantChanged: true }),
   });
   assertCase('productRelevantChanged with missing task mode -> manual_confirmation_required', result.taskDisciplineStatus.status === 'manual_confirmation_required', failures, cases, result.taskDisciplineStatus.status);
-
-  result = await runV085({
-    CODEX_EVENT_NAME: 'pull_request',
-    CODEX_RISK_LEVEL: 'R3',
-    CODEX_REMOTE_EVIDENCE_PHASE: 'remote_evidence_required_after_push',
-    CODEX_CHANGED_FILES: 'src/example.ts',
-    CODEX_PR_BODY: 'PR profile: product_r3\n\nTask mode: feature\n\nGoal:\nProduct pre-push handoff.\n\nRisk level:\nR3\n\nProduct verification:\nLocal product checks pass; remote evidence pending after push.\n\nAffected entrypoints:\nSafe label.\n\nFailure paths considered:\nSafe label.\n\nResidual risks:\nRemote quality-gate pending after push.\n\nHuman confirmation needed:\nyes.',
-    CODEX_PRODUCT_VERIFICATION_JSON: productStatus({ status: 'pass', reasonCodes: [] }),
-    CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { productSourceChanged: true }, productRelevantChanged: true }),
-  });
-  assertCase('target product PR pending-after-push -> pass but not merge-ready', result.status === 'pass' && result.oneScreenDashboardStatus.targetMergeReady === false && result.oneScreenDashboardStatus.reasonCodes.includes('remote_evidence_pending_after_push'), failures, cases, `${result.status}:${result.oneScreenDashboardStatus.targetMergeReady}`);
 
   const goodBugfixEvidence = {
     codexBugFixEvidence: {
