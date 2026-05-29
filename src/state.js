@@ -12,6 +12,7 @@ export function createRendererState({
   sceneId = "",
   cubismCoreJsPath = "",
   model3JsonPath = "",
+  cubismLoaderEnv = {},
   heartbeatMaxAgeMs = DEFAULT_HEARTBEAT_MAX_AGE_MS,
   realModelLoadSupported = false,
   now = () => Date.now(),
@@ -21,6 +22,7 @@ export function createRendererState({
     sceneId,
     cubismCoreJsPath,
     model3JsonPath,
+    cubismLoaderEnv,
     heartbeatMaxAgeMs,
   });
   const state = {
@@ -34,6 +36,7 @@ export function createRendererState({
     model3ManifestAvailable: cubismConfig.model3_manifest_available,
     model3ManifestStatus: cubismConfig.model3_manifest_status,
     model3AssetRegistry: cubismConfig.model3_asset_registry,
+    cubismLoaderProvisioning: cubismConfig.cubism_loader_provisioning,
     heartbeatMaxAgeMs,
     startedAtMs: now(),
     cueCount: 0,
@@ -82,6 +85,7 @@ export function createRendererState({
           loader_capability_class: heartbeatStatus.loader_capability_class,
           loader_dependency_status: heartbeatStatus.loader_dependency_status,
           loader_candidate_kind: heartbeatStatus.loader_candidate_kind,
+          loader_provisioning: state.cubismLoaderProvisioning,
           trusted_loader_evidence_status: heartbeatStatus.trusted_loader_evidence_status,
           trusted_loader_kind: heartbeatStatus.trusted_loader_kind,
           trusted_loader_policy_gate: heartbeatStatus.trusted_loader_policy_gate,
@@ -139,6 +143,7 @@ export function createRendererState({
         loader_capability_class: status.renderer_health.loader_capability_class,
         loader_dependency_status: status.renderer_health.loader_dependency_status,
         loader_candidate_kind: status.renderer_health.loader_candidate_kind,
+        loader_provisioning: status.renderer_health.loader_provisioning,
         trusted_loader_evidence_status: status.renderer_health.trusted_loader_evidence_status,
         trusted_loader_kind: status.renderer_health.trusted_loader_kind,
         trusted_loader_policy_gate: status.renderer_health.trusted_loader_policy_gate,
@@ -222,6 +227,7 @@ export function createRendererState({
         model3ManifestAvailable: state.model3ManifestAvailable,
         model3ManifestStatus: state.model3ManifestStatus,
         model3BrowserLoadSupported: state.model3AssetRegistry?.available === true,
+        loaderProvisioning: state.cubismLoaderProvisioning,
       });
       assertSafePublicObject(response, "browser runtime config");
       return response;
@@ -271,6 +277,7 @@ export function createRendererState({
           loader_capability_class: heartbeatStatus.loader_capability_class,
           loader_dependency_status: heartbeatStatus.loader_dependency_status,
           loader_candidate_kind: heartbeatStatus.loader_candidate_kind,
+          loader_provisioning: state.cubismLoaderProvisioning,
           trusted_loader_evidence_status: heartbeatStatus.trusted_loader_evidence_status,
           trusted_loader_kind: heartbeatStatus.trusted_loader_kind,
           trusted_loader_policy_gate: heartbeatStatus.trusted_loader_policy_gate,

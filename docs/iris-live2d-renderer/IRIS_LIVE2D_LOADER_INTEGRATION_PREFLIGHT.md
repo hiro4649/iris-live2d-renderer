@@ -90,3 +90,13 @@ This PR is an inserted preflight between `REAL-MODEL-LOAD4` and `MICRO-REACTION-
 - If the compatible Cubism Framework model loader is absent, browser diagnostics must report `missing_dependency` or `operator_attention_required` without attempting readiness.
 - Loader-shaped objects and test fixtures remain diagnostic-only while the server trusted allowlist is empty.
 - The next safe operator action is to provide the approved Cubism Framework loader through configured renderer environment names only; raw local paths must stay private.
+
+## Loader Provisioning Preflight
+
+`LIVE2D-CUBISM-LOADER-PROVISIONING8` verifies only whether an owner can provide licensed Cubism Framework loader material through safe configuration. The repository must not download, redistribute, or commit Cubism SDK or Framework files, and it must not quote vendor source contents.
+
+Allowed configuration names are `IRIS_LIVE2D_CUBISM_FRAMEWORK_JS`, `IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE`, and `IRIS_LIVE2D_CUBISM_LOADER_KIND`. Public runtime summaries may expose those names and safe status labels, but not their values, local file locations, SDK filenames, loader errors, stack traces, endpoint values, tokens, secrets, manifests, assets, cues, or commands.
+
+Provisioning statuses are diagnostic only. `candidate_present` means an owner-provided file appears to be present and still requires `license_attention_required`, owner confirmation, and a future trusted loader policy gate. `cubism_moc_create` remains diagnostic-only. `cubism_framework_model_loader_v1` remains a future loader path until the trusted loader allowlist is explicitly enabled in a later PR with same-head evidence.
+
+Loader provisioning does not imply `model_loaded`, `scene_loaded`, `browser_cue_delivery_ready`, `renderer_ready`, runtime readiness, or production readiness. The next PR may enable a trusted loader kind only after license/provisioning review, owner confirmation, and passing same-head tests.
