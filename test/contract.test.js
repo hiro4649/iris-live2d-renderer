@@ -4,6 +4,13 @@ import { join } from "node:path";
 import { createLive2dRendererServer, listen } from "../src/server.js";
 import { createRendererState } from "../src/state.js";
 import {
+  TRUSTED_LOADER_EVIDENCE_SCHEMA,
+  TRUSTED_LOADER_KINDS,
+  createTrustedLoaderEvidenceSummary,
+  isTrustedLoaderEvidenceCandidate,
+  validateTrustedLoaderEvidence,
+} from "../src/renderer/trustedLoaderEvidence.js";
+import {
   applyRuntimeConfig,
   browserStatusText,
   createHeartbeatPayload,
@@ -81,6 +88,104 @@ try {
     true
   );
 
+  assert.equal(TRUSTED_LOADER_EVIDENCE_SCHEMA, "iris_live2d_trusted_loader_evidence_v1");
+  assert.equal(TRUSTED_LOADER_KINDS.length, 0);
+  const missingTrustedEvidence = validateTrustedLoaderEvidence(null, { nowMs });
+  assert.equal(missingTrustedEvidence.error_kind, "trusted_loader_evidence_missing");
+  assert.equal(missingTrustedEvidence.status, "missing");
+
+  const futureTrustedEvidence = trustedLoaderEvidenceFixture();
+  assert.equal(isTrustedLoaderEvidenceCandidate(futureTrustedEvidence), true);
+  const futureTrustedValidation = validateTrustedLoaderEvidence(futureTrustedEvidence, {
+    nowMs,
+    expectedModelId: "iris_default",
+    expectedSceneId: "main_scene",
+  });
+  assert.equal(futureTrustedValidation.status, "future_only");
+  assert.equal(futureTrustedValidation.error_kind, "trusted_loader_future_only");
+  assert.equal(futureTrustedValidation.trusted_loader_ready_candidate, false);
+  const futureTrustedSummary = createTrustedLoaderEvidenceSummary(futureTrustedValidation);
+  assert.equal(futureTrustedSummary.trusted_loader_evidence_status, "future_only");
+  assert.equal(futureTrustedSummary.trusted_loader_policy_gate, true);
+  assert.equal(futureTrustedSummary.trusted_loader_ready_candidate, false);
+  assertSafe(JSON.stringify(futureTrustedSummary));
+
+  const unknownTrustedValidation = validateTrustedLoaderEvidence(
+    trustedLoaderEvidenceFixture({ loader_kind: "unknown_loader_fixture" }),
+    { nowMs }
+  );
+  assert.equal(unknownTrustedValidation.status, "untrusted");
+  assert.equal(unknownTrustedValidation.error_kind, "trusted_loader_kind_untrusted");
+  const missingPolicyGateValidation = validateTrustedLoaderEvidence(
+    trustedLoaderEvidenceFixture({ server_trusted_policy_gate: false }),
+    { nowMs }
+  );
+  assert.equal(missingPolicyGateValidation.error_kind, "trusted_loader_policy_gate_missing");
+  const staleTrustedValidation = validateTrustedLoaderEvidence(
+    trustedLoaderEvidenceFixture({
+      loaded_at_ms: nowMs - 10_000,
+      fresh_heartbeat_timestamp_ms: nowMs - 10_000,
+    }),
+    { nowMs }
+  );
+  assert.equal(staleTrustedValidation.error_kind, "trusted_loader_evidence_stale");
+  const modelMismatchTrustedValidation = validateTrustedLoaderEvidence(
+    trustedLoaderEvidenceFixture({ model_id: "other_model" }),
+    { nowMs, expectedModelId: "iris_default" }
+  );
+  assert.equal(modelMismatchTrustedValidation.error_kind, "trusted_loader_evidence_invalid");
+  const sceneMismatchTrustedValidation = validateTrustedLoaderEvidence(
+    trustedLoaderEvidenceFixture({ scene_id: "other_scene" }),
+    { nowMs, expectedSceneId: "main_scene" }
+  );
+  assert.equal(sceneMismatchTrustedValidation.error_kind, "trusted_loader_evidence_invalid");
+  for (const field of [
+    "raw_model_path",
+    "model_path",
+    "internal_model_path",
+    "raw_asset_path",
+    "asset_path",
+    "raw_manifest_body",
+    "manifest_body",
+    "raw_loader_error",
+    "loader_error",
+    "stack",
+    "stack_trace",
+    "endpoint",
+    "renderer_endpoint",
+    "url",
+    "token",
+    "secret",
+    "authorization",
+    "credential",
+    "password",
+    "api_key",
+    "raw_cue_payload",
+    "raw_payload",
+    "raw_motion_command",
+    "candidate",
+    "command",
+    "world_command",
+    "obs_command",
+    "game_input",
+    "os_command",
+  ]) {
+    const unsafeTrustedValidation = validateTrustedLoaderEvidence(
+      trustedLoaderEvidenceFixture({ [field]: "unsafe_fixture_value" }),
+      { nowMs }
+    );
+    assert.equal(unsafeTrustedValidation.error_kind, "trusted_loader_evidence_unsafe");
+    const unsafeTrustedSummary = JSON.stringify(createTrustedLoaderEvidenceSummary(unsafeTrustedValidation));
+    assert.equal(unsafeTrustedSummary.includes(`"${field}"`), false);
+    assert.equal(unsafeTrustedSummary.includes("unsafe_fixture_value"), false);
+    assertSafe(unsafeTrustedSummary);
+  }
+  const unsafeTrustedValueValidation = validateTrustedLoaderEvidence(
+    trustedLoaderEvidenceFixture({ loader_version: "https://secret.example/loader" }),
+    { nowMs }
+  );
+  assert.equal(unsafeTrustedValueValidation.error_kind, "trusted_loader_evidence_unsafe");
+
   const missing = await startHarness(createRendererState({
     modelId: "iris_default",
     sceneId: "main_scene",
@@ -99,6 +204,8 @@ try {
   assert.equal(statusBefore.scene_id, "main_scene");
   assert.equal(statusBefore.renderer_ready, false);
   assert.equal(statusBefore.renderer_health.model3_manifest_available, false);
+  assert.equal(statusBefore.renderer_health.trusted_loader_evidence_status, "missing");
+  assert.equal(statusBefore.renderer_health.trusted_loader_ready_candidate, false);
   assert.equal(statusBefore.last_cue_received_at, null);
   assert.equal(statusBefore.cue_capability.live2d_engine_request, true);
   assertSafe(JSON.stringify(statusBefore));
@@ -214,6 +321,22 @@ try {
   assert.equal(fakeLoaderHeartbeat.renderer_health.model_loaded, false);
   assert.equal(fakeLoaderHeartbeat.renderer_health.scene_loaded, false);
   assertSafe(JSON.stringify(fakeLoaderHeartbeat));
+
+  const diagnosticTrustedLoaderHeartbeat = await missing.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    trusted_loader_evidence: trustedLoaderEvidenceFixture({
+      loader_kind: "cubism_moc_create",
+    }),
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_ready, false);
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.real_model_load_supported, false);
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.scene_loaded, false);
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.trusted_loader_evidence_status, "future_only");
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.trusted_loader_kind, "cubism_moc_create");
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.trusted_loader_policy_gate, true);
+  assert.equal(diagnosticTrustedLoaderHeartbeat.renderer_health.trusted_loader_ready_candidate, false);
+  assertSafe(JSON.stringify(diagnosticTrustedLoaderHeartbeat));
 
   browserState.realModelLoadSupported = true;
   browserState.model3Loaded = true;
@@ -524,9 +647,19 @@ try {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: { schema: "iris_live2d_renderer_cue_v1", motion: { style: "spin_attack" } },
   }, "unknown_motion_style", "spin_attack");
-  await assertCueRejected(missing, rendererCueDelivery({
-    motion: { style: "surprise_micro" },
-  }), "unknown_motion_style", "surprise_micro");
+  for (const futureMicroLabel of [
+    "blink_attention",
+    "small_nod",
+    "soft_smile",
+    "surprise_micro",
+    "breathing_shift",
+    "gaze_return",
+    "neutral_breath",
+  ]) {
+    await assertCueRejected(missing, rendererCueDelivery({
+      motion: { style: futureMicroLabel },
+    }), "unknown_motion_style", futureMicroLabel);
+  }
   await assertCueRejected(missing, {
     schema: "iris_live2d_renderer_cue_delivery_v1",
     cue: {
@@ -1073,7 +1206,10 @@ try {
       "real_model_load_evidence_required",
       "synthetic_real_model_heartbeat_does_not_make_ready",
       "trusted_loader_preflight_contract_documented",
+      "trusted_loader_evidence_gate_diagnostic_only",
+      "trusted_loader_evidence_forbidden_material_rejected",
       "fake_loader_detection_is_diagnostic_only",
+      "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
     ],
   }));
@@ -1117,6 +1253,25 @@ function syntheticRealModelHeartbeat(overrides = {}) {
     real_scene_loaded: true,
     ...overrides,
   });
+}
+
+function trustedLoaderEvidenceFixture(overrides = {}) {
+  return {
+    loader_kind: "cubism_framework_model_loader_v1",
+    loader_version: "fixture_loader_version",
+    model_load_session_id: "fixture_session_label",
+    safe_manifest_status_hash: "fixture_manifest_hash",
+    safe_moc_asset_token_hash: "fixture_moc_asset_hash",
+    model_id: "iris_default",
+    scene_id: "main_scene",
+    loaded_at_ms: nowMs,
+    fresh_heartbeat_timestamp_ms: nowMs,
+    scene_binding_result: "bound",
+    cue_capability_result: "confirmed",
+    last_cue_applied_result: "applied",
+    server_trusted_policy_gate: true,
+    ...overrides,
+  };
 }
 
 function createIrisBridgeCueFixture() {
