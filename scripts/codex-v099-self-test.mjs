@@ -49,9 +49,9 @@ export function buildV099SelfTestReport() {
   assertCase('normal_safe_bundle_with_standby_lifeboat_pass', statusOf(report, 'lifeboatSemanticsStatus') === 'pass', failures, cases, statusOf(report, 'lifeboatSemanticsStatus'), reasonsOf(report, 'lifeboatSemanticsStatus'));
   report = buildSafeArtifactBundleCompletenessReport({ targetFinalSummaryMissing: true });
   assertCase('missing_target_summary_fails', statusOf(report, 'safeArtifactBundleCompletenessStatus') === 'fail', failures, cases, statusOf(report, 'safeArtifactBundleCompletenessStatus'), reasonsOf(report, 'safeArtifactBundleCompletenessStatus'));
-  report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, productEvidenceMissing: true, remoteBaseline: passEvidence, remoteNpmDiagnostic: passEvidence, sameHeadMatch: true });
+  report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, productEvidenceMissing: true, remoteBaseline: passEvidence, remoteNpmDiagnostic: passEvidence, sameHeadMatch: true, remoteEvidencePhase: 'not_required' });
   assertCase('missing_product_evidence_fails', statusOf(report, 'formalEvidencePrecedenceStatus') === 'fail', failures, cases, statusOf(report, 'formalEvidencePrecedenceStatus'), reasonsOf(report, 'formalEvidencePrecedenceStatus'));
-  report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, formalEvidence: passEvidence, remoteBaselineMissing: true, remoteNpmDiagnostic: passEvidence, sameHeadMatch: true });
+  report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, formalEvidence: passEvidence, remoteBaselineMissing: true, remoteNpmDiagnostic: passEvidence, sameHeadMatch: true, remoteEvidencePhase: 'not_required' });
   assertCase('missing_remote_baseline_fails', statusOf(report, 'formalEvidencePrecedenceStatus') === 'fail', failures, cases, statusOf(report, 'formalEvidencePrecedenceStatus'), reasonsOf(report, 'formalEvidencePrecedenceStatus'));
   report = buildSafeArtifactBundleCompletenessReport({ reasonSummaryMissing: true });
   assertCase('missing_reason_summary_fails', statusOf(report, 'safeArtifactBundleCompletenessStatus') === 'fail', failures, cases, statusOf(report, 'safeArtifactBundleCompletenessStatus'), reasonsOf(report, 'safeArtifactBundleCompletenessStatus'));
@@ -59,8 +59,12 @@ export function buildV099SelfTestReport() {
   assertCase('npm_failure_remains_fail', statusOf(report, 'formalEvidencePrecedenceStatus') === 'fail', failures, cases, statusOf(report, 'formalEvidencePrecedenceStatus'), reasonsOf(report, 'formalEvidencePrecedenceStatus'));
   report = buildRemoteNpmDiagnosticNormalizationReport({ forceCheck: true, productRelevant: true, npmExecuted: true, npmExitCode: 0, formalEvidence: passEvidence, remoteBaseline: passEvidence, diagnosticStatus: 'superseded_by_formal_evidence' });
   assertCase('remote_npm_diagnostic_normalized_when_formal_evidence_pass', statusOf(report, 'remoteNpmDiagnosticNormalizationStatus') === 'pass', failures, cases, statusOf(report, 'remoteNpmDiagnosticNormalizationStatus'), reasonsOf(report, 'remoteNpmDiagnosticNormalizationStatus'));
-  report = buildRemoteNpmDiagnosticNormalizationReport({ forceCheck: true, productRelevant: true, npmExecuted: false });
+  report = buildRemoteNpmDiagnosticNormalizationReport({ forceCheck: true, productRelevant: true, npmExecuted: false, remoteEvidencePhase: 'not_required' });
   assertCase('remote_npm_not_executed_emitted_when_npm_not_run', statusOf(report, 'remoteNpmDiagnosticNormalizationStatus') === 'fail', failures, cases, statusOf(report, 'remoteNpmDiagnosticNormalizationStatus'), reasonsOf(report, 'remoteNpmDiagnosticNormalizationStatus'));
+  report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, remoteEvidencePhase: 'remote_evidence_required_after_push' });
+  assertCase('formal_evidence_pending_after_push_warns', statusOf(report, 'formalEvidencePrecedenceStatus') === 'warning', failures, cases, statusOf(report, 'formalEvidencePrecedenceStatus'), reasonsOf(report, 'formalEvidencePrecedenceStatus'));
+  report = buildRemoteNpmDiagnosticNormalizationReport({ forceCheck: true, productRelevant: true, npmExecuted: false, remoteEvidencePhase: 'remote_evidence_required_after_push' });
+  assertCase('remote_npm_pending_after_push_warns', statusOf(report, 'remoteNpmDiagnosticNormalizationStatus') === 'warning', failures, cases, statusOf(report, 'remoteNpmDiagnosticNormalizationStatus'), reasonsOf(report, 'remoteNpmDiagnosticNormalizationStatus'));
   report = buildLegacySelfTestAdvisoryReport({ harnessVersion: '0.9.9', selfTestFilePresent: true, localGateHasStatus: true, legacyFailureAdvisory: true });
   assertCase('legacy_self_test_advisory_for_non_active_version', statusOf(report, 'legacySelfTestAdvisoryStatus') === 'pass', failures, cases, statusOf(report, 'legacySelfTestAdvisoryStatus'), reasonsOf(report, 'legacySelfTestAdvisoryStatus'));
   report = buildLegacySelfTestAdvisoryReport({ harnessVersion: '0.9.9', selfTestFilePresent: true, localGateHasStatus: true, activeV099Failure: true });

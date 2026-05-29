@@ -40,6 +40,15 @@
       "notes": "Harness usage docs."
     },
     {
+      "pathPattern": "docs/iris-live2d-renderer/**",
+      "classification": "docs",
+      "surface": "docs",
+      "risk": "R2",
+      "requiresProductVerification": false,
+      "allowsFastPath": false,
+      "notes": "Live2D renderer product planning and safety docs."
+    },
+    {
       "pathPattern": ".github/workflows/**",
       "classification": "workflow",
       "surface": "workflow",
