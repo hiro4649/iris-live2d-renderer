@@ -82,3 +82,11 @@ This contract preserves K331, K332, K333, K334, K626, K627, K628, K629, K806, K8
 ## Live2D Schedule Phase
 
 This PR is an inserted preflight between `REAL-MODEL-LOAD4` and `MICRO-REACTION-PACK5`. The reason is that a compatible real Cubism model loader is not bundled, and trusted loader evidence must be defined before motion packs or micro reactions rely on renderer capability.
+
+## Loader Integration Candidate
+
+- Selected future loader kind: `cubism_framework_model_loader_v1`.
+- Diagnostic fallback kind: `cubism_moc_create`.
+- If the compatible Cubism Framework model loader is absent, browser diagnostics must report `missing_dependency` or `operator_attention_required` without attempting readiness.
+- Loader-shaped objects and test fixtures remain diagnostic-only while the server trusted allowlist is empty.
+- The next safe operator action is to provide the approved Cubism Framework loader through configured renderer environment names only; raw local paths must stay private.

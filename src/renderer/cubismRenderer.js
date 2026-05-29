@@ -62,6 +62,12 @@ export function createBrowserRuntimeConfig({
       loader_required: true,
       model_load_status: browserLoadSupported ? "asset_route_available" : "not_configured",
     },
+    loader_selection: {
+      selected_loader_kind: "cubism_framework_model_loader_v1",
+      fallback_loader_kind: "cubism_moc_create",
+      dependency_status: cubismSdkAvailable ? "operator_attention_required" : "missing_dependency",
+      trusted_loader_allowlist_enabled: false,
+    },
     cue_capability_required: [
       "live2d_engine_request",
       "renderer_cue_delivery",

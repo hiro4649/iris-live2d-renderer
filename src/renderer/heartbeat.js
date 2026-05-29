@@ -19,10 +19,27 @@ const MODEL_LOAD_ERROR_KIND = new Set([
   "asset_route_unavailable",
   "runtime_missing",
   "loader_missing",
+  "missing_dependency",
+  "operator_attention_required",
   "load_failed",
   "invalid_manifest",
   "unsupported_runtime",
   "unknown",
+]);
+const LOADER_CAPABILITY_CLASS = new Set([
+  "no_runtime",
+  "cubism_core_only",
+  "loader_detected_untrusted",
+  "loader_contract_candidate",
+  "trusted_loader_evidence_candidate",
+  "trusted_loader_ready_future",
+]);
+const LOADER_DEPENDENCY_STATUS = new Set([
+  "not_configured",
+  "missing_dependency",
+  "operator_attention_required",
+  "candidate_detected",
+  "unsupported_runtime",
 ]);
 
 export function createHeartbeatStatus({
@@ -66,6 +83,9 @@ export function createHeartbeatStatus({
   const cubismRuntimeLoaded = heartbeat?.cubism_runtime_loaded === true;
   const modelLoadStatus = safeModelLoadStatus(heartbeat?.model_load_status);
   const modelLoadErrorKind = safeModelLoadErrorKind(heartbeat?.model_load_error_kind);
+  const loaderCapabilityClass = safeLoaderCapabilityClass(heartbeat?.loader_capability_class);
+  const loaderDependencyStatus = safeLoaderDependencyStatus(heartbeat?.loader_dependency_status);
+  const loaderCandidateKind = safeLoaderKind(heartbeat?.loader_candidate_kind);
   const modelAssetRouteAvailable = heartbeat?.model_asset_route_available === true;
   const trustedLoaderEvidence = createTrustedLoaderEvidenceSummary(validateTrustedLoaderEvidence(
     heartbeat?.trusted_loader_evidence,
@@ -120,6 +140,9 @@ export function createHeartbeatStatus({
     model_load_attempted: heartbeat?.model_load_attempted === true,
     model_load_succeeded: heartbeat?.model_load_succeeded === true,
     model_load_error_kind: modelLoadErrorKind,
+    loader_capability_class: loaderCapabilityClass,
+    loader_dependency_status: loaderDependencyStatus,
+    loader_candidate_kind: loaderCandidateKind,
     trusted_loader_evidence_status: trustedLoaderEvidence.trusted_loader_evidence_status,
     trusted_loader_kind: trustedLoaderEvidence.trusted_loader_kind,
     trusted_loader_policy_gate: trustedLoaderEvidence.trusted_loader_policy_gate,
@@ -152,4 +175,21 @@ function safeModelLoadStatus(value) {
 function safeModelLoadErrorKind(value) {
   const text = String(value ?? "").trim();
   return MODEL_LOAD_ERROR_KIND.has(text) ? text : "unknown";
+}
+
+function safeLoaderCapabilityClass(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return "no_runtime";
+  return LOADER_CAPABILITY_CLASS.has(text) ? text : "loader_detected_untrusted";
+}
+
+function safeLoaderDependencyStatus(value) {
+  const text = String(value ?? "").trim();
+  if (!text) return "not_configured";
+  return LOADER_DEPENDENCY_STATUS.has(text) ? text : "operator_attention_required";
+}
+
+function safeLoaderKind(value) {
+  const text = String(value ?? "").trim();
+  return /^[a-z0-9_]{1,80}$/u.test(text) ? text : "none";
 }

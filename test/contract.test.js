@@ -59,6 +59,10 @@ try {
     "loader_detected_untrusted",
     "trusted_loader_evidence_candidate",
     "trusted_loader_ready_future",
+    "cubism_framework_model_loader_v1",
+    "cubism_moc_create",
+    "missing_dependency",
+    "operator_attention_required",
     "model_load_supported",
     "real_model_load_supported",
     "runtime_motion_allowlist",
@@ -215,6 +219,10 @@ try {
   assert.equal(missingRuntimeConfig.model3.available, false);
   assert.equal(missingRuntimeConfig.model3.load_route, "not_available");
   assert.equal(missingRuntimeConfig.model3.browser_load_supported, false);
+  assert.equal(missingRuntimeConfig.loader_selection.selected_loader_kind, "cubism_framework_model_loader_v1");
+  assert.equal(missingRuntimeConfig.loader_selection.fallback_loader_kind, "cubism_moc_create");
+  assert.equal(missingRuntimeConfig.loader_selection.dependency_status, "missing_dependency");
+  assert.equal(missingRuntimeConfig.loader_selection.trusted_loader_allowlist_enabled, false);
   assertSafe(JSON.stringify(missingRuntimeConfig));
   const missingModel3 = await fetchJsonStatus(`${missing.baseUrl}/renderer/model3`);
   assert.equal(missingModel3.status, 404);
@@ -281,7 +289,9 @@ try {
   assert.equal(cubismCoreOnlyState.cubismRuntimeLoaded, true);
   assert.equal(cubismCoreOnlyState.modelAssetRouteAvailable, true);
   assert.equal(cubismCoreOnlyState.modelLoadStatus, "loader_missing");
-  assert.equal(cubismCoreOnlyState.modelLoadErrorKind, "loader_missing");
+  assert.equal(cubismCoreOnlyState.modelLoadErrorKind, "missing_dependency");
+  assert.equal(cubismCoreOnlyState.loaderCapabilityClass, "cubism_core_only");
+  assert.equal(cubismCoreOnlyState.loaderDependencyStatus, "missing_dependency");
   assert.equal(cubismCoreOnlyState.modelLoadSupported, false);
   assert.equal(cubismCoreOnlyState.modelLoadSucceeded, false);
   assert.equal(cubismCoreOnlyState.realModelLoadSupported, false);
@@ -289,7 +299,10 @@ try {
   assert.equal(cubismCoreOnlyState.sceneLoaded, false);
   const loaderMissingPayload = createHeartbeatPayload(cubismCoreOnlyState, nowMs);
   assert.equal(loaderMissingPayload.model_load_status, "loader_missing");
-  assert.equal(loaderMissingPayload.model_load_error_kind, "loader_missing");
+  assert.equal(loaderMissingPayload.model_load_error_kind, "missing_dependency");
+  assert.equal(loaderMissingPayload.loader_capability_class, "cubism_core_only");
+  assert.equal(loaderMissingPayload.loader_dependency_status, "missing_dependency");
+  assert.equal(loaderMissingPayload.loader_candidate_kind, "none");
   assert.equal(loaderMissingPayload.real_model_loaded, false);
   assert.equal(loaderMissingPayload.real_scene_loaded, false);
   assertSafe(JSON.stringify(loaderMissingPayload));
@@ -301,25 +314,38 @@ try {
     fetchImpl: createFakeLoaderFetch(),
     runtimeRoot: createFakeLoaderRuntime(),
   });
-  assert.equal(fakeLoaderState.modelLoadStatus, "loaded");
-  assert.equal(fakeLoaderState.modelLoadSupported, true);
-  assert.equal(fakeLoaderState.realModelLoadSupported, true);
-  assert.equal(fakeLoaderState.model3Loaded, true);
-  assert.equal(fakeLoaderState.sceneLoaded, true);
+  assert.equal(fakeLoaderState.modelLoadStatus, "loader_missing");
+  assert.equal(fakeLoaderState.modelLoadErrorKind, "operator_attention_required");
+  assert.equal(fakeLoaderState.loaderCapabilityClass, "loader_detected_untrusted");
+  assert.equal(fakeLoaderState.loaderDependencyStatus, "operator_attention_required");
+  assert.equal(fakeLoaderState.loaderCandidateKind, "cubism_moc_create");
+  assert.equal(fakeLoaderState.modelLoadSupported, false);
+  assert.equal(fakeLoaderState.realModelLoadSupported, false);
+  assert.equal(fakeLoaderState.model3Loaded, false);
+  assert.equal(fakeLoaderState.sceneLoaded, false);
+  assert.equal(fakeLoaderState.trustedLoaderEvidence.loader_kind, "cubism_moc_create");
+  assert.equal(fakeLoaderState.trustedLoaderEvidence.server_trusted_policy_gate, false);
   const fakeLoaderHeartbeatPayload = createHeartbeatPayload(fakeLoaderState, nowMs);
-  assert.equal(fakeLoaderHeartbeatPayload.real_model_load_supported, true);
-  assert.equal(fakeLoaderHeartbeatPayload.real_model_loaded, true);
+  assert.equal(fakeLoaderHeartbeatPayload.real_model_load_supported, false);
+  assert.equal(fakeLoaderHeartbeatPayload.real_model_loaded, false);
+  assert.equal(fakeLoaderHeartbeatPayload.trusted_loader_evidence.loader_kind, "cubism_moc_create");
+  assert.equal(fakeLoaderHeartbeatPayload.trusted_loader_evidence.server_trusted_policy_gate, false);
   const fakeLoaderHeartbeat = await missing.postJson(
     "/renderer/heartbeat",
     fakeLoaderHeartbeatPayload
   );
   assert.equal(fakeLoaderHeartbeat.renderer_ready, false);
   assert.equal(fakeLoaderHeartbeat.renderer_health.real_model_load_supported, false);
-  assert.equal(fakeLoaderHeartbeat.renderer_health.model_load_supported, true);
-  assert.equal(fakeLoaderHeartbeat.renderer_health.model_loaded_claimed, true);
-  assert.equal(fakeLoaderHeartbeat.renderer_health.real_model_loaded_claimed, true);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.model_load_supported, false);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.model_loaded_claimed, false);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.real_model_loaded_claimed, false);
   assert.equal(fakeLoaderHeartbeat.renderer_health.model_loaded, false);
   assert.equal(fakeLoaderHeartbeat.renderer_health.scene_loaded, false);
+  assert.equal(fakeLoaderHeartbeat.renderer_health.loader_capability_class, "loader_detected_untrusted");
+  assert.equal(fakeLoaderHeartbeat.renderer_health.loader_dependency_status, "operator_attention_required");
+  assert.equal(fakeLoaderHeartbeat.renderer_health.loader_candidate_kind, "cubism_moc_create");
+  assert.equal(fakeLoaderHeartbeat.renderer_health.trusted_loader_evidence_status, "missing");
+  assert.equal(fakeLoaderHeartbeat.renderer_health.trusted_loader_error_kind, "trusted_loader_policy_gate_missing");
   assertSafe(JSON.stringify(fakeLoaderHeartbeat));
 
   const diagnosticTrustedLoaderHeartbeat = await missing.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
@@ -1208,6 +1234,8 @@ try {
       "trusted_loader_preflight_contract_documented",
       "trusted_loader_evidence_gate_diagnostic_only",
       "trusted_loader_evidence_forbidden_material_rejected",
+      "cubism_loader_integration_candidate_missing_dependency",
+      "loader_shape_remains_diagnostic_without_allowlist",
       "fake_loader_detection_is_diagnostic_only",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
