@@ -85,6 +85,8 @@ function buildV099SelfTestReportInner() {
   assertCase('remote_npm_not_executed_emitted_when_npm_not_run', statusOf(report, 'remoteNpmDiagnosticNormalizationStatus') === 'fail', failures, cases, statusOf(report, 'remoteNpmDiagnosticNormalizationStatus'), reasonsOf(report, 'remoteNpmDiagnosticNormalizationStatus'));
   report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, remoteEvidencePhase: 'remote_evidence_required_after_push' });
   assertCase('formal_evidence_pending_after_push_warns', statusOf(report, 'formalEvidencePrecedenceStatus') === 'warning', failures, cases, statusOf(report, 'formalEvidencePrecedenceStatus'), reasonsOf(report, 'formalEvidencePrecedenceStatus'));
+  report = buildFormalEvidencePrecedenceReport({ forceCheck: true, productRelevant: true, formalEvidence: passEvidence, remoteEvidencePhase: 'remote_evidence_required_after_push', standbyLifeboatPresent: true });
+  assertCase('target_product_pr_pending_after_push_warns_not_pass', statusOf(report, 'formalEvidencePrecedenceStatus') === 'warning', failures, cases, statusOf(report, 'formalEvidencePrecedenceStatus'), reasonsOf(report, 'formalEvidencePrecedenceStatus'));
   report = buildRemoteNpmDiagnosticNormalizationReport({ forceCheck: true, productRelevant: true, npmExecuted: false, remoteEvidencePhase: 'remote_evidence_required_after_push' });
   assertCase('remote_npm_pending_after_push_warns', statusOf(report, 'remoteNpmDiagnosticNormalizationStatus') === 'warning', failures, cases, statusOf(report, 'remoteNpmDiagnosticNormalizationStatus'), reasonsOf(report, 'remoteNpmDiagnosticNormalizationStatus'));
   report = buildLegacySelfTestAdvisoryReport({ harnessVersion: '0.9.9', selfTestFilePresent: true, localGateHasStatus: true, legacyFailureAdvisory: true });
@@ -107,10 +109,14 @@ function buildV099SelfTestReportInner() {
   assertCase('actions_blocker_billing_classified_remote_infra', statusOf(report, 'actionsBlockerRecoveryStatus') === 'pass', failures, cases, statusOf(report, 'actionsBlockerRecoveryStatus'), reasonsOf(report, 'actionsBlockerRecoveryStatus'));
   report = buildActionsBlockerRecoveryReport({ forceCheck: true, failureClass: 'remote_quality_gate_rerun_404', safeAction: 'push_empty_commit_to_refresh_pr_context' });
   assertCase('actions_blocker_rerun_404_empty_commit_hint', statusOf(report, 'actionsBlockerRecoveryStatus') === 'pass', failures, cases, statusOf(report, 'actionsBlockerRecoveryStatus'), reasonsOf(report, 'actionsBlockerRecoveryStatus'));
+  report = buildActionsBlockerRecoveryReport({ forceCheck: true, mergeAllowedWithoutSameHeadRemotePass: true });
+  assertCase('product_pr_merge_ready_without_remote_pass_fails', statusOf(report, 'actionsBlockerRecoveryStatus') === 'fail', failures, cases, statusOf(report, 'actionsBlockerRecoveryStatus'), reasonsOf(report, 'actionsBlockerRecoveryStatus'));
   report = buildPrContextRerunAssistantReport({ forceCheck: true, rerunContext: 'stale_head', blindRerunForStaleHead: true });
   assertCase('pr_context_rerun_stale_head_blocks', statusOf(report, 'prContextRerunAssistantStatus') === 'fail', failures, cases, statusOf(report, 'prContextRerunAssistantStatus'), reasonsOf(report, 'prContextRerunAssistantStatus'));
   report = buildSameHeadEvidenceRefreshReport({ forceCheck: true, evidenceRefreshRelevant: true, refreshRequired: true });
   assertCase('same_head_evidence_refresh_after_empty_commit', statusOf(report, 'sameHeadEvidenceRefreshStatus') === 'pass', failures, cases, statusOf(report, 'sameHeadEvidenceRefreshStatus'), reasonsOf(report, 'sameHeadEvidenceRefreshStatus'));
+  report = buildSameHeadEvidenceRefreshReport({ forceCheck: true, evidenceRefreshRelevant: true, headShaStale: true });
+  assertCase('stale_same_head_evidence_fails', statusOf(report, 'sameHeadEvidenceRefreshStatus') === 'fail', failures, cases, statusOf(report, 'sameHeadEvidenceRefreshStatus'), reasonsOf(report, 'sameHeadEvidenceRefreshStatus'));
   report = buildSafeArtifactBundleCompletenessReport({});
   assertCase('safe_artifact_bundle_completeness_normal_pass', statusOf(report, 'safeArtifactBundleCompletenessStatus') === 'pass', failures, cases, statusOf(report, 'safeArtifactBundleCompletenessStatus'), reasonsOf(report, 'safeArtifactBundleCompletenessStatus'));
   report = buildSafeArtifactBundleCompletenessReport({ lifeboatOnlyPass: true });
