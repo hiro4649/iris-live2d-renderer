@@ -1,11 +1,11 @@
 {
     "schemaVersion":  "1.0.0",
     "harnessVersion":  "0.9.8",
-    "targetRepository":  "hiro4649/iris-live2d-renderer",
+    "targetRepository":  "hiro4649/disco-funky-repair",
     "safeSummaryOnly":  true,
     "patches":  [
                     {
-                        "id":  "renderer-target-version-lineage-readme-scope-v098",
+                        "id":  "funky-target-version-lineage-readme-scope-v098",
                         "path":  "scripts/codex-version-lineage-gate.mjs",
                         "classification":  "target_specific_adaptation",
                         "owner":  "target-rollout",
@@ -17,7 +17,7 @@
                         "safeSummary":  "Target mode limits active lineage markers to harness-managed rollout files and excludes historical non-harness reports."
                     },
                     {
-                        "id":  "renderer-target-active-self-test-manifest-scope-v098",
+                        "id":  "funky-target-active-self-test-manifest-scope-v098",
                         "path":  "scripts/codex-v097-gate-lib.mjs",
                         "classification":  "target_specific_adaptation",
                         "owner":  "target-rollout",
@@ -29,7 +29,7 @@
                         "safeSummary":  "Active self-test registry reads the target manifest when the source manifest is absent."
                     },
                     {
-                        "id":  "renderer-target-knowledge-map-manifest-scope-v098",
+                        "id":  "funky-target-knowledge-map-manifest-scope-v098",
                         "path":  "docs/process/CODEX_KNOWLEDGE_MAP.json",
                         "classification":  "target_specific_adaptation",
                         "owner":  "target-rollout",
@@ -41,7 +41,7 @@
                         "safeSummary":  "Knowledge governance uses target-present source-of-record files only."
                     },
                     {
-                        "id":  "renderer-target-workflow-pr-context-export-v098",
+                        "id":  "funky-target-workflow-pr-context-export-v098",
                         "path":  ".github/workflows/quality-gate.yml",
                         "classification":  "target_specific_adaptation",
                         "owner":  "target-rollout",
