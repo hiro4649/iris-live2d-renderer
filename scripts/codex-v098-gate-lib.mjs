@@ -15,6 +15,10 @@ export function parseList(value) {
   if (Array.isArray(value)) return value.map(String).filter(Boolean);
   return String(value || '').split(/[\r\n,]+/).map((item) => item.trim()).filter(Boolean);
 }
+function remoteEvidenceDeferred(input = {}, env = process.env) {
+  const phase = String(input.remoteEvidencePhase || env.CODEX_REMOTE_EVIDENCE_PHASE || '');
+  return ['remote_evidence_required_after_push', 'remote_evidence_pending_before_push'].includes(phase);
+}
 function uniq(values) { return [...new Set((values || []).filter(Boolean))]; }
 function safe(statusKey, status, payload = {}) {
   const out = simpleStatus(statusKey, status, { ...payload, reasonCodes: uniq(payload.reasonCodes), warnings: uniq(payload.warnings), safeSummaryOnly: true });
@@ -53,6 +57,7 @@ export function buildRemoteProductEvidenceExecutionReport(input = parseJson(proc
   const pr = isPullRequest(input);
   const target = targetMode(input);
   if (!parseBool(input.forceCheck) && (!productRelevant || !pr || !target)) return notApplicable('remoteProductEvidenceExecutionStatus', 'remote_product_evidence_execution_not_required');
+  const deferred = remoteEvidenceDeferred(input);
   const reasonCodes = [];
   const warnings = [];
   const skipNpm = input.skipNpm !== undefined ? parseBool(input.skipNpm) : process.env.CODEX_SKIP_NPM === '1';
@@ -63,6 +68,14 @@ export function buildRemoteProductEvidenceExecutionReport(input = parseJson(proc
   const evidence = input.evidence || readMaybeJson(evidencePath);
   const baseline = input.baseline || readMaybeJson(baselinePath);
   const diagnostic = input.diagnostic || readMaybeJson(diagnosticPath);
+  if (productRelevant && deferred && !npmExecuted && !evidence && !baseline && !diagnostic) {
+    return safe('remoteProductEvidenceExecutionStatus', 'warning', {
+      reasonCodes,
+      warnings: ['remote_product_evidence_pending_after_push'],
+      productRelevant,
+      npmExecuted,
+    });
+  }
   if (productRelevant && skipNpm) reasonCodes.push('remote_npm_not_executed_for_product_pr');
   if (productRelevant && !npmExecuted) reasonCodes.push('remote_npm_not_executed_for_product_pr');
   if (productRelevant && !(parseBool(input.evidencePresent) || evidencePathPresent(evidencePath) || evidence)) reasonCodes.push('remote_product_evidence_execution_missing');
@@ -85,6 +98,16 @@ export function buildRemoteProductEvidenceRunnerReport(input = parseJson(process
   const npmExitCode = Number(input.npmExitCode ?? process.env.CODEX_NPM_EXIT_CODE ?? 0);
   const npmExecuted = parseBool(input.npmExecuted) || process.env.CODEX_REMOTE_NPM_EXECUTED === '1';
   const runnerStatus = npmExitCode === 0 ? 'pass' : 'fail';
+  if (productRelevant && remoteEvidenceDeferred(input) && !npmExecuted) {
+    return safe('remoteProductEvidenceRunnerStatus', 'warning', {
+      reasonCodes,
+      warnings: ['remote_product_evidence_pending_after_push'],
+      productRelevant,
+      npmExecuted,
+      npmExitCode,
+      runnerStatus,
+    });
+  }
   if (scanObjectForUnsafe(input).length || parseBool(input.rawLogsIncluded) || parseBool(input.rawStdoutIncluded) || parseBool(input.rawStderrIncluded)) reasonCodes.push('remote_product_evidence_runner_failed');
   if (productRelevant && !npmExecuted) reasonCodes.push('remote_npm_not_executed_for_product_pr');
   if (productRelevant && input.headSha === '') reasonCodes.push('remote_product_evidence_runner_failed');

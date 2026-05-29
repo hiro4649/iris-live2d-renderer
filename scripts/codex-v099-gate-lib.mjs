@@ -9,6 +9,10 @@ export function parseJson(value) {
   try { return JSON.parse(value); } catch { return { invalidInput: true }; }
 }
 export function parseBool(value) { return value === true || value === '1' || value === 'true' || value === 'yes'; }
+function remoteEvidenceDeferred(input = {}, env = process.env) {
+  const phase = String(input.remoteEvidencePhase || env.CODEX_REMOTE_EVIDENCE_PHASE || '');
+  return ['remote_evidence_required_after_push', 'remote_evidence_pending_before_push'].includes(phase);
+}
 function uniq(values) { return [...new Set((values || []).filter(Boolean))]; }
 function safe(statusKey, status, payload = {}) {
   const out = simpleStatus(statusKey, status, { ...payload, reasonCodes: uniq(payload.reasonCodes), warnings: uniq(payload.warnings), safeSummaryOnly: true });
@@ -53,6 +57,7 @@ function activeSelfTestFile(version) {
 export function buildFormalEvidencePrecedenceReport(input = parseJson(process.env.CODEX_FORMAL_EVIDENCE_PRECEDENCE_JSON) || {}) {
   const productRelevant = productRelevantFromInput(input);
   const force = parseBool(input.forceCheck);
+  const deferred = remoteEvidenceDeferred(input);
   const evidence = input.formalEvidence || input.productEvidence || parseJson(process.env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON) || readMaybeJson(input.evidencePath || process.env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH);
   const baseline = input.formalBaseline || input.remoteBaseline || parseJson(process.env.CODEX_REMOTE_PRODUCT_BASELINE_JSON) || readMaybeJson(input.baselinePath || process.env.CODEX_REMOTE_PRODUCT_BASELINE_PATH);
   const diagnostic = input.formalDiagnostic || input.remoteNpmDiagnostic || parseJson(process.env.CODEX_REMOTE_NPM_DIAGNOSTIC_JSON) || readMaybeJson(input.diagnosticPath || process.env.CODEX_NPM_TEST_SAFE_SUMMARY_PATH);
@@ -64,6 +69,15 @@ export function buildFormalEvidencePrecedenceReport(input = parseJson(process.en
   const sameHead = input.sameHeadMatch === undefined ? !parseBool(input.sameHeadMismatch) : parseBool(input.sameHeadMatch);
   const npmFailure = parseBool(input.npmFailure) || Number(input.npmExitCode ?? 0) !== 0 || Number(diagnostic?.npmExitCode ?? 0) !== 0;
   const formalPass = evidencePresent && baselinePresent && diagnosticPresent && isPassLike(evidence) && isPassLike(baseline) && isPassLike(diagnostic) && sameHead && !npmFailure;
+  if (productRelevant && deferred && (!evidencePresent || !baselinePresent || !diagnosticPresent)) {
+    return safe('formalEvidencePrecedenceStatus', 'warning', {
+      reasonCodes,
+      warnings: ['formal_evidence_pending_after_push'],
+      productRelevant,
+      formalEvidencePresent: evidencePresent,
+      lifeboatMode: parseBool(input.standbyLifeboatPresent) ? 'standby' : 'none',
+    });
+  }
   if (!evidencePresent || parseBool(input.productEvidenceMissing)) reasonCodes.push('formal_evidence_precedence_failed');
   if (!baselinePresent || parseBool(input.remoteBaselineMissing)) reasonCodes.push('formal_evidence_precedence_failed');
   if (!diagnosticPresent || parseBool(input.remoteNpmDiagnosticMissing)) reasonCodes.push('formal_evidence_precedence_failed');
@@ -104,6 +118,15 @@ export function buildRemoteNpmDiagnosticNormalizationReport(input = parseJson(pr
   const reasonCodes = [];
   const npmExecuted = parseBool(input.npmExecuted);
   const npmExitCode = Number(input.npmExitCode ?? 0);
+  if (productRelevant && remoteEvidenceDeferred(input) && !npmExecuted) {
+    return safe('remoteNpmDiagnosticNormalizationStatus', 'warning', {
+      reasonCodes,
+      warnings: ['remote_npm_diagnostic_pending_after_push'],
+      productRelevant,
+      npmExecuted,
+      npmExitCode,
+    });
+  }
   if (productRelevant && !npmExecuted) reasonCodes.push('remote_npm_not_executed_for_product_pr');
   if (npmExitCode !== 0 || parseBool(input.npmFailMarkedPass)) reasonCodes.push('remote_npm_diagnostic_normalization_failed');
   if (parseBool(input.diagnosticPendingFinalPass) || parseBool(input.diagnosticMissingNoFormalEvidence) || parseBool(input.remoteNpmNotExecutedEmittedDespiteExecuted)) reasonCodes.push('remote_npm_diagnostic_normalization_failed');
