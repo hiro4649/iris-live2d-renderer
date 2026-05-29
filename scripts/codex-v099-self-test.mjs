@@ -30,7 +30,29 @@ function assertCase(id, condition, failures, cases, actualStatus = 'pass', reaso
 const passEvidence = { status: 'pass', safeSummaryOnly: true };
 const failEvidence = { status: 'fail', safeSummaryOnly: true };
 
-export function buildV099SelfTestReport() {
+const evidenceEnvKeys = [
+  'CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON',
+  'CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH',
+  'CODEX_REMOTE_PRODUCT_BASELINE_JSON',
+  'CODEX_REMOTE_PRODUCT_BASELINE_PATH',
+  'CODEX_REMOTE_NPM_DIAGNOSTIC_JSON',
+  'CODEX_NPM_TEST_SAFE_SUMMARY_PATH',
+];
+
+function withClearedEvidenceEnv(callback) {
+  const saved = new Map(evidenceEnvKeys.map((key) => [key, process.env[key]]));
+  for (const key of evidenceEnvKeys) delete process.env[key];
+  try {
+    return callback();
+  } finally {
+    for (const [key, value] of saved.entries()) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+}
+
+function buildV099SelfTestReportInner() {
   const failures = [];
   const cases = [];
   let report;
@@ -129,6 +151,10 @@ export function buildV099SelfTestReport() {
     cases: safeCases,
     safeSummaryOnly: true,
   };
+}
+
+export function buildV099SelfTestReport() {
+  return withClearedEvidenceEnv(buildV099SelfTestReportInner);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
