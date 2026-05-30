@@ -39,7 +39,7 @@
     "stalePrAudit": true
   },
   "coreProfileSeparation": {
-    "sourceHarnessVersion": "0.9.9",
+    "sourceHarnessVersion": "1.0.0",
     "targetMode": "target",
     "profilesRequired": false
   },
