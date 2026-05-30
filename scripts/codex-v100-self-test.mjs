@@ -509,6 +509,111 @@ const CASES = [
     },
     "mergeSequenceStatus",
     "pass"
+  ],
+  [
+    "pr42_pre_push_product_handoff_passes_with_pending_remote",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "sameHeadRemotePass": false,
+      "targetMergeReady": false
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "pass"
+  ],
+  [
+    "pr42_pending_after_push_remote_pass_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "pendingAfterPushTreatedAsRemotePass": true
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
+  ],
+  [
+    "pr42_merge_ready_without_same_head_remote_pass_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "targetMergeReady": true,
+      "sameHeadRemotePass": false
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
+  ],
+  [
+    "pr42_missing_live2d_docs_classification_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": false
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
+  ],
+  [
+    "pr42_lifeboat_only_pass_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "lifeboatOnlyPass": true
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
+  ],
+  [
+    "pr42_placeholder_only_evidence_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "placeholderOnlyEvidence": true
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
+  ],
+  [
+    "pr42_stale_same_head_evidence_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "staleSameHeadEvidence": true
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
+  ],
+  [
+    "pr42_missing_review_independence_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "missingReviewIndependence": true
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
   ]
 ];
 function statusOf(report, key) { return report[key]?.status || report.status || 'missing'; }
