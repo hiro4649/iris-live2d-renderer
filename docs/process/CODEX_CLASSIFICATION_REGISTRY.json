@@ -85,6 +85,15 @@
       "notes": "Repository overview."
     },
     {
+      "pathPattern": "docs/iris-live2d-renderer/**",
+      "classification": "docs",
+      "surface": "live2d_renderer_docs",
+      "risk": "R2",
+      "requiresProductVerification": false,
+      "allowsFastPath": false,
+      "notes": "Live2D renderer integration documentation."
+    },
+    {
       "pathPattern": "CODEX_SOURCE_HARNESS_MANIFEST.json",
       "classification": "harness_managed",
       "surface": "harness",

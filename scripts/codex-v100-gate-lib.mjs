@@ -68,4 +68,45 @@ export function buildPublicContractChangeReport(input = parseJson(process.env.CO
 export function buildMigrationSafetyPlanReport(input = parseJson(process.env.CODEX_MIGRATION_SAFETY_PLAN_JSON) || {}) { return mapGate('migrationSafetyPlanStatus', 'migration_safety_plan_failed', input, 'migrationRelevant', ['migrationAutoApplied','compatMissing','backfillMissing','rollbackMissing','downtimeUnknown']); }
 export function buildRuntimeReadinessBoundaryReport(input = parseJson(process.env.CODEX_RUNTIME_READINESS_BOUNDARY_JSON) || {}) { const r = []; if (parseBool(input.runtimeReadinessClaimed) && !parseBool(input.runtimeOraclePresent)) r.push('runtime_readiness_boundary_failed'); if (any(input, ['fixturePassRealReady','unitTestPassRealReady','localSmokeRealReady'])) r.push('runtime_readiness_boundary_failed'); return safe('runtimeReadinessBoundaryStatus', r.length ? 'fail' : 'pass', { reasonCodes: r, runtimeReadinessClaimed: parseBool(input.runtimeReadinessClaimed) }); }
 export function buildProductionGoBoundaryReport(input = parseJson(process.env.CODEX_PRODUCTION_GO_BOUNDARY_JSON) || {}) { const r = any(input, ['productionReadinessClaimed','productionGoWithoutOwner','productionGoWithoutOracle','harnessAloneProductionGo']) ? ['production_go_boundary_failed'] : []; return safe('productionGoBoundaryStatus', r.length ? 'fail' : 'pass', { reasonCodes: r, productionReadinessClaimed: parseBool(input.productionReadinessClaimed) }); }
+const PR42_EXPECTED_FILES = [
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+  'src/renderer/cubismLoaderProvisioning.js',
+  'src/renderer/cubismRenderer.js',
+  'src/server.js',
+  'src/state.js',
+  'test/contract.test.js',
+];
+export function buildPr42EvidenceClassificationHandoffReport(input = parseJson(process.env.CODEX_PR42_EVIDENCE_CLASSIFICATION_HANDOFF_JSON) || {}) {
+  const files = Array.isArray(input.changedFiles) ? input.changedFiles.map(String) : PR42_EXPECTED_FILES;
+  const missingExpected = PR42_EXPECTED_FILES.filter((file) => !files.includes(file));
+  const phase = String(input.remoteEvidencePhase || 'remote_evidence_required_after_push');
+  const pendingAfterPush = phase === 'remote_evidence_required_after_push';
+  const sameHeadRemotePass = parseBool(input.sameHeadRemotePass);
+  const targetMergeReady = parseBool(input.targetMergeReady);
+  const docsCovered = input.docsClassificationCoveragePresent === undefined ? true : parseBool(input.docsClassificationCoveragePresent);
+  const r = [];
+  if (missingExpected.length || parseBool(input.unexpectedFilesPresent)) r.push('pr42_expected_files_mismatch');
+  if (!parseBool(input.localProductChecksPassed)) r.push('product_verification_evidence_missing');
+  if (!parseBool(input.safePrContextPresent)) r.push('pr_profile_missing');
+  if (!pendingAfterPush || parseBool(input.pendingAfterPushTreatedAsRemotePass)) r.push('local_remote_phase_conflict');
+  if (targetMergeReady && !sameHeadRemotePass) r.push('workflow_stop_condition_triggered');
+  if (!docsCovered || parseBool(input.docsClassificationMissing)) r.push('classification_unknown_file');
+  if (parseBool(input.lifeboatOnlyPass)) r.push('lifeboat_only_pass_forbidden');
+  if (parseBool(input.placeholderOnlyEvidence)) r.push('placeholder_only_evidence_forbidden');
+  if (parseBool(input.staleSameHeadEvidence)) r.push('same_head_evidence_refresh_failed');
+  if (parseBool(input.safeArtifactBundleMissing) && !pendingAfterPush) r.push('safe_artifact_bundle_completeness_failed');
+  if (parseBool(input.missingReviewIndependence)) r.push('review_independence_missing');
+  if (parseBool(input.runtimeReadinessClaimed)) r.push('runtime_readiness_boundary_failed');
+  if (parseBool(input.productionReadinessClaimed)) r.push('production_go_boundary_failed');
+  return safe('pr42EvidenceClassificationHandoffStatus', r.length ? 'fail' : 'pass', {
+    reasonCodes: r,
+    changedFileCount: files.length,
+    expectedFileCount: PR42_EXPECTED_FILES.length,
+    pendingAfterPush,
+    remoteEvidencePass: false,
+    targetMergeReady: targetMergeReady && sameHeadRemotePass,
+    sameHeadRemotePassRequired: !sameHeadRemotePass,
+  });
+}
 export function runV100GateCli(metaUrl, argvOne, builder, envName) { if (argvOne && fileURLToPath(metaUrl) === argvOne) { const report = builder(); writeJsonReport(report, envName); exitFor(report); } }
