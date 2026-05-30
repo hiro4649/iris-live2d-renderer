@@ -64,7 +64,13 @@
     "pr42_lifeboat_only_pass_fails",
     "pr42_placeholder_only_evidence_fails",
     "pr42_stale_same_head_evidence_fails",
-    "pr42_missing_review_independence_fails"
+    "pr42_missing_review_independence_fails",
+    "target_harness_timeout_absent_passes",
+    "target_harness_timeout_safe_class_fails",
+    "target_harness_empty_safe_artifact_fails",
+    "target_harness_missing_safe_artifact_fails",
+    "target_harness_timeout_merge_ready_without_remote_fails",
+    "target_harness_unexpected_git_mutation_fails"
   ],
   "safeSummaryOnly": true
 }
