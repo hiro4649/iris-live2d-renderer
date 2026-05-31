@@ -109,4 +109,34 @@ export function buildPr42EvidenceClassificationHandoffReport(input = parseJson(p
     sameHeadRemotePassRequired: !sameHeadRemotePass,
   });
 }
+
+export function buildTargetHarnessTimeoutDiagnosisReport(input = parseJson(process.env.CODEX_TARGET_HARNESS_TIMEOUT_DIAGNOSIS_JSON) || {}) {
+  const reasonCodes = [];
+  const timeoutClass = String(input.timeoutClass || (parseBool(input.workstationTimeout) ? 'local_target_harness_timeout_workstation' : parseBool(input.waitingForMissingArtifact) || parseBool(input.missingSafeArtifact) ? 'local_target_harness_timeout_waiting_for_missing_artifact' : parseBool(input.timedOut) || parseBool(input.possibleInfiniteLoop) ? 'local_target_harness_timeout_possible_infinite_loop' : parseBool(input.unknownTimeout) ? 'local_target_harness_timeout_unknown' : ''));
+  const allowedTimeoutClasses = [
+    'local_target_harness_timeout_workstation',
+    'local_target_harness_timeout_waiting_for_missing_artifact',
+    'local_target_harness_timeout_possible_infinite_loop',
+    'local_target_harness_timeout_empty_safe_artifact',
+    'local_target_harness_timeout_unknown',
+  ];
+  if (timeoutClass) reasonCodes.push(allowedTimeoutClasses.includes(timeoutClass) ? timeoutClass : 'local_target_harness_timeout_unknown');
+  if (parseBool(input.emptySafeArtifact)) reasonCodes.push('local_target_harness_timeout_empty_safe_artifact');
+  if (parseBool(input.missingSafeArtifact)) reasonCodes.push('local_target_harness_timeout_waiting_for_missing_artifact');
+  if (parseBool(input.unexpectedGitMutation)) reasonCodes.push('suspected_harness_or_script_git_mutation');
+  if (parseBool(input.timeoutTreatedAsPass) || parseBool(input.emptyArtifactTreatedAsPass)) reasonCodes.push('workflow_stop_condition_triggered');
+  const phase = String(input.remoteEvidencePhase || 'remote_evidence_required_after_push');
+  const pendingAfterPush = phase === 'remote_evidence_required_after_push';
+  const sameHeadRemotePass = parseBool(input.sameHeadRemotePass);
+  const targetMergeReady = parseBool(input.targetMergeReady);
+  if (!pendingAfterPush || parseBool(input.pendingAfterPushTreatedAsRemotePass)) reasonCodes.push('local_remote_phase_conflict');
+  if (targetMergeReady && !sameHeadRemotePass) reasonCodes.push('workflow_stop_condition_triggered');
+  return safe('targetHarnessTimeoutDiagnosisStatus', reasonCodes.length ? 'fail' : 'pass', {
+    reasonCodes,
+    pendingAfterPush,
+    remoteEvidencePass: false,
+    targetMergeReady: targetMergeReady && sameHeadRemotePass && reasonCodes.length === 0,
+    safeArtifactComplete: reasonCodes.length === 0,
+  });
+}
 export function runV100GateCli(metaUrl, argvOne, builder, envName) { if (argvOne && fileURLToPath(metaUrl) === argvOne) { const report = builder(); writeJsonReport(report, envName); exitFor(report); } }

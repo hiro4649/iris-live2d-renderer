@@ -39,6 +39,7 @@ import { buildGithubReplayContextAsync } from './codex-ci-replay.mjs';
 
 
 import { buildCompactReasonSummary } from './codex-reason-summary.mjs';
+import { buildTargetHarnessTimeoutDiagnosisReport } from './codex-v100-gate-lib.mjs';
 
 
 
@@ -676,7 +677,7 @@ const V099_OPTIONAL_NOT_APPLICABLE_STATUS_KEYS = [
   'belovedAvatarSafetyReadinessStatus',
 ];
 const V100_STATUS_KEYS = [
-  'parentHarnessDevelopmentStatus','parentHarnessSelfTestStatus','newHarnessSelfTestStatus','parentGatePreservationStatus','versionSuccessionStatus','workflowPlanStatus','taskGraphStatus','workflowScopeStatus','parallelWorkerBudgetStatus','branchIsolationStatus','workerFileOwnershipStatus','subagentRoleMatrixStatus','evidenceAggregationStatus','mergeSequenceStatus','workflowStopConditionStatus','workflowResumeStatus','workflowCostBudgetStatus','codebaseMapStatus','entrypointMapStatus','moduleBoundaryStatus','dependencyGraphStatus','dataFlowMapStatus','apiSurfaceMapStatus','dbUsageMapStatus','workerBatchMapStatus','externalIntegrationMapStatus','securitySurfaceMapStatus','performanceHotspotMapStatus','serviceCostMapStatus','deadCodeCandidateStatus','testGapMapStatus','docsImplementationDriftStatus','architectureBlueprintStatus','handoverDocumentStatus','confidenceClassificationStatus','improvementBacklogStatus','safeCleanupPlanStatus','behaviorPreservationStatus','refactorSliceStatus','publicContractChangeStatus','migrationSafetyPlanStatus','runtimeReadinessBoundaryStatus','productionGoBoundaryStatus','v100SelfTestStatus',
+  'parentHarnessDevelopmentStatus','parentHarnessSelfTestStatus','newHarnessSelfTestStatus','parentGatePreservationStatus','versionSuccessionStatus','workflowPlanStatus','taskGraphStatus','workflowScopeStatus','parallelWorkerBudgetStatus','branchIsolationStatus','workerFileOwnershipStatus','subagentRoleMatrixStatus','evidenceAggregationStatus','mergeSequenceStatus','workflowStopConditionStatus','workflowResumeStatus','workflowCostBudgetStatus','codebaseMapStatus','entrypointMapStatus','moduleBoundaryStatus','dependencyGraphStatus','dataFlowMapStatus','apiSurfaceMapStatus','dbUsageMapStatus','workerBatchMapStatus','externalIntegrationMapStatus','securitySurfaceMapStatus','performanceHotspotMapStatus','serviceCostMapStatus','deadCodeCandidateStatus','testGapMapStatus','docsImplementationDriftStatus','architectureBlueprintStatus','handoverDocumentStatus','confidenceClassificationStatus','improvementBacklogStatus','safeCleanupPlanStatus','behaviorPreservationStatus','refactorSliceStatus','publicContractChangeStatus','migrationSafetyPlanStatus','runtimeReadinessBoundaryStatus','productionGoBoundaryStatus','targetHarnessTimeoutDiagnosisStatus','v100SelfTestStatus',
 ];
 const V100_OPTIONAL_NOT_APPLICABLE_STATUS_KEYS = [
   'workflowPlanStatus','taskGraphStatus','branchIsolationStatus','subagentRoleMatrixStatus','evidenceAggregationStatus','mergeSequenceStatus','workflowResumeStatus','codebaseMapStatus','entrypointMapStatus','moduleBoundaryStatus','dependencyGraphStatus','dataFlowMapStatus','apiSurfaceMapStatus','dbUsageMapStatus','workerBatchMapStatus','externalIntegrationMapStatus','securitySurfaceMapStatus','performanceHotspotMapStatus','serviceCostMapStatus','deadCodeCandidateStatus','testGapMapStatus','docsImplementationDriftStatus','architectureBlueprintStatus','handoverDocumentStatus','confidenceClassificationStatus','improvementBacklogStatus','safeCleanupPlanStatus','behaviorPreservationStatus','refactorSliceStatus','publicContractChangeStatus','migrationSafetyPlanStatus',
@@ -949,7 +950,7 @@ function spawn(cmd, args, options = {}) {
 
 
 
-  return spawnSync(spec.command, spec.args, {
+  const spawnOptions = {
 
 
 
@@ -969,7 +970,14 @@ function spawn(cmd, args, options = {}) {
 
 
 
-  });
+  };
+
+  if (Number.isFinite(options.timeout) && options.timeout > 0) {
+    spawnOptions.timeout = options.timeout;
+    spawnOptions.killSignal = 'SIGTERM';
+  }
+
+  return spawnSync(spec.command, spec.args, spawnOptions);
 
 
 
@@ -1467,6 +1475,75 @@ function safeForbiddenArtifactHit(value) {
 
 }
 
+function parsePositiveInteger(value) {
+
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+
+}
+
+function targetGateScriptTimeoutMs(baseEnv = process.env) {
+
+  const configured = parsePositiveInteger(baseEnv.CODEX_TARGET_GATE_SCRIPT_TIMEOUT_MS || baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS);
+
+  if (configured) return configured;
+
+  return (baseEnv.CODEX_HARNESS_MODE || process.env.CODEX_HARNESS_MODE) === 'target' ? 120000 : 0;
+
+}
+
+function gateScriptFailure(field, reasonCode, extra = {}) {
+
+  return {
+    status: 'fail',
+    reasonCodes: [reasonCode],
+    failures: [`${field}=${reasonCode}`],
+    safeSummaryOnly: true,
+    ...extra,
+  };
+
+}
+
+let targetHarnessTimeoutState = null;
+
+function targetHarnessModeActive(baseEnv = process.env) {
+
+  return (baseEnv.CODEX_HARNESS_MODE || process.env.CODEX_HARNESS_MODE) === 'target';
+
+}
+
+function targetHarnessTimeoutAbortStatus() {
+
+  return {
+    status: 'not_applicable',
+    reasonCodes: ['target_harness_timeout_abort'],
+    safeSummaryOnly: true,
+  };
+
+}
+
+function collectTargetHarnessTimeoutDiagnosis(report) {
+
+  const statuses = Object.values(report).filter((value) => value && typeof value === 'object');
+  const reasonCodes = statuses.flatMap((value) => Array.isArray(value.reasonCodes) ? value.reasonCodes : []);
+  const failures = statuses.flatMap((value) => Array.isArray(value.failures) ? value.failures : []);
+
+  const timeoutReport = buildTargetHarnessTimeoutDiagnosisReport({
+    timedOut: reasonCodes.includes('local_target_harness_timeout_possible_infinite_loop'),
+    emptySafeArtifact: reasonCodes.includes('local_target_harness_timeout_empty_safe_artifact') || failures.some((failure) => String(failure).includes('empty_output')),
+    missingSafeArtifact: reasonCodes.includes('local_target_harness_timeout_waiting_for_missing_artifact'),
+    possibleInfiniteLoop: reasonCodes.includes('local_target_harness_timeout_possible_infinite_loop'),
+    unexpectedGitMutation: reasonCodes.includes('suspected_harness_or_script_git_mutation'),
+    remoteEvidencePhase: process.env.CODEX_REMOTE_EVIDENCE_PHASE || 'remote_evidence_required_after_push',
+    sameHeadRemotePass: false,
+    targetMergeReady: false,
+  });
+
+  return timeoutReport.targetHarnessTimeoutDiagnosisStatus || timeoutReport;
+
+}
+
 
 
 function runGateScript(script, field, envName, baseEnv = process.env) {
@@ -1483,7 +1560,15 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
   }
 
+  if (targetHarnessModeActive(baseEnv) && targetHarnessTimeoutState) {
 
+    return targetHarnessTimeoutAbortStatus();
+
+  }
+
+
+
+  const timeoutMs = targetGateScriptTimeoutMs(baseEnv);
 
   const result = spawn('node', [script], {
 
@@ -1495,9 +1580,19 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
     stdio: 'pipe',
 
+    timeout: timeoutMs,
+
 
 
   });
+
+  if (result.error?.code === 'ETIMEDOUT') {
+
+    if (targetHarnessModeActive(baseEnv)) targetHarnessTimeoutState = { field, timeoutMs };
+
+    return gateScriptFailure(field, 'local_target_harness_timeout_possible_infinite_loop', { timeoutMs });
+
+  }
 
 
 
@@ -1509,7 +1604,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
 
-    return { status: 'fail', failures: [`${field}=empty_output`], safeSummaryOnly: true };
+    return gateScriptFailure(field, 'local_target_harness_timeout_empty_safe_artifact');
 
 
 
@@ -2227,7 +2322,22 @@ function runV100Gates(report, gateEnv) {
   report.runtimeReadinessBoundaryStatus = runGateScript('scripts/codex-runtime-readiness-boundary-gate.mjs', 'runtimeReadinessBoundaryStatus', 'CODEX_RUNTIME_READINESS_BOUNDARY_REPORT', v100Env);
   report.productionGoBoundaryStatus = runGateScript('scripts/codex-production-go-boundary-gate.mjs', 'productionGoBoundaryStatus', 'CODEX_PRODUCTION_GO_BOUNDARY_REPORT', v100Env);
 }
-function initializeV100Statuses(report) { for (const key of V100_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' }; }
+function initializeV100Statuses(report) {
+  for (const key of V100_STATUS_KEYS) {
+    if (report[key]) continue;
+    report[key] = key === 'targetHarnessTimeoutDiagnosisStatus'
+      ? {
+        status: 'pass',
+        reasonCodes: [],
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+        safeArtifactComplete: true,
+        safeSummaryOnly: true,
+      }
+      : { status: 'not_run' };
+  }
+}
 
 
 
@@ -8438,6 +8548,8 @@ async function runSourceHarnessGate() {
 
   });
 
+  report.targetHarnessTimeoutDiagnosisStatus = collectTargetHarnessTimeoutDiagnosis(report);
+
 
 
   const reasonSummary = buildCompactReasonSummary(report);
@@ -10446,6 +10558,8 @@ async function runTargetHarnessGate() {
   report.v100SelfTestStatus = process.env.CODEX_SKIP_V100_SELF_TEST === '1'
     ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
     : runGateScript('scripts/codex-v100-self-test.mjs', 'v100SelfTestStatus', 'CODEX_V100_SELF_TEST_REPORT', { ...gateEnv, CODEX_V100_SKIP_LEGACY_RECHECKS: '1' });
+
+  report.targetHarnessTimeoutDiagnosisStatus = collectTargetHarnessTimeoutDiagnosis(report);
 
 
 

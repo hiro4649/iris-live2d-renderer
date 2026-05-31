@@ -614,6 +614,71 @@ const CASES = [
     },
     "pr42EvidenceClassificationHandoffStatus",
     "fail"
+  ],
+  [
+    "target_harness_timeout_absent_passes",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "pass"
+  ],
+  [
+    "target_harness_timeout_safe_class_fails",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "timedOut": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "fail"
+  ],
+  [
+    "target_harness_empty_safe_artifact_fails",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "emptySafeArtifact": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "fail"
+  ],
+  [
+    "target_harness_missing_safe_artifact_fails",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "missingSafeArtifact": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "fail"
+  ],
+  [
+    "target_harness_timeout_merge_ready_without_remote_fails",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": true,
+      "sameHeadRemotePass": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "fail"
+  ],
+  [
+    "target_harness_unexpected_git_mutation_fails",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "unexpectedGitMutation": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "fail"
   ]
 ];
 function statusOf(report, key) { return report[key]?.status || report.status || 'missing'; }
