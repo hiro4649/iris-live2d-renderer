@@ -1513,6 +1513,38 @@ function targetHarnessModeActive(baseEnv = process.env) {
 
 }
 
+function targetHarnessChildDepth(baseEnv = process.env) {
+  return parsePositiveInteger(baseEnv.CODEX_TARGET_HARNESS_CHILD_DEPTH);
+}
+
+function withTargetHarnessChildEnv(baseEnv = process.env) {
+  const out = { ...baseEnv };
+  if (targetHarnessModeActive(baseEnv)) {
+    out.CODEX_TARGET_HARNESS_CHILD_DEPTH = String(targetHarnessChildDepth(baseEnv) + 1);
+  }
+  return out;
+}
+
+function targetHarnessSelfTestScript(script) {
+  return /codex-v\d+-self-test\.mjs$/.test(String(script || ''));
+}
+
+function targetHarnessRecursiveChildActive(baseEnv = process.env) {
+  return targetHarnessModeActive(baseEnv) && targetHarnessChildDepth(baseEnv) > 0;
+}
+
+function targetSelfTestFixtureCompletionActive(baseEnv = process.env) {
+  return targetHarnessRecursiveChildActive(baseEnv) && baseEnv.CODEX_TARGET_HARNESS_SELF_TEST_CHILD === '1';
+}
+
+function targetSelfTestSkipRequested(version, env = process.env) {
+  return env[`CODEX_SKIP_${version}_SELF_TEST`] === '1' || targetHarnessRecursiveChildActive(env);
+}
+
+function targetSelfTestRecursionGuardStatus() {
+  return { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true };
+}
+
 function targetHarnessTimeoutAbortStatus() {
 
   return {
@@ -1544,6 +1576,55 @@ function collectTargetHarnessTimeoutDiagnosis(report) {
 
 }
 
+function buildTargetSelfTestFixtureCompletionReport(secretScanStatus) {
+  const failures = [];
+  const manifestStatus = targetManifestStatus();
+  if (secretScanStatus.status !== 'pass') failures.push({ id: 'secretScan.failed', message: 'secret safety scan failed' });
+  if (manifestStatus.status === 'fail') failures.push({ id: 'targetManifestStatus.failed', message: 'target manifest validation failed' });
+  const status = failures.length ? 'fail' : 'pass';
+  const timeoutDiagnosis = buildTargetHarnessTimeoutDiagnosisReport({
+    remoteEvidencePhase: 'remote_evidence_required_after_push',
+    sameHeadRemotePass: false,
+    targetMergeReady: false,
+  }).targetHarnessTimeoutDiagnosisStatus;
+  return {
+    marker: MARKER,
+    harnessVersion: HARNESS_VERSION,
+    status,
+    mergeReady: false,
+    targetMergeReady: false,
+    targetManifestStatus: manifestStatus,
+    secretScan: secretScanStatus,
+    selfTestFixtureCompletionStatus: {
+      status: 'pass',
+      reasonCodes: ['target_self_test_fixture_completion_path'],
+      safeSummaryOnly: true,
+    },
+    targetHarnessTimeoutDiagnosisStatus: timeoutDiagnosis,
+    safeArtifactValidation: {
+      status: 'pass',
+      reasonCodes: [],
+      safeSummaryOnly: true,
+    },
+    outputShapeStatus: {
+      status: 'pass',
+      reasonCodes: [],
+      safeSummaryOnly: true,
+    },
+    targetQualityScoreStatus: {
+      status,
+      score: failures.length ? 70 : 95,
+      reasonCodes: failures.length ? ['target_self_test_fixture_completion_failed'] : [],
+      safeSummaryOnly: true,
+    },
+    failures,
+    warnings: [],
+    humanReviewRequired: false,
+    valuesPrinted: false,
+    safeSummaryOnly: true,
+  };
+}
+
 
 
 function runGateScript(script, field, envName, baseEnv = process.env) {
@@ -1570,11 +1651,17 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
   const timeoutMs = targetGateScriptTimeoutMs(baseEnv);
 
+  const childEnv = withTargetHarnessChildEnv(baseEnv);
+
+  if (targetHarnessModeActive(baseEnv) && targetHarnessSelfTestScript(script)) {
+    childEnv.CODEX_TARGET_HARNESS_SELF_TEST_CHILD = '1';
+  }
+
   const result = spawn('node', [script], {
 
 
 
-    env: { ...baseEnv, CODEX_QUALITY_REPORT: 'json', [envName]: 'json' },
+    env: { ...childEnv, CODEX_QUALITY_REPORT: 'json', [envName]: 'json' },
 
 
 
@@ -6954,6 +7041,15 @@ function remoteEvidencePendingAfterPush(env = process.env) {
   ].includes(remoteEvidencePhase(env));
 }
 
+function explicitSameHeadRemotePass(report = {}, env = process.env) {
+  if (env.CODEX_SAME_HEAD_REMOTE_PASS === '1' || env.CODEX_REMOTE_EVIDENCE_PASS === '1') return true;
+  return [
+    report.remoteEvidenceHandoffStatus,
+    report.sameHeadEvidenceRefreshStatus,
+    report.sameHeadArtifactEvidenceStatus,
+  ].some((status) => status?.sameHeadRemotePass === true || status?.remoteEvidencePass === true);
+}
+
 function localLifeboatPath(env = process.env) {
   const dir = env.RUNNER_TEMP || env.TMPDIR || env.TMP || env.TEMP || path.join('.git', 'codex');
   return path.join(dir, 'codex-minimal-safe-failure.json');
@@ -8256,208 +8352,82 @@ async function runSourceHarnessGate() {
 
 
 
-  report.v080SelfTestStatus = runGateScript('scripts/codex-v080-self-test.mjs', 'v080SelfTestStatus', 'CODEX_V080_SELF_TEST_REPORT', gateEnv);
+  report.v080SelfTestStatus = targetSelfTestSkipRequested('V080', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
+    : runGateScript('scripts/codex-v080-self-test.mjs', 'v080SelfTestStatus', 'CODEX_V080_SELF_TEST_REPORT', gateEnv);
 
-
-
-  report.v081SelfTestStatus = process.env.CODEX_SKIP_V081_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v081SelfTestStatus = targetSelfTestSkipRequested('V081', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v081-self-test.mjs', 'v081SelfTestStatus', 'CODEX_V081_SELF_TEST_REPORT', gateEnv);
 
-
-
-  report.v082SelfTestStatus = process.env.CODEX_SKIP_V082_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v082SelfTestStatus = targetSelfTestSkipRequested('V082', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v082-self-test.mjs', 'v082SelfTestStatus', 'CODEX_V082_SELF_TEST_REPORT', gateEnv);
 
-
-
-  report.v083SelfTestStatus = process.env.CODEX_SKIP_V083_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v083SelfTestStatus = targetSelfTestSkipRequested('V083', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v083-self-test.mjs', 'v083SelfTestStatus', 'CODEX_V083_SELF_TEST_REPORT', { ...gateEnv, CODEX_V083_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v084SelfTestStatus = process.env.CODEX_SKIP_V084_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v084SelfTestStatus = targetSelfTestSkipRequested('V084', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v084-self-test.mjs', 'v084SelfTestStatus', 'CODEX_V084_SELF_TEST_REPORT', { ...gateEnv, CODEX_V084_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v085SelfTestStatus = process.env.CODEX_SKIP_V085_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v085SelfTestStatus = targetSelfTestSkipRequested('V085', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v085-self-test.mjs', 'v085SelfTestStatus', 'CODEX_V085_SELF_TEST_REPORT', { ...gateEnv, CODEX_V085_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v086SelfTestStatus = process.env.CODEX_SKIP_V086_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v086SelfTestStatus = targetSelfTestSkipRequested('V086', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v086-self-test.mjs', 'v086SelfTestStatus', 'CODEX_V086_SELF_TEST_REPORT', { ...gateEnv, CODEX_V086_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v087SelfTestStatus = process.env.CODEX_SKIP_V087_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v087SelfTestStatus = targetSelfTestSkipRequested('V087', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v087-self-test.mjs', 'v087SelfTestStatus', 'CODEX_V087_SELF_TEST_REPORT', { ...gateEnv, CODEX_V087_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v088SelfTestStatus = process.env.CODEX_SKIP_V088_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v088SelfTestStatus = targetSelfTestSkipRequested('V088', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v088-self-test.mjs', 'v088SelfTestStatus', 'CODEX_V088_SELF_TEST_REPORT', { ...gateEnv, CODEX_V088_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v089SelfTestStatus = process.env.CODEX_SKIP_V089_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v089SelfTestStatus = targetSelfTestSkipRequested('V089', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v089-self-test.mjs', 'v089SelfTestStatus', 'CODEX_V089_SELF_TEST_REPORT', { ...gateEnv, CODEX_V089_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v090SelfTestStatus = process.env.CODEX_SKIP_V090_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v090SelfTestStatus = targetSelfTestSkipRequested('V090', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v090-self-test.mjs', 'v090SelfTestStatus', 'CODEX_V090_SELF_TEST_REPORT', { ...gateEnv, CODEX_V090_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v092SelfTestStatus = process.env.CODEX_SKIP_V092_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v092SelfTestStatus = targetSelfTestSkipRequested('V092', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v092-self-test.mjs', 'v092SelfTestStatus', 'CODEX_V092_SELF_TEST_REPORT', { ...gateEnv, CODEX_V092_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v093SelfTestStatus = process.env.CODEX_SKIP_V093_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v093SelfTestStatus = targetSelfTestSkipRequested('V093', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v093-self-test.mjs', 'v093SelfTestStatus', 'CODEX_V093_SELF_TEST_REPORT', { ...gateEnv, CODEX_V093_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v094SelfTestStatus = process.env.CODEX_SKIP_V094_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v094SelfTestStatus = targetSelfTestSkipRequested('V094', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v094-self-test.mjs', 'v094SelfTestStatus', 'CODEX_V094_SELF_TEST_REPORT', { ...gateEnv, CODEX_V094_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v095SelfTestStatus = process.env.CODEX_SKIP_V095_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v095SelfTestStatus = targetSelfTestSkipRequested('V095', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v095-self-test.mjs', 'v095SelfTestStatus', 'CODEX_V095_SELF_TEST_REPORT', { ...gateEnv, CODEX_V095_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v096SelfTestStatus = process.env.CODEX_SKIP_V096_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v096SelfTestStatus = targetSelfTestSkipRequested('V096', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v096-self-test.mjs', 'v096SelfTestStatus', 'CODEX_V096_SELF_TEST_REPORT', { ...gateEnv, CODEX_V096_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v097SelfTestStatus = process.env.CODEX_SKIP_V097_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v097SelfTestStatus = targetSelfTestSkipRequested('V097', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v097-self-test.mjs', 'v097SelfTestStatus', 'CODEX_V097_SELF_TEST_REPORT', { ...gateEnv, CODEX_V097_SKIP_LEGACY_RECHECKS: '1' });
 
-  report.v098SelfTestStatus = process.env.CODEX_SKIP_V098_SELF_TEST === '1'
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+  report.v098SelfTestStatus = targetSelfTestSkipRequested('V098', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...gateEnv, CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
-  report.v099SelfTestStatus = process.env.CODEX_SKIP_V099_SELF_TEST === '1'
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+  report.v099SelfTestStatus = targetSelfTestSkipRequested('V099', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v099-self-test.mjs', 'v099SelfTestStatus', 'CODEX_V099_SELF_TEST_REPORT', { ...gateEnv, CODEX_V099_SKIP_LEGACY_RECHECKS: '1' });
-  report.v100SelfTestStatus = process.env.CODEX_SKIP_V100_SELF_TEST === '1'
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+  report.v100SelfTestStatus = targetSelfTestSkipRequested('V100', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v100-self-test.mjs', 'v100SelfTestStatus', 'CODEX_V100_SELF_TEST_REPORT', { ...gateEnv, CODEX_V100_SKIP_LEGACY_RECHECKS: '1' });
 
 
@@ -9561,6 +9531,13 @@ async function runTargetHarnessGate() {
 
   const gateEnv = prepareTargetGateEnv(process.env);
 
+  if (targetSelfTestFixtureCompletionActive(gateEnv)) {
+    const report = buildTargetSelfTestFixtureCompletionReport({ status: secretScan.status === 0 ? 'pass' : 'fail' });
+    if (jsonReport) console.log(JSON.stringify(report, null, 2));
+    else console.log(`status: ${report.status}`);
+    process.exit(report.status === 'pass' ? 0 : 1);
+  }
+
 
 
   const report = {
@@ -10355,208 +10332,82 @@ async function runTargetHarnessGate() {
 
 
 
-  report.v080SelfTestStatus = runGateScript('scripts/codex-v080-self-test.mjs', 'v080SelfTestStatus', 'CODEX_V080_SELF_TEST_REPORT', gateEnv);
+  report.v080SelfTestStatus = targetSelfTestSkipRequested('V080', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
+    : runGateScript('scripts/codex-v080-self-test.mjs', 'v080SelfTestStatus', 'CODEX_V080_SELF_TEST_REPORT', gateEnv);
 
-
-
-  report.v081SelfTestStatus = process.env.CODEX_SKIP_V081_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v081SelfTestStatus = targetSelfTestSkipRequested('V081', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v081-self-test.mjs', 'v081SelfTestStatus', 'CODEX_V081_SELF_TEST_REPORT', gateEnv);
 
-
-
-  report.v082SelfTestStatus = process.env.CODEX_SKIP_V082_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v082SelfTestStatus = targetSelfTestSkipRequested('V082', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v082-self-test.mjs', 'v082SelfTestStatus', 'CODEX_V082_SELF_TEST_REPORT', gateEnv);
 
-
-
-  report.v083SelfTestStatus = process.env.CODEX_SKIP_V083_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v083SelfTestStatus = targetSelfTestSkipRequested('V083', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v083-self-test.mjs', 'v083SelfTestStatus', 'CODEX_V083_SELF_TEST_REPORT', { ...gateEnv, CODEX_V083_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v084SelfTestStatus = process.env.CODEX_SKIP_V084_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v084SelfTestStatus = targetSelfTestSkipRequested('V084', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v084-self-test.mjs', 'v084SelfTestStatus', 'CODEX_V084_SELF_TEST_REPORT', { ...gateEnv, CODEX_V084_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v085SelfTestStatus = process.env.CODEX_SKIP_V085_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v085SelfTestStatus = targetSelfTestSkipRequested('V085', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v085-self-test.mjs', 'v085SelfTestStatus', 'CODEX_V085_SELF_TEST_REPORT', { ...gateEnv, CODEX_V085_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v086SelfTestStatus = process.env.CODEX_SKIP_V086_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v086SelfTestStatus = targetSelfTestSkipRequested('V086', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v086-self-test.mjs', 'v086SelfTestStatus', 'CODEX_V086_SELF_TEST_REPORT', { ...gateEnv, CODEX_V086_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v087SelfTestStatus = process.env.CODEX_SKIP_V087_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v087SelfTestStatus = targetSelfTestSkipRequested('V087', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v087-self-test.mjs', 'v087SelfTestStatus', 'CODEX_V087_SELF_TEST_REPORT', { ...gateEnv, CODEX_V087_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v088SelfTestStatus = process.env.CODEX_SKIP_V088_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v088SelfTestStatus = targetSelfTestSkipRequested('V088', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v088-self-test.mjs', 'v088SelfTestStatus', 'CODEX_V088_SELF_TEST_REPORT', { ...gateEnv, CODEX_V088_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v089SelfTestStatus = process.env.CODEX_SKIP_V089_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v089SelfTestStatus = targetSelfTestSkipRequested('V089', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v089-self-test.mjs', 'v089SelfTestStatus', 'CODEX_V089_SELF_TEST_REPORT', { ...gateEnv, CODEX_V089_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v090SelfTestStatus = process.env.CODEX_SKIP_V090_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v090SelfTestStatus = targetSelfTestSkipRequested('V090', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v090-self-test.mjs', 'v090SelfTestStatus', 'CODEX_V090_SELF_TEST_REPORT', { ...gateEnv, CODEX_V090_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v092SelfTestStatus = process.env.CODEX_SKIP_V092_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v092SelfTestStatus = targetSelfTestSkipRequested('V092', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v092-self-test.mjs', 'v092SelfTestStatus', 'CODEX_V092_SELF_TEST_REPORT', { ...gateEnv, CODEX_V092_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v093SelfTestStatus = process.env.CODEX_SKIP_V093_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v093SelfTestStatus = targetSelfTestSkipRequested('V093', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v093-self-test.mjs', 'v093SelfTestStatus', 'CODEX_V093_SELF_TEST_REPORT', { ...gateEnv, CODEX_V093_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v094SelfTestStatus = process.env.CODEX_SKIP_V094_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v094SelfTestStatus = targetSelfTestSkipRequested('V094', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v094-self-test.mjs', 'v094SelfTestStatus', 'CODEX_V094_SELF_TEST_REPORT', { ...gateEnv, CODEX_V094_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v095SelfTestStatus = process.env.CODEX_SKIP_V095_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v095SelfTestStatus = targetSelfTestSkipRequested('V095', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v095-self-test.mjs', 'v095SelfTestStatus', 'CODEX_V095_SELF_TEST_REPORT', { ...gateEnv, CODEX_V095_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v096SelfTestStatus = process.env.CODEX_SKIP_V096_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v096SelfTestStatus = targetSelfTestSkipRequested('V096', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v096-self-test.mjs', 'v096SelfTestStatus', 'CODEX_V096_SELF_TEST_REPORT', { ...gateEnv, CODEX_V096_SKIP_LEGACY_RECHECKS: '1' });
 
-
-
-  report.v097SelfTestStatus = process.env.CODEX_SKIP_V097_SELF_TEST === '1'
-
-
-
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-
-
-
+  report.v097SelfTestStatus = targetSelfTestSkipRequested('V097', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v097-self-test.mjs', 'v097SelfTestStatus', 'CODEX_V097_SELF_TEST_REPORT', { ...gateEnv, CODEX_V097_SKIP_LEGACY_RECHECKS: '1' });
 
-  report.v098SelfTestStatus = process.env.CODEX_SKIP_V098_SELF_TEST === '1'
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+  report.v098SelfTestStatus = targetSelfTestSkipRequested('V098', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...gateEnv, CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
-  report.v099SelfTestStatus = process.env.CODEX_SKIP_V099_SELF_TEST === '1'
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+  report.v099SelfTestStatus = targetSelfTestSkipRequested('V099', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v099-self-test.mjs', 'v099SelfTestStatus', 'CODEX_V099_SELF_TEST_REPORT', { ...gateEnv, CODEX_V099_SKIP_LEGACY_RECHECKS: '1' });
-  report.v100SelfTestStatus = process.env.CODEX_SKIP_V100_SELF_TEST === '1'
-    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+  report.v100SelfTestStatus = targetSelfTestSkipRequested('V100', gateEnv)
+    ? targetSelfTestRecursionGuardStatus()
     : runGateScript('scripts/codex-v100-self-test.mjs', 'v100SelfTestStatus', 'CODEX_V100_SELF_TEST_REPORT', { ...gateEnv, CODEX_V100_SKIP_LEGACY_RECHECKS: '1' });
 
   report.targetHarnessTimeoutDiagnosisStatus = collectTargetHarnessTimeoutDiagnosis(report);
@@ -11054,7 +10905,7 @@ async function runTargetHarnessGate() {
 
 
 
-  report.targetMergeReady = report.mergeReady;
+  report.targetMergeReady = report.mergeReady && explicitSameHeadRemotePass(report, gateEnv);
 
 
 

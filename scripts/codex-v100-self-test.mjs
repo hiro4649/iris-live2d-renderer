@@ -511,6 +511,29 @@ const CASES = [
     "pass"
   ],
   [
+    "pr42_expected_file_set_pre_push_handoff_passes",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "changedFiles": [
+        "docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md",
+        "docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md",
+        "src/renderer/cubismLoaderProvisioning.js",
+        "src/renderer/cubismRenderer.js",
+        "src/server.js",
+        "src/state.js",
+        "test/contract.test.js"
+      ],
+      "localProductChecksPassed": true,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true,
+      "sameHeadRemotePass": false,
+      "targetMergeReady": false
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "pass"
+  ],
+  [
     "pr42_pre_push_product_handoff_passes_with_pending_remote",
     "buildPr42EvidenceClassificationHandoffReport",
     {
@@ -523,6 +546,18 @@ const CASES = [
     },
     "pr42EvidenceClassificationHandoffStatus",
     "pass"
+  ],
+  [
+    "pr42_missing_local_product_evidence_fails",
+    "buildPr42EvidenceClassificationHandoffReport",
+    {
+      "localProductChecksPassed": false,
+      "safePrContextPresent": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "docsClassificationCoveragePresent": true
+    },
+    "pr42EvidenceClassificationHandoffStatus",
+    "fail"
   ],
   [
     "pr42_pending_after_push_remote_pass_fails",
@@ -624,6 +659,28 @@ const CASES = [
     },
     "targetHarnessTimeoutDiagnosisStatus",
     "pass"
+  ],
+  [
+    "target_harness_remote_pending_pre_push_completes_without_timeout",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "sameHeadRemotePass": false,
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "pass"
+  ],
+  [
+    "target_harness_pending_after_push_as_remote_pass_fails",
+    "buildTargetHarnessTimeoutDiagnosisReport",
+    {
+      "pendingAfterPushTreatedAsRemotePass": true,
+      "remoteEvidencePhase": "remote_evidence_required_after_push",
+      "targetMergeReady": false
+    },
+    "targetHarnessTimeoutDiagnosisStatus",
+    "fail"
   ],
   [
     "target_harness_timeout_safe_class_fails",
