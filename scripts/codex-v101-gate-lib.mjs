@@ -47,6 +47,7 @@ export const V101_STATUS_KEYS = [
   'authoritativeProductEvidenceStatus',
   'targetQualityOwnerActionStatus',
   'runtimeAdoptionSequenceStatus',
+  'targetHarnessCompletionStatus',
   'v101SelfTestStatus',
 ];
 
@@ -91,6 +92,11 @@ export const V101_REASON_CODES = [
   'authoritative_product_evidence_conflict',
   'target_quality_owner_action_ambiguous',
   'runtime_adoption_sequence_violation',
+  'target_harness_no_report',
+  'target_harness_missing_formal_product_evidence',
+  'pending_after_push_not_remote_pass',
+  'remote_evidence_without_same_head_pass',
+  'target_merge_ready_without_same_head_remote_pass',
 ];
 
 function uniq(values) {
@@ -392,6 +398,29 @@ export function buildRuntimeAdoptionSequenceReport(input = {}) {
   return pass('runtimeAdoptionSequenceStatus');
 }
 
+export function buildTargetHarnessCompletionReport(input = {}) {
+  const pendingAfterPush = bool(input.pendingAfterPush) || input.remoteEvidencePhase === 'remote_evidence_required_after_push';
+  const sameHeadRemotePass = bool(input.sameHeadRemotePass);
+  const remoteEvidencePass = bool(input.remoteEvidencePass);
+  const targetMergeReady = bool(input.targetMergeReady);
+  const reasons = [];
+  if (bool(input.timeout)) reasons.push('local_gate_timeout');
+  if (bool(input.noSafeJsonReport)) reasons.push('target_harness_no_report');
+  if (bool(input.emptySafeJsonReport)) reasons.push('local_gate_json_empty');
+  if (bool(input.missingFormalProductEvidence)) reasons.push('target_harness_missing_formal_product_evidence');
+  if (pendingAfterPush && remoteEvidencePass) reasons.push('pending_after_push_not_remote_pass');
+  if (remoteEvidencePass && !sameHeadRemotePass) reasons.push('remote_evidence_without_same_head_pass');
+  if (targetMergeReady && !sameHeadRemotePass) reasons.push('target_merge_ready_without_same_head_remote_pass');
+  const safeState = {
+    pendingAfterPush,
+    remoteEvidencePass: remoteEvidencePass && sameHeadRemotePass && !pendingAfterPush,
+    targetMergeReady: targetMergeReady && sameHeadRemotePass && !pendingAfterPush,
+  };
+  return reasons.length
+    ? fail('targetHarnessCompletionStatus', reasons, safeState)
+    : pass('targetHarnessCompletionStatus', safeState);
+}
+
 export function buildV101SelfTestRegistrationReport(input = {}) {
   const reasons = [];
   const manifest = harnessManifestText();
@@ -465,6 +494,7 @@ export function buildDefaultV101Reports(context = {}) {
     authoritativeProductEvidenceStatus: buildAuthoritativeProductEvidenceReport(),
     targetQualityOwnerActionStatus: buildTargetQualityOwnerActionReport({ action: 'harness_fix_required' }),
     runtimeAdoptionSequenceStatus: buildRuntimeAdoptionSequenceReport(),
+    targetHarnessCompletionStatus: buildTargetHarnessCompletionReport(),
     v101SelfTestStatus: buildV101SelfTestRegistrationReport(),
   };
 }
