@@ -13,6 +13,7 @@
     "self_test_fixture_isolation",
     "authoritative_product_evidence",
     "target_quality_owner_action",
-    "runtime_adoption_sequence"
+    "runtime_adoption_sequence",
+    "target_harness_completion"
   ]
 }

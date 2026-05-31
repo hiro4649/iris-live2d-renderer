@@ -16,6 +16,13 @@ const CASES = [
   ['local_gate_side_effect_tracked_file_fails', gates.buildLocalGateSideEffectReport, { trackedFileSideEffect: true }, 'localGateSideEffectStatus', 'fail'],
   ['local_gate_branch_mutation_fails', gates.buildLocalGateSideEffectReport, { branchMutation: true }, 'localGateSideEffectStatus', 'fail'],
   ['local_gate_head_mutation_fails', gates.buildLocalGateSideEffectReport, { headMutation: true }, 'localGateSideEffectStatus', 'fail'],
+  ['target_harness_pr42_pending_after_push_passes_local_completion', gates.buildTargetHarnessCompletionReport, { pendingAfterPush: true, remoteEvidencePass: false, sameHeadRemotePass: false, targetMergeReady: false }, 'targetHarnessCompletionStatus', 'pass'],
+  ['target_harness_no_safe_json_fails', gates.buildTargetHarnessCompletionReport, { noSafeJsonReport: true }, 'targetHarnessCompletionStatus', 'fail'],
+  ['target_harness_empty_safe_json_fails', gates.buildTargetHarnessCompletionReport, { emptySafeJsonReport: true }, 'targetHarnessCompletionStatus', 'fail'],
+  ['target_harness_missing_formal_evidence_fails_fast', gates.buildTargetHarnessCompletionReport, { missingFormalProductEvidence: true }, 'targetHarnessCompletionStatus', 'fail'],
+  ['target_harness_pending_after_push_not_remote_pass', gates.buildTargetHarnessCompletionReport, { pendingAfterPush: true, remoteEvidencePass: true }, 'targetHarnessCompletionStatus', 'fail'],
+  ['target_harness_remote_pass_requires_same_head', gates.buildTargetHarnessCompletionReport, { remoteEvidencePass: true, sameHeadRemotePass: false }, 'targetHarnessCompletionStatus', 'fail'],
+  ['target_harness_target_merge_ready_requires_same_head_remote_pass', gates.buildTargetHarnessCompletionReport, { targetMergeReady: true, sameHeadRemotePass: false }, 'targetHarnessCompletionStatus', 'fail'],
 
   ['local_branch_main_pass', gates.buildLocalBranchInvariantReport, { pilotRelevant: true, branch: 'main' }, 'localBranchInvariantStatus', 'pass'],
   ['local_branch_non_main_fails', gates.buildLocalBranchInvariantReport, { pilotRelevant: true, branch: 'feature' }, 'localBranchInvariantStatus', 'fail'],
