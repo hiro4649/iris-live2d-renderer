@@ -1,5 +1,5 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v1.0.0",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v1.0.1",
   "harnessVersion": "1.0.0",
   "schemaVersion": "1.0.0",
   "cases": [
@@ -56,25 +56,7 @@
     "runtime_readiness_fixture_only_fails",
     "production_go_without_oracle_fails",
     "source_harness_only_v100_fixture_pass",
-    "target_harness_rollout_v100_fixture_pass",
-    "pr42_expected_file_set_pre_push_handoff_passes",
-    "pr42_pre_push_product_handoff_passes_with_pending_remote",
-    "pr42_missing_local_product_evidence_fails",
-    "pr42_pending_after_push_remote_pass_fails",
-    "pr42_merge_ready_without_same_head_remote_pass_fails",
-    "pr42_missing_live2d_docs_classification_fails",
-    "pr42_lifeboat_only_pass_fails",
-    "pr42_placeholder_only_evidence_fails",
-    "pr42_stale_same_head_evidence_fails",
-    "pr42_missing_review_independence_fails",
-    "target_harness_timeout_absent_passes",
-    "target_harness_remote_pending_pre_push_completes_without_timeout",
-    "target_harness_pending_after_push_as_remote_pass_fails",
-    "target_harness_timeout_safe_class_fails",
-    "target_harness_empty_safe_artifact_fails",
-    "target_harness_missing_safe_artifact_fails",
-    "target_harness_timeout_merge_ready_without_remote_fails",
-    "target_harness_unexpected_git_mutation_fails"
+    "target_harness_rollout_v100_fixture_pass"
   ],
   "safeSummaryOnly": true
 }

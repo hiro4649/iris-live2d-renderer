@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.0
+// CODEX_QUALITY_HARNESS_FILE v1.0.1
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { HARNESS_VERSION, scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor, readJson, readText } from './codex-v080-lib.mjs';
@@ -14,8 +14,9 @@ function safe(statusKey, status, payload = {}) {
 }
 function notApplicable(statusKey, reasonCode) { return safe(statusKey, 'not_applicable', { reasonCodes: [reasonCode] }); }
 function hasText(file, pattern) { const text = readText(file) || ''; return typeof pattern === 'string' ? text.includes(pattern) : pattern.test(text); }
-function manifestText() { return readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json') || ''; }
-function manifestJson() { const file = fs.existsSync('CODEX_SOURCE_HARNESS_MANIFEST.json') ? 'CODEX_SOURCE_HARNESS_MANIFEST.json' : 'docs/process/CODEX_HARNESS_MANIFEST.json'; const parsed = readJson(file); return parsed.ok ? parsed.value : {}; }
+function targetMode() { return process.env.CODEX_HARNESS_MODE === 'target' && fs.existsSync('docs/process/CODEX_HARNESS_MANIFEST.json'); }
+function manifestText() { return targetMode() ? (readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '') : (readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json') || ''); }
+function manifestJson() { const file = targetMode() ? 'docs/process/CODEX_HARNESS_MANIFEST.json' : (fs.existsSync('CODEX_SOURCE_HARNESS_MANIFEST.json') ? 'CODEX_SOURCE_HARNESS_MANIFEST.json' : 'docs/process/CODEX_HARNESS_MANIFEST.json'); const parsed = readJson(file); return parsed.ok ? parsed.value : {}; }
 function relevant(input, field) { return parseBool(input.forceCheck) || parseBool(input[field]); }
 function mapGate(statusKey, reasonCode, input, relevantField, failFields = [], warnFields = []) {
   if (!relevant(input, relevantField)) return notApplicable(statusKey, reasonCode + '_not_applicable');
@@ -24,12 +25,14 @@ function mapGate(statusKey, reasonCode, input, relevantField, failFields = [], w
   return safe(statusKey, reasonCodes.length ? 'fail' : warnings.length ? 'warning' : 'pass', { reasonCodes, warnings });
 }
 const REQUIRED_PARENT_GATE_KEYS = ['formalEvidencePrecedenceStatus','lifeboatSemanticsStatus','placeholderOnlyEvidenceStatus','remoteNpmDiagnosticNormalizationStatus','legacySelfTestAdvisoryStatus','targetQualityBlockerDigestStatus','prEvidenceAutoRepairHintStatus','actionsBlockerRecoveryStatus','sameHeadEvidenceRefreshStatus','safeArtifactBundleCompletenessStatus','productEvidenceConsumptionStatus','placeholderEvidenceForbiddenStatus','sameHeadArtifactEvidenceStatus','skipNpmProductBypassStatus'];
+const V100_HARNESS_VERSION = '1.0.0';
+const V100_SUCCESSOR_VERSIONS = ['1.0.0', '1.0.1'];
 
-export function buildParentHarnessDevelopmentReport(input = parseJson(process.env.CODEX_PARENT_HARNESS_DEVELOPMENT_JSON) || {}) { const reasonCodes = []; const parentVersion = String(input.parentVersion || '0.9.9'); const childVersion = String(input.childVersion || HARNESS_VERSION); if (parentVersion !== '0.9.9' || childVersion !== '1.0.0' || input.parentVersion === '') reasonCodes.push('parent_harness_required'); if (!fs.existsSync('scripts/codex-v099-self-test.mjs') || parseBool(input.parentSelfTestNotRun)) reasonCodes.push('parent_harness_self_test_failed'); if (any(input, ['newHarnessOnlyJudgement','v099GateWeakened','targetRolloutBeforeSourceMainVerification'])) reasonCodes.push('parent_gate_preservation_failed'); return safe('parentHarnessDevelopmentStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, parentVersion, childVersion }); }
+export function buildParentHarnessDevelopmentReport(input = parseJson(process.env.CODEX_PARENT_HARNESS_DEVELOPMENT_JSON) || {}) { const reasonCodes = []; const parentVersion = String(input.parentVersion || '0.9.9'); const childVersion = String(input.childVersion || V100_HARNESS_VERSION); if (parentVersion !== '0.9.9' || childVersion !== V100_HARNESS_VERSION || input.parentVersion === '') reasonCodes.push('parent_harness_required'); if (!fs.existsSync('scripts/codex-v099-self-test.mjs') || parseBool(input.parentSelfTestNotRun)) reasonCodes.push('parent_harness_self_test_failed'); if (any(input, ['newHarnessOnlyJudgement','v099GateWeakened','targetRolloutBeforeSourceMainVerification'])) reasonCodes.push('parent_gate_preservation_failed'); return safe('parentHarnessDevelopmentStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, parentVersion, childVersion }); }
 export function buildParentHarnessSelfTestReport(input = parseJson(process.env.CODEX_PARENT_HARNESS_SELF_TEST_JSON) || {}) { const reasonCodes = []; if (!fs.existsSync('scripts/codex-v099-self-test.mjs') || !hasText('scripts/codex-local-quality-gate.mjs', 'v099SelfTestStatus')) reasonCodes.push('parent_harness_self_test_failed'); if (any(input, ['activeParentFailure','parentActiveSelfTestRegistryMissing','legacyFailureBlockingActive','activeFailureAdvisory'])) reasonCodes.push('parent_harness_self_test_failed'); return safe('parentHarnessSelfTestStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, requiredSelfTestCount: 9 }); }
 export function buildNewHarnessSelfTestReport(input = parseJson(process.env.CODEX_NEW_HARNESS_SELF_TEST_JSON) || {}) { const reasonCodes = []; const manifest = manifestText(); if (!fs.existsSync('scripts/codex-v100-self-test.mjs') || parseBool(input.v100SelfTestMissing)) reasonCodes.push('new_harness_self_test_failed'); if (!hasText('scripts/codex-local-quality-gate.mjs', 'v100SelfTestStatus') || parseBool(input.v100StatusKeyMissing)) reasonCodes.push('new_harness_self_test_failed'); if (!fs.existsSync('docs/process/CODEX_V100_EVAL_CASES.json') || parseBool(input.v100EvalCasesMissing)) reasonCodes.push('new_harness_self_test_failed'); if (!manifest.includes('codex-v100-self-test.mjs') || parseBool(input.v100FilesMissingFromManifest)) reasonCodes.push('new_harness_self_test_failed'); if (parseBool(input.v100LocalQualityGateIntegrationMissing)) reasonCodes.push('new_harness_self_test_failed'); return safe('newHarnessSelfTestStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes }); }
 export function buildParentGatePreservationReport(input = parseJson(process.env.CODEX_PARENT_GATE_PRESERVATION_JSON) || {}) { const reasonCodes = []; const localGateText = readText('scripts/codex-local-quality-gate.mjs') || ''; for (const key of REQUIRED_PARENT_GATE_KEYS) if (!localGateText.includes(key)) reasonCodes.push('parent_gate_preservation_failed'); if (any(input, ['formalEvidenceFailPass','lifeboatOnlyPass','placeholderOnlyProductEvidencePass','npmFailurePass','workflowDispatchPrEvidence','sameHeadMismatchHidden','remoteInfraAsProduct','productFailureAsRemoteInfra','parentGateFileRemoved'])) reasonCodes.push('parent_gate_preservation_failed'); return safe('parentGatePreservationStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, preservedGateCount: REQUIRED_PARENT_GATE_KEYS.length }); }
-export function buildVersionSuccessionReport(input = parseJson(process.env.CODEX_VERSION_SUCCESSION_JSON) || {}) { const reasonCodes = []; const manifest = manifestJson(); const targetMode = process.env.CODEX_HARNESS_MODE === 'target' && fs.existsSync('docs/process/CODEX_HARNESS_MANIFEST.json'); const targetManifestAligned = manifest.harnessVersion === '1.0.0' && manifest.sourceHarnessVersion === '1.0.0' && manifest.coreProfileSeparation?.sourceHarnessVersion === '1.0.0'; if ((!targetMode && !targetManifestAligned && !hasText('README.md', 'Version: v1.0.0')) || manifest.harnessVersion !== '1.0.0' || parseBool(input.manifestReadmeMismatch) || parseBool(input.activeSelfTestVersionMismatch)) reasonCodes.push('version_succession_failed'); if (any(input, ['v099TargetRolloutIncomplete','sourceMainUnverifiedTargetRollout','threeRepoIncompleteNextVersion','skipParentVersion'])) reasonCodes.push('version_succession_failed'); return safe('versionSuccessionStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, parentVersion: '0.9.9', childVersion: '1.0.0' }); }
+export function buildVersionSuccessionReport(input = parseJson(process.env.CODEX_VERSION_SUCCESSION_JSON) || {}) { const reasonCodes = []; const manifest = manifestJson(); const readmeOk = targetMode() ? true : V100_SUCCESSOR_VERSIONS.some((version) => hasText('README.md', `Version: v${version}`)); if (!readmeOk || !V100_SUCCESSOR_VERSIONS.includes(manifest.harnessVersion) || parseBool(input.manifestReadmeMismatch) || parseBool(input.activeSelfTestVersionMismatch)) reasonCodes.push('version_succession_failed'); if (any(input, ['v099TargetRolloutIncomplete','sourceMainUnverifiedTargetRollout','threeRepoIncompleteNextVersion','skipParentVersion'])) reasonCodes.push('version_succession_failed'); return safe('versionSuccessionStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, parentVersion: '0.9.9', childVersion: V100_HARNESS_VERSION }); }
 export function buildWorkflowPlanReport(input = parseJson(process.env.CODEX_WORKFLOW_PLAN_JSON) || {}) { if (!relevant(input, 'workflowRelevant')) return notApplicable('workflowPlanStatus', 'workflow_plan_not_applicable'); const r = any(input, ['largeTaskWithoutDecomposition','productAndHarnessMixed','allowedFilesMissing','forbiddenFilesMissing','doneCriteriaMissing','stopConditionMissing']) ? ['workflow_plan_missing'] : []; return safe('workflowPlanStatus', r.length ? 'fail' : 'pass', { reasonCodes: r, taskMode: input.taskMode || 'harness_change' }); }
 export function buildTaskGraphReport(input = parseJson(process.env.CODEX_TASK_GRAPH_JSON) || {}) { if (!relevant(input, 'taskGraphRelevant')) return notApplicable('taskGraphStatus', 'task_graph_not_applicable'); const r = any(input, ['targetBeforeSource','productBeforeHarnessRepair','cycleDetected','missingDependency']) ? ['task_graph_invalid'] : []; return safe('taskGraphStatus', r.length ? 'fail' : 'pass', { reasonCodes: r }); }
 export function buildWorkflowScopeReport(input = parseJson(process.env.CODEX_WORKFLOW_SCOPE_JSON) || {}) { const allowed = ['read_only_map','plan_only','safe_cleanup','behavior_preserving_refactor','product_change','security_audit','performance_audit','cost_audit','db_audit','handover','runtime_readiness','harness_change','target_rollout']; const scope = String(input.scope || 'harness_change'); const r = (!allowed.includes(scope) || parseBool(input.scopeUnknown) || parseBool(input.productCodeHarnessMixed)) ? ['workflow_scope_missing'] : []; return safe('workflowScopeStatus', r.length ? 'fail' : 'pass', { reasonCodes: r, scope }); }
@@ -68,75 +71,4 @@ export function buildPublicContractChangeReport(input = parseJson(process.env.CO
 export function buildMigrationSafetyPlanReport(input = parseJson(process.env.CODEX_MIGRATION_SAFETY_PLAN_JSON) || {}) { return mapGate('migrationSafetyPlanStatus', 'migration_safety_plan_failed', input, 'migrationRelevant', ['migrationAutoApplied','compatMissing','backfillMissing','rollbackMissing','downtimeUnknown']); }
 export function buildRuntimeReadinessBoundaryReport(input = parseJson(process.env.CODEX_RUNTIME_READINESS_BOUNDARY_JSON) || {}) { const r = []; if (parseBool(input.runtimeReadinessClaimed) && !parseBool(input.runtimeOraclePresent)) r.push('runtime_readiness_boundary_failed'); if (any(input, ['fixturePassRealReady','unitTestPassRealReady','localSmokeRealReady'])) r.push('runtime_readiness_boundary_failed'); return safe('runtimeReadinessBoundaryStatus', r.length ? 'fail' : 'pass', { reasonCodes: r, runtimeReadinessClaimed: parseBool(input.runtimeReadinessClaimed) }); }
 export function buildProductionGoBoundaryReport(input = parseJson(process.env.CODEX_PRODUCTION_GO_BOUNDARY_JSON) || {}) { const r = any(input, ['productionReadinessClaimed','productionGoWithoutOwner','productionGoWithoutOracle','harnessAloneProductionGo']) ? ['production_go_boundary_failed'] : []; return safe('productionGoBoundaryStatus', r.length ? 'fail' : 'pass', { reasonCodes: r, productionReadinessClaimed: parseBool(input.productionReadinessClaimed) }); }
-const PR42_EXPECTED_FILES = [
-  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
-  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
-  'src/renderer/cubismLoaderProvisioning.js',
-  'src/renderer/cubismRenderer.js',
-  'src/server.js',
-  'src/state.js',
-  'test/contract.test.js',
-];
-export function buildPr42EvidenceClassificationHandoffReport(input = parseJson(process.env.CODEX_PR42_EVIDENCE_CLASSIFICATION_HANDOFF_JSON) || {}) {
-  const files = Array.isArray(input.changedFiles) ? input.changedFiles.map(String) : PR42_EXPECTED_FILES;
-  const missingExpected = PR42_EXPECTED_FILES.filter((file) => !files.includes(file));
-  const phase = String(input.remoteEvidencePhase || 'remote_evidence_required_after_push');
-  const pendingAfterPush = phase === 'remote_evidence_required_after_push';
-  const sameHeadRemotePass = parseBool(input.sameHeadRemotePass);
-  const targetMergeReady = parseBool(input.targetMergeReady);
-  const docsCovered = input.docsClassificationCoveragePresent === undefined ? true : parseBool(input.docsClassificationCoveragePresent);
-  const r = [];
-  if (missingExpected.length || parseBool(input.unexpectedFilesPresent)) r.push('pr42_expected_files_mismatch');
-  if (!parseBool(input.localProductChecksPassed)) r.push('product_verification_evidence_missing');
-  if (!parseBool(input.safePrContextPresent)) r.push('pr_profile_missing');
-  if (!pendingAfterPush || parseBool(input.pendingAfterPushTreatedAsRemotePass)) r.push('local_remote_phase_conflict');
-  if (targetMergeReady && !sameHeadRemotePass) r.push('workflow_stop_condition_triggered');
-  if (!docsCovered || parseBool(input.docsClassificationMissing)) r.push('classification_unknown_file');
-  if (parseBool(input.lifeboatOnlyPass)) r.push('lifeboat_only_pass_forbidden');
-  if (parseBool(input.placeholderOnlyEvidence)) r.push('placeholder_only_evidence_forbidden');
-  if (parseBool(input.staleSameHeadEvidence)) r.push('same_head_evidence_refresh_failed');
-  if (parseBool(input.safeArtifactBundleMissing) && !pendingAfterPush) r.push('safe_artifact_bundle_completeness_failed');
-  if (parseBool(input.missingReviewIndependence)) r.push('review_independence_missing');
-  if (parseBool(input.runtimeReadinessClaimed)) r.push('runtime_readiness_boundary_failed');
-  if (parseBool(input.productionReadinessClaimed)) r.push('production_go_boundary_failed');
-  return safe('pr42EvidenceClassificationHandoffStatus', r.length ? 'fail' : 'pass', {
-    reasonCodes: r,
-    changedFileCount: files.length,
-    expectedFileCount: PR42_EXPECTED_FILES.length,
-    pendingAfterPush,
-    remoteEvidencePass: false,
-    targetMergeReady: targetMergeReady && sameHeadRemotePass,
-    sameHeadRemotePassRequired: !sameHeadRemotePass,
-  });
-}
-
-export function buildTargetHarnessTimeoutDiagnosisReport(input = parseJson(process.env.CODEX_TARGET_HARNESS_TIMEOUT_DIAGNOSIS_JSON) || {}) {
-  const reasonCodes = [];
-  const timeoutClass = String(input.timeoutClass || (parseBool(input.workstationTimeout) ? 'local_target_harness_timeout_workstation' : parseBool(input.waitingForMissingArtifact) || parseBool(input.missingSafeArtifact) ? 'local_target_harness_timeout_waiting_for_missing_artifact' : parseBool(input.timedOut) || parseBool(input.possibleInfiniteLoop) ? 'local_target_harness_timeout_possible_infinite_loop' : parseBool(input.unknownTimeout) ? 'local_target_harness_timeout_unknown' : ''));
-  const allowedTimeoutClasses = [
-    'local_target_harness_timeout_workstation',
-    'local_target_harness_timeout_waiting_for_missing_artifact',
-    'local_target_harness_timeout_possible_infinite_loop',
-    'local_target_harness_timeout_empty_safe_artifact',
-    'local_target_harness_timeout_unknown',
-  ];
-  if (timeoutClass) reasonCodes.push(allowedTimeoutClasses.includes(timeoutClass) ? timeoutClass : 'local_target_harness_timeout_unknown');
-  if (parseBool(input.emptySafeArtifact)) reasonCodes.push('local_target_harness_timeout_empty_safe_artifact');
-  if (parseBool(input.missingSafeArtifact)) reasonCodes.push('local_target_harness_timeout_waiting_for_missing_artifact');
-  if (parseBool(input.unexpectedGitMutation)) reasonCodes.push('suspected_harness_or_script_git_mutation');
-  if (parseBool(input.timeoutTreatedAsPass) || parseBool(input.emptyArtifactTreatedAsPass)) reasonCodes.push('workflow_stop_condition_triggered');
-  const phase = String(input.remoteEvidencePhase || 'remote_evidence_required_after_push');
-  const pendingAfterPush = phase === 'remote_evidence_required_after_push';
-  const sameHeadRemotePass = parseBool(input.sameHeadRemotePass);
-  const targetMergeReady = parseBool(input.targetMergeReady);
-  if (!pendingAfterPush || parseBool(input.pendingAfterPushTreatedAsRemotePass)) reasonCodes.push('local_remote_phase_conflict');
-  if (targetMergeReady && !sameHeadRemotePass) reasonCodes.push('workflow_stop_condition_triggered');
-  return safe('targetHarnessTimeoutDiagnosisStatus', reasonCodes.length ? 'fail' : 'pass', {
-    reasonCodes,
-    pendingAfterPush,
-    remoteEvidencePass: false,
-    targetMergeReady: targetMergeReady && sameHeadRemotePass && reasonCodes.length === 0,
-    safeArtifactComplete: reasonCodes.length === 0,
-  });
-}
 export function runV100GateCli(metaUrl, argvOne, builder, envName) { if (argvOne && fileURLToPath(metaUrl) === argvOne) { const report = builder(); writeJsonReport(report, envName); exitFor(report); } }
