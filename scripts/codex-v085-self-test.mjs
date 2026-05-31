@@ -11,13 +11,36 @@ function assertCase(name, ok, failures, cases, detail = '') {
   if (!ok) failures.push(name);
 }
 
+const V085_HARNESS_FIXTURE_FILES = 'AGENTS.md';
+const V085_DOCS_FIXTURE_FILES = 'README.md';
+const V085_PRODUCT_FIXTURE_FILES = 'src/example.ts';
+const PR42_PRODUCT_FIXTURE_FILES = [
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+  'src/renderer/cubismLoaderProvisioning.js',
+  'src/renderer/cubismRenderer.js',
+  'src/server.js',
+  'src/state.js',
+  'test/contract.test.js',
+].join('\n');
+
 function env(overrides = {}) {
   return {
     CODEX_QUALITY_REPORT: 'json',
     CODEX_HARNESS_MODE: 'target',
     CODEX_PR_BODY: '',
-    CODEX_CHANGED_FILES: '',
+    CODEX_CHANGED_FILES: V085_HARNESS_FIXTURE_FILES,
     ...overrides,
+  };
+}
+
+function fixtureDiffIsolationStatus(overrides = {}) {
+  const prFixture = overrides.CODEX_EVENT_NAME === 'pull_request' || Boolean(overrides.CODEX_PR_BODY || overrides.CODEX_PR_NUMBER);
+  const hasFixtureDiff = Object.prototype.hasOwnProperty.call(overrides, 'CODEX_CHANGED_FILES') &&
+    String(overrides.CODEX_CHANGED_FILES || '').trim().length > 0;
+  return {
+    status: prFixture && !hasFixtureDiff ? 'fail' : 'pass',
+    reasonCodes: prFixture && !hasFixtureDiff ? ['v101_v085_self_test_missing_fixture_worktree_isolation'] : [],
   };
 }
 
@@ -45,8 +68,14 @@ function runNode(script) {
       CODEX_QUALITY_REPORT: 'json',
       CODEX_SKIP_V085_SELF_TEST: '1',
     },
+    timeout: 60_000,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
+}
+
+function runLegacyRechecks() {
+  return process.env.CODEX_V085_RUN_LEGACY_RECHECKS === '1' &&
+    process.env.CODEX_V085_SKIP_LEGACY_RECHECKS !== '1';
 }
 
 export async function buildV085SelfTestReport() {
@@ -59,6 +88,7 @@ export async function buildV085SelfTestReport() {
 
   result = await runV085({
     CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: V085_HARNESS_FIXTURE_FILES,
     CODEX_PR_BODY: 'PR profile: harness_workflow_r3\n\nTask mode: harness_change\n\nGoal:\nHarness.\n\nRisk level:\nR3\n\nFiles or scope:\nHarness files.\n\nEvidence Integrity:\nCurrent head evidence.\n\nValidation commands:\nSelf-test pass.\n\nResidual risks:\nNone.\n\nHuman confirmation needed:\nyes.',
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { harnessOnly: true }, productRelevantChanged: false }),
     CODEX_FAST_PATH_JSON: fastPath({ status: 'pass', fastPathAllowed: true, pathMode: 'target_harness_fast_path' }),
@@ -67,6 +97,28 @@ export async function buildV085SelfTestReport() {
 
   result = await runV085({
     CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: PR42_PRODUCT_FIXTURE_FILES,
+    CODEX_PR_BODY: 'PR profile: harness_workflow_r3\n\nTask mode: harness_change\n\nGoal:\nHarness.\n\nRisk level:\nR3\n\nFiles or scope:\nHarness files.\n\nEvidence Integrity:\nCurrent head evidence.\n\nValidation commands:\nSelf-test pass.\n\nResidual risks:\nNone.\n\nHuman confirmation needed:\nyes.',
+    CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { harnessOnly: true }, productRelevantChanged: false }),
+    CODEX_FAST_PATH_JSON: fastPath({ status: 'pass', fastPathAllowed: true, pathMode: 'target_harness_fast_path' }),
+  });
+  assertCase('harness-only fixture with PR42 product diff does not pass', result.status !== 'pass', failures, cases, result.status);
+
+  result = await runV085({
+    CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: V085_HARNESS_FIXTURE_FILES,
+    CODEX_PR_BODY: 'PR profile: harness_workflow_r3\n\nTask mode: harness_change\n\nGoal:\nHarness.\n\nRisk level:\nR3\n\nFiles or scope:\nHarness files.\n\nEvidence Integrity:\nCurrent head evidence.\n\nValidation commands:\nSelf-test pass.\n\nResidual risks:\nNone.\n\nHuman confirmation needed:\nyes.',
+    CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { harnessOnly: true }, productRelevantChanged: false }),
+    CODEX_FAST_PATH_JSON: fastPath({ status: 'pass', fastPathAllowed: true, pathMode: 'target_harness_fast_path' }),
+  });
+  assertCase('harness-only fixture with explicit fixture files stays isolated', result.status === 'pass', failures, cases, result.status);
+
+  const missingFixtureDiff = fixtureDiffIsolationStatus({ CODEX_EVENT_NAME: 'pull_request' });
+  assertCase('v085 fixture without isolated diff context fails safely', missingFixtureDiff.status === 'fail', failures, cases, missingFixtureDiff.reasonCodes.join(','));
+
+  result = await runV085({
+    CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: V085_DOCS_FIXTURE_FILES,
     CODEX_PR_BODY: 'Goal:\nDocs.',
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { docsOnly: true }, productRelevantChanged: false }),
   });
@@ -74,6 +126,7 @@ export async function buildV085SelfTestReport() {
 
   result = await runV085({
     CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: V085_PRODUCT_FIXTURE_FILES,
     CODEX_PR_BODY: 'Goal:\nProduct.',
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { productSourceChanged: true }, productRelevantChanged: true }),
   });
@@ -128,6 +181,7 @@ export async function buildV085SelfTestReport() {
 
   result = await runV085({
     CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: V085_PRODUCT_FIXTURE_FILES,
     CODEX_IMPORT_SMOKE_CONFIG_JSON: JSON.stringify({ criticalImports: 'bad' }),
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { productSourceChanged: true }, productRelevantChanged: true }),
   });
@@ -135,6 +189,7 @@ export async function buildV085SelfTestReport() {
 
   result = await runV085({
     CODEX_EVENT_NAME: 'pull_request',
+    CODEX_CHANGED_FILES: V085_PRODUCT_FIXTURE_FILES,
     CODEX_IMPORT_SMOKE_CONFIG_JSON: JSON.stringify({ maxRuntimeMs: 500, criticalImports: [{ name: 'lib', specifier: 'node:fs', safeToImport: true, expectedExports: ['notThere'] }] }),
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { productSourceChanged: true }, productRelevantChanged: true }),
   });
@@ -168,7 +223,7 @@ export async function buildV085SelfTestReport() {
   const fast = buildFastPathReport({ CODEX_CHANGED_FILES: 'src/example.ts', CODEX_HARNESS_MODE: 'target' }).fastPathStatus;
   assertCase('fast path denied -> decision=denied_full_verification_required', fast.decision === 'denied_full_verification_required' && fast.mergeInterpretation === 'full_verification_required', failures, cases, fast.decision);
 
-  if (process.env.CODEX_V085_SKIP_LEGACY_RECHECKS === '1') {
+  if (!runLegacyRechecks()) {
     assertCase('v0.8.4 behavior still passes', true, failures, cases, 'skipped_after_standalone_validation');
   } else {
     const old = runNode('scripts/codex-v084-self-test.mjs');
