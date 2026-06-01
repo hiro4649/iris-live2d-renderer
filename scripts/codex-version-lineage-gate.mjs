@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.1
+// CODEX_QUALITY_HARNESS_FILE v1.0.2
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +20,6 @@ function firstMarkerVersion(file) {
 
 function listRepoFiles(dir = '.') {
   const out = [];
-  if (!fs.existsSync(dir)) return out;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (['.git', 'node_modules', 'dist', 'build'].includes(entry.name)) continue;
     const full = path.join(dir, entry.name);
@@ -30,17 +29,6 @@ function listRepoFiles(dir = '.') {
     else out.push(normalized);
   }
   return out;
-}
-
-function targetHarnessMarkerFiles(paths = []) {
-  const files = new Set(paths);
-  for (const dir of ['docs/process', 'docs/codex', 'scripts']) {
-    for (const file of listRepoFiles(dir)) files.add(file);
-  }
-  for (const file of ['.github/pull_request_template.md', '.github/workflows/quality-gate.yml']) {
-    files.add(file);
-  }
-  return [...files].filter((file) => fs.existsSync(file) && fs.statSync(file).isFile());
 }
 
 function manifestPath(env = process.env) {
@@ -68,7 +56,6 @@ function requiredPaths(env = process.env) {
 export function buildVersionLineageReport(env = process.env) {
   const failures = [];
   const warnings = [];
-  const target = env.CODEX_HARNESS_MODE === 'target' && fs.existsSync('docs/process/CODEX_HARNESS_MANIFEST.json');
   const paths = requiredPaths(env);
   const manifestFile = manifestPath(env);
   const manifestJson = readJson(manifestFile);
@@ -90,7 +77,7 @@ export function buildVersionLineageReport(env = process.env) {
   for (const file of missing) failures.push(`missing:${file}`);
 
   const readme = readText('README.md');
-  if (!target && fs.existsSync('README.md') && !readme.includes(`Version: v${HARNESS_VERSION}`)) failures.push('version_lineage_readme_mismatch');
+  if (fs.existsSync('README.md') && !readme.includes(`Version: v${HARNESS_VERSION}`)) failures.push('version_lineage_readme_mismatch');
 
   const localGate = readText('scripts/codex-local-quality-gate.mjs');
   const lib = readText('scripts/codex-v080-lib.mjs');
@@ -102,8 +89,7 @@ export function buildVersionLineageReport(env = process.env) {
     if (version && version !== HARNESS_VERSION) failures.push(`active_marker_version_mismatch:${file}`);
   }
 
-  const markerFiles = target ? targetHarnessMarkerFiles(paths) : listRepoFiles();
-  for (const file of markerFiles) {
+  for (const file of listRepoFiles()) {
     if (!fs.existsSync(file) || !fs.statSync(file).isFile()) continue;
     const version = firstMarkerVersion(file);
     if (!version) continue;

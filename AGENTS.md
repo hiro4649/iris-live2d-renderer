@@ -15,7 +15,7 @@ source, tests, specs, package files, lockfiles, runtime files, assets, or
 `scripts/run-tests.js` unless the project owner explicitly requests product
 work and required verification evidence is available.
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-CODEX_QUALITY_HARNESS_FILE v1.0.1
+CODEX_QUALITY_HARNESS_FILE v1.0.2
 
 ## Prime Directive
 
@@ -29,7 +29,7 @@ authority remains outside this block.
 
 ## Codex Target Harness Boundary
 
-This target repository consumes Codex Development Harness v1.0.1 through
+This target repository consumes Codex Development Harness v1.0.2 through
 `docs/process/CODEX_HARNESS_MANIFEST.json`; do not copy or create
 `CODEX_SOURCE_HARNESS_MANIFEST.json` here. Keep product authority outside this
 block intact.
@@ -40,11 +40,11 @@ Keep AGENTS.md compact: doctrine, routing map, and links only. Put detailed
 policy in `docs/process`. Load only task-needed skills, normally four or fewer
 and never more than five. Use `docs/process/CODEX_AGENTS_DOCTRINE_POLICY.md`,
 `docs/process/CODEX_SKILL_ROUTING_POLICY.md`,
-`docs/process/CODEX_SUBAGENT_GOVERNANCE_POLICY.md`, and related v0.9.5-v1.0.1
+`docs/process/CODEX_SUBAGENT_GOVERNANCE_POLICY.md`, and related v0.9.5-v1.0.2
 files for detailed rules. Use `docs/process/CODEX_OPENAI_CODEX_METHOD_POLICY.md`
-for Codex Method requirements. For v1.0.1 outcome, ownership, anti-accretion,
-visible acceptance evidence, toolchain preflight, branch/head, and local gate
-report contract routing, use the matching `docs/process/CODEX_*_POLICY.md`
+for Codex Method requirements. For v1.0.1 and v1.0.2 outcome, recovery,
+fixture isolation, clean-main, external blocked, handover, branch/head, and
+local gate contract routing, use the matching `docs/process/CODEX_*_POLICY.md`
 files.
 
 ## Plan-First Rule
