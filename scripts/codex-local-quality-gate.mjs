@@ -2229,6 +2229,26 @@ function runV097Gates(report, gateEnv) {
 function initializeV097Statuses(report) {
   for (const key of V097_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
 }
+function pendingRemoteProductEvidenceStatus(statusKey) {
+  return {
+    status: 'pass',
+    pendingAfterPush: true,
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    phase: 'remote_evidence_required_after_push',
+    safeSummaryOnly: true,
+    reasonCodes: [],
+    warnings: [],
+  };
+}
+
+function isPrePushProductRemoteEvidencePending(report, gateEnv) {
+  return gateEnv.CODEX_HARNESS_MODE === 'target'
+    && gateEnv.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push'
+    && Boolean(gateEnv.CODEX_PR_NUMBER)
+    && (gateEnv.CODEX_PR_PROFILE === 'product_r3' || report.changeClassificationStatus?.risk === 'R3');
+}
+
 function runV098Gates(report, gateEnv) {
   const v098Env = {
     ...gateEnv,
@@ -2237,8 +2257,13 @@ function runV098Gates(report, gateEnv) {
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
   };
-  report.remoteProductEvidenceExecutionStatus = runGateScript('scripts/codex-remote-product-evidence-execution-gate.mjs', 'remoteProductEvidenceExecutionStatus', 'CODEX_REMOTE_PRODUCT_EVIDENCE_EXECUTION_REPORT', v098Env);
-  report.remoteProductEvidenceRunnerStatus = runGateScript('scripts/codex-remote-product-evidence-runner.mjs', 'remoteProductEvidenceRunnerStatus', 'CODEX_REMOTE_PRODUCT_EVIDENCE_RUNNER_REPORT', v098Env);
+  const prePushRemoteEvidencePending = isPrePushProductRemoteEvidencePending(report, gateEnv);
+  report.remoteProductEvidenceExecutionStatus = prePushRemoteEvidencePending
+    ? pendingRemoteProductEvidenceStatus('remoteProductEvidenceExecutionStatus')
+    : runGateScript('scripts/codex-remote-product-evidence-execution-gate.mjs', 'remoteProductEvidenceExecutionStatus', 'CODEX_REMOTE_PRODUCT_EVIDENCE_EXECUTION_REPORT', v098Env);
+  report.remoteProductEvidenceRunnerStatus = prePushRemoteEvidencePending
+    ? pendingRemoteProductEvidenceStatus('remoteProductEvidenceRunnerStatus')
+    : runGateScript('scripts/codex-remote-product-evidence-runner.mjs', 'remoteProductEvidenceRunnerStatus', 'CODEX_REMOTE_PRODUCT_EVIDENCE_RUNNER_REPORT', v098Env);
   report.productEvidenceConsumptionStatus = runGateScript('scripts/codex-product-evidence-consumption-gate.mjs', 'productEvidenceConsumptionStatus', 'CODEX_PRODUCT_EVIDENCE_CONSUMPTION_REPORT', v098Env);
   report.placeholderEvidenceForbiddenStatus = runGateScript('scripts/codex-placeholder-evidence-forbidden-gate.mjs', 'placeholderEvidenceForbiddenStatus', 'CODEX_PLACEHOLDER_EVIDENCE_FORBIDDEN_REPORT', v098Env);
   report.localRemotePhaseStatus = runGateScript('scripts/codex-local-remote-phase-status-gate.mjs', 'localRemotePhaseStatus', 'CODEX_LOCAL_REMOTE_PHASE_STATUS_REPORT', v098Env);
@@ -2266,7 +2291,9 @@ function runV099Gates(report, gateEnv) {
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
   report.placeholderOnlyEvidenceStatus = runGateScript('scripts/codex-placeholder-only-evidence-gate.mjs', 'placeholderOnlyEvidenceStatus', 'CODEX_PLACEHOLDER_ONLY_EVIDENCE_REPORT', v099Env);
-  report.remoteNpmDiagnosticNormalizationStatus = runGateScript('scripts/codex-remote-npm-diagnostic-normalization-gate.mjs', 'remoteNpmDiagnosticNormalizationStatus', 'CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_REPORT', v099Env);
+  report.remoteNpmDiagnosticNormalizationStatus = isPrePushProductRemoteEvidencePending(report, gateEnv)
+    ? pendingRemoteProductEvidenceStatus('remoteNpmDiagnosticNormalizationStatus')
+    : runGateScript('scripts/codex-remote-npm-diagnostic-normalization-gate.mjs', 'remoteNpmDiagnosticNormalizationStatus', 'CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_REPORT', v099Env);
   report.legacySelfTestAdvisoryStatus = runGateScript('scripts/codex-legacy-self-test-advisory-gate.mjs', 'legacySelfTestAdvisoryStatus', 'CODEX_LEGACY_SELF_TEST_ADVISORY_REPORT', v099Env);
   report.authSurfaceClassifierRefinementStatus = runGateScript('scripts/codex-auth-surface-classifier-refinement-gate.mjs', 'authSurfaceClassifierRefinementStatus', 'CODEX_AUTH_SURFACE_CLASSIFIER_REFINEMENT_REPORT', v099Env);
   report.targetQualityBlockerDigestStatus = runGateScript('scripts/codex-target-quality-blocker-digest-gate.mjs', 'targetQualityBlockerDigestStatus', 'CODEX_TARGET_QUALITY_BLOCKER_DIGEST_REPORT', v099Env);
@@ -10977,7 +11004,19 @@ async function runTargetHarnessGate() {
 
 
 
-  report.targetMergeReady = report.mergeReady;
+  const prePushRemoteEvidencePending = gateEnv.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+
+
+
+  report.pendingAfterPush = prePushRemoteEvidencePending;
+
+
+
+  report.remoteEvidencePass = prePushRemoteEvidencePending ? false : Boolean(report.remoteEvidencePass);
+
+
+
+  report.targetMergeReady = prePushRemoteEvidencePending ? false : report.mergeReady;
 
 
 

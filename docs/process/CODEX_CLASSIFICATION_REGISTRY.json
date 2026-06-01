@@ -85,6 +85,24 @@
       "notes": "Repository overview."
     },
     {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md",
+      "classification": "product_relevant",
+      "surface": "runtime_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Exact PR42 Live2D loader provisioning scope; does not allow docs/iris-live2d-renderer/** globally."
+    },
+    {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md",
+      "classification": "product_relevant",
+      "surface": "runtime_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Exact PR42 Live2D renderer schedule scope; does not allow docs/iris-live2d-renderer/** globally."
+    },
+    {
       "pathPattern": "CODEX_SOURCE_HARNESS_MANIFEST.json",
       "classification": "harness_managed",
       "surface": "harness",

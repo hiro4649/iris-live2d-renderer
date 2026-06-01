@@ -21,6 +21,8 @@ export const V102_STATUS_KEYS = [
   'productPrEvidenceGeneratorStatus',
   'productPrEvidenceValidatorStatus',
   'productPrEvidenceSafeSummaryStatus',
+  'pr42ProductDocsScopeClassificationStatus',
+  'remoteProductEvidencePrepushStatus',
   'backupArtifactManagerStatus',
   'repoExternalBackupStatus',
   'dirtyWorktreeBackupBoundaryStatus',
@@ -56,6 +58,8 @@ export const V102_REASON_CODES = [
   'harness_fixture_diff_isolation_failed',
   'product_pr_evidence_missing',
   'product_pr_pending_after_push_not_remote_pass',
+  'pr42_docs_scope_classification_unknown',
+  'remote_product_evidence_prepush_misclassified',
   'target_merge_ready_without_same_head_remote_pass',
   'backup_artifact_tracked',
   'backup_artifact_staged',
@@ -297,6 +301,53 @@ export function buildProductPrEvidenceSafeSummaryReport(input = {}) {
     : pass('productPrEvidenceSafeSummaryStatus', { valuesPrinted: false });
 }
 
+export const PR42_EXPECTED_PRODUCT_FILES = [
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+  'src/renderer/cubismLoaderProvisioning.js',
+  'src/renderer/cubismRenderer.js',
+  'src/server.js',
+  'src/state.js',
+  'test/contract.test.js',
+];
+
+export function buildPr42ProductDocsScopeClassificationReport(input = {}) {
+  const changedFiles = input.changedFiles || PR42_EXPECTED_PRODUCT_FILES;
+  const expected = new Set(PR42_EXPECTED_PRODUCT_FILES);
+  const reasons = [];
+  const live2dDocs = changedFiles.filter((file) => file.startsWith('docs/iris-live2d-renderer/'));
+  const unexpectedLive2dDocs = live2dDocs.filter((file) => !expected.has(file));
+  if (bool(input.docsGlobGloballyAllowed) || bool(input.classificationUnknownGloballySuppressed)) reasons.push('pr42_docs_scope_classification_unknown');
+  if (unexpectedLive2dDocs.length || bool(input.unexpectedDocsAllowed)) reasons.push('pr42_docs_scope_classification_unknown');
+  if (!PR42_EXPECTED_PRODUCT_FILES.every((file) => changedFiles.includes(file))) reasons.push('product_pr_diff_containment_failed');
+  if (bool(input.harnessOnlyDocsAllowed)) reasons.push('harness_fixture_diff_isolation_failed');
+  return reasons.length
+    ? fail('pr42ProductDocsScopeClassificationStatus', reasons)
+    : pass('pr42ProductDocsScopeClassificationStatus', {
+      expectedFileCount: PR42_EXPECTED_PRODUCT_FILES.length,
+      docsScope: 'exact_pr42_files_only',
+      harnessOnlyDocsGlobAllowed: false,
+    });
+}
+
+export function buildRemoteProductEvidencePrepushReport(input = {}) {
+  const reasons = [];
+  if (input.phase !== 'remote_evidence_required_after_push') reasons.push('remote_product_evidence_prepush_misclassified');
+  if (!bool(input.localProductEvidencePresent)) reasons.push('product_pr_evidence_missing');
+  if (!bool(input.formalProductEvidencePresent)) reasons.push('product_pr_evidence_missing');
+  if (!bool(input.pendingAfterPush)) reasons.push('remote_product_evidence_prepush_misclassified');
+  if (bool(input.pendingAfterPushAsRemotePass) || bool(input.remoteEvidencePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
+  if (bool(input.targetMergeReady)) reasons.push('target_merge_ready_without_same_head_remote_pass');
+  return reasons.length
+    ? fail('remoteProductEvidencePrepushStatus', reasons)
+    : pass('remoteProductEvidencePrepushStatus', {
+      pendingAfterPush: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      sameHeadRemoteQualityGateRequired: true,
+    });
+}
+
 export function buildBackupArtifactManagerReport(input = {}) {
   const reasons = [];
   if (bool(input.tracked)) reasons.push('backup_artifact_tracked');
@@ -520,6 +571,15 @@ export function buildDefaultV102Reports(context = {}) {
     productPrEvidenceGeneratorStatus: buildProductPrEvidenceGeneratorReport(),
     productPrEvidenceValidatorStatus: buildProductPrEvidenceValidatorReport(),
     productPrEvidenceSafeSummaryStatus: buildProductPrEvidenceSafeSummaryReport(),
+    pr42ProductDocsScopeClassificationStatus: buildPr42ProductDocsScopeClassificationReport(),
+    remoteProductEvidencePrepushStatus: buildRemoteProductEvidencePrepushReport({
+      phase: 'remote_evidence_required_after_push',
+      localProductEvidencePresent: true,
+      formalProductEvidencePresent: true,
+      pendingAfterPush: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+    }),
     backupArtifactManagerStatus: buildBackupArtifactManagerReport(),
     repoExternalBackupStatus: buildRepoExternalBackupReport(),
     dirtyWorktreeBackupBoundaryStatus: buildDirtyWorktreeBackupBoundaryReport(),
