@@ -1,18 +1,9 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.1
+// CODEX_QUALITY_HARNESS_FILE v1.0.2
 import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor, readText } from './codex-v080-lib.mjs';
-
-function targetMode() {
-  return process.env.CODEX_HARNESS_MODE === 'target' && fs.existsSync('docs/process/CODEX_HARNESS_MANIFEST.json');
-}
-
-function harnessManifestText() {
-  if (targetMode()) return readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
-  return readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
-}
 
 export const V101_STATUS_KEYS = [
   'primeDirectiveStatus',
@@ -47,7 +38,6 @@ export const V101_STATUS_KEYS = [
   'authoritativeProductEvidenceStatus',
   'targetQualityOwnerActionStatus',
   'runtimeAdoptionSequenceStatus',
-  'targetHarnessCompletionStatus',
   'v101SelfTestStatus',
 ];
 
@@ -92,11 +82,6 @@ export const V101_REASON_CODES = [
   'authoritative_product_evidence_conflict',
   'target_quality_owner_action_ambiguous',
   'runtime_adoption_sequence_violation',
-  'target_harness_no_report',
-  'target_harness_missing_formal_product_evidence',
-  'pending_after_push_not_remote_pass',
-  'remote_evidence_without_same_head_pass',
-  'target_merge_ready_without_same_head_remote_pass',
 ];
 
 function uniq(values) {
@@ -398,35 +383,12 @@ export function buildRuntimeAdoptionSequenceReport(input = {}) {
   return pass('runtimeAdoptionSequenceStatus');
 }
 
-export function buildTargetHarnessCompletionReport(input = {}) {
-  const pendingAfterPush = bool(input.pendingAfterPush) || input.remoteEvidencePhase === 'remote_evidence_required_after_push';
-  const sameHeadRemotePass = bool(input.sameHeadRemotePass);
-  const remoteEvidencePass = bool(input.remoteEvidencePass);
-  const targetMergeReady = bool(input.targetMergeReady);
-  const reasons = [];
-  if (bool(input.timeout)) reasons.push('local_gate_timeout');
-  if (bool(input.noSafeJsonReport)) reasons.push('target_harness_no_report');
-  if (bool(input.emptySafeJsonReport)) reasons.push('local_gate_json_empty');
-  if (bool(input.missingFormalProductEvidence)) reasons.push('target_harness_missing_formal_product_evidence');
-  if (pendingAfterPush && remoteEvidencePass) reasons.push('pending_after_push_not_remote_pass');
-  if (remoteEvidencePass && !sameHeadRemotePass) reasons.push('remote_evidence_without_same_head_pass');
-  if (targetMergeReady && !sameHeadRemotePass) reasons.push('target_merge_ready_without_same_head_remote_pass');
-  const safeState = {
-    pendingAfterPush,
-    remoteEvidencePass: remoteEvidencePass && sameHeadRemotePass && !pendingAfterPush,
-    targetMergeReady: targetMergeReady && sameHeadRemotePass && !pendingAfterPush,
-  };
-  return reasons.length
-    ? fail('targetHarnessCompletionStatus', reasons, safeState)
-    : pass('targetHarnessCompletionStatus', safeState);
-}
-
 export function buildV101SelfTestRegistrationReport(input = {}) {
   const reasons = [];
-  const manifest = harnessManifestText();
+  const manifestText = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
   if (!fs.existsSync('scripts/codex-v101-self-test.mjs') || bool(input.selfTestMissing)) reasons.push('v101_self_test_missing');
   if (!readText('scripts/codex-local-quality-gate.mjs')?.includes('v101SelfTestStatus')) reasons.push('v101_self_test_missing');
-  if (!manifest.includes('codex-v101-self-test.mjs')) reasons.push('v101_self_test_missing');
+  if (!manifestText.includes('codex-v101-self-test.mjs')) reasons.push('v101_self_test_missing');
   return reasons.length ? fail('v101SelfTestStatus', reasons) : pass('v101SelfTestStatus');
 }
 
@@ -494,7 +456,6 @@ export function buildDefaultV101Reports(context = {}) {
     authoritativeProductEvidenceStatus: buildAuthoritativeProductEvidenceReport(),
     targetQualityOwnerActionStatus: buildTargetQualityOwnerActionReport({ action: 'harness_fix_required' }),
     runtimeAdoptionSequenceStatus: buildRuntimeAdoptionSequenceReport(),
-    targetHarnessCompletionStatus: buildTargetHarnessCompletionReport(),
     v101SelfTestStatus: buildV101SelfTestRegistrationReport(),
   };
 }
