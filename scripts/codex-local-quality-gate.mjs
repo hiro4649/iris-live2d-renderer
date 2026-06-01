@@ -2298,6 +2298,37 @@ function withPr42ProductPrepushProfileMetadata(gateEnv = process.env) {
   };
 }
 
+function withoutActiveEvidenceArtifactEnv(gateEnv = process.env) {
+  const next = { ...gateEnv };
+  for (const key of [
+    'CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH',
+    'CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON',
+    'CODEX_REMOTE_PRODUCT_BASELINE_PATH',
+    'CODEX_REMOTE_PRODUCT_BASELINE_JSON',
+    'CODEX_NPM_TEST_SAFE_SUMMARY_PATH',
+    'CODEX_NPM_TEST_SAFE_SUMMARY_JSON',
+    'CODEX_REMOTE_NPM_DIAGNOSTIC_JSON',
+  ]) {
+    delete next[key];
+    next[key] = '';
+  }
+  return next;
+}
+
+function normalizeSkippedRemoteNpmDiagnostic(report, gateEnv = process.env) {
+  const productRelevant = Boolean(report.changeClassificationStatus?.productRelevantChanged ||
+    report.changeClassificationStatus?.runtimeReadinessClaimed ||
+    report.changeClassificationStatus?.packageOrLockfileChanged);
+  if (productRelevant) return;
+  if (gateEnv.CODEX_SKIP_NPM !== '1' && gateEnv.CODEX_REMOTE_NPM_EXECUTED !== '0') return;
+  if (!['manual_confirmation_required', 'fail'].includes(report.remoteNpmDiagnosticStatus?.status)) return;
+  report.remoteNpmDiagnosticStatus = {
+    status: 'not_applicable',
+    reasonCodes: ['remote_npm_diagnostic_not_required_for_harness_only_skip'],
+    safeSummaryOnly: true,
+  };
+}
+
 function runV098Gates(report, gateEnv) {
   const v098Env = {
     ...gateEnv,
@@ -7817,6 +7848,7 @@ async function runSourceHarnessGate() {
 
 
   report.remoteNpmDiagnosticStatus = runGateScript('scripts/codex-remote-npm-diagnostic-classify.mjs', 'remoteNpmDiagnosticStatus', 'CODEX_REMOTE_NPM_DIAGNOSTIC_REPORT', gateEnv);
+  normalizeSkippedRemoteNpmDiagnostic(report, gateEnv);
 
 
 
@@ -8453,7 +8485,7 @@ async function runSourceHarnessGate() {
 
   report.v098SelfTestStatus = process.env.CODEX_SKIP_V098_SELF_TEST === '1'
     ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-    : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...gateEnv, CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
+    : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...withoutActiveEvidenceArtifactEnv(gateEnv), CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
   report.v099SelfTestStatus = process.env.CODEX_SKIP_V099_SELF_TEST === '1'
     ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
     : runGateScript('scripts/codex-v099-self-test.mjs', 'v099SelfTestStatus', 'CODEX_V099_SELF_TEST_REPORT', { ...gateEnv, CODEX_V099_SKIP_LEGACY_RECHECKS: '1' });
@@ -9969,6 +10001,7 @@ async function runTargetHarnessGate() {
 
 
   report.remoteNpmDiagnosticStatus = runGateScript('scripts/codex-remote-npm-diagnostic-classify.mjs', 'remoteNpmDiagnosticStatus', 'CODEX_REMOTE_NPM_DIAGNOSTIC_REPORT', gateEnv);
+  normalizeSkippedRemoteNpmDiagnostic(report, gateEnv);
 
 
 
@@ -10554,7 +10587,7 @@ async function runTargetHarnessGate() {
 
   report.v098SelfTestStatus = process.env.CODEX_SKIP_V098_SELF_TEST === '1'
     ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
-    : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...gateEnv, CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
+    : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...withoutActiveEvidenceArtifactEnv(gateEnv), CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
   report.v099SelfTestStatus = process.env.CODEX_SKIP_V099_SELF_TEST === '1'
     ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
     : runGateScript('scripts/codex-v099-self-test.mjs', 'v099SelfTestStatus', 'CODEX_V099_SELF_TEST_REPORT', { ...gateEnv, CODEX_V099_SKIP_LEGACY_RECHECKS: '1' });
