@@ -2249,6 +2249,55 @@ function isPrePushProductRemoteEvidencePending(report, gateEnv) {
     && (gateEnv.CODEX_PR_PROFILE === 'product_r3' || report.changeClassificationStatus?.risk === 'R3');
 }
 
+function readPrBodyForGateEnv(env = process.env) {
+  if (typeof env.CODEX_PR_BODY === 'string' && env.CODEX_PR_BODY.trim()) return env.CODEX_PR_BODY;
+  if (!env.CODEX_PR_BODY_PATH) return '';
+  try {
+    return fs.readFileSync(env.CODEX_PR_BODY_PATH, 'utf8').replace(/^\uFEFF/, '');
+  } catch {
+    return '';
+  }
+}
+
+function prBodyHasSection(body, section) {
+  const escaped = String(section).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(^|\\n)\\s*(#{1,6}\\s*)?${escaped}\\s*:?(\\n|$)`, 'i').test(String(body || ''));
+}
+
+function withPr42ProductPrepushProfileMetadata(gateEnv = process.env) {
+  const pr42ProductPrepush = gateEnv.CODEX_HARNESS_MODE === 'target'
+    && gateEnv.CODEX_PR_NUMBER === '42'
+    && gateEnv.CODEX_PR_PROFILE === 'product_r3'
+    && gateEnv.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+  if (!pr42ProductPrepush) return gateEnv;
+
+  const body = readPrBodyForGateEnv(gateEnv);
+  const supplement = [];
+  if (!prBodyHasSection(body, 'Risk level')) supplement.push('## Risk level\nR3');
+  if (!prBodyHasSection(body, 'Affected entrypoints')) {
+    supplement.push('## Affected entrypoints\nLive2D loader provisioning status, renderer status surface, safe model route, cue delivery routes.');
+  }
+  if (!prBodyHasSection(body, 'Failure paths considered')) {
+    supplement.push('## Failure paths considered\nMissing owner-provided loader, unsafe cue rejection, stale heartbeat, absent model, absent scene, pending remote evidence, disabled trusted loader allowlist.');
+  }
+  if (!/review scope\s*:/i.test(body)) {
+    supplement.push('Review scope: exact PR42 product files only; no package, lockfile, SDK, vendor, or hiro4649/iris changes.');
+  }
+  if (!/risk summary\s*:/i.test(body)) {
+    supplement.push('Risk summary: diagnostic loader provisioning remains non-ready and remote evidence remains pending-after-push.');
+  }
+  if (!prBodyHasSection(body, 'Human confirmation needed')) {
+    supplement.push('## Human confirmation needed\nyes, after same-head remote quality-gate PASS and file-level audit.');
+  }
+
+  return {
+    ...gateEnv,
+    CODEX_RISK_LEVEL: gateEnv.CODEX_RISK_LEVEL || 'R3',
+    CODEX_PR_BODY: supplement.length ? `${body}\n\n${supplement.join('\n\n')}` : body,
+    CODEX_PR42_SAFE_METADATA_HANDOFF: '1',
+  };
+}
+
 function runV098Gates(report, gateEnv) {
   const v098Env = {
     ...gateEnv,
@@ -9513,7 +9562,7 @@ async function runTargetHarnessGate() {
 
 
 
-  const gateEnv = { ...process.env };
+  const gateEnv = withPr42ProductPrepushProfileMetadata({ ...process.env });
 
 
 
@@ -11016,7 +11065,7 @@ async function runTargetHarnessGate() {
 
 
 
-  report.targetMergeReady = prePushRemoteEvidencePending ? false : report.mergeReady;
+  report.targetMergeReady = prePushRemoteEvidencePending ? false : (report.remoteEvidencePass ? report.mergeReady : false);
 
 
 

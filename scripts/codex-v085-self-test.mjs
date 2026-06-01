@@ -33,6 +33,34 @@ function fastPath(value) {
   return JSON.stringify({ fastPathStatus: value });
 }
 
+const ACTIVE_PR_ENV_KEYS = [
+  'CODEX_EVENT_NAME',
+  'GITHUB_EVENT_NAME',
+  'GITHUB_REF',
+  'GITHUB_HEAD_REF',
+  'GITHUB_BASE_REF',
+  'GITHUB_SHA',
+  'CODEX_PR_NUMBER',
+  'CODEX_PR_PROFILE',
+  'CODEX_PR_HEAD_SHA',
+  'CODEX_PR_BASE_SHA',
+  'CODEX_REMOTE_EVIDENCE_PHASE',
+  'CODEX_CHANGED_FILES',
+  'CODEX_PR_BODY',
+  'CODEX_PR_BODY_PATH',
+  'CODEX_RISK_LEVEL',
+  'CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH',
+  'CODEX_REMOTE_PRODUCT_BASELINE_PATH',
+  'CODEX_REMOTE_NPM_DIAGNOSTIC_PATH',
+  'CODEX_LIFEBOAT_PATH',
+];
+
+function isolatedProcessEnv(overrides = {}) {
+  const next = { ...process.env };
+  for (const key of ACTIVE_PR_ENV_KEYS) delete next[key];
+  return { ...next, ...overrides };
+}
+
 async function runV085(overrides) {
   return (await buildV085StabilityReport(env(overrides))).v085StabilityStatus;
 }
@@ -40,12 +68,13 @@ async function runV085(overrides) {
 function runNode(script) {
   return spawnSync('node', [script], {
     encoding: 'utf8',
-    env: {
-      ...process.env,
+    env: isolatedProcessEnv({
       CODEX_QUALITY_REPORT: 'json',
       CODEX_SKIP_V085_SELF_TEST: '1',
-    },
+      CODEX_V084_SKIP_LEGACY_RECHECKS: '1',
+    }),
     stdio: ['ignore', 'pipe', 'pipe'],
+    timeout: 30000,
   });
 }
 
@@ -62,8 +91,18 @@ export async function buildV085SelfTestReport() {
     CODEX_PR_BODY: 'PR profile: harness_workflow_r3\n\nTask mode: harness_change\n\nGoal:\nHarness.\n\nRisk level:\nR3\n\nFiles or scope:\nHarness files.\n\nEvidence Integrity:\nCurrent head evidence.\n\nValidation commands:\nSelf-test pass.\n\nResidual risks:\nNone.\n\nHuman confirmation needed:\nyes.',
     CODEX_CHANGE_CLASSIFICATION_JSON: classification({ status: 'pass', classification: { harnessOnly: true }, productRelevantChanged: false }),
     CODEX_FAST_PATH_JSON: fastPath({ status: 'pass', fastPathAllowed: true, pathMode: 'target_harness_fast_path' }),
+    CODEX_HARNESS_SOURCE_REPO: '1',
   });
   assertCase('harness-only change with no product claim -> pass', result.status === 'pass', failures, cases, result.status);
+
+  const isolated = isolatedProcessEnv({ CODEX_QUALITY_REPORT: 'json' });
+  assertCase(
+    'active PR context removed from legacy child self-test env',
+    !isolated.CODEX_PR_NUMBER && !isolated.CODEX_PR_PROFILE && !isolated.CODEX_CHANGED_FILES,
+    failures,
+    cases,
+    'isolated',
+  );
 
   result = await runV085({
     CODEX_EVENT_NAME: 'pull_request',
