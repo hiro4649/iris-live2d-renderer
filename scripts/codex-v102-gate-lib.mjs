@@ -22,6 +22,8 @@ export const V102_STATUS_KEYS = [
   'productPrEvidenceValidatorStatus',
   'productPrEvidenceSafeSummaryStatus',
   'pr42ProductDocsScopeClassificationStatus',
+  'pr42EvidenceMetadataProfileStatus',
+  'v085EnvironmentIsolationStatus',
   'remoteProductEvidencePrepushStatus',
   'backupArtifactManagerStatus',
   'repoExternalBackupStatus',
@@ -59,6 +61,8 @@ export const V102_REASON_CODES = [
   'product_pr_evidence_missing',
   'product_pr_pending_after_push_not_remote_pass',
   'pr42_docs_scope_classification_unknown',
+  'pr42_evidence_metadata_missing',
+  'v085_self_test_environment_leak',
   'remote_product_evidence_prepush_misclassified',
   'target_merge_ready_without_same_head_remote_pass',
   'backup_artifact_tracked',
@@ -330,6 +334,52 @@ export function buildPr42ProductDocsScopeClassificationReport(input = {}) {
     });
 }
 
+export function buildPr42EvidenceMetadataProfileReport(input = {}) {
+  const requiredSections = [
+    'Goal',
+    'Risk level',
+    'Product verification',
+    'Affected entrypoints',
+    'Failure paths considered',
+    'Residual risks',
+    'Human confirmation needed',
+  ];
+  const presentSections = new Set(input.presentSections || requiredSections);
+  const reasons = [];
+  if ((input.profile || 'product_r3') !== 'product_r3') reasons.push('pr42_evidence_metadata_missing');
+  if (bool(input.profileConflict)) reasons.push('pr42_evidence_metadata_missing');
+  for (const section of requiredSections) {
+    if (!presentSections.has(section)) reasons.push('pr42_evidence_metadata_missing');
+  }
+  if (bool(input.safeBodyNotRecognized) || bool(input.formalEvidenceMissing)) reasons.push('pr42_evidence_metadata_missing');
+  if (bool(input.topLevelProductDiffHidden)) reasons.push('product_pr_diff_containment_failed');
+  return reasons.length
+    ? fail('pr42EvidenceMetadataProfileStatus', reasons)
+    : pass('pr42EvidenceMetadataProfileStatus', {
+      profile: 'product_r3',
+      requiredSections,
+      safeMetadataHandoff: 'pr42_product_r3_prepush_only',
+      topLevelProductDiffVisible: true,
+    });
+}
+
+export function buildV085EnvironmentIsolationReport(input = {}) {
+  const reasons = [];
+  if (bool(input.activePrContextInherited) || bool(input.fixtureInheritedActivePrContext)) reasons.push('v085_self_test_environment_leak');
+  if (bool(input.v085SelfTestDisabled)) reasons.push('v085_self_test_environment_leak');
+  if (bool(input.topLevelProductDiffHidden)) reasons.push('product_pr_diff_containment_failed');
+  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
+  if (bool(input.remoteEvidencePassWithoutSameHeadRemotePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
+  if (bool(input.targetMergeReadyWithoutSameHeadRemotePass)) reasons.push('target_merge_ready_without_same_head_remote_pass');
+  return reasons.length
+    ? fail('v085EnvironmentIsolationStatus', reasons)
+    : pass('v085EnvironmentIsolationStatus', {
+      v085SelfTestEnabled: true,
+      activePrContextInherited: false,
+      topLevelProductDiffVisible: true,
+    });
+}
+
 export function buildRemoteProductEvidencePrepushReport(input = {}) {
   const reasons = [];
   if (input.phase !== 'remote_evidence_required_after_push') reasons.push('remote_product_evidence_prepush_misclassified');
@@ -572,6 +622,8 @@ export function buildDefaultV102Reports(context = {}) {
     productPrEvidenceValidatorStatus: buildProductPrEvidenceValidatorReport(),
     productPrEvidenceSafeSummaryStatus: buildProductPrEvidenceSafeSummaryReport(),
     pr42ProductDocsScopeClassificationStatus: buildPr42ProductDocsScopeClassificationReport(),
+    pr42EvidenceMetadataProfileStatus: buildPr42EvidenceMetadataProfileReport(),
+    v085EnvironmentIsolationStatus: buildV085EnvironmentIsolationReport(),
     remoteProductEvidencePrepushStatus: buildRemoteProductEvidencePrepushReport({
       phase: 'remote_evidence_required_after_push',
       localProductEvidencePresent: true,
