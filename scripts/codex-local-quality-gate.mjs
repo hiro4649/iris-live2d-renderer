@@ -59,6 +59,12 @@ const PROFILE_TEMPLATE_VERSION = '0.7.0';
 
 const MARKER = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
 
+function emitSafeJsonReport(report) {
+  // Target runs may redirect stdout to a file; write synchronously so process.exit cannot
+  // leave an empty safe JSON artifact.
+  fs.writeSync(1, `${JSON.stringify(report, null, 2)}\n`);
+}
+
 
 
 
@@ -739,6 +745,11 @@ const V102_STATUS_KEYS = [
   'productPrEvidenceGeneratorStatus',
   'productPrEvidenceValidatorStatus',
   'productPrEvidenceSafeSummaryStatus',
+  'pr42ProductDocsScopeClassificationStatus',
+  'pr42EvidenceMetadataProfileStatus',
+  'v085EnvironmentIsolationStatus',
+  'remoteProductEvidencePrepushStatus',
+  'pr42TargetSafeJsonFinalizationStatus',
   'backupArtifactManagerStatus',
   'repoExternalBackupStatus',
   'dirtyWorktreeBackupBoundaryStatus',
@@ -7069,6 +7080,55 @@ function applyStatusOutcome(key, value, failures, warnings) {
 
 }
 
+function isPr42ProductPrepushTargetEnv(env = process.env) {
+  return env.CODEX_HARNESS_MODE === 'target'
+    && env.CODEX_PR_NUMBER === '42'
+    && env.CODEX_PR_PROFILE === 'product_r3'
+    && env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+}
+
+function buildPr42PrepushEvidenceArtifactStatus(env = process.env) {
+  const artifactPath = env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH || '';
+  const reasons = [];
+  if (!artifactPath) reasons.push('v102_real_pr42_evidence_artifact_shape_mismatch');
+  else if (!fs.existsSync(artifactPath)) reasons.push('v102_real_pr42_evidence_artifact_shape_mismatch');
+  else {
+    try {
+      const parsed = readJsonFile(artifactPath);
+      if (!parsed || typeof parsed !== 'object' || safeForbiddenArtifactHit(parsed)) {
+        reasons.push('v102_real_pr42_evidence_artifact_shape_mismatch');
+      }
+    } catch {
+      reasons.push('v102_real_pr42_evidence_artifact_shape_mismatch');
+    }
+  }
+  return reasons.length
+    ? { status: 'fail', reasonCodes: reasons, safeSummaryOnly: true }
+    : { status: 'pass', safeSummaryOnly: true };
+}
+
+function emitPr42PrepushEvidenceArtifactFailure(status) {
+  const finalization = v102Gates.buildPr42TargetSafeJsonFinalizationReport({
+    nonEmptySafeJson: true,
+    missingArtifact: true,
+  }).pr42TargetSafeJsonFinalizationStatus;
+  const report = {
+    marker: MARKER,
+    harnessVersion: HARNESS_VERSION,
+    status: 'fail',
+    mergeReady: false,
+    pendingAfterPush: true,
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    pr42PrepushEvidenceArtifactStatus: status,
+    pr42TargetSafeJsonFinalizationStatus: finalization,
+    safeSummaryOnly: true,
+  };
+  if (process.env.CODEX_QUALITY_REPORT === 'json') emitSafeJsonReport(report);
+  else console.error('Codex target harness failed. Safe reason: v102_real_pr42_evidence_artifact_shape_mismatch');
+  process.exit(1);
+}
+
 
 
 function isPullRequestContext(env = process.env) {
@@ -9075,7 +9135,7 @@ async function runSourceHarnessGate() {
 
 
 
-  if (jsonReport) console.log(JSON.stringify(report, null, 2));
+  if (jsonReport) emitSafeJsonReport(report);
 
 
 
@@ -9575,6 +9635,11 @@ async function runTargetHarnessGate() {
 
 
   if (!jsonReport) console.log('== Codex target harness quality gate ==');
+
+  if (isPr42ProductPrepushTargetEnv(process.env)) {
+    const prepushEvidenceArtifactStatus = buildPr42PrepushEvidenceArtifactStatus(process.env);
+    if (prepushEvidenceArtifactStatus.status === 'fail') emitPr42PrepushEvidenceArtifactFailure(prepushEvidenceArtifactStatus);
+  }
 
 
 
@@ -11490,7 +11555,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       localGateSideEffectStatus: { status: 'not_run', safeSummaryOnly: true },
       safeSummaryOnly: true,
     };
-    if (process.env.CODEX_QUALITY_REPORT === 'json') console.log(JSON.stringify(report, null, 2));
+    if (process.env.CODEX_QUALITY_REPORT === 'json') emitSafeJsonReport(report);
     else console.error('Codex local quality gate failed. Safe reason: local_gate_unknown_report_contract');
     process.exit(1);
 

@@ -25,6 +25,7 @@ export const V102_STATUS_KEYS = [
   'pr42EvidenceMetadataProfileStatus',
   'v085EnvironmentIsolationStatus',
   'remoteProductEvidencePrepushStatus',
+  'pr42TargetSafeJsonFinalizationStatus',
   'backupArtifactManagerStatus',
   'repoExternalBackupStatus',
   'dirtyWorktreeBackupBoundaryStatus',
@@ -64,6 +65,12 @@ export const V102_REASON_CODES = [
   'pr42_evidence_metadata_missing',
   'v085_self_test_environment_leak',
   'remote_product_evidence_prepush_misclassified',
+  'v102_real_pr42_empty_target_safe_json',
+  'v102_real_pr42_minimal_failure_without_gate_label',
+  'v102_real_pr42_report_finalization_gap',
+  'v102_real_pr42_artifact_path_mismatch',
+  'v102_real_pr42_evidence_artifact_shape_mismatch',
+  'v102_real_pr42_unclassified_failure_boundary',
   'target_merge_ready_without_same_head_remote_pass',
   'backup_artifact_tracked',
   'backup_artifact_staged',
@@ -398,6 +405,32 @@ export function buildRemoteProductEvidencePrepushReport(input = {}) {
     });
 }
 
+export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
+  const reasons = [];
+  const nonEmptySafeJson = bool(input.nonEmptySafeJson);
+  if (!nonEmptySafeJson || bool(input.emptySafeJson)) reasons.push('v102_real_pr42_empty_target_safe_json');
+  if (bool(input.minimalFailureWithoutGateLabel)) reasons.push('v102_real_pr42_minimal_failure_without_gate_label');
+  if (bool(input.reportFinalizationSkipped)) reasons.push('v102_real_pr42_report_finalization_gap');
+  if (bool(input.artifactPathMismatch)) reasons.push('v102_real_pr42_artifact_path_mismatch');
+  if (bool(input.missingArtifact)) reasons.push('v102_real_pr42_evidence_artifact_shape_mismatch');
+  if (bool(input.malformedArtifact)) reasons.push('v102_real_pr42_evidence_artifact_shape_mismatch');
+  if (bool(input.unclassifiedInternalFailure)) reasons.push('v102_real_pr42_unclassified_failure_boundary');
+  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
+  if (bool(input.remoteEvidencePassWithoutSameHeadRemotePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
+  if (bool(input.targetMergeReadyWithoutSameHeadRemotePass)) reasons.push('target_merge_ready_without_same_head_remote_pass');
+  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
+  return reasons.length
+    ? fail('pr42TargetSafeJsonFinalizationStatus', reasons)
+    : pass('pr42TargetSafeJsonFinalizationStatus', {
+      nonEmptySafeJson: true,
+      pendingAfterPush: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      reportFinalizationContract: 'simulation_and_real_path_shared',
+    });
+}
+
 export function buildBackupArtifactManagerReport(input = {}) {
   const reasons = [];
   if (bool(input.tracked)) reasons.push('backup_artifact_tracked');
@@ -628,6 +661,12 @@ export function buildDefaultV102Reports(context = {}) {
       phase: 'remote_evidence_required_after_push',
       localProductEvidencePresent: true,
       formalProductEvidencePresent: true,
+      pendingAfterPush: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+    }),
+    pr42TargetSafeJsonFinalizationStatus: buildPr42TargetSafeJsonFinalizationReport({
+      nonEmptySafeJson: true,
       pendingAfterPush: true,
       remoteEvidencePass: false,
       targetMergeReady: false,
