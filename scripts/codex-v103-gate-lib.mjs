@@ -91,6 +91,13 @@ export const V103_REASON_CODES = [
   'v103_real_pr42_empty_target_safe_json',
   'v103_real_pr42_minimal_failure_without_gate_label',
   'v103_real_pr42_report_finalization_gap',
+  'v103_real_pr42_no_safe_json_report',
+  'v103_real_pr42_timeout_without_report',
+  'v103_real_pr42_untracked_safe_failure_artifact',
+  'v103_real_pr42_artifact_path_not_repo_external',
+  'v103_real_pr42_child_process_blocks_finalizer',
+  'v103_real_pr42_synchronous_child_timeout_gap',
+  'v103_real_pr42_simulation_real_path_delta',
   'v103_real_pr42_artifact_path_mismatch',
   'v103_real_pr42_evidence_artifact_shape_mismatch',
   'v103_real_pr42_unclassified_failure_boundary',
@@ -355,6 +362,13 @@ export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
     reasons.push('v103_real_pr42_minimal_failure_without_gate_label');
   }
   if (bool(input.finalizationGap)) reasons.push('v103_real_pr42_report_finalization_gap');
+  if (bool(input.noSafeJsonReport)) reasons.push('v103_real_pr42_no_safe_json_report');
+  if (bool(input.timeoutWithoutReport)) reasons.push('v103_real_pr42_timeout_without_report');
+  if (bool(input.untrackedSafeFailureArtifact)) reasons.push('v103_real_pr42_untracked_safe_failure_artifact');
+  if (bool(input.artifactPathNotRepoExternal)) reasons.push('v103_real_pr42_artifact_path_not_repo_external');
+  if (bool(input.childProcessBlocksFinalizer)) reasons.push('v103_real_pr42_child_process_blocks_finalizer');
+  if (bool(input.synchronousChildTimeoutGap)) reasons.push('v103_real_pr42_synchronous_child_timeout_gap');
+  if (bool(input.simulationRealPathDelta)) reasons.push('v103_real_pr42_simulation_real_path_delta');
   if (bool(input.artifactPathMismatch)) reasons.push('v103_real_pr42_artifact_path_mismatch');
   if (bool(input.artifactShapeMismatch)) reasons.push('v103_real_pr42_evidence_artifact_shape_mismatch');
   if (bool(input.unclassifiedFailure)) reasons.push('v103_real_pr42_unclassified_failure_boundary');

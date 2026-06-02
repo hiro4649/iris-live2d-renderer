@@ -26,8 +26,10 @@ function artifactFound(env = process.env) {
   if (env.CODEX_ARTIFACT_FOUND === '1') return true;
   if (env.CODEX_ARTIFACT_FOUND === '0') return false;
   const runnerTempLifeboat = env.RUNNER_TEMP ? path.join(env.RUNNER_TEMP, 'codex-minimal-safe-failure.json') : '';
+  const localSafeArtifactLifeboat = path.join('.git', 'codex-safe-artifacts', 'codex-minimal-safe-failure.json');
   const candidates = [
     env.CODEX_LIFEBOAT_PATH || 'codex-minimal-safe-failure.json',
+    localSafeArtifactLifeboat,
     env.CODEX_LIFEBOAT_MIRROR_PATH,
     env.CODEX_RUNNER_TEMP_LIFEBOAT_PATH,
     runnerTempLifeboat,
