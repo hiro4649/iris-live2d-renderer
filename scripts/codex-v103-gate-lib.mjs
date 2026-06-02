@@ -24,6 +24,7 @@ export const V103_STATUS_KEYS = [
   'userManualWorkProhibitedStatus',
   'safeNextActionPrecisionStatus',
   'pr42TargetSafeJsonFinalizationStatus',
+  'pr42ContractMarkerStatus',
   'designOnlyPrStatus',
   'implementationDeferredStatus',
   'fiveFiveLowModeStatus',
@@ -116,6 +117,14 @@ export const V103_REASON_CODES = [
   'v103_pr42_remote_npm_marker_prepush_misclassified',
   'v103_pr42_metadata_realpath_simulation_delta',
   'v103_unknown_pr42_metadata_classification_blocker',
+  'v103_pr42_child_boundary_label_not_recognized',
+  'v103_pr42_contract_metadata_missing',
+  'v103_pr42_contract_metadata_not_recognized',
+  'v103_pr42_remote_npm_normalization_marker_missing',
+  'v103_pr42_remote_npm_normalization_marker_misclassified',
+  'v103_pr42_remote_npm_marker_realpath_simulation_delta',
+  'v103_pr42_metadata_contract_realpath_delta',
+  'v103_unknown_pr42_contract_marker_blocker',
   'v103_real_pr42_simulation_real_path_delta',
   'v103_real_pr42_artifact_path_mismatch',
   'v103_real_pr42_evidence_artifact_shape_mismatch',
@@ -462,6 +471,56 @@ export function buildPr42MetadataClassificationReport(input = {}) {
       });
 }
 
+export const PR42_FIXED_CHILD_BOUNDARY_LABELS = [
+  'v103_pr42_child_process_timeout_boundary_missing',
+  'v103_pr42_synchronous_child_blocks_finalizer',
+  'v103_pr42_spawn_timeout_not_enforced',
+  'v103_pr42_child_timeout_no_safe_report',
+  'v103_pr42_child_exit_not_observed',
+  'v103_pr42_child_stdio_blocking',
+  'v103_pr42_child_process_artifact_finalization_gap',
+  'v103_pr42_timeout_finalizer_ordering_bug',
+  'v103_pr42_untracked_artifact_after_child_timeout',
+  'v103_unknown_child_process_timeout_boundary',
+];
+
+export function buildPr42ContractMarkerReport(input = {}) {
+  const labels = Array.isArray(input.childBoundaryLabels) ? input.childBoundaryLabels.map(String) : [];
+  const hasChildBoundaryLabel = bool(input.childBoundaryLabelPresent) || labels.some((label) => PR42_FIXED_CHILD_BOUNDARY_LABELS.includes(label));
+  const unknownChildBoundaryLabel = bool(input.unknownChildBoundaryLabel) || labels.some((label) => (/^v103_pr42_.*child|child.*boundary/).test(label) && !PR42_FIXED_CHILD_BOUNDARY_LABELS.includes(label));
+  const hasContractMetadata = bool(input.contractMetadataPresent);
+  const recognizedContractMetadata = bool(input.contractMetadataRecognized);
+  const fabricatedContractMetadata = bool(input.contractMetadataFabricated);
+  const hasRemoteNpmNormalizationMarker = bool(input.remoteNpmNormalizationMarkerPresent);
+  const remoteNpmNormalizationAsRemotePass = bool(input.remoteNpmNormalizationMarkerTreatedAsRemotePass);
+  const reasons = [];
+  if (!hasChildBoundaryLabel || unknownChildBoundaryLabel) reasons.push('v103_pr42_child_boundary_label_not_recognized');
+  if (!hasContractMetadata) reasons.push('v103_pr42_contract_metadata_missing');
+  if (hasContractMetadata && (!recognizedContractMetadata || fabricatedContractMetadata)) reasons.push('v103_pr42_contract_metadata_not_recognized');
+  if (!hasRemoteNpmNormalizationMarker) reasons.push('v103_pr42_remote_npm_normalization_marker_missing');
+  if (remoteNpmNormalizationAsRemotePass) reasons.push('v103_pr42_remote_npm_normalization_marker_misclassified');
+  if (bool(input.realpathSimulationDelta)) reasons.push('v103_pr42_metadata_contract_realpath_delta');
+  if (bool(input.remoteNpmMarkerRealpathSimulationDelta)) reasons.push('v103_pr42_remote_npm_marker_realpath_simulation_delta');
+  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
+    reasons.push('v103_pr42_remote_npm_normalization_marker_misclassified');
+  }
+  if (bool(input.runtimeReadinessClaimed) || bool(input.productionReadinessClaimed)) reasons.push('v103_unknown_pr42_contract_marker_blocker');
+  return reasons.length
+    ? fail('pr42ContractMarkerStatus', reasons, {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      })
+    : pass('pr42ContractMarkerStatus', {
+        childBoundaryLabelsAreReadiness: false,
+        contractMetadataFabricated: false,
+        remoteNpmNormalizationMarkerIsRemotePass: false,
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      });
+}
+
 export function buildDesignOnlyPrReport(input = {}) {
   return hasAny(input, ['runtimeBehaviorChanged', 'designClaimedAsImplementation'])
     ? fail('designOnlyPrStatus', ['design_only_pr_misclassified_as_implementation'])
@@ -641,6 +700,12 @@ export function buildDefaultV103Reports(context = {}) {
     userManualWorkProhibitedStatus: buildUserManualWorkProhibitedReport(),
     safeNextActionPrecisionStatus: buildSafeNextActionPrecisionReport({ safeNextAction }),
     pr42TargetSafeJsonFinalizationStatus: buildPr42TargetSafeJsonFinalizationReport({ pendingAfterPush: true }),
+    pr42ContractMarkerStatus: buildPr42ContractMarkerReport({
+      childBoundaryLabelPresent: true,
+      contractMetadataPresent: true,
+      contractMetadataRecognized: true,
+      remoteNpmNormalizationMarkerPresent: true,
+    }),
     designOnlyPrStatus: buildDesignOnlyPrReport(),
     implementationDeferredStatus: buildImplementationDeferredReport(),
     fiveFiveLowModeStatus: buildFiveFiveLowModeReport(),

@@ -2420,6 +2420,17 @@ function runV099Gates(report, gateEnv) {
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
   };
+  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
+    v099Env.CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON = JSON.stringify({
+      forceCheck: true,
+      productRelevant: true,
+      npmExecuted: true,
+      npmExitCode: 0,
+      prepushDiagnosticOnly: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+    });
+  }
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
   report.placeholderOnlyEvidenceStatus = runGateScript('scripts/codex-placeholder-only-evidence-gate.mjs', 'placeholderOnlyEvidenceStatus', 'CODEX_PLACEHOLDER_ONLY_EVIDENCE_REPORT', v099Env);
