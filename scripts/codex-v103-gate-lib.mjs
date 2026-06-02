@@ -97,6 +97,16 @@ export const V103_REASON_CODES = [
   'v103_real_pr42_artifact_path_not_repo_external',
   'v103_real_pr42_child_process_blocks_finalizer',
   'v103_real_pr42_synchronous_child_timeout_gap',
+  'v103_pr42_child_process_timeout_boundary_missing',
+  'v103_pr42_synchronous_child_blocks_finalizer',
+  'v103_pr42_spawn_timeout_not_enforced',
+  'v103_pr42_child_timeout_no_safe_report',
+  'v103_pr42_child_exit_not_observed',
+  'v103_pr42_child_stdio_blocking',
+  'v103_pr42_child_process_artifact_finalization_gap',
+  'v103_pr42_timeout_finalizer_ordering_bug',
+  'v103_pr42_untracked_artifact_after_child_timeout',
+  'v103_unknown_child_process_timeout_boundary',
   'v103_real_pr42_simulation_real_path_delta',
   'v103_real_pr42_artifact_path_mismatch',
   'v103_real_pr42_evidence_artifact_shape_mismatch',
@@ -368,6 +378,16 @@ export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
   if (bool(input.artifactPathNotRepoExternal)) reasons.push('v103_real_pr42_artifact_path_not_repo_external');
   if (bool(input.childProcessBlocksFinalizer)) reasons.push('v103_real_pr42_child_process_blocks_finalizer');
   if (bool(input.synchronousChildTimeoutGap)) reasons.push('v103_real_pr42_synchronous_child_timeout_gap');
+  if (bool(input.childProcessTimeoutBoundaryMissing)) reasons.push('v103_pr42_child_process_timeout_boundary_missing');
+  if (bool(input.synchronousChildBlocksFinalizer)) reasons.push('v103_pr42_synchronous_child_blocks_finalizer');
+  if (bool(input.spawnTimeoutNotEnforced)) reasons.push('v103_pr42_spawn_timeout_not_enforced');
+  if (bool(input.childTimeoutNoSafeReport)) reasons.push('v103_pr42_child_timeout_no_safe_report');
+  if (bool(input.childExitNotObserved)) reasons.push('v103_pr42_child_exit_not_observed');
+  if (bool(input.childStdioBlocking)) reasons.push('v103_pr42_child_stdio_blocking');
+  if (bool(input.childProcessArtifactFinalizationGap)) reasons.push('v103_pr42_child_process_artifact_finalization_gap');
+  if (bool(input.timeoutFinalizerOrderingBug)) reasons.push('v103_pr42_timeout_finalizer_ordering_bug');
+  if (bool(input.untrackedArtifactAfterChildTimeout)) reasons.push('v103_pr42_untracked_artifact_after_child_timeout');
+  if (bool(input.unknownChildProcessTimeoutBoundary)) reasons.push('v103_unknown_child_process_timeout_boundary');
   if (bool(input.simulationRealPathDelta)) reasons.push('v103_real_pr42_simulation_real_path_delta');
   if (bool(input.artifactPathMismatch)) reasons.push('v103_real_pr42_artifact_path_mismatch');
   if (bool(input.artifactShapeMismatch)) reasons.push('v103_real_pr42_evidence_artifact_shape_mismatch');
