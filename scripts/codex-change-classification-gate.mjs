@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.2
+// CODEX_QUALITY_HARNESS_FILE v1.0.3
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -58,6 +58,7 @@ function matches(file, patterns = []) {
     if (!normalized) return false;
     if (normalized.includes('*')) return globToRegExp(normalized).test(file);
     if (normalized.endsWith('/')) return file.startsWith(normalized);
+    if (normalized.endsWith('-')) return file.startsWith(normalized);
     return file === normalized || file.startsWith(`${normalized}/`);
   });
 }
@@ -127,6 +128,11 @@ export function loadClassificationRules(env = process.env) {
     return { ok: false, reasonCode: 'classification_rules_invalid', rules: defaultRules, source: basePath };
   }
   let rules = { ...defaultRules, ...base.value };
+  for (const key of Object.keys(defaultRules)) {
+    if (Array.isArray(defaultRules[key]) && Array.isArray(base.value[key])) {
+      rules[key] = [...new Set([...defaultRules[key], ...base.value[key]])];
+    }
+  }
   const localPath = path.join('docs', 'process', 'CODEX_CHANGE_CLASSIFICATION_RULES.local.json');
   if (env.CODEX_ALLOW_CLASSIFICATION_LOCAL_OVERRIDE !== '0') {
     const local = readJson(localPath);
@@ -135,6 +141,15 @@ export function loadClassificationRules(env = process.env) {
         return { ok: false, reasonCode: 'classification_rules_invalid', rules, source: localPath };
       }
       rules = { ...rules, ...local.value };
+      for (const key of Object.keys(defaultRules)) {
+        if (Array.isArray(defaultRules[key]) && Array.isArray(local.value[key])) {
+          rules[key] = [...new Set([
+            ...defaultRules[key],
+            ...(Array.isArray(base.value[key]) ? base.value[key] : []),
+            ...local.value[key],
+          ])];
+        }
+      }
     }
   }
   return { ok: true, reasonCode: null, rules, source: basePath };
@@ -234,6 +249,7 @@ export function classifyChange(files = changedFiles(), env = process.env) {
     reasonCodes,
     rulesSource: loaded.source,
     unknownFiles: unknownFiles.length,
+    unknownFileSamples: unknownFiles.slice(0, 20),
   };
 }
 
@@ -246,6 +262,7 @@ export function buildChangeClassificationReport(env = process.env) {
     runtimeReadinessClaimed: classified.runtimeReadinessClaimed,
     packageOrLockfileChanged: classified.packageOrLockfileChanged,
     reasonCodes: classified.reasonCodes,
+    unknownFileSamples: classified.unknownFileSamples,
   });
 }
 

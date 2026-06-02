@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.2
+// CODEX_QUALITY_HARNESS_FILE v1.0.3
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor, readText } from './codex-v080-lib.mjs';
@@ -21,10 +21,6 @@ export const V102_STATUS_KEYS = [
   'productPrEvidenceGeneratorStatus',
   'productPrEvidenceValidatorStatus',
   'productPrEvidenceSafeSummaryStatus',
-  'pr42ProductDocsScopeClassificationStatus',
-  'pr42EvidenceMetadataProfileStatus',
-  'v085EnvironmentIsolationStatus',
-  'remoteProductEvidencePrepushStatus',
   'backupArtifactManagerStatus',
   'repoExternalBackupStatus',
   'dirtyWorktreeBackupBoundaryStatus',
@@ -60,10 +56,6 @@ export const V102_REASON_CODES = [
   'harness_fixture_diff_isolation_failed',
   'product_pr_evidence_missing',
   'product_pr_pending_after_push_not_remote_pass',
-  'pr42_docs_scope_classification_unknown',
-  'pr42_evidence_metadata_missing',
-  'v085_self_test_environment_leak',
-  'remote_product_evidence_prepush_misclassified',
   'target_merge_ready_without_same_head_remote_pass',
   'backup_artifact_tracked',
   'backup_artifact_staged',
@@ -305,99 +297,6 @@ export function buildProductPrEvidenceSafeSummaryReport(input = {}) {
     : pass('productPrEvidenceSafeSummaryStatus', { valuesPrinted: false });
 }
 
-export const PR42_EXPECTED_PRODUCT_FILES = [
-  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
-  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
-  'src/renderer/cubismLoaderProvisioning.js',
-  'src/renderer/cubismRenderer.js',
-  'src/server.js',
-  'src/state.js',
-  'test/contract.test.js',
-];
-
-export function buildPr42ProductDocsScopeClassificationReport(input = {}) {
-  const changedFiles = input.changedFiles || PR42_EXPECTED_PRODUCT_FILES;
-  const expected = new Set(PR42_EXPECTED_PRODUCT_FILES);
-  const reasons = [];
-  const live2dDocs = changedFiles.filter((file) => file.startsWith('docs/iris-live2d-renderer/'));
-  const unexpectedLive2dDocs = live2dDocs.filter((file) => !expected.has(file));
-  if (bool(input.docsGlobGloballyAllowed) || bool(input.classificationUnknownGloballySuppressed)) reasons.push('pr42_docs_scope_classification_unknown');
-  if (unexpectedLive2dDocs.length || bool(input.unexpectedDocsAllowed)) reasons.push('pr42_docs_scope_classification_unknown');
-  if (!PR42_EXPECTED_PRODUCT_FILES.every((file) => changedFiles.includes(file))) reasons.push('product_pr_diff_containment_failed');
-  if (bool(input.harnessOnlyDocsAllowed)) reasons.push('harness_fixture_diff_isolation_failed');
-  return reasons.length
-    ? fail('pr42ProductDocsScopeClassificationStatus', reasons)
-    : pass('pr42ProductDocsScopeClassificationStatus', {
-      expectedFileCount: PR42_EXPECTED_PRODUCT_FILES.length,
-      docsScope: 'exact_pr42_files_only',
-      harnessOnlyDocsGlobAllowed: false,
-    });
-}
-
-export function buildPr42EvidenceMetadataProfileReport(input = {}) {
-  const requiredSections = [
-    'Goal',
-    'Risk level',
-    'Product verification',
-    'Affected entrypoints',
-    'Failure paths considered',
-    'Residual risks',
-    'Human confirmation needed',
-  ];
-  const presentSections = new Set(input.presentSections || requiredSections);
-  const reasons = [];
-  if ((input.profile || 'product_r3') !== 'product_r3') reasons.push('pr42_evidence_metadata_missing');
-  if (bool(input.profileConflict)) reasons.push('pr42_evidence_metadata_missing');
-  for (const section of requiredSections) {
-    if (!presentSections.has(section)) reasons.push('pr42_evidence_metadata_missing');
-  }
-  if (bool(input.safeBodyNotRecognized) || bool(input.formalEvidenceMissing)) reasons.push('pr42_evidence_metadata_missing');
-  if (bool(input.topLevelProductDiffHidden)) reasons.push('product_pr_diff_containment_failed');
-  return reasons.length
-    ? fail('pr42EvidenceMetadataProfileStatus', reasons)
-    : pass('pr42EvidenceMetadataProfileStatus', {
-      profile: 'product_r3',
-      requiredSections,
-      safeMetadataHandoff: 'pr42_product_r3_prepush_only',
-      topLevelProductDiffVisible: true,
-    });
-}
-
-export function buildV085EnvironmentIsolationReport(input = {}) {
-  const reasons = [];
-  if (bool(input.activePrContextInherited) || bool(input.fixtureInheritedActivePrContext)) reasons.push('v085_self_test_environment_leak');
-  if (bool(input.v085SelfTestDisabled)) reasons.push('v085_self_test_environment_leak');
-  if (bool(input.topLevelProductDiffHidden)) reasons.push('product_pr_diff_containment_failed');
-  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
-  if (bool(input.remoteEvidencePassWithoutSameHeadRemotePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
-  if (bool(input.targetMergeReadyWithoutSameHeadRemotePass)) reasons.push('target_merge_ready_without_same_head_remote_pass');
-  return reasons.length
-    ? fail('v085EnvironmentIsolationStatus', reasons)
-    : pass('v085EnvironmentIsolationStatus', {
-      v085SelfTestEnabled: true,
-      activePrContextInherited: false,
-      topLevelProductDiffVisible: true,
-    });
-}
-
-export function buildRemoteProductEvidencePrepushReport(input = {}) {
-  const reasons = [];
-  if (input.phase !== 'remote_evidence_required_after_push') reasons.push('remote_product_evidence_prepush_misclassified');
-  if (!bool(input.localProductEvidencePresent)) reasons.push('product_pr_evidence_missing');
-  if (!bool(input.formalProductEvidencePresent)) reasons.push('product_pr_evidence_missing');
-  if (!bool(input.pendingAfterPush)) reasons.push('remote_product_evidence_prepush_misclassified');
-  if (bool(input.pendingAfterPushAsRemotePass) || bool(input.remoteEvidencePass)) reasons.push('product_pr_pending_after_push_not_remote_pass');
-  if (bool(input.targetMergeReady)) reasons.push('target_merge_ready_without_same_head_remote_pass');
-  return reasons.length
-    ? fail('remoteProductEvidencePrepushStatus', reasons)
-    : pass('remoteProductEvidencePrepushStatus', {
-      pendingAfterPush: true,
-      remoteEvidencePass: false,
-      targetMergeReady: false,
-      sameHeadRemoteQualityGateRequired: true,
-    });
-}
-
 export function buildBackupArtifactManagerReport(input = {}) {
   const reasons = [];
   if (bool(input.tracked)) reasons.push('backup_artifact_tracked');
@@ -596,10 +495,10 @@ export function buildDefaultHandoverSnapshot() {
 
 export function buildV102SelfTestRegistrationReport(input = {}) {
   const reasons = [];
-  const manifestText = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
   if (!fs.existsSync('scripts/codex-v102-self-test.mjs') || bool(input.selfTestMissing)) reasons.push('v102_self_test_missing');
   if (!readText('scripts/codex-local-quality-gate.mjs')?.includes('v102SelfTestStatus')) reasons.push('v102_self_test_missing');
-  if (!manifestText.includes('codex-v102-self-test.mjs')) reasons.push('v102_self_test_missing');
+  const manifestText = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json');
+  if (!manifestText?.includes('codex-v102-self-test.mjs')) reasons.push('v102_self_test_missing');
   return reasons.length ? fail('v102SelfTestStatus', reasons) : pass('v102SelfTestStatus');
 }
 
@@ -621,17 +520,6 @@ export function buildDefaultV102Reports(context = {}) {
     productPrEvidenceGeneratorStatus: buildProductPrEvidenceGeneratorReport(),
     productPrEvidenceValidatorStatus: buildProductPrEvidenceValidatorReport(),
     productPrEvidenceSafeSummaryStatus: buildProductPrEvidenceSafeSummaryReport(),
-    pr42ProductDocsScopeClassificationStatus: buildPr42ProductDocsScopeClassificationReport(),
-    pr42EvidenceMetadataProfileStatus: buildPr42EvidenceMetadataProfileReport(),
-    v085EnvironmentIsolationStatus: buildV085EnvironmentIsolationReport(),
-    remoteProductEvidencePrepushStatus: buildRemoteProductEvidencePrepushReport({
-      phase: 'remote_evidence_required_after_push',
-      localProductEvidencePresent: true,
-      formalProductEvidencePresent: true,
-      pendingAfterPush: true,
-      remoteEvidencePass: false,
-      targetMergeReady: false,
-    }),
     backupArtifactManagerStatus: buildBackupArtifactManagerReport(),
     repoExternalBackupStatus: buildRepoExternalBackupReport(),
     dirtyWorktreeBackupBoundaryStatus: buildDirtyWorktreeBackupBoundaryReport(),

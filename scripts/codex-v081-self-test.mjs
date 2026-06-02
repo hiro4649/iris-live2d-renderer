@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.2
+// CODEX_QUALITY_HARNESS_FILE v1.0.3
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -147,49 +147,42 @@ function buildReport() {
   });
   assertCase('Runtime readiness claim with CODEX_SKIP_NPM=1 fails product verification', runtimeSkip.productVerificationStatus.status !== 'pass', failures, cases, runtimeSkip.productVerificationStatus.status);
 
-  if (process.env.CODEX_V081_SKIP_LEGACY_RECHECKS === '1') {
-    assertCase('Target mode local quality gate does not require source manifest', true, failures, cases, 'pass');
-    assertCase('Target mode emits targetQualityScoreStatus with score', true, failures, cases, 'pass');
-    assertCase('Target mode does not emit qualityScoreStatus not_available as the only score', true, failures, cases, 'pass');
-  } else {
-    const tmpTarget = path.join(tmp, 'target');
-    initTargetFixture(tmpTarget);
-    result = run('scripts/codex-local-quality-gate.mjs', {
-      cwd: tmpTarget,
-      env: {
-        CODEX_HARNESS_MODE: 'target',
-        CODEX_HARNESS_SOURCE_REPO: '0',
-        CODEX_PROFILE_COMPAT_MODE: 'off',
-        CODEX_QUALITY_REPORT: 'json',
-        CODEX_SKIP_NPM: '1',
-        CODEX_SKIP_V081_SELF_TEST: '1',
-        CODEX_SKIP_V082_SELF_TEST: '1',
-        CODEX_SKIP_V083_SELF_TEST: '1',
-        CODEX_SKIP_V084_SELF_TEST: '1',
-        CODEX_SKIP_V085_SELF_TEST: '1',
-        CODEX_SKIP_V086_SELF_TEST: '1',
-        CODEX_SKIP_V087_SELF_TEST: '1',
-        CODEX_SKIP_V088_SELF_TEST: '1',
-        CODEX_SKIP_V089_SELF_TEST: '1',
-        CODEX_SKIP_V090_SELF_TEST: '1',
-        CODEX_SKIP_V092_SELF_TEST: '1',
-        CODEX_SKIP_V093_SELF_TEST: '1',
-        CODEX_SKIP_V094_SELF_TEST: '1',
-        CODEX_SKIP_V095_SELF_TEST: '1',
-        CODEX_SKIP_V096_SELF_TEST: '1',
-        CODEX_SKIP_V097_SELF_TEST: '1',
-        CODEX_SKIP_V098_SELF_TEST: '1',
-        CODEX_SKIP_V099_SELF_TEST: '1',
-        CODEX_SKIP_V100_SELF_TEST: '1',
-        CODEX_SKIP_V101_SELF_TEST: '1',
-        CODEX_SKIP_V102_SELF_TEST: '1',
-        CODEX_NPM_SKIP_REASON: 'harness-only fixture',
-      },
-    });
-    assertCase('Target mode local quality gate does not require source manifest', result.parsed?.sourceHarnessValidationStatus === undefined, failures, cases, result.parsed?.targetQualityScoreStatus?.status);
-    assertCase('Target mode emits targetQualityScoreStatus with score', typeof result.parsed?.targetQualityScoreStatus?.score === 'number', failures, cases, result.parsed?.targetQualityScoreStatus?.status);
-    assertCase('Target mode does not emit qualityScoreStatus not_available as the only score', result.parsed?.targetQualityScoreStatus?.status !== 'not_available', failures, cases, result.parsed?.targetQualityScoreStatus?.status);
-  }
+  const tmpTarget = path.join(tmp, 'target');
+  initTargetFixture(tmpTarget);
+  result = run('scripts/codex-local-quality-gate.mjs', {
+    cwd: tmpTarget,
+    env: {
+      CODEX_HARNESS_MODE: 'target',
+      CODEX_HARNESS_SOURCE_REPO: '0',
+      CODEX_PROFILE_COMPAT_MODE: 'off',
+      CODEX_QUALITY_REPORT: 'json',
+      CODEX_SKIP_NPM: '1',
+      CODEX_SKIP_V081_SELF_TEST: '1',
+      CODEX_SKIP_V082_SELF_TEST: '1',
+      CODEX_SKIP_V083_SELF_TEST: '1',
+      CODEX_SKIP_V084_SELF_TEST: '1',
+      CODEX_SKIP_V085_SELF_TEST: '1',
+      CODEX_SKIP_V086_SELF_TEST: '1',
+      CODEX_SKIP_V087_SELF_TEST: '1',
+      CODEX_SKIP_V088_SELF_TEST: '1',
+      CODEX_SKIP_V089_SELF_TEST: '1',
+      CODEX_SKIP_V090_SELF_TEST: '1',
+      CODEX_SKIP_V092_SELF_TEST: '1',
+      CODEX_SKIP_V093_SELF_TEST: '1',
+      CODEX_SKIP_V094_SELF_TEST: '1',
+      CODEX_SKIP_V095_SELF_TEST: '1',
+      CODEX_SKIP_V096_SELF_TEST: '1',
+      CODEX_SKIP_V097_SELF_TEST: '1',
+      CODEX_SKIP_V098_SELF_TEST: '1',
+      CODEX_SKIP_V099_SELF_TEST: '1',
+      CODEX_SKIP_V100_SELF_TEST: '1',
+      CODEX_SKIP_V101_SELF_TEST: '1',
+      CODEX_NPM_SKIP_REASON: 'harness-only fixture',
+    },
+  });
+  assertCase('Target mode local quality gate does not require source manifest', result.parsed?.sourceHarnessValidationStatus === undefined, failures, cases, result.parsed?.targetQualityScoreStatus?.status);
+  assertCase('Target mode emits targetQualityScoreStatus with score', typeof result.parsed?.targetQualityScoreStatus?.score === 'number', failures, cases, result.parsed?.targetQualityScoreStatus?.status);
+  assertCase('Target mode does not emit qualityScoreStatus not_available as the only score', result.parsed?.targetQualityScoreStatus?.status !== 'not_available', failures, cases, result.parsed?.targetQualityScoreStatus?.status);
 
   result = run('scripts/codex-performance-evidence-gate.mjs', { env: { CODEX_EVENT_NAME: 'pull_request', CODEX_PR_BODY: 'This is faster.' } });
   assertCase('Performance claim without evidence fails', result.parsed?.performanceEvidenceStatus?.status === 'fail', failures, cases, result.parsed?.performanceEvidenceStatus?.status);

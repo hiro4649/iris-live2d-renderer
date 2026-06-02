@@ -1,4 +1,4 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v1.0.2 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v1.0.3 -->
 # Codex Production Readiness Policy
 
 Production Evidence and Hermes Gate does not make a project production ready. It makes production, release, merge-ready, go/no-go, and similar claims require verifiable evidence.
@@ -17,7 +17,7 @@ Production Evidence and Hermes Gate does not make a project production ready. It
   `confirmedByRole`, `reviewedItems`, current head SHA, residual risks accepted,
   `qualityGateNotWeakened`, and `riskLevelNotLowered`
 - human confirmation requirement must be read from explicit `Human confirmation` or
-  `Manual confirmation` fields only. Other sections that say `not required with reason`
+  `Manual confirmation` fields only. Other sections that say`not required with reason`
   do not make human confirmation optional.
 
 ## Decision Rules
@@ -25,7 +25,7 @@ Production Evidence and Hermes Gate does not make a project production ready. It
 - `pass`: required evidence is present, current, safe, and not contradicted by known risk labels.
 - `manual_confirmation_required`: remote evidence cannot be fetched but the gap is human-reviewable and not non-overridable.
 - `manual_confirmation_required`: human confirmation is declared as required but the confirmation evidence is incomplete.
-- `not_applicable`: non-PR local execution with no production or release claim.
+-`not_applicable`: non-PR local execution with no production or release claim.
 - `fail`: production-ready claim without evidence, stale head SHA, unsafe output, missing rollback for release-like work, R3 without human review, confirmation head SHA mismatch, quality gate weakening, risk level lowering, or manual override of a non-overridable failure.
 
 ## Non-Overridable Failures

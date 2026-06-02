@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.2
+// CODEX_QUALITY_HARNESS_FILE v1.0.3
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -272,7 +272,7 @@ function buildReport() {
   result = buildCompactReasonSummary({ status: 'fail', targetQualityScoreStatus: { status: 'fail', score: 70 }, failures: [{ id: 'workflow_runner_failed', message: 'safe failure' }] });
   assertCase('compact reason summary contains no unsafe values', result.status === 'pass' && result.summary.safeSummaryOnly, failures, cases, result.status);
 
-  result = run('scripts/codex-v081-self-test.mjs', { env: { CODEX_QUALITY_REPORT: 'json', CODEX_SKIP_V082_SELF_TEST: '1', CODEX_V081_SKIP_LEGACY_RECHECKS: '1' } });
+  result = run('scripts/codex-v081-self-test.mjs', { env: { CODEX_QUALITY_REPORT: 'json', CODEX_SKIP_V082_SELF_TEST: '1' } });
   assertCase('v0.8.1 core behavior still passes', result.parsed?.v081SelfTestStatus?.status === 'pass', failures, cases, result.parsed?.v081SelfTestStatus?.status);
 
   return {
