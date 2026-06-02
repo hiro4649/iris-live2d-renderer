@@ -88,16 +88,43 @@ function buildPr42TargetFinalizationInput(report, env) {
   if (!isPr42ProductPrepushTargetEnv(env)) return { pendingAfterPush: true };
   const failures = Array.isArray(report?.failures) ? report.failures : [];
   const failureClass = failures.find((item) => typeof item?.id === 'string' && item.id.trim())?.id || '';
+  const reasonCodes = collectSafeReasonCodes(report);
   return {
     report,
     failureClass,
     pendingAfterPush: true,
     emptyReport: !report || !Object.keys(report).length,
     minimalFailure: report?.status === 'fail' && !failureClass,
+    timeoutWithoutReport: reasonCodes.has('v103_real_pr42_timeout_without_report'),
+    childProcessTimeoutBoundaryMissing: reasonCodes.has('v103_pr42_child_process_timeout_boundary_missing'),
+    synchronousChildBlocksFinalizer: reasonCodes.has('v103_pr42_synchronous_child_blocks_finalizer'),
+    spawnTimeoutNotEnforced: reasonCodes.has('v103_pr42_spawn_timeout_not_enforced'),
+    childTimeoutNoSafeReport: reasonCodes.has('v103_pr42_child_timeout_no_safe_report'),
+    childExitNotObserved: reasonCodes.has('v103_pr42_child_exit_not_observed'),
+    childStdioBlocking: reasonCodes.has('v103_pr42_child_stdio_blocking'),
+    childProcessArtifactFinalizationGap: reasonCodes.has('v103_pr42_child_process_artifact_finalization_gap'),
+    timeoutFinalizerOrderingBug: reasonCodes.has('v103_pr42_timeout_finalizer_ordering_bug'),
+    untrackedArtifactAfterChildTimeout: reasonCodes.has('v103_pr42_untracked_artifact_after_child_timeout'),
+    unknownChildProcessTimeoutBoundary: reasonCodes.has('v103_unknown_child_process_timeout_boundary'),
     pendingAfterPushTreatedAsRemotePass: report?.remoteEvidencePass === true,
     remoteEvidencePassWithoutSameHead: report?.remoteEvidencePass === true,
     targetMergeReadyWithoutSameHead: report?.targetMergeReady === true,
   };
+}
+
+function collectSafeReasonCodes(value, reasonCodes = new Set()) {
+  if (!value || typeof value !== 'object') return reasonCodes;
+  if (Array.isArray(value)) {
+    for (const item of value) collectSafeReasonCodes(item, reasonCodes);
+    return reasonCodes;
+  }
+  if (Array.isArray(value.reasonCodes)) {
+    for (const item of value.reasonCodes) {
+      if (typeof item === 'string' && /^[a-z0-9_.-]+$/i.test(item)) reasonCodes.add(item);
+    }
+  }
+  for (const child of Object.values(value)) collectSafeReasonCodes(child, reasonCodes);
+  return reasonCodes;
 }
 
 function buildPr42PrepushEvidenceArtifactStatus(env) {
@@ -1661,9 +1688,32 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
   const childEnv = { ...baseEnv, ...approvedLocalSafeArtifactEnv(baseEnv), CODEX_QUALITY_REPORT: 'json', [envName]: 'json' };
-  const childTimeoutMs = isPr42ProductPrepushTargetEnvLike(childEnv)
-    ? Number(childEnv.CODEX_PR42_TARGET_CHILD_TIMEOUT_MS || 20000)
+  const pr42TargetChild = isPr42ProductPrepushTargetEnvLike(childEnv);
+  const targetStartedAtMs = Number(childEnv.CODEX_PR42_TARGET_STARTED_AT_MS || 0);
+  const targetTotalTimeoutMs = Number(childEnv.CODEX_PR42_TARGET_TOTAL_TIMEOUT_MS || 90000);
+  const targetFinalizationReserveMs = Number(childEnv.CODEX_PR42_TARGET_FINALIZATION_RESERVE_MS || 5000);
+  const targetElapsedMs = targetStartedAtMs > 0 ? Date.now() - targetStartedAtMs : 0;
+  const targetRemainingMs = targetStartedAtMs > 0 ? targetTotalTimeoutMs - targetElapsedMs - targetFinalizationReserveMs : Number.POSITIVE_INFINITY;
+  if (pr42TargetChild && targetRemainingMs <= 0) {
+    return {
+      status: 'fail',
+      reasonCodes: [
+        'local_gate_timeout',
+        'v103_pr42_child_process_timeout_boundary_missing',
+        'v103_pr42_child_timeout_no_safe_report',
+        'v103_pr42_timeout_finalizer_ordering_bug',
+      ],
+      failures: [`${field}=target_deadline_exhausted`],
+      safeSummaryOnly: true,
+      script,
+    };
+  }
+  const configuredChildTimeoutMs = pr42TargetChild
+    ? Number(childEnv.CODEX_PR42_TARGET_CHILD_TIMEOUT_MS || 15000)
     : Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS || 120000);
+  const childTimeoutMs = pr42TargetChild
+    ? Math.max(1000, Math.min(configuredChildTimeoutMs, Math.floor(targetRemainingMs)))
+    : configuredChildTimeoutMs;
   const result = spawn('node', [script], {
 
 
@@ -1688,12 +1738,15 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
   const stderr = String(result.stderr || '').trim();
   const timedOut = result.error?.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
   const reasonCodes = [];
-  const pr42TargetChild = isPr42ProductPrepushTargetEnvLike(childEnv);
 
   if (timedOut) reasonCodes.push('local_gate_timeout');
   if (timedOut && pr42TargetChild) {
     reasonCodes.push('v103_real_pr42_timeout_without_report');
     reasonCodes.push('v103_real_pr42_synchronous_child_timeout_gap');
+    reasonCodes.push('v103_pr42_child_process_timeout_boundary_missing');
+    reasonCodes.push('v103_pr42_synchronous_child_blocks_finalizer');
+    reasonCodes.push('v103_pr42_spawn_timeout_not_enforced');
+    reasonCodes.push('v103_pr42_child_timeout_no_safe_report');
   }
 
 
@@ -1704,7 +1757,10 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
     reasonCodes.push('local_gate_json_missing');
     if (pr42TargetChild) reasonCodes.push('v103_real_pr42_no_safe_json_report');
-    if (timedOut && !stderr) reasonCodes.push('local_gate_stdout_stderr_empty_timeout');
+    if (timedOut && !stderr) {
+      reasonCodes.push('local_gate_stdout_stderr_empty_timeout');
+      if (pr42TargetChild) reasonCodes.push('v103_pr42_child_stdio_blocking');
+    }
     return { status: 'fail', reasonCodes, failures: [`${field}=empty_output`], safeSummaryOnly: true, script };
 
 
@@ -1750,6 +1806,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
     reasonCodes.push(output.includes('{') || output.includes('}') ? 'local_gate_human_text_mixed_with_json' : 'local_gate_json_parse_failed');
+    if (pr42TargetChild) reasonCodes.push('v103_pr42_child_exit_not_observed');
     return { status: 'fail', reasonCodes, failures: [`${field}=invalid_json`], safeSummaryOnly: true, script };
 
 
@@ -9662,6 +9719,11 @@ async function runTargetHarnessGate() {
 
 
   const gateEnv = { ...process.env, ...approvedLocalSafeArtifactEnv(process.env) };
+  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
+    gateEnv.CODEX_PR42_TARGET_STARTED_AT_MS = gateEnv.CODEX_PR42_TARGET_STARTED_AT_MS || String(Date.now());
+    gateEnv.CODEX_PR42_TARGET_TOTAL_TIMEOUT_MS = gateEnv.CODEX_PR42_TARGET_TOTAL_TIMEOUT_MS || '90000';
+    gateEnv.CODEX_PR42_TARGET_FINALIZATION_RESERVE_MS = gateEnv.CODEX_PR42_TARGET_FINALIZATION_RESERVE_MS || '5000';
+  }
 
 
 
@@ -10006,28 +10068,6 @@ async function runTargetHarnessGate() {
       if (jsonReport) emitSafeJsonReport(report);
       else console.error('Codex target harness failed. Safe reason: pr42 pre-push evidence artifact validation failed');
       if (targetSafeJsonWatchdog) clearTimeout(targetSafeJsonWatchdog);
-      process.exit(1);
-    }
-    if (!gateEnv.GITHUB_ACTIONS && gateEnv.CODEX_PR42_REALPATH_ALLOW_LONG_TARGET !== '1') {
-      report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport({
-        report,
-        failureClass: 'v103_real_pr42_synchronous_child_timeout_gap',
-        timeoutWithoutReport: true,
-        childProcessBlocksFinalizer: true,
-        synchronousChildTimeoutGap: true,
-        pendingAfterPush: true,
-      });
-      report.status = 'fail';
-      report.mergeReady = false;
-      report.targetMergeReady = false;
-      report.remoteEvidencePass = false;
-      report.pendingAfterPush = true;
-      report.failures.push({
-        id: 'pr42TargetSafeJsonFinalizationStatus.failed',
-        message: 'safe PR42 local target report finalization boundary failed',
-      });
-      if (jsonReport) emitSafeJsonReport(report);
-      else console.error('Codex target harness failed. Safe reason: PR42 local target report finalization boundary');
       process.exit(1);
     }
   }
@@ -10979,6 +11019,11 @@ async function runTargetHarnessGate() {
   report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport(
     buildPr42TargetFinalizationInput(report, gateEnv),
   );
+  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
+    report.pendingAfterPush = true;
+    report.remoteEvidencePass = false;
+    report.targetMergeReady = false;
+  }
   applyStatusOutcome('pr42TargetSafeJsonFinalizationStatus', report.pr42TargetSafeJsonFinalizationStatus, failures, warnings);
 
 
@@ -11024,6 +11069,11 @@ async function runTargetHarnessGate() {
 
 
   report.targetMergeReady = report.mergeReady;
+  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
+    report.pendingAfterPush = true;
+    report.remoteEvidencePass = false;
+    report.targetMergeReady = false;
+  }
 
 
 
