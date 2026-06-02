@@ -25,6 +25,7 @@ export const V103_STATUS_KEYS = [
   'safeNextActionPrecisionStatus',
   'pr42TargetSafeJsonFinalizationStatus',
   'pr42ContractMarkerStatus',
+  'pr42LifeboatQualityScoreStatus',
   'designOnlyPrStatus',
   'implementationDeferredStatus',
   'fiveFiveLowModeStatus',
@@ -125,6 +126,17 @@ export const V103_REASON_CODES = [
   'v103_pr42_remote_npm_marker_realpath_simulation_delta',
   'v103_pr42_metadata_contract_realpath_delta',
   'v103_unknown_pr42_contract_marker_blocker',
+  'v103_pr42_artifact_lifeboat_missing',
+  'v103_pr42_lifeboat_artifact_not_generated',
+  'v103_pr42_lifeboat_artifact_path_mismatch',
+  'v103_pr42_lifeboat_artifact_not_recognized',
+  'v103_pr42_lifeboat_only_evidence_rejected',
+  'v103_pr42_target_quality_score_missing',
+  'v103_pr42_target_quality_score_not_computed',
+  'v103_pr42_target_quality_score_prepush_misclassified',
+  'v103_pr42_target_quality_score_remote_required_before_push',
+  'v103_pr42_lifeboat_qualityscore_realpath_delta',
+  'v103_unknown_pr42_lifeboat_qualityscore_blocker',
   'v103_real_pr42_simulation_real_path_delta',
   'v103_real_pr42_artifact_path_mismatch',
   'v103_real_pr42_evidence_artifact_shape_mismatch',
@@ -521,6 +533,41 @@ export function buildPr42ContractMarkerReport(input = {}) {
       });
 }
 
+export function buildPr42LifeboatQualityScoreReport(input = {}) {
+  const reasons = [];
+  const lifeboatStatus = String(input.lifeboatStatus || (bool(input.lifeboatArtifactPresent) ? 'pass' : ''));
+  const scoreStatus = String(input.targetQualityScoreStatus || (bool(input.targetQualityScoreComputed) ? 'pass' : ''));
+  if (!bool(input.lifeboatArtifactPresent)) reasons.push('v103_pr42_artifact_lifeboat_missing');
+  if (bool(input.lifeboatArtifactNotGenerated)) reasons.push('v103_pr42_lifeboat_artifact_not_generated');
+  if (bool(input.lifeboatArtifactPathMismatch)) reasons.push('v103_pr42_lifeboat_artifact_path_mismatch');
+  if (lifeboatStatus && lifeboatStatus !== 'pass') reasons.push('v103_pr42_lifeboat_artifact_not_recognized');
+  if (bool(input.lifeboatOnlyEvidencePass)) reasons.push('v103_pr42_lifeboat_only_evidence_rejected');
+  if (!bool(input.targetQualityScoreComputed)) reasons.push('v103_pr42_target_quality_score_missing');
+  if (scoreStatus && !['pass', 'manual_confirmation_required', 'fail'].includes(scoreStatus)) reasons.push('v103_pr42_target_quality_score_not_computed');
+  if (bool(input.targetQualityScoreRequiresRemoteBeforePush)) reasons.push('v103_pr42_target_quality_score_remote_required_before_push');
+  if (bool(input.targetQualityScoreTreatedAsRemotePass)) reasons.push('v103_pr42_target_quality_score_prepush_misclassified');
+  if (bool(input.targetQualityScoreTreatedAsMergeReady)) reasons.push('v103_pr42_target_quality_score_prepush_misclassified');
+  if (bool(input.realpathDelta)) reasons.push('v103_pr42_lifeboat_qualityscore_realpath_delta');
+  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
+    reasons.push('v103_pr42_target_quality_score_prepush_misclassified');
+  }
+  if (bool(input.runtimeReadinessClaimed) || bool(input.productionReadinessClaimed)) reasons.push('v103_unknown_pr42_lifeboat_qualityscore_blocker');
+  return reasons.length
+    ? fail('pr42LifeboatQualityScoreStatus', reasons, {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      })
+    : pass('pr42LifeboatQualityScoreStatus', {
+        lifeboatOnlyEvidenceRejected: true,
+        targetQualityScoreIsRemotePass: false,
+        targetQualityScoreIsMergeReadyEvidence: false,
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      });
+}
+
 export function buildDesignOnlyPrReport(input = {}) {
   return hasAny(input, ['runtimeBehaviorChanged', 'designClaimedAsImplementation'])
     ? fail('designOnlyPrStatus', ['design_only_pr_misclassified_as_implementation'])
@@ -705,6 +752,10 @@ export function buildDefaultV103Reports(context = {}) {
       contractMetadataPresent: true,
       contractMetadataRecognized: true,
       remoteNpmNormalizationMarkerPresent: true,
+    }),
+    pr42LifeboatQualityScoreStatus: buildPr42LifeboatQualityScoreReport({
+      lifeboatArtifactPresent: true,
+      targetQualityScoreComputed: true,
     }),
     designOnlyPrStatus: buildDesignOnlyPrReport(),
     implementationDeferredStatus: buildImplementationDeferredReport(),

@@ -84,6 +84,20 @@ function isPr42ProductPrepushTargetEnv(env) {
     && env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
 }
 
+function pr42PrepushSafeLifeboatEnv(env) {
+  if (!isPr42ProductPrepushTargetEnv(env)) return {};
+  const head = String(env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || 'local-head').replace(/[^A-Za-z0-9_.:-]/g, '_').slice(0, 40);
+  const tempRoot = env.RUNNER_TEMP || env.TMPDIR || env.TEMP || env.TMP || path.join(process.cwd(), '.git', 'codex-safe-artifacts');
+  const safeDir = path.join(tempRoot, 'codex-pr42-prepush-safe-artifacts');
+  return {
+    CODEX_LIFEBOAT_PATH: env.CODEX_LIFEBOAT_PATH || path.join(safeDir, `codex-pr42-lifeboat-${head}.json`),
+    CODEX_LIFEBOAT_PHASE: env.CODEX_LIFEBOAT_PHASE || 'quality_gate_started',
+    CODEX_LAST_KNOWN_GATE: env.CODEX_LAST_KNOWN_GATE || 'pr42_target_prepush',
+    CODEX_LAST_KNOWN_REASON_CODES: env.CODEX_LAST_KNOWN_REASON_CODES || 'remote_evidence_required_after_push',
+    CODEX_SAFE_NEXT_ACTION: env.CODEX_SAFE_NEXT_ACTION || 'wait_for_same_head_remote_quality_gate_after_push',
+  };
+}
+
 function buildPr42TargetFinalizationInput(report, env) {
   if (!isPr42ProductPrepushTargetEnv(env)) return { pendingAfterPush: true };
   const failures = Array.isArray(report?.failures) ? report.failures : [];
@@ -7885,10 +7899,11 @@ async function runSourceHarnessGate() {
 
 
     ...gateEnv,
+    ...pr42PrepushSafeLifeboatEnv(gateEnv),
 
 
 
-    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' ? '1' : '0',
+    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' || isPr42ProductPrepushTargetEnv(gateEnv) ? '1' : '0',
 
 
 
@@ -10097,10 +10112,11 @@ async function runTargetHarnessGate() {
 
 
     ...gateEnv,
+    ...pr42PrepushSafeLifeboatEnv(gateEnv),
 
 
 
-    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' ? '1' : '0',
+    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' || isPr42ProductPrepushTargetEnv(gateEnv) ? '1' : '0',
 
 
 
