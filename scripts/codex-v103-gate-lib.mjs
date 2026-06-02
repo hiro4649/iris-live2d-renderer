@@ -23,6 +23,7 @@ export const V103_STATUS_KEYS = [
   'codexActionBoundaryStatus',
   'userManualWorkProhibitedStatus',
   'safeNextActionPrecisionStatus',
+  'pr42TargetSafeJsonFinalizationStatus',
   'designOnlyPrStatus',
   'implementationDeferredStatus',
   'fiveFiveLowModeStatus',
@@ -87,6 +88,12 @@ export const V103_REASON_CODES = [
   'codex_action_boundary_missing',
   'user_manual_work_pushed_back',
   'safe_next_action_not_precise',
+  'v103_real_pr42_empty_target_safe_json',
+  'v103_real_pr42_minimal_failure_without_gate_label',
+  'v103_real_pr42_report_finalization_gap',
+  'v103_real_pr42_artifact_path_mismatch',
+  'v103_real_pr42_evidence_artifact_shape_mismatch',
+  'v103_real_pr42_unclassified_failure_boundary',
   'design_only_pr_misclassified_as_implementation',
   'implementation_deferred_not_respected',
   'five_five_low_mode_violation',
@@ -339,6 +346,34 @@ export function buildSafeNextActionPrecisionReport(input = {}) {
     : fail('safeNextActionPrecisionStatus', ['safe_next_action_not_precise']);
 }
 
+export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
+  const reasons = [];
+  const report = input.report || null;
+  const failureClass = input.failureClass || '';
+  if (bool(input.emptyReport) || (report && Object.keys(report).length === 0)) reasons.push('v103_real_pr42_empty_target_safe_json');
+  if (bool(input.minimalFailure) || (report?.status === 'fail' && !oneLine(failureClass) && !(report?.failures || []).some((item) => oneLine(item?.id)))) {
+    reasons.push('v103_real_pr42_minimal_failure_without_gate_label');
+  }
+  if (bool(input.finalizationGap)) reasons.push('v103_real_pr42_report_finalization_gap');
+  if (bool(input.artifactPathMismatch)) reasons.push('v103_real_pr42_artifact_path_mismatch');
+  if (bool(input.artifactShapeMismatch)) reasons.push('v103_real_pr42_evidence_artifact_shape_mismatch');
+  if (bool(input.unclassifiedFailure)) reasons.push('v103_real_pr42_unclassified_failure_boundary');
+  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
+    reasons.push('v103_real_pr42_unclassified_failure_boundary');
+  }
+  return reasons.length
+    ? fail('pr42TargetSafeJsonFinalizationStatus', reasons, {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      })
+    : pass('pr42TargetSafeJsonFinalizationStatus', {
+        pendingAfterPush: bool(input.pendingAfterPush) || true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      });
+}
+
 export function buildDesignOnlyPrReport(input = {}) {
   return hasAny(input, ['runtimeBehaviorChanged', 'designClaimedAsImplementation'])
     ? fail('designOnlyPrStatus', ['design_only_pr_misclassified_as_implementation'])
@@ -517,6 +552,7 @@ export function buildDefaultV103Reports(context = {}) {
     codexActionBoundaryStatus: buildCodexActionBoundaryReport(),
     userManualWorkProhibitedStatus: buildUserManualWorkProhibitedReport(),
     safeNextActionPrecisionStatus: buildSafeNextActionPrecisionReport({ safeNextAction }),
+    pr42TargetSafeJsonFinalizationStatus: buildPr42TargetSafeJsonFinalizationReport({ pendingAfterPush: true }),
     designOnlyPrStatus: buildDesignOnlyPrReport(),
     implementationDeferredStatus: buildImplementationDeferredReport(),
     fiveFiveLowModeStatus: buildFiveFiveLowModeReport(),
