@@ -13,6 +13,24 @@
       "notes": "Codex harness scripts only."
     },
     {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md",
+      "classification": "product_relevant",
+      "surface": "live2d_loader_provisioning_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Exact approved PR42 Live2D loader provisioning preflight doc; not a global docs/iris-live2d-renderer allowlist."
+    },
+    {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md",
+      "classification": "product_relevant",
+      "surface": "live2d_loader_provisioning_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Exact approved PR42 Live2D renderer development schedule doc; not a global docs/iris-live2d-renderer allowlist."
+    },
+    {
       "pathPattern": "scripts/run-tests.js",
       "classification": "product_relevant",
       "surface": "verification",
