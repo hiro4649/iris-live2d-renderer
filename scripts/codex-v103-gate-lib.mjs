@@ -107,6 +107,15 @@ export const V103_REASON_CODES = [
   'v103_pr42_timeout_finalizer_ordering_bug',
   'v103_pr42_untracked_artifact_after_child_timeout',
   'v103_unknown_child_process_timeout_boundary',
+  'v103_pr42_classification_unknown_file',
+  'v103_pr42_exact_docs_scope_missing',
+  'v103_pr42_profile_sections_missing',
+  'v103_pr42_profile_metadata_not_recognized',
+  'v103_pr42_review_independence_metadata_missing',
+  'v103_pr42_remote_npm_marker_missing',
+  'v103_pr42_remote_npm_marker_prepush_misclassified',
+  'v103_pr42_metadata_realpath_simulation_delta',
+  'v103_unknown_pr42_metadata_classification_blocker',
   'v103_real_pr42_simulation_real_path_delta',
   'v103_real_pr42_artifact_path_mismatch',
   'v103_real_pr42_evidence_artifact_shape_mismatch',
@@ -403,6 +412,51 @@ export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
       })
     : pass('pr42TargetSafeJsonFinalizationStatus', {
         pendingAfterPush: bool(input.pendingAfterPush) || true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      });
+}
+
+export function buildPr42MetadataClassificationReport(input = {}) {
+  const expectedFiles = [
+    'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+    'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+    'src/renderer/cubismLoaderProvisioning.js',
+    'src/renderer/cubismRenderer.js',
+    'src/server.js',
+    'src/state.js',
+    'test/contract.test.js',
+  ];
+  const files = Array.isArray(input.changedFiles) ? input.changedFiles.map(String) : expectedFiles;
+  const exactScope = files.length === expectedFiles.length && expectedFiles.every((file) => files.includes(file));
+  const unexpectedLive2dDoc = files.some((file) => /^docs\/iris-live2d-renderer\//.test(file) && !expectedFiles.includes(file));
+  const harnessOnly = bool(input.harnessOnly);
+  const hasProfileMetadata = bool(input.profileMetadataPresent);
+  const hasReviewMetadata = bool(input.reviewIndependenceMetadataPresent);
+  const reviewMetadataFabricated = bool(input.reviewIndependenceMetadataFabricated);
+  const remoteNpmMarker = bool(input.remoteNpmPrepushDiagnosticPresent);
+  const remoteNpmMarkerAsRemotePass = bool(input.remoteNpmMarkerTreatedAsRemotePass);
+  const reasons = [];
+  if (!exactScope) reasons.push('v103_pr42_exact_docs_scope_missing');
+  if (unexpectedLive2dDoc) reasons.push('v103_pr42_classification_unknown_file');
+  if (harnessOnly && files.some((file) => /^docs\/iris-live2d-renderer\//.test(file))) reasons.push('v103_pr42_classification_unknown_file');
+  if (!hasProfileMetadata) reasons.push('v103_pr42_profile_sections_missing');
+  if (!hasReviewMetadata) reasons.push('v103_pr42_review_independence_metadata_missing');
+  if (reviewMetadataFabricated) reasons.push('v103_pr42_review_independence_metadata_missing');
+  if (!remoteNpmMarker) reasons.push('v103_pr42_remote_npm_marker_missing');
+  if (remoteNpmMarkerAsRemotePass) reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
+  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
+    reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
+  }
+  return reasons.length
+    ? fail('pr42MetadataClassificationStatus', reasons, {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+      })
+    : pass('pr42MetadataClassificationStatus', {
+        exactPr42Scope: true,
+        pendingAfterPush: true,
         remoteEvidencePass: false,
         targetMergeReady: false,
       });
