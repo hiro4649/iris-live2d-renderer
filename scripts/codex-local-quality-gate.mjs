@@ -60,6 +60,65 @@ const PROFILE_TEMPLATE_VERSION = '0.7.0';
 
 const MARKER = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
 
+function emitSafeJsonReport(report) {
+  const safeReport = report && typeof report === 'object' && Object.keys(report).length
+    ? report
+    : {
+        marker: MARKER,
+        harnessVersion: HARNESS_VERSION,
+        status: 'fail',
+        mergeReady: false,
+        targetMergeReady: false,
+        pr42TargetSafeJsonFinalizationStatus: v103Gates.buildPr42TargetSafeJsonFinalizationReport({
+          emptyReport: true,
+        }),
+        safeSummaryOnly: true,
+      };
+  console.log(JSON.stringify(safeReport, null, 2));
+}
+
+function isPr42ProductPrepushTargetEnv(env) {
+  return env.CODEX_HARNESS_MODE === 'target'
+    && env.CODEX_PR_NUMBER === '42'
+    && env.CODEX_PR_PROFILE === 'product_r3'
+    && env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+}
+
+function buildPr42TargetFinalizationInput(report, env) {
+  if (!isPr42ProductPrepushTargetEnv(env)) return { pendingAfterPush: true };
+  const failures = Array.isArray(report?.failures) ? report.failures : [];
+  const failureClass = failures.find((item) => typeof item?.id === 'string' && item.id.trim())?.id || '';
+  return {
+    report,
+    failureClass,
+    pendingAfterPush: true,
+    emptyReport: !report || !Object.keys(report).length,
+    minimalFailure: report?.status === 'fail' && !failureClass,
+    pendingAfterPushTreatedAsRemotePass: report?.remoteEvidencePass === true,
+    remoteEvidencePassWithoutSameHead: report?.remoteEvidencePass === true,
+    targetMergeReadyWithoutSameHead: report?.targetMergeReady === true,
+  };
+}
+
+function buildPr42PrepushEvidenceArtifactStatus(env) {
+  const hasProductEvidence = Boolean(
+    env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH
+      || env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON
+      || env.CODEX_PRODUCT_PR_EVIDENCE_GENERATOR_REPORT
+      || env.CODEX_PRODUCT_PR_EVIDENCE_SAFE_SUMMARY_REPORT,
+  );
+  const hasRemotePendingEvidence = Boolean(
+    env.CODEX_REMOTE_PRODUCT_BASELINE_JSON
+      || env.CODEX_REMOTE_PRODUCT_BASELINE_REPORT
+      || env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push',
+  );
+  return v103Gates.buildPr42TargetSafeJsonFinalizationReport({
+    pendingAfterPush: true,
+    artifactPathMismatch: !hasProductEvidence,
+    artifactShapeMismatch: !hasRemotePendingEvidence,
+  });
+}
+
 
 
 
@@ -9024,7 +9083,7 @@ async function runSourceHarnessGate() {
 
 
 
-  if (jsonReport) console.log(JSON.stringify(report, null, 2));
+  if (jsonReport) emitSafeJsonReport(report);
 
 
 
@@ -9512,6 +9571,37 @@ async function runTargetHarnessGate() {
 
 
   const jsonReport = process.env.CODEX_QUALITY_REPORT === 'json';
+  let targetReportForWatchdog = null;
+  const targetSafeJsonTimeoutMs = Number(process.env.CODEX_TARGET_SAFE_JSON_TIMEOUT_MS || 150000);
+  const targetSafeJsonWatchdog = jsonReport ? setTimeout(() => {
+    const report = targetReportForWatchdog || {
+      marker: MARKER,
+      harnessVersion: HARNESS_VERSION,
+      status: 'fail',
+      mergeReady: false,
+      targetMergeReady: false,
+      failures: [],
+      warnings: [],
+      safeSummaryOnly: true,
+    };
+    report.status = 'fail';
+    report.mergeReady = false;
+    report.targetMergeReady = false;
+    report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport({
+      report,
+      failureClass: 'targetSafeJsonWatchdog.timeout',
+      finalizationGap: true,
+      pendingAfterPush: true,
+    });
+    report.failures = Array.isArray(report.failures) ? report.failures : [];
+    report.failures.push({
+      id: 'targetSafeJsonWatchdog.timeout',
+      message: 'target harness safe report watchdog timeout',
+    });
+    emitSafeJsonReport(report);
+    process.exit(1);
+  }, targetSafeJsonTimeoutMs) : null;
+  if (targetSafeJsonWatchdog?.unref) targetSafeJsonWatchdog.unref();
 
 
 
@@ -9848,6 +9938,7 @@ async function runTargetHarnessGate() {
 
 
   };
+  targetReportForWatchdog = report;
 
 
 
@@ -9871,6 +9962,25 @@ async function runTargetHarnessGate() {
   initializeV098Statuses(report);
   initializeV099Statuses(report);
   initializeV100Statuses(report);
+
+  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
+    report.pr42TargetSafeJsonFinalizationStatus = buildPr42PrepushEvidenceArtifactStatus(gateEnv);
+    if (report.pr42TargetSafeJsonFinalizationStatus.status === 'fail') {
+      report.status = 'fail';
+      report.mergeReady = false;
+      report.targetMergeReady = false;
+      report.remoteEvidencePass = false;
+      report.pendingAfterPush = true;
+      report.failures.push({
+        id: 'pr42TargetSafeJsonFinalizationStatus.failed',
+        message: 'safe PR42 pre-push evidence artifact validation failed',
+      });
+      if (jsonReport) emitSafeJsonReport(report);
+      else console.error('Codex target harness failed. Safe reason: pr42 pre-push evidence artifact validation failed');
+      if (targetSafeJsonWatchdog) clearTimeout(targetSafeJsonWatchdog);
+      process.exit(1);
+    }
+  }
 
 
   report.agentsContextStatus = runGateScript('scripts/codex-agents-context-gate.mjs', 'agentsContextStatus', 'CODEX_AGENTS_CONTEXT_REPORT', gateEnv);
@@ -10816,6 +10926,11 @@ async function runTargetHarnessGate() {
 
   }
 
+  report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport(
+    buildPr42TargetFinalizationInput(report, gateEnv),
+  );
+  applyStatusOutcome('pr42TargetSafeJsonFinalizationStatus', report.pr42TargetSafeJsonFinalizationStatus, failures, warnings);
+
 
 
   report.safeArtifactValidation = computeSafeArtifactValidation(report);
@@ -10870,7 +10985,7 @@ async function runTargetHarnessGate() {
 
 
 
-  if (jsonReport) console.log(JSON.stringify(report, null, 2));
+  if (jsonReport) emitSafeJsonReport(report);
 
 
 
@@ -10960,6 +11075,8 @@ async function runTargetHarnessGate() {
   }
 
 
+
+  if (targetSafeJsonWatchdog) clearTimeout(targetSafeJsonWatchdog);
 
   if (failures.length) process.exit(1);
 
@@ -11251,7 +11368,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       localGateSideEffectStatus: { status: 'not_run', safeSummaryOnly: true },
       safeSummaryOnly: true,
     };
-    if (process.env.CODEX_QUALITY_REPORT === 'json') console.log(JSON.stringify(report, null, 2));
+    if (process.env.CODEX_QUALITY_REPORT === 'json') emitSafeJsonReport(report);
     else console.error('Codex local quality gate failed. Safe reason: local_gate_unknown_report_contract');
     process.exit(1);
 
@@ -11348,7 +11465,7 @@ async function runSourceHarnessCoreContractGate() {
   report.mergeReady = failures.length === 0 && warnings.length === 0;
   report.localGate = { status: report.status };
 
-  if (jsonReport) console.log(JSON.stringify(report, null, 2));
+  if (jsonReport) emitSafeJsonReport(report);
   else {
     console.log(`status: ${report.status}`);
     console.log(`qualityScore: ${report.qualityScoreStatus.score}`);
