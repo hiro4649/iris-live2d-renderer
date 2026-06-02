@@ -1,4 +1,4 @@
-# CODEX_QUALITY_HARNESS_FILE v1.0.2
+# CODEX_QUALITY_HARNESS_FILE v1.0.3
 name: quality-gate
 
 on:
@@ -128,11 +128,6 @@ jobs:
           export CODEX_PROFILE_COMPAT_MODE=off
           changed_files="$(git diff --name-only origin/main...HEAD || true)"
           export CODEX_CHANGED_FILES="$changed_files"
-          {
-            echo 'CODEX_CHANGED_FILES<<CODEX_CHANGED_FILES_EOF'
-            printf '%s\n' "$changed_files"
-            echo 'CODEX_CHANGED_FILES_EOF'
-          } >> "$GITHUB_ENV"
           classification_json="$(CODEX_QUALITY_REPORT=json node scripts/codex-change-classification-gate.mjs || true)"
           product_relevant="$(CLASSIFICATION_JSON="$classification_json" node -e "const r=JSON.parse(process.env.CLASSIFICATION_JSON||'{}'); const s=r.changeClassificationStatus||{}; process.stdout.write(s.productRelevantChanged||s.runtimeReadinessClaimed||s.packageOrLockfileChanged?'1':'0')")"
           npm_exit=0
@@ -165,6 +160,8 @@ jobs:
           if [ "${CODEX_EVENT_NAME:-}" = "pull_request" ]; then
             export CODEX_EVIDENCE_PACK_STRICT=1
             export CODEX_HUMAN_CONFIRMATION_STRICT=1
+            export CODEX_CHANGED_FILES="$(git diff --name-only origin/main...HEAD || true)"
+            export CODEX_PR_BODY="$(node -e "const https=require('https'); const repo=process.env.CODEX_REPOSITORY||''; const pr=process.env.CODEX_PR_NUMBER||''; const token=process.env.GITHUB_TOKEN||''; if(!repo||!pr||!token){process.stdout.write(''); process.exit(0);} const req=https.request({hostname:'api.github.com', path:'/repos/'+repo+'/pulls/'+pr, headers:{'User-Agent':'codex-harness','Accept':'application/vnd.github+json','Authorization':'Bearer '+token}}, res=>{let data=''; res.on('data', c=>data+=c); res.on('end',()=>{try{process.stdout.write(JSON.parse(data).body||'')}catch{process.stdout.write('')}})}); req.on('error',()=>process.stdout.write('')); req.end();")"
           else
             export CODEX_EVIDENCE_PACK_STRICT="${CODEX_EVIDENCE_PACK_STRICT:-0}"
             export CODEX_HUMAN_CONFIRMATION_STRICT="${CODEX_HUMAN_CONFIRMATION_STRICT:-0}"

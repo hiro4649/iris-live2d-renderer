@@ -1,4 +1,4 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v1.0.2 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v1.0.3 -->
 # Preview And Smoke Check Standard
 
 ## Purpose
@@ -7,8 +7,8 @@ Use these checks as the Vercel-preview equivalent for each project. Run them aft
 
 ## IRIS
 
-- `npm test`
-- `node scripts/verify-iris.mjs`
+-`npm test`
+-`node scripts/verify-iris.mjs`
 - Git for Windows bash: `scripts/verify-iris.sh`
 - Secret scan
 - Local quality gate
@@ -31,7 +31,7 @@ Use these checks as the Vercel-preview equivalent for each project. Run them aft
 ## IRIS-live2d-renderer
 
 - `scripts/verify-iris-live2d-renderer.sh`
-- `npm test`
+-`npm test`
 - Renderer smoke
 - Docs lint
 - Boundary/eval

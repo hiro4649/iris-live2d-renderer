@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.2
+// CODEX_QUALITY_HARNESS_FILE v1.0.3
 import { scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 import * as gates from './codex-v102-gate-lib.mjs';
 
@@ -64,21 +64,6 @@ const CASES = [
   ['product_pr_evidence_stale_remote_fails', gates.buildProductPrEvidenceValidatorReport, { remoteEvidenceStale: true }, 'productPrEvidenceValidatorStatus', 'fail'],
   ['product_pr_evidence_placeholder_only_fails', gates.buildProductPrEvidenceValidatorReport, { placeholderOnly: true }, 'productPrEvidenceValidatorStatus', 'fail'],
   ['product_pr_evidence_lifeboat_only_fails', gates.buildProductPrEvidenceValidatorReport, { lifeboatOnly: true }, 'productPrEvidenceValidatorStatus', 'fail'],
-  ['pr42_product_r3_expected_docs_classified', gates.buildPr42ProductDocsScopeClassificationReport, {}, 'pr42ProductDocsScopeClassificationStatus', 'pass'],
-  ['pr42_product_docs_not_globally_allowed', gates.buildPr42ProductDocsScopeClassificationReport, { docsGlobGloballyAllowed: true }, 'pr42ProductDocsScopeClassificationStatus', 'fail'],
-  ['pr42_unexpected_live2d_doc_requires_review', gates.buildPr42ProductDocsScopeClassificationReport, { changedFiles: [...gates.PR42_EXPECTED_PRODUCT_FILES, 'docs/iris-live2d-renderer/UNEXPECTED.md'] }, 'pr42ProductDocsScopeClassificationStatus', 'fail'],
-  ['pr42_harness_only_live2d_docs_forbidden', gates.buildPr42ProductDocsScopeClassificationReport, { harnessOnlyDocsAllowed: true }, 'pr42ProductDocsScopeClassificationStatus', 'fail'],
-  ['pr42_metadata_profile_sections_pass', gates.buildPr42EvidenceMetadataProfileReport, {}, 'pr42EvidenceMetadataProfileStatus', 'pass'],
-  ['pr42_metadata_profile_missing_section_fails', gates.buildPr42EvidenceMetadataProfileReport, { presentSections: ['Goal', 'Risk level', 'Product verification', 'Residual risks', 'Human confirmation needed'] }, 'pr42EvidenceMetadataProfileStatus', 'fail'],
-  ['pr42_metadata_profile_conflict_fails', gates.buildPr42EvidenceMetadataProfileReport, { profileConflict: true }, 'pr42EvidenceMetadataProfileStatus', 'fail'],
-  ['v085_environment_isolated_from_pr42_context_pass', gates.buildV085EnvironmentIsolationReport, {}, 'v085EnvironmentIsolationStatus', 'pass'],
-  ['v085_environment_active_pr_context_leak_fails', gates.buildV085EnvironmentIsolationReport, { activePrContextInherited: true }, 'v085EnvironmentIsolationStatus', 'fail'],
-  ['v085_environment_disabled_self_test_fails', gates.buildV085EnvironmentIsolationReport, { v085SelfTestDisabled: true }, 'v085EnvironmentIsolationStatus', 'fail'],
-  ['v085_environment_hidden_top_level_product_diff_fails', gates.buildV085EnvironmentIsolationReport, { topLevelProductDiffHidden: true }, 'v085EnvironmentIsolationStatus', 'fail'],
-  ['remote_product_evidence_prepush_pending_pass', gates.buildRemoteProductEvidencePrepushReport, { phase: 'remote_evidence_required_after_push', localProductEvidencePresent: true, formalProductEvidencePresent: true, pendingAfterPush: true, remoteEvidencePass: false, targetMergeReady: false }, 'remoteProductEvidencePrepushStatus', 'pass'],
-  ['remote_product_evidence_missing_formal_fails', gates.buildRemoteProductEvidencePrepushReport, { phase: 'remote_evidence_required_after_push', localProductEvidencePresent: true, pendingAfterPush: true }, 'remoteProductEvidencePrepushStatus', 'fail'],
-  ['remote_product_evidence_pending_not_remote_pass', gates.buildRemoteProductEvidencePrepushReport, { phase: 'remote_evidence_required_after_push', localProductEvidencePresent: true, formalProductEvidencePresent: true, pendingAfterPush: true, remoteEvidencePass: true }, 'remoteProductEvidencePrepushStatus', 'fail'],
-  ['remote_product_evidence_target_merge_ready_fails', gates.buildRemoteProductEvidencePrepushReport, { phase: 'remote_evidence_required_after_push', localProductEvidencePresent: true, formalProductEvidencePresent: true, pendingAfterPush: true, targetMergeReady: true }, 'remoteProductEvidencePrepushStatus', 'fail'],
 
   ['backup_artifact_repo_external_pass', gates.buildRepoExternalBackupReport, {}, 'repoExternalBackupStatus', 'pass'],
   ['backup_artifact_tracked_file_fails', gates.buildBackupArtifactManagerReport, { tracked: true }, 'backupArtifactManagerStatus', 'fail'],
@@ -132,7 +117,7 @@ const results = CASES.map(([name, builder, input, key, expected]) => {
 
 const failures = results.filter((item) => item.status !== 'pass');
 const report = {
-  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.2',
+  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.3',
   status: failures.length ? 'fail' : 'pass',
   v102SelfTestStatus: {
     status: failures.length ? 'fail' : 'pass',

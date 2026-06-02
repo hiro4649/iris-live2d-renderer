@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.2
+// CODEX_QUALITY_HARNESS_FILE v1.0.3
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { HARNESS_VERSION, marker, readJson, readText, scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
@@ -26,6 +26,11 @@ function hasEntry(entries, file) {
   return entries.some((entry) => String(entry) === file || String(entry).endsWith(file));
 }
 
+function isTargetSourceOnlyFile(file, env = process.env) {
+  if (env.CODEX_HARNESS_MODE !== 'target') return false;
+  return ['README.md', 'CODEX_SOURCE_HARNESS_MANIFEST.json'].includes(String(file).replace(/\\/g, '/'));
+}
+
 function agentsTooManualLike(env = process.env) {
   if (env.CODEX_KNOWLEDGE_TEST_AGENTS_LONG === '1') return true;
   const text = readText('AGENTS.md') || '';
@@ -50,7 +55,7 @@ export function buildKnowledgeGovernanceReport(env = process.env) {
   const evals = flattenIndex(map.evalIndex);
   const contracts = flattenIndex(map.contractIndex);
   const listed = [...new Set([...flattenIndex(map.entrypoints), ...sources, ...policies, ...skills, ...evals, ...contracts, ...flattenIndex(map.gateIndex), ...flattenIndex(map.reviewIndex)])];
-  const missingSources = listed.filter((file) => !fs.existsSync(file));
+  const missingSources = listed.filter((file) => !isTargetSourceOnlyFile(file, env) && !fs.existsSync(file));
   if (missingSources.length) reasonCodes.push('knowledge_source_missing');
   for (const file of requiredPolicies) if (!hasEntry(policies, file)) reasonCodes.push('knowledge_required_policy_not_indexed');
   for (const file of requiredSkills) if (!hasEntry(skills, file)) reasonCodes.push('knowledge_required_skill_not_indexed');

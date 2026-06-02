@@ -1,4 +1,4 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v1.0.2 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v1.0.3 -->
 
 # Codex Manual Confirmation Policy
 
@@ -23,7 +23,7 @@ Required structured fields for required confirmation:
 - `residualRisks[]`
 - `qualityGateNotWeakened`
 - `riskLevelNotLowered`
-- `nonOverridableFailuresAcknowledged`
+-`nonOverridableFailuresAcknowledged`
 
 Head SHA mismatch is failure. Quality gate weakening, risk-level lowering, and
 non-overridable failures remain blocking. Manual confirmation cannot override
