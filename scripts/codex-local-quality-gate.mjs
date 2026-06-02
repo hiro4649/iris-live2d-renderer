@@ -119,6 +119,24 @@ function buildPr42PrepushEvidenceArtifactStatus(env) {
   });
 }
 
+function approvedLocalSafeArtifactEnv(env = process.env) {
+  if (env.GITHUB_ACTIONS) return {};
+  const dir = path.join('.git', 'codex-safe-artifacts');
+  fs.mkdirSync(dir, { recursive: true });
+  return {
+    CODEX_LIFEBOAT_PATH: path.join(dir, 'codex-minimal-safe-failure.json'),
+    CODEX_RUNNER_TEMP_LIFEBOAT_PATH: path.join(dir, 'codex-minimal-safe-failure.json'),
+  };
+}
+
+function isPr42ProductPrepushTargetEnvLike(env = process.env) {
+  return isPr42ProductPrepushTargetEnv(env) || (
+    env.CODEX_HARNESS_MODE === 'target'
+      && env.CODEX_PR_NUMBER === '42'
+      && env.CODEX_PR_PROFILE === 'product_r3'
+  );
+}
+
 
 
 
@@ -1642,11 +1660,15 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
 
+  const childEnv = { ...baseEnv, ...approvedLocalSafeArtifactEnv(baseEnv), CODEX_QUALITY_REPORT: 'json', [envName]: 'json' };
+  const childTimeoutMs = isPr42ProductPrepushTargetEnvLike(childEnv)
+    ? Number(childEnv.CODEX_PR42_TARGET_CHILD_TIMEOUT_MS || 20000)
+    : Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS || 120000);
   const result = spawn('node', [script], {
 
 
 
-    env: { ...baseEnv, CODEX_QUALITY_REPORT: 'json', [envName]: 'json' },
+    env: childEnv,
 
 
 
@@ -1654,7 +1676,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
 
-    timeout: Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS || 120000),
+    timeout: childTimeoutMs,
 
 
 
@@ -1666,8 +1688,13 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
   const stderr = String(result.stderr || '').trim();
   const timedOut = result.error?.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
   const reasonCodes = [];
+  const pr42TargetChild = isPr42ProductPrepushTargetEnvLike(childEnv);
 
   if (timedOut) reasonCodes.push('local_gate_timeout');
+  if (timedOut && pr42TargetChild) {
+    reasonCodes.push('v103_real_pr42_timeout_without_report');
+    reasonCodes.push('v103_real_pr42_synchronous_child_timeout_gap');
+  }
 
 
 
@@ -1676,6 +1703,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
     reasonCodes.push('local_gate_json_missing');
+    if (pr42TargetChild) reasonCodes.push('v103_real_pr42_no_safe_json_report');
     if (timedOut && !stderr) reasonCodes.push('local_gate_stdout_stderr_empty_timeout');
     return { status: 'fail', reasonCodes, failures: [`${field}=empty_output`], safeSummaryOnly: true, script };
 
@@ -9633,7 +9661,7 @@ async function runTargetHarnessGate() {
 
 
 
-  const gateEnv = { ...process.env };
+  const gateEnv = { ...process.env, ...approvedLocalSafeArtifactEnv(process.env) };
 
 
 
@@ -9978,6 +10006,28 @@ async function runTargetHarnessGate() {
       if (jsonReport) emitSafeJsonReport(report);
       else console.error('Codex target harness failed. Safe reason: pr42 pre-push evidence artifact validation failed');
       if (targetSafeJsonWatchdog) clearTimeout(targetSafeJsonWatchdog);
+      process.exit(1);
+    }
+    if (!gateEnv.GITHUB_ACTIONS && gateEnv.CODEX_PR42_REALPATH_ALLOW_LONG_TARGET !== '1') {
+      report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport({
+        report,
+        failureClass: 'v103_real_pr42_synchronous_child_timeout_gap',
+        timeoutWithoutReport: true,
+        childProcessBlocksFinalizer: true,
+        synchronousChildTimeoutGap: true,
+        pendingAfterPush: true,
+      });
+      report.status = 'fail';
+      report.mergeReady = false;
+      report.targetMergeReady = false;
+      report.remoteEvidencePass = false;
+      report.pendingAfterPush = true;
+      report.failures.push({
+        id: 'pr42TargetSafeJsonFinalizationStatus.failed',
+        message: 'safe PR42 local target report finalization boundary failed',
+      });
+      if (jsonReport) emitSafeJsonReport(report);
+      else console.error('Codex target harness failed. Safe reason: PR42 local target report finalization boundary');
       process.exit(1);
     }
   }

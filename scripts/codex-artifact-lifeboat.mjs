@@ -33,7 +33,9 @@ function phase(env = process.env) {
 }
 
 function artifactPath(env = process.env) {
-  return env.CODEX_LIFEBOAT_PATH || 'codex-minimal-safe-failure.json';
+  if (env.CODEX_LIFEBOAT_PATH) return env.CODEX_LIFEBOAT_PATH;
+  if (!env.GITHUB_ACTIONS) return '.git/codex-safe-artifacts/codex-minimal-safe-failure.json';
+  return 'codex-minimal-safe-failure.json';
 }
 
 function mirrorPath(env = process.env) {
