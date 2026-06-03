@@ -128,6 +128,7 @@ export const V104_STATUS_KEYS = [
   'productPrSafeMetadataSchemaStatus',
   'productPrEvidenceGeneratorStatus',
   'childProcessBoundaryCommonLibStatus',
+  'targetSafeReportFinalizerStatus',
   'pr42RecoveryAutopilotStatus',
   'live2dRealEvidenceCollectorSpecStatus',
   'motionDatasetRowAuditRunnerStatus',
@@ -564,6 +565,21 @@ export function buildRepoProfileFixtureReports() {
   return out;
 }
 
+export function buildTargetSafeReportFinalizerReport(input = {}) {
+  const reasons = [];
+  if (bool(input.noSafeJsonTreatedAsPass)) reasons.push('target_no_safe_json_treated_as_pass');
+  if (bool(input.emptySafeJsonTreatedAsPass)) reasons.push('target_empty_safe_json_treated_as_pass');
+  if (bool(input.noConsolePayloadTreatedAsPass)) reasons.push('target_no_console_payload_treated_as_pass');
+  if (bool(input.nonzeroExitTreatedAsPass)) reasons.push('target_nonzero_exit_treated_as_pass');
+  if (bool(input.targetFailed) && !bool(input.safeReportWritten)) reasons.push('target_safe_failure_report_missing');
+  if (bool(input.finalizerSkipped)) reasons.push('target_safe_report_finalizer_skipped');
+  return reasons.length
+    ? fail('targetSafeReportFinalizerStatus', reasons)
+    : pass('targetSafeReportFinalizerStatus', {
+      safeReportWritten: bool(input.safeReportWritten),
+      reportLocation: input.reportLocation || 'not_required',
+    });
+}
 export function buildDefaultV104Reports(input = {}) {
   return {
     ...buildClaimToCodeVerifierReport({ body: 'API code now depends on repository interface\nno runtime readiness claimed\nno production readiness claimed\nsame-head evidence present', evidenceSources: ['safe_artifact'], sameHeadEvidence: true }),
@@ -582,6 +598,7 @@ export function buildDefaultV104Reports(input = {}) {
     ...buildRoleToolEvidenceAnnotationReport(),
     ...buildDynamicWorkflowLiteReport(),
     ...buildRepoProfileFixtureReports(),
+    targetSafeReportFinalizerStatus: buildTargetSafeReportFinalizerReport(input).targetSafeReportFinalizerStatus,
     v104SelfTestStatus: pass('v104SelfTestStatus', {
       activeHarnessVersion: '1.0.4',
       activeSelfTestSuite: 'v104',

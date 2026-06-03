@@ -27,6 +27,7 @@ const CASES = [
   ['parent_v101_required_for_v102_pass', gates.buildLegacySelfTestMatrixReport, { v101SelfTestStatus: 'pass', v102SelfTestStatus: 'pass' }, 'legacySelfTestMatrixStatus', 'pass'],
   ['v101_self_test_preserved_pass', gates.buildLegacySelfTestMatrixReport, { activeVersion: 'v102', v101SelfTestStatus: 'pass' }, 'legacySelfTestMatrixStatus', 'pass'],
   ['v102_self_test_registered_pass', gates.buildV102SelfTestRegistrationReport, {}, 'v102SelfTestStatus', 'pass'],
+  ['v102_self_test_missing_still_fails', gates.buildV102SelfTestRegistrationReport, { selfTestMissing: true }, 'v102SelfTestStatus', 'fail'],
 
   ['clean_main_baseline_pass', gates.buildCleanMainBaselineStabilityReport, { classification: 'clean_main_pass' }, 'cleanMainBaselineStabilityStatus', 'pass'],
   ['clean_main_legacy_self_test_drift_fails', gates.buildCleanMainBaselineStabilityReport, { classification: 'legacy_self_test_drift' }, 'cleanMainBaselineStabilityStatus', 'fail'],
