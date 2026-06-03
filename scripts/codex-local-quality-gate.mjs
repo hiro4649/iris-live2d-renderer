@@ -60,6 +60,8 @@ const PROFILE_TEMPLATE_VERSION = '0.7.0';
 
 const MARKER = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
 
+let safeJsonReportEmitted = false;
+
 function emitSafeJsonReport(report) {
   const safeReport = report && typeof report === 'object' && Object.keys(report).length
     ? report
@@ -74,6 +76,7 @@ function emitSafeJsonReport(report) {
         }),
         safeSummaryOnly: true,
       };
+  safeJsonReportEmitted = true;
   console.log(JSON.stringify(safeReport, null, 2));
 }
 
@@ -96,6 +99,36 @@ function pr42PrepushSafeLifeboatEnv(env) {
     CODEX_LAST_KNOWN_REASON_CODES: env.CODEX_LAST_KNOWN_REASON_CODES || 'remote_evidence_required_after_push',
     CODEX_SAFE_NEXT_ACTION: env.CODEX_SAFE_NEXT_ACTION || 'wait_for_same_head_remote_quality_gate_after_push',
   };
+}
+
+function buildPr42NoSafeJsonFallbackReport(reasonCode = 'v103_pr42_final_safe_json_not_written') {
+  const reasonCodes = [
+    reasonCode,
+    'v103_pr42_target_finalizer_skipped',
+    'v103_pr42_unclassified_no_report_path',
+  ];
+  const report = {
+    marker: MARKER,
+    harnessVersion: HARNESS_VERSION,
+    status: 'fail',
+    mergeReady: false,
+    targetMergeReady: false,
+    pendingAfterPush: true,
+    remoteEvidencePass: false,
+    failures: [{ id: reasonCode, message: 'target harness safe report finalization failed' }],
+    warnings: [],
+    safeSummaryOnly: true,
+  };
+  report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport({
+    report,
+    failureClass: reasonCode,
+    noSafeJsonReport: true,
+    finalizationGap: true,
+    unclassifiedFailure: true,
+    pendingAfterPush: true,
+    reasonCodes,
+  });
+  return report;
 }
 
 function buildPr42TargetFinalizationInput(report, env) {
@@ -11466,6 +11499,17 @@ async function main() {
 
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  process.on('exit', (code) => {
+    if (
+      code !== 0
+      && process.env.CODEX_QUALITY_REPORT === 'json'
+      && process.env.CODEX_HARNESS_MODE === 'target'
+      && isPr42ProductPrepushTargetEnv(process.env)
+      && !safeJsonReportEmitted
+    ) {
+      emitSafeJsonReport(buildPr42NoSafeJsonFallbackReport());
+    }
+  });
 
 
 

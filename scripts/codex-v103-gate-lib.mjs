@@ -403,6 +403,13 @@ export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
   }
   if (bool(input.finalizationGap)) reasons.push('v103_real_pr42_report_finalization_gap');
   if (bool(input.noSafeJsonReport)) reasons.push('v103_real_pr42_no_safe_json_report');
+  if (bool(input.finalSafeJsonNotWritten)) reasons.push('v103_pr42_final_safe_json_not_written');
+  if (bool(input.targetFinalizerSkipped)) reasons.push('v103_pr42_target_finalizer_skipped');
+  if (bool(input.reportFinalizerOrderingGap)) reasons.push('v103_pr42_report_finalizer_ordering_gap');
+  if (bool(input.safeReportWriteAfterFailureSkipped)) reasons.push('v103_pr42_safe_report_write_after_failure_skipped');
+  if (bool(input.lifeboatQualityscoreFinalizerGap)) reasons.push('v103_pr42_lifeboat_qualityscore_finalizer_gap');
+  if (bool(input.childBoundaryFinalizerGap)) reasons.push('v103_pr42_child_boundary_finalizer_gap');
+  if (bool(input.unclassifiedNoReportPath)) reasons.push('v103_pr42_unclassified_no_report_path');
   if (bool(input.timeoutWithoutReport)) reasons.push('v103_real_pr42_timeout_without_report');
   if (bool(input.untrackedSafeFailureArtifact)) reasons.push('v103_real_pr42_untracked_safe_failure_artifact');
   if (bool(input.artifactPathNotRepoExternal)) reasons.push('v103_real_pr42_artifact_path_not_repo_external');
