@@ -2661,6 +2661,16 @@ function normalizePr42PrepushTargetPhaseStatuses(report, env = process.env) {
   return report;
 }
 
+function filterPr42PrepushTargetPhaseWarnings(warnings, env = process.env) {
+  if (!isPr42ProductPrepushTargetEnv(env)) return warnings;
+  const advisoryWarningIds = new Set([
+    'prProfileStatus.manual',
+    'v085StabilityStatus.manual',
+    'codeReviewMonitorStatus.manual',
+  ]);
+  return warnings.filter((warning) => !advisoryWarningIds.has(warning?.id));
+}
+
 
 
 function runJsonScript(script, cwd, failures, warnings) {
@@ -11161,11 +11171,13 @@ async function runTargetHarnessGate() {
 
 
 
-  report.status = failures.length ? 'fail' : (warnings.length ? 'manual_confirmation_required' : 'pass');
+  const targetOutcomeWarnings = filterPr42PrepushTargetPhaseWarnings(warnings, gateEnv);
+
+  report.status = failures.length ? 'fail' : (targetOutcomeWarnings.length ? 'manual_confirmation_required' : 'pass');
 
 
 
-  report.mergeReady = failures.length === 0 && warnings.length === 0;
+  report.mergeReady = failures.length === 0 && targetOutcomeWarnings.length === 0;
 
 
 

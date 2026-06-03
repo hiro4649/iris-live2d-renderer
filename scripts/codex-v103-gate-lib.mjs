@@ -582,6 +582,7 @@ export function buildPr42ManualProfileReviewScopeReport(input = {}) {
   if (bool(input.manualConfirmationSatisfiedWithoutOwner)) reasons.push('v103_pr42_manual_confirmation_phase_misclassified');
   if (bool(input.codeReviewSatisfiedWithoutEvidence)) reasons.push('v103_pr42_code_review_monitor_phase_misclassified');
   if (bool(input.v085StabilityDisabled)) reasons.push('v103_pr42_v085_stability_manual_misclassified');
+  if (bool(input.v085ActualFailingScope)) reasons.push('v103_pr42_v085_stability_status_outcome_phase_leak');
   if (bool(input.requiredHeadingHardFailure)) reasons.push('v103_pr42_required_heading_hint_warning_blocks_target');
   if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) {
     reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
