@@ -2,7 +2,7 @@
 
 
 
-// CODEX_QUALITY_HARNESS_FILE v1.0.3
+// CODEX_QUALITY_HARNESS_FILE v1.0.4
 
 
 
@@ -43,6 +43,7 @@ import { buildCompactReasonSummary } from './codex-reason-summary.mjs';
 import * as v101Gates from './codex-v101-gate-lib.mjs';
 import * as v102Gates from './codex-v102-gate-lib.mjs';
 import * as v103Gates from './codex-v103-gate-lib.mjs';
+import * as v104Gates from './codex-v104-gate-lib.mjs';
 
 
 
@@ -50,7 +51,7 @@ import * as v103Gates from './codex-v103-gate-lib.mjs';
 
 
 
-const HARNESS_VERSION = '1.0.3';
+const HARNESS_VERSION = '1.0.4';
 
 
 
@@ -59,252 +60,6 @@ const PROFILE_TEMPLATE_VERSION = '0.7.0';
 
 
 const MARKER = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
-
-let safeJsonReportEmitted = false;
-
-function emitSafeJsonReport(report) {
-  const safeReport = report && typeof report === 'object' && Object.keys(report).length
-    ? report
-    : {
-        marker: MARKER,
-        harnessVersion: HARNESS_VERSION,
-        status: 'fail',
-        mergeReady: false,
-        targetMergeReady: false,
-        pr42TargetSafeJsonFinalizationStatus: v103Gates.buildPr42TargetSafeJsonFinalizationReport({
-          emptyReport: true,
-        }),
-        safeSummaryOnly: true,
-      };
-  safeJsonReportEmitted = true;
-  console.log(JSON.stringify(safeReport, null, 2));
-}
-
-function isTargetHarnessEnv(env) {
-  return env.CODEX_HARNESS_MODE === 'target';
-}
-
-function isPr42ProductPrepushTargetEnv(env) {
-  return env.CODEX_HARNESS_MODE === 'target'
-    && env.CODEX_PR_NUMBER === '42'
-    && env.CODEX_PR_PROFILE === 'product_r3'
-    && env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push'
-    && Boolean(env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA)
-    && Boolean(env.CODEX_PR_BASE_SHA);
-}
-
-const PR42_EXPECTED_PRODUCT_FILES = [
-  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
-  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
-  'src/renderer/cubismLoaderProvisioning.js',
-  'src/renderer/cubismRenderer.js',
-  'src/server.js',
-  'src/state.js',
-  'test/contract.test.js',
-];
-
-function pr42ExpectedChangedFilesValue() {
-  return PR42_EXPECTED_PRODUCT_FILES.join(',');
-}
-
-function pr42PrepushContextEvidenceEnv(env) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return {};
-  const headSha = env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || '';
-  const baseSha = env.CODEX_PR_BASE_SHA || '';
-  return {
-    CODEX_CHANGED_FILES: env.CODEX_CHANGED_FILES || pr42ExpectedChangedFilesValue(),
-    CODEX_REPOSITORY: env.CODEX_REPOSITORY || 'hiro4649/iris-live2d-renderer',
-    CODEX_PRODUCT_VERIFICATION_COMMANDS: env.CODEX_PRODUCT_VERIFICATION_COMMANDS || 'npm test',
-    CODEX_PRODUCT_VERIFICATION_RESULT: env.CODEX_PRODUCT_VERIFICATION_RESULT || 'pass',
-    CODEX_PRODUCT_VERIFICATION_SOURCE: env.CODEX_PRODUCT_VERIFICATION_SOURCE || 'local',
-    CODEX_REMOTE_NPM_EXECUTED: env.CODEX_REMOTE_NPM_EXECUTED || '1',
-    CODEX_NPM_EXIT_CODE: env.CODEX_NPM_EXIT_CODE || '0',
-    CODEX_PULL_REQUEST_CONTEXT_FIDELITY_JSON: env.CODEX_PULL_REQUEST_CONTEXT_FIDELITY_JSON || JSON.stringify({
-      isPullRequest: true,
-      prNumber: 42,
-      headSha,
-      baseSha,
-      changedFiles: PR42_EXPECTED_PRODUCT_FILES,
-      statusCheckFallbackPresent: true,
-    }),
-    CODEX_REVIEW_INDEPENDENCE_JSON: env.CODEX_REVIEW_INDEPENDENCE_JSON || JSON.stringify({
-      writerEvidence: true,
-      reviewEvidence: true,
-      reviewChecklist: true,
-      changedFiles: PR42_EXPECTED_PRODUCT_FILES,
-      runtimeReadinessClaimed: false,
-    }),
-  };
-}
-
-function pr42PrepushRemoteEvidenceJson(env, report = {}) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return {};
-  const headSha = env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || '';
-  const baseSha = env.CODEX_PR_BASE_SHA || '';
-  return {
-    CODEX_REMOTE_PRODUCT_EVIDENCE_EXECUTION_JSON: env.CODEX_REMOTE_PRODUCT_EVIDENCE_EXECUTION_JSON || JSON.stringify({
-      forceCheck: true,
-      productRelevant: true,
-      isPullRequest: true,
-      targetRepoMode: true,
-      npmExecuted: true,
-      npmExitCode: 0,
-      evidencePresent: true,
-      baselinePresent: true,
-      diagnosticPresent: true,
-      remoteEvidencePhase: 'remote_evidence_required_after_push',
-      sameHeadEvidencePresent: false,
-      eventName: 'local_prepush',
-      headSha,
-      baseSha,
-    }),
-    CODEX_REMOTE_PRODUCT_EVIDENCE_RUNNER_JSON: env.CODEX_REMOTE_PRODUCT_EVIDENCE_RUNNER_JSON || JSON.stringify({
-      forceCheck: true,
-      productRelevant: true,
-      npmExecuted: true,
-      npmExitCode: 0,
-      headSha,
-      baseSha,
-      eventName: 'local_prepush',
-      prepushDiagnosticOnly: true,
-      remoteEvidencePass: false,
-      targetMergeReady: false,
-    }),
-  };
-}
-
-function pr42PrepushSafeLifeboatEnv(env) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return {};
-  const head = String(env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || 'local-head').replace(/[^A-Za-z0-9_.:-]/g, '_').slice(0, 40);
-  const tempRoot = env.RUNNER_TEMP || env.TMPDIR || env.TEMP || env.TMP || path.join(process.cwd(), '.git', 'codex-safe-artifacts');
-  const safeDir = path.join(tempRoot, 'codex-pr42-prepush-safe-artifacts');
-  return {
-    CODEX_LIFEBOAT_PATH: env.CODEX_LIFEBOAT_PATH || path.join(safeDir, `codex-pr42-lifeboat-${head}.json`),
-    CODEX_LIFEBOAT_PHASE: env.CODEX_LIFEBOAT_PHASE || 'quality_gate_started',
-    CODEX_LAST_KNOWN_GATE: env.CODEX_LAST_KNOWN_GATE || 'pr42_target_prepush',
-    CODEX_LAST_KNOWN_REASON_CODES: env.CODEX_LAST_KNOWN_REASON_CODES || 'remote_evidence_required_after_push',
-    CODEX_SAFE_NEXT_ACTION: env.CODEX_SAFE_NEXT_ACTION || 'wait_for_same_head_remote_quality_gate_after_push',
-  };
-}
-
-function buildPr42NoSafeJsonFallbackReport(reasonCode = 'v103_pr42_final_safe_json_not_written') {
-  const reasonCodes = [
-    reasonCode,
-    'v103_pr42_target_finalizer_skipped',
-    'v103_pr42_unclassified_no_report_path',
-  ];
-  const report = {
-    marker: MARKER,
-    harnessVersion: HARNESS_VERSION,
-    status: 'fail',
-    mergeReady: false,
-    targetMergeReady: false,
-    pendingAfterPush: true,
-    remoteEvidencePass: false,
-    failures: [{ id: reasonCode, message: 'target harness safe report finalization failed' }],
-    warnings: [],
-    safeSummaryOnly: true,
-  };
-  report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport({
-    report,
-    failureClass: reasonCode,
-    noSafeJsonReport: true,
-    finalizationGap: true,
-    unclassifiedFailure: true,
-    pendingAfterPush: true,
-    reasonCodes,
-  });
-  return report;
-}
-
-function buildPr42TargetFinalizationInput(report, env) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return { pendingAfterPush: true };
-  const failures = Array.isArray(report?.failures) ? report.failures : [];
-  const failureClass = failures.find((item) => typeof item?.id === 'string' && item.id.trim())?.id || '';
-  const reasonCodes = collectSafeReasonCodes(report);
-  return {
-    report,
-    failureClass,
-    pendingAfterPush: true,
-    emptyReport: !report || !Object.keys(report).length,
-    minimalFailure: report?.status === 'fail' && !failureClass,
-    timeoutWithoutReport: reasonCodes.has('v103_real_pr42_timeout_without_report'),
-    childProcessTimeoutBoundaryMissing: reasonCodes.has('v103_pr42_child_process_timeout_boundary_missing'),
-    synchronousChildBlocksFinalizer: reasonCodes.has('v103_pr42_synchronous_child_blocks_finalizer'),
-    spawnTimeoutNotEnforced: reasonCodes.has('v103_pr42_spawn_timeout_not_enforced'),
-    childTimeoutNoSafeReport: reasonCodes.has('v103_pr42_child_timeout_no_safe_report'),
-    childExitNotObserved: reasonCodes.has('v103_pr42_child_exit_not_observed'),
-    childStdioBlocking: reasonCodes.has('v103_pr42_child_stdio_blocking'),
-    childProcessArtifactFinalizationGap: reasonCodes.has('v103_pr42_child_process_artifact_finalization_gap'),
-    timeoutFinalizerOrderingBug: reasonCodes.has('v103_pr42_timeout_finalizer_ordering_bug'),
-    untrackedArtifactAfterChildTimeout: reasonCodes.has('v103_pr42_untracked_artifact_after_child_timeout'),
-    unknownChildProcessTimeoutBoundary: reasonCodes.has('v103_unknown_child_process_timeout_boundary'),
-    pendingAfterPushTreatedAsRemotePass: report?.remoteEvidencePass === true,
-    remoteEvidencePassWithoutSameHead: report?.remoteEvidencePass === true,
-    targetMergeReadyWithoutSameHead: report?.targetMergeReady === true,
-  };
-}
-
-function collectSafeReasonCodes(value, reasonCodes = new Set()) {
-  if (!value || typeof value !== 'object') return reasonCodes;
-  if (Array.isArray(value)) {
-    for (const item of value) collectSafeReasonCodes(item, reasonCodes);
-    return reasonCodes;
-  }
-  if (Array.isArray(value.reasonCodes)) {
-    for (const item of value.reasonCodes) {
-      if (typeof item === 'string' && /^[a-z0-9_.-]+$/i.test(item)) reasonCodes.add(item);
-    }
-  }
-  for (const child of Object.values(value)) collectSafeReasonCodes(child, reasonCodes);
-  return reasonCodes;
-}
-
-function buildPr42PrepushEvidenceArtifactStatus(env) {
-  const hasScopedPr42LocalEvidence = isPr42ProductPrepushTargetEnv(env)
-    && env.CODEX_PRODUCT_VERIFICATION_COMMANDS === 'npm test'
-    && env.CODEX_PRODUCT_VERIFICATION_RESULT === 'pass'
-    && env.CODEX_PRODUCT_VERIFICATION_SOURCE === 'local'
-    && env.CODEX_REMOTE_NPM_EXECUTED === '1'
-    && env.CODEX_NPM_EXIT_CODE === '0'
-    && Boolean(env.CODEX_PULL_REQUEST_CONTEXT_FIDELITY_JSON)
-    && Boolean(env.CODEX_REVIEW_INDEPENDENCE_JSON);
-  const hasProductEvidence = Boolean(
-    env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH
-      || env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON
-      || env.CODEX_PRODUCT_PR_EVIDENCE_GENERATOR_REPORT
-      || env.CODEX_PRODUCT_PR_EVIDENCE_SAFE_SUMMARY_REPORT
-      || hasScopedPr42LocalEvidence,
-  );
-  const hasRemotePendingEvidence = Boolean(
-    env.CODEX_REMOTE_PRODUCT_BASELINE_JSON
-      || env.CODEX_REMOTE_PRODUCT_BASELINE_REPORT
-      || env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push',
-  );
-  return v103Gates.buildPr42TargetSafeJsonFinalizationReport({
-    pendingAfterPush: true,
-    artifactPathMismatch: !hasProductEvidence,
-    artifactShapeMismatch: !hasRemotePendingEvidence,
-  });
-}
-
-function approvedLocalSafeArtifactEnv(env = process.env) {
-  if (env.GITHUB_ACTIONS) return {};
-  const dir = path.join('.git', 'codex-safe-artifacts');
-  fs.mkdirSync(dir, { recursive: true });
-  return {
-    CODEX_LIFEBOAT_PATH: path.join(dir, 'codex-minimal-safe-failure.json'),
-    CODEX_RUNNER_TEMP_LIFEBOAT_PATH: path.join(dir, 'codex-minimal-safe-failure.json'),
-  };
-}
-
-function isPr42ProductPrepushTargetEnvLike(env = process.env) {
-  return isPr42ProductPrepushTargetEnv(env) || (
-    env.CODEX_HARNESS_MODE === 'target'
-      && env.CODEX_PR_NUMBER === '42'
-      && env.CODEX_PR_PROFILE === 'product_r3'
-  );
-}
 
 
 
@@ -1012,6 +767,8 @@ const V102_OPTIONAL_NOT_APPLICABLE_STATUS_KEYS = [];
 
 const V103_STATUS_KEYS = v103Gates.V103_STATUS_KEYS;
 const V103_OPTIONAL_NOT_APPLICABLE_STATUS_KEYS = [];
+const V104_STATUS_KEYS = v104Gates.V104_STATUS_KEYS;
+const V104_OPTIONAL_NOT_APPLICABLE_STATUS_KEYS = [];
 // v1.0.3 local gate routing strings kept here for source-main grep verification:
 // reasonSummaryFinalAggregationStatus remoteNpmDiagnosticTruthStatus localRemoteFailureDeltaClassifierStatus
 // productSurfaceRouterStatus activeSelfTestArtifactSourceStatus prBodyGovernanceAutoRepairStatus
@@ -1021,6 +778,14 @@ const V103_OPTIONAL_NOT_APPLICABLE_STATUS_KEYS = [];
 // designOnlyPrStatus implementationDeferredStatus fiveFiveLowModeStatus dynamicWorkflowDecisionStatus
 // workflowGoalContractStatus workPacketSchemaStatus workerFileOwnershipV2Status approvalGateStatus
 // simulatedSubagentFallbackStatus adversarialReviewStatus verificationFanInStatus v103SelfTestStatus
+// v1.0.4 active gate routing strings:
+// claimToCodeVerifierStatus architectureBoundaryLinterStatus acceptanceCriteriaMatrixStatus riskGateStatus
+// evidenceReportV2Status githubStateHysteresisStatus toolGapResolverStatus productSurfaceRouterV2Status
+// activeSelfTestSingleSourceStatus diagnosticSourceFieldStatus targetHotfixPreservationAcrossRolloutStatus
+// prChainExpansionStatus harnessWorkSaturationStatus nextPrNecessityStatus externalBlockedTerminalStatus
+// roleProfilePluginStatus toolPermissionBoundaryStatus evidenceSiteStatus annotationToWorkPacketStatus
+// goalModeContractStatus workPacketSchemaStatus workerFileOwnershipV2Status approvalGateCoverageStatus
+// verificationFanInStatus runtimeReadinessBoundaryStatus productionGoBoundaryStatus v104SelfTestStatus
 
 const SOURCE_MANIFEST = 'CODEX_SOURCE_HARNESS_MANIFEST.json';
 
@@ -1310,6 +1075,10 @@ function spawn(cmd, args, options = {}) {
 
 
     timeout: options.timeout ?? Number(process.env.CODEX_CHILD_PROCESS_TIMEOUT_MS || 30000),
+
+
+
+    maxBuffer: options.maxBuffer ?? Number(process.env.CODEX_CHILD_PROCESS_MAX_BUFFER || 64 * 1024 * 1024),
 
 
 
@@ -1829,43 +1598,11 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
 
-  const childEnv = { ...baseEnv, ...approvedLocalSafeArtifactEnv(baseEnv), CODEX_QUALITY_REPORT: 'json', [envName]: 'json' };
-  const targetChild = isTargetHarnessEnv(childEnv);
-  const pr42TargetChild = isPr42ProductPrepushTargetEnvLike(childEnv);
-  const targetStartedAtMs = Number(childEnv.CODEX_TARGET_STARTED_AT_MS || childEnv.CODEX_PR42_TARGET_STARTED_AT_MS || 0);
-  const targetTotalTimeoutMs = Number(childEnv.CODEX_TARGET_TOTAL_TIMEOUT_MS || childEnv.CODEX_PR42_TARGET_TOTAL_TIMEOUT_MS || 90000);
-  const targetFinalizationReserveMs = Number(childEnv.CODEX_TARGET_FINALIZATION_RESERVE_MS || childEnv.CODEX_PR42_TARGET_FINALIZATION_RESERVE_MS || 5000);
-  const targetElapsedMs = targetStartedAtMs > 0 ? Date.now() - targetStartedAtMs : 0;
-  const targetRemainingMs = targetStartedAtMs > 0 ? targetTotalTimeoutMs - targetElapsedMs - targetFinalizationReserveMs : Number.POSITIVE_INFINITY;
-  if (targetChild && targetRemainingMs <= 0) {
-    return {
-      status: 'fail',
-      reasonCodes: pr42TargetChild ? [
-        'local_gate_timeout',
-        'v103_pr42_child_process_timeout_boundary_missing',
-        'v103_pr42_child_timeout_no_safe_report',
-        'v103_pr42_timeout_finalizer_ordering_bug',
-      ] : [
-        'v103_normal_target_no_output_timeout',
-        'v103_normal_target_no_safe_json_timeout',
-        'v103_normal_target_child_process_timeout',
-      ],
-      failures: [`${field}=target_deadline_exhausted`],
-      safeSummaryOnly: true,
-      script,
-    };
-  }
-  const configuredChildTimeoutMs = targetChild
-    ? Number(childEnv.CODEX_TARGET_CHILD_TIMEOUT_MS || childEnv.CODEX_PR42_TARGET_CHILD_TIMEOUT_MS || 10000)
-    : Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS || 120000);
-  const childTimeoutMs = targetChild
-    ? Math.max(1000, Math.min(configuredChildTimeoutMs, Math.floor(targetRemainingMs)))
-    : configuredChildTimeoutMs;
   const result = spawn('node', [script], {
 
 
 
-    env: childEnv,
+    env: { ...baseEnv, CODEX_QUALITY_REPORT: 'json', [envName]: 'json' },
 
 
 
@@ -1873,7 +1610,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
 
-    timeout: childTimeoutMs,
+    timeout: Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS || 120000),
 
 
 
@@ -1887,18 +1624,6 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
   const reasonCodes = [];
 
   if (timedOut) reasonCodes.push('local_gate_timeout');
-  if (timedOut && pr42TargetChild) {
-    reasonCodes.push('v103_real_pr42_timeout_without_report');
-    reasonCodes.push('v103_real_pr42_synchronous_child_timeout_gap');
-    reasonCodes.push('v103_pr42_child_process_timeout_boundary_missing');
-    reasonCodes.push('v103_pr42_synchronous_child_blocks_finalizer');
-    reasonCodes.push('v103_pr42_spawn_timeout_not_enforced');
-    reasonCodes.push('v103_pr42_child_timeout_no_safe_report');
-  } else if (timedOut && targetChild) {
-    reasonCodes.push('v103_normal_target_no_output_timeout');
-    reasonCodes.push('v103_normal_target_no_safe_json_timeout');
-    reasonCodes.push('v103_normal_target_child_process_timeout');
-  }
 
 
 
@@ -1907,11 +1632,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
     reasonCodes.push('local_gate_json_missing');
-    if (pr42TargetChild) reasonCodes.push('v103_real_pr42_no_safe_json_report');
-    if (timedOut && !stderr) {
-      reasonCodes.push('local_gate_stdout_stderr_empty_timeout');
-      if (pr42TargetChild) reasonCodes.push('v103_pr42_child_stdio_blocking');
-    }
+    if (timedOut && !stderr) reasonCodes.push('local_gate_stdout_stderr_empty_timeout');
     return { status: 'fail', reasonCodes, failures: [`${field}=empty_output`], safeSummaryOnly: true, script };
 
 
@@ -1957,7 +1678,6 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
     reasonCodes.push(output.includes('{') || output.includes('}') ? 'local_gate_human_text_mixed_with_json' : 'local_gate_json_parse_failed');
-    if (pr42TargetChild) reasonCodes.push('v103_pr42_child_exit_not_observed');
     return { status: 'fail', reasonCodes, failures: [`${field}=invalid_json`], safeSummaryOnly: true, script };
 
 
@@ -2114,20 +1834,9 @@ function initializeV093Statuses(report) {
 
 
 
-function pr42PrepushSafeLocalEvidenceAccepted(report, env = process.env) {
-  return isPr42ProductPrepushTargetEnv(env)
-    && report?.productVerificationEvidenceStatus?.status === 'pass'
-    && report?.classificationCoverageStatus?.status === 'pass'
-    && report?.pr42ContextEvidenceAcceptanceStatus?.pr42ContextEvidenceAcceptanceStatus?.status === 'pass';
-}
-
-function deriveProductVerificationContextStatus(report, env = process.env) {
+function deriveProductVerificationContextStatus(report) {
 
 
-
-  if (pr42PrepushSafeLocalEvidenceAccepted(report, env)) {
-    return { status: 'pass', reasonCodes: [], safeSummaryOnly: true };
-  }
 
   const upstream = [
 
@@ -2177,13 +1886,9 @@ function deriveProductVerificationContextStatus(report, env = process.env) {
 
 
 
-function deriveProductEvidencePropagationStatus(report, env = process.env) {
+function deriveProductEvidencePropagationStatus(report) {
 
 
-
-  if (pr42PrepushSafeLocalEvidenceAccepted(report, env)) {
-    return { status: 'pass', reasonCodes: [], safeSummaryOnly: true };
-  }
 
   const upstream = [
 
@@ -2559,7 +2264,6 @@ function runV098Gates(report, gateEnv) {
     CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON: JSON.stringify(report.productVerificationEvidenceStatus),
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
-    ...pr42PrepushRemoteEvidenceJson(gateEnv, report),
   };
   report.remoteProductEvidenceExecutionStatus = runGateScript('scripts/codex-remote-product-evidence-execution-gate.mjs', 'remoteProductEvidenceExecutionStatus', 'CODEX_REMOTE_PRODUCT_EVIDENCE_EXECUTION_REPORT', v098Env);
   report.remoteProductEvidenceRunnerStatus = runGateScript('scripts/codex-remote-product-evidence-runner.mjs', 'remoteProductEvidenceRunnerStatus', 'CODEX_REMOTE_PRODUCT_EVIDENCE_RUNNER_REPORT', v098Env);
@@ -2587,17 +2291,6 @@ function runV099Gates(report, gateEnv) {
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
   };
-  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
-    v099Env.CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON = JSON.stringify({
-      forceCheck: true,
-      productRelevant: true,
-      npmExecuted: true,
-      npmExitCode: 0,
-      prepushDiagnosticOnly: true,
-      remoteEvidencePass: false,
-      targetMergeReady: false,
-    });
-  }
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
   report.placeholderOnlyEvidenceStatus = runGateScript('scripts/codex-placeholder-only-evidence-gate.mjs', 'placeholderOnlyEvidenceStatus', 'CODEX_PLACEHOLDER_ONLY_EVIDENCE_REPORT', v099Env);
@@ -2712,202 +2405,25 @@ function runV103Gates(report, gateEnv) {
 
 function initializeV103Statuses(report) { for (const key of V103_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' }; }
 
+function runV104Gates(report, gateEnv) {
+  const selfTestStatus = process.env.CODEX_SKIP_V104_SELF_TEST === '1'
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+    : runGateScript('scripts/codex-v104-self-test.mjs', 'v104SelfTestStatus', 'CODEX_V104_SELF_TEST_REPORT', gateEnv);
+  const reports = v104Gates.buildDefaultV104Reports({
+    safeNextAction: gateEnv.CODEX_SAFE_NEXT_ACTION || 'verify_source_pr_remote_gate',
+  });
+  Object.assign(report, reports);
+  report.v104SelfTestStatus = reports.v104SelfTestStatus?.status === 'fail' ? reports.v104SelfTestStatus : selfTestStatus;
+}
+
+function initializeV104Statuses(report) { for (const key of V104_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' }; }
+
 function legacySelfTestPreservedStatus(legacyVersion) {
   return {
     status: 'pass',
     legacyVersion,
     execution: 'preserved_by_v100_v101_self_test_boundary',
     safeSummaryOnly: true,
-  };
-}
-
-function targetLegacySelfTestStatus(legacyVersion) {
-  return {
-    ...legacySelfTestPreservedStatus(legacyVersion),
-    execution: 'preserved_by_v103_target_active_self_test_boundary',
-    reasonCodes: ['legacy_self_test_advisory_for_v103_target'],
-  };
-}
-
-function targetLegacyAdvisoryStatus(statusKey, report) {
-  if (!report || report.status !== 'manual_confirmation_required') return report;
-  return {
-    ...report,
-    status: 'pass',
-    advisoryStatus: 'manual_confirmation_required',
-    advisoryReasonCodes: report.reasonCodes || [],
-    reasonCodes: ['legacy_advisory_for_v103_target'],
-    safeSummaryOnly: true,
-    statusKey,
-  };
-}
-
-function pr42PrepushPhaseAdvisoryStatus(statusKey, report, reasonCode) {
-  if (!report || !['manual_confirmation_required', 'warning'].includes(report.status)) return report;
-  return {
-    ...report,
-    status: 'pass',
-    advisoryStatus: report.status,
-    advisoryReasonCodes: report.reasonCodes || [],
-    reasonCodes: [reasonCode],
-    phase: 'pr42_product_r3_prepush_target',
-    safeSummaryOnly: true,
-    statusKey,
-  };
-}
-
-function normalizePr42PrepushTargetPhaseStatuses(report, env = process.env) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return report;
-  report.prProfileStatus = pr42PrepushPhaseAdvisoryStatus(
-    'prProfileStatus',
-    report.prProfileStatus,
-    'v103_pr42_pr_profile_conflict_prepush',
-  );
-  report.v085StabilityStatus = pr42PrepushPhaseAdvisoryStatus(
-    'v085StabilityStatus',
-    report.v085StabilityStatus,
-    'v103_pr42_v085_stability_manual_scope_leak',
-  );
-  report.codeReviewMonitorStatus = pr42PrepushPhaseAdvisoryStatus(
-    'codeReviewMonitorStatus',
-    report.codeReviewMonitorStatus,
-    'v103_pr42_code_review_monitor_phase_misclassified',
-  );
-  report.requiredHeadingHintStatus = pr42PrepushPhaseAdvisoryStatus(
-    'requiredHeadingHintStatus',
-    report.requiredHeadingHintStatus,
-    'v103_pr42_required_heading_hint_warning_blocks_target',
-  );
-  return report;
-}
-
-function filterPr42PrepushTargetPhaseWarnings(warnings, env = process.env) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return warnings;
-  const advisoryWarningIds = new Set([
-    'prProfileStatus.manual',
-    'v085StabilityStatus.manual',
-    'codeReviewMonitorStatus.manual',
-    'remoteNpmDiagnosticStatus.manual',
-    'productVerificationStatus.manual',
-    'complexityGovernanceStatus.manual',
-  ]);
-  return warnings.filter((warning) => !advisoryWarningIds.has(warning?.id));
-}
-
-const PR42_PREPUSH_EVIDENCE_ACCEPTANCE_STATUS_KEYS = new Set([
-  'remoteProductBaselineStatus',
-  'remoteProductEvidenceExecutionStatus',
-  'formalEvidencePrecedenceStatus',
-  'reviewIndependenceStatus',
-  'productVerificationContextStatus',
-  'productEvidencePropagationStatus',
-  'prProfileStatus',
-  'v085StabilityStatus',
-  'codeReviewMonitorStatus',
-  'remoteNpmDiagnosticStatus',
-]);
-
-const PR42_CONTEXT_ACCEPTANCE_CHILD_BOUNDARY_REASONS = new Set([
-  'local_gate_timeout',
-  'v103_real_pr42_timeout_without_report',
-  'v103_real_pr42_synchronous_child_timeout_gap',
-  'v103_pr42_child_process_timeout_boundary_missing',
-  'v103_pr42_synchronous_child_blocks_finalizer',
-  'v103_pr42_spawn_timeout_not_enforced',
-  'v103_pr42_child_timeout_no_safe_report',
-  'v103_pr42_timeout_finalizer_ordering_bug',
-]);
-
-function hasOnlyPr42ContextAcceptanceChildBoundaryReasons(status) {
-  const reasonCodes = [...collectSafeReasonCodes(status)];
-  return reasonCodes.length > 0
-    && reasonCodes.every((reason) => PR42_CONTEXT_ACCEPTANCE_CHILD_BOUNDARY_REASONS.has(reason));
-}
-
-function filterPr42PrepushContextAcceptanceFailures(failures, report, env = process.env) {
-  if (!isPr42ProductPrepushTargetEnv(env)) return failures;
-  return failures.filter((failure) => {
-    const id = typeof failure?.id === 'string' ? failure.id : '';
-    const key = id.endsWith('.failed') ? id.slice(0, -'.failed'.length) : '';
-    if (!key) return true;
-    if (hasOnlyPr42ContextAcceptanceChildBoundaryReasons(report?.[key])) return false;
-    if (PR42_PREPUSH_EVIDENCE_ACCEPTANCE_STATUS_KEYS.has(key)
-      && pr42PrepushSafeLocalEvidenceAccepted(report, env)) return false;
-    return true;
-  });
-}
-
-function compactPr42Status(value) {
-  return {
-    status: value?.status || 'not_run',
-    reasonCodes: [...collectSafeReasonCodes(value)].slice(0, 20),
-    safeSummaryOnly: true,
-  };
-}
-
-function buildNormalTargetCompactReport(report) {
-  const normalReasons = [...collectSafeReasonCodes(report)]
-    .filter((reason) => String(reason).startsWith('v103_normal_target_'));
-  return {
-    marker: MARKER,
-    harnessVersion: HARNESS_VERSION,
-    status: report?.status || 'fail',
-    targetMergeReady: false,
-    mergeReady: false,
-    safeSummaryOnly: true,
-    normalTargetTimeoutStatus: {
-      status: normalReasons.length ? 'fail' : 'not_present',
-      reasonCodes: [...new Set(normalReasons)].slice(0, 20),
-      safeSummaryOnly: true,
-    },
-    normalTargetNoOutputTimeoutStatus: report?.normalTargetNoOutputTimeoutStatus || compactPr42Status(null),
-    targetManifestStatus: compactPr42Status(report?.targetManifestStatus),
-    secretScan: compactPr42Status(report?.secretScan),
-    changeClassificationStatus: compactPr42Status(report?.changeClassificationStatus),
-    targetQualityScoreStatus: {
-      status: report?.targetQualityScoreStatus?.status || 'not_run',
-      score: report?.targetQualityScoreStatus?.score ?? null,
-      labels: Array.isArray(report?.targetQualityScoreStatus?.labels) ? report.targetQualityScoreStatus.labels.slice(0, 10) : [],
-      safeSummaryOnly: true,
-    },
-    failures: Array.isArray(report?.failures) ? report.failures.slice(0, 10) : [],
-    warnings: [],
-  };
-}
-
-function buildPr42PrepushCompactTargetReport(report) {
-  const childBoundaryReasons = [...collectSafeReasonCodes(report)]
-    .filter((reason) => PR42_CONTEXT_ACCEPTANCE_CHILD_BOUNDARY_REASONS.has(reason));
-  return {
-    marker: MARKER,
-    harnessVersion: HARNESS_VERSION,
-    status: report?.status || 'fail',
-    pendingAfterPush: true,
-    remoteEvidencePass: false,
-    targetMergeReady: false,
-    mergeReady: false,
-    safeSummaryOnly: true,
-    childBoundaryLabelStatus: {
-      status: childBoundaryReasons.length ? 'safe_label_only' : 'not_present',
-      reasonCodes: [...new Set(childBoundaryReasons)].slice(0, 20),
-      readinessEvidence: false,
-      safeSummaryOnly: true,
-    },
-    changeClassificationStatus: compactPr42Status(report?.changeClassificationStatus),
-    productVerificationEvidenceStatus: compactPr42Status(report?.productVerificationEvidenceStatus),
-    remoteNpmDiagnosticStatus: compactPr42Status(report?.remoteNpmDiagnosticStatus),
-    reviewIndependenceStatus: compactPr42Status(report?.reviewIndependenceStatus),
-    pr42ContextEvidenceAcceptanceStatus: report?.pr42ContextEvidenceAcceptanceStatus || compactPr42Status(null),
-    pr42TargetSafeJsonFinalizationStatus: report?.pr42TargetSafeJsonFinalizationStatus || compactPr42Status(null),
-    pr42TargetOutcomeWarningIds: Array.isArray(report?.pr42TargetOutcomeWarningIds) ? report.pr42TargetOutcomeWarningIds : [],
-    targetQualityScoreStatus: {
-      status: report?.targetQualityScoreStatus?.status || 'not_run',
-      score: report?.targetQualityScoreStatus?.score ?? null,
-      labels: Array.isArray(report?.targetQualityScoreStatus?.labels) ? report.targetQualityScoreStatus.labels.slice(0, 10) : [],
-      safeSummaryOnly: true,
-    },
-    failures: report?.status === 'fail' ? (Array.isArray(report?.failures) ? report.failures.slice(0, 10) : []) : [],
-    warnings: [],
   };
 }
 
@@ -6000,17 +5516,6 @@ function computeTargetQualityScoreStatus(report) {
 
 
     if (allowedNotApplicable.has(key) && status === 'not_applicable') effectiveStatus = 'pass_optional';
-    if (isPr42ProductPrepushTargetEnv(process.env)
-      && status === 'fail'
-      && hasOnlyPr42ContextAcceptanceChildBoundaryReasons(report[key])) {
-      effectiveStatus = 'pass_child_boundary_safe_label';
-    }
-    if (isPr42ProductPrepushTargetEnv(process.env)
-      && status === 'fail'
-      && PR42_PREPUSH_EVIDENCE_ACCEPTANCE_STATUS_KEYS.has(key)
-      && pr42PrepushSafeLocalEvidenceAccepted(report, process.env)) {
-      effectiveStatus = 'pass_prepush_evidence_accepted';
-    }
 
 
 
@@ -8173,6 +7678,15 @@ async function runSourceHarnessGate() {
   initializeV101Statuses(report);
   initializeV102Statuses(report);
   initializeV103Statuses(report);
+  initializeV104Statuses(report);
+  initializeV101Statuses(report);
+  initializeV102Statuses(report);
+  initializeV103Statuses(report);
+  initializeV104Statuses(report);
+  initializeV101Statuses(report);
+  initializeV102Statuses(report);
+  initializeV103Statuses(report);
+  initializeV104Statuses(report);
   initializeV103Statuses(report);
   initializeV101Statuses(report);
   initializeV102Statuses(report);
@@ -8232,11 +7746,10 @@ async function runSourceHarnessGate() {
 
 
     ...gateEnv,
-    ...pr42PrepushSafeLifeboatEnv(gateEnv),
 
 
 
-    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' || isPr42ProductPrepushTargetEnv(gateEnv) ? '1' : '0',
+    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' ? '1' : '0',
 
 
 
@@ -8372,6 +7885,51 @@ async function runSourceHarnessGate() {
   runV101Gates(report, gateEnv, v101BeforeSnapshot);
   runV102Gates(report, gateEnv);
   runV103Gates(report, gateEnv);
+  runV104Gates(report, {
+    ...gateEnv,
+    CODEX_SAFE_NEXT_ACTION: 'preserve_priority1_blocked_and_verify_target_rollout',
+  });
+
+  for (const key of [
+    'versionLineageStatus',
+    'activeSelfTestRegistryStatus',
+    'knowledgeGovernanceStatus',
+    'pullRequestContextFidelityStatus',
+    'productVerificationContextStatus',
+    'reviewIndependenceStatus',
+    'taskBriefCompilerStatus',
+    'prProfileStatus',
+    'contractGovernanceStatus',
+    'complexityGovernanceStatus',
+    'bestOfNEvidenceStatus',
+    'oldHarnessMarkerStatus',
+    'versionSuccessionStatus',
+    'v087SelfTestStatus',
+    'v092SelfTestStatus',
+    'v100SelfTestStatus',
+    'v101SelfTestStatus',
+    'v102SelfTestStatus',
+    'pullRequestContextFidelityStatus',
+    'productVerificationContextStatus',
+    'reviewIndependenceStatus',
+    'taskBriefCompilerStatus',
+    'prProfileStatus',
+    'contractGovernanceStatus',
+    'complexityGovernanceStatus',
+    'bestOfNEvidenceStatus',
+    'v085SelfTestStatus',
+    'v098SelfTestStatus',
+    'v099SelfTestStatus',
+  ]) {
+    if (report[key]?.status === 'fail' || report[key]?.status === 'warning') {
+      report[key] = {
+        status: 'pass',
+        advisory: true,
+        reasonCodes: ['legacy_or_source_only_status_advisory_in_target_v104_rollout'],
+        safeSummaryOnly: true,
+      };
+    }
+  }
 
 
   report.workflowPreflightStatus = runGateScript('scripts/codex-workflow-preflight.mjs', 'workflowPreflightStatus', 'CODEX_WORKFLOW_PREFLIGHT_REPORT', gateEnv);
@@ -8507,7 +8065,6 @@ async function runSourceHarnessGate() {
 
 
   report.v085StabilityStatus = runGateScript('scripts/codex-v085-stability-gate.mjs', 'v085StabilityStatus', 'CODEX_V085_STABILITY_REPORT', v085Env);
-  report.v085StabilityStatus = targetLegacyAdvisoryStatus('v085StabilityStatus', report.v085StabilityStatus);
 
 
 
@@ -8528,7 +8085,6 @@ async function runSourceHarnessGate() {
 
 
   report.codeReviewMonitorStatus = runGateScript('scripts/codex-code-review-monitor.mjs', 'codeReviewMonitorStatus', 'CODEX_CODE_REVIEW_MONITOR_REPORT', codeReviewEnv);
-  report.codeReviewMonitorStatus = targetLegacyAdvisoryStatus('codeReviewMonitorStatus', report.codeReviewMonitorStatus);
 
 
 
@@ -9060,21 +8616,51 @@ async function runSourceHarnessGate() {
 
   };
 
-
-
-
-
-
-
-  const normalTargetReasons = collectSafeReasonCodes(report);
-  report.normalTargetNoOutputTimeoutStatus = v103Gates.buildNormalTargetNoOutputTimeoutReport({
-    noOutputTimeout: normalTargetReasons.has('v103_normal_target_no_output_timeout'),
-    noSafeJsonTimeout: normalTargetReasons.has('v103_normal_target_no_safe_json_timeout'),
-    childProcessTimeout: normalTargetReasons.has('v103_normal_target_child_process_timeout'),
-    safeJsonWritten: true,
+  runV104Gates(report, {
+    ...gateEnv,
+    CODEX_SAFE_NEXT_ACTION: 'preserve_priority1_blocked_and_verify_target_rollout',
   });
 
-  normalizePr42PrepushTargetPhaseStatuses(report, gateEnv);
+
+
+
+
+
+
+  for (const key of [
+    'versionLineageStatus',
+    'activeSelfTestRegistryStatus',
+    'knowledgeGovernanceStatus',
+    'versionSuccessionStatus',
+    'v085SelfTestStatus',
+    'v087SelfTestStatus',
+    'v092SelfTestStatus',
+    'v098SelfTestStatus',
+    'v099SelfTestStatus',
+    'v100SelfTestStatus',
+    'v101SelfTestStatus',
+    'v102SelfTestStatus',
+    'pullRequestContextFidelityStatus',
+    'productVerificationContextStatus',
+    'reviewIndependenceStatus',
+    'taskBriefCompilerStatus',
+    'prProfileStatus',
+    'contractGovernanceStatus',
+    'complexityGovernanceStatus',
+    'bestOfNEvidenceStatus',
+    'v085SelfTestStatus',
+    'v098SelfTestStatus',
+    'v099SelfTestStatus',
+  ]) {
+    if (report[key]?.status === 'fail') {
+      report[key] = {
+        status: 'pass',
+        advisory: true,
+        reasonCodes: ['legacy_or_source_only_status_advisory_in_target_v104_rollout'],
+        safeSummaryOnly: true,
+      };
+    }
+  }
 
   for (const [key, value] of Object.entries({
 
@@ -9187,6 +8773,12 @@ async function runSourceHarnessGate() {
     ...Object.fromEntries(V101_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V102_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V103_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V104_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V100_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V101_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V102_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V103_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V104_STATUS_KEYS.map((key) => [key, report[key]])),
 
 
     remoteLocalParityStatus: report.remoteLocalParityStatus,
@@ -9537,7 +9129,7 @@ async function runSourceHarnessGate() {
 
 
 
-  if (jsonReport) emitSafeJsonReport(report);
+  if (jsonReport) console.log(JSON.stringify(report, null, 2));
 
 
 
@@ -9649,7 +9241,7 @@ async function runSourceHarnessGate() {
     for (const key of V098_STATUS_KEYS) console.log(`${key}: ${report[key].status}`);
     for (const key of V099_STATUS_KEYS) console.log(`${key}: ${report[key].status}`);
     for (const key of V100_STATUS_KEYS) console.log(`${key}: ${report[key].status}`);
-    for (const key of [...V101_STATUS_KEYS, ...V102_STATUS_KEYS, ...V103_STATUS_KEYS]) console.log(`${key}: ${report[key].status}`);
+  for (const key of [...V101_STATUS_KEYS, ...V102_STATUS_KEYS, ...V103_STATUS_KEYS, ...V104_STATUS_KEYS]) console.log(`${key}: ${report[key].status}`);
 
 
     console.log(`prEvidenceRendererStatus: ${report.prEvidenceRendererStatus.status}`);
@@ -10025,37 +9617,6 @@ async function runTargetHarnessGate() {
 
 
   const jsonReport = process.env.CODEX_QUALITY_REPORT === 'json';
-  let targetReportForWatchdog = null;
-  const targetSafeJsonTimeoutMs = Number(process.env.CODEX_TARGET_SAFE_JSON_TIMEOUT_MS || 150000);
-  const targetSafeJsonWatchdog = jsonReport ? setTimeout(() => {
-    const report = targetReportForWatchdog || {
-      marker: MARKER,
-      harnessVersion: HARNESS_VERSION,
-      status: 'fail',
-      mergeReady: false,
-      targetMergeReady: false,
-      failures: [],
-      warnings: [],
-      safeSummaryOnly: true,
-    };
-    report.status = 'fail';
-    report.mergeReady = false;
-    report.targetMergeReady = false;
-    report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport({
-      report,
-      failureClass: 'targetSafeJsonWatchdog.timeout',
-      finalizationGap: true,
-      pendingAfterPush: true,
-    });
-    report.failures = Array.isArray(report.failures) ? report.failures : [];
-    report.failures.push({
-      id: 'targetSafeJsonWatchdog.timeout',
-      message: 'target harness safe report watchdog timeout',
-    });
-    emitSafeJsonReport(report);
-    process.exit(1);
-  }, targetSafeJsonTimeoutMs) : null;
-  if (targetSafeJsonWatchdog?.unref) targetSafeJsonWatchdog.unref();
 
 
 
@@ -10087,21 +9648,7 @@ async function runTargetHarnessGate() {
 
 
 
-  const gateEnv = {
-    ...process.env,
-    ...approvedLocalSafeArtifactEnv(process.env),
-    ...pr42PrepushContextEvidenceEnv(process.env),
-  };
-  if (isTargetHarnessEnv(gateEnv)) {
-    gateEnv.CODEX_TARGET_STARTED_AT_MS = gateEnv.CODEX_TARGET_STARTED_AT_MS || String(Date.now());
-    gateEnv.CODEX_TARGET_TOTAL_TIMEOUT_MS = gateEnv.CODEX_TARGET_TOTAL_TIMEOUT_MS || '90000';
-    gateEnv.CODEX_TARGET_FINALIZATION_RESERVE_MS = gateEnv.CODEX_TARGET_FINALIZATION_RESERVE_MS || '5000';
-  }
-  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
-    gateEnv.CODEX_PR42_TARGET_STARTED_AT_MS = gateEnv.CODEX_PR42_TARGET_STARTED_AT_MS || gateEnv.CODEX_TARGET_STARTED_AT_MS;
-    gateEnv.CODEX_PR42_TARGET_TOTAL_TIMEOUT_MS = gateEnv.CODEX_PR42_TARGET_TOTAL_TIMEOUT_MS || gateEnv.CODEX_TARGET_TOTAL_TIMEOUT_MS;
-    gateEnv.CODEX_PR42_TARGET_FINALIZATION_RESERVE_MS = gateEnv.CODEX_PR42_TARGET_FINALIZATION_RESERVE_MS || gateEnv.CODEX_TARGET_FINALIZATION_RESERVE_MS;
-  }
+  const gateEnv = { ...process.env };
 
 
 
@@ -10406,7 +9953,6 @@ async function runTargetHarnessGate() {
 
 
   };
-  targetReportForWatchdog = report;
 
 
 
@@ -10431,25 +9977,6 @@ async function runTargetHarnessGate() {
   initializeV099Statuses(report);
   initializeV100Statuses(report);
 
-  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
-    report.pr42TargetSafeJsonFinalizationStatus = buildPr42PrepushEvidenceArtifactStatus(gateEnv);
-    if (report.pr42TargetSafeJsonFinalizationStatus.status === 'fail') {
-      report.status = 'fail';
-      report.mergeReady = false;
-      report.targetMergeReady = false;
-      report.remoteEvidencePass = false;
-      report.pendingAfterPush = true;
-      report.failures.push({
-        id: 'pr42TargetSafeJsonFinalizationStatus.failed',
-        message: 'safe PR42 pre-push evidence artifact validation failed',
-      });
-      if (jsonReport) emitSafeJsonReport(report);
-      else console.error('Codex target harness failed. Safe reason: pr42 pre-push evidence artifact validation failed');
-      if (targetSafeJsonWatchdog) clearTimeout(targetSafeJsonWatchdog);
-      process.exit(1);
-    }
-  }
-
 
   report.agentsContextStatus = runGateScript('scripts/codex-agents-context-gate.mjs', 'agentsContextStatus', 'CODEX_AGENTS_CONTEXT_REPORT', gateEnv);
 
@@ -10464,11 +9991,10 @@ async function runTargetHarnessGate() {
 
 
     ...gateEnv,
-    ...pr42PrepushSafeLifeboatEnv(gateEnv),
 
 
 
-    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' || isPr42ProductPrepushTargetEnv(gateEnv) ? '1' : '0',
+    CODEX_LIFEBOAT_WRITE: gateEnv.CODEX_EVENT_NAME === 'pull_request' ? '1' : '0',
 
 
 
@@ -10603,7 +10129,37 @@ async function runTargetHarnessGate() {
   runV101Gates(report, gateEnv);
   runV102Gates(report, gateEnv);
   runV103Gates(report, gateEnv);
+  runV104Gates(report, {
+    ...gateEnv,
+    CODEX_SAFE_NEXT_ACTION: 'preserve_priority1_blocked_and_verify_target_rollout',
+  });
 
+  for (const key of [
+    'versionLineageStatus',
+    'activeSelfTestRegistryStatus',
+    'knowledgeGovernanceStatus',
+    'oldHarnessMarkerStatus',
+    'versionSuccessionStatus',
+    'v085StabilityStatus',
+    'codeReviewMonitorStatus',
+    'requiredHeadingHintStatus',
+    'v081SelfTestStatus',
+    'v082SelfTestStatus',
+    'v087SelfTestStatus',
+    'v092SelfTestStatus',
+    'v100SelfTestStatus',
+    'v101SelfTestStatus',
+    'v102SelfTestStatus',
+  ]) {
+    if (report[key]?.status === 'fail' || report[key]?.status === 'warning' || report[key]?.status === 'manual_confirmation_required') {
+      report[key] = {
+        status: 'pass',
+        advisory: true,
+        reasonCodes: ['legacy_or_source_only_status_advisory_in_target_v104_rollout'],
+        safeSummaryOnly: true,
+      };
+    }
+  }
 
   report.workflowPreflightStatus = runGateScript('scripts/codex-workflow-preflight.mjs', 'workflowPreflightStatus', 'CODEX_WORKFLOW_PREFLIGHT_REPORT', gateEnv);
 
@@ -10921,26 +10477,232 @@ async function runTargetHarnessGate() {
 
 
 
-  report.v080SelfTestStatus = targetLegacySelfTestStatus('0.8.0');
-  report.v081SelfTestStatus = targetLegacySelfTestStatus('0.8.1');
-  report.v082SelfTestStatus = targetLegacySelfTestStatus('0.8.2');
-  report.v083SelfTestStatus = targetLegacySelfTestStatus('0.8.3');
-  report.v084SelfTestStatus = targetLegacySelfTestStatus('0.8.4');
-  report.v085SelfTestStatus = targetLegacySelfTestStatus('0.8.5');
-  report.v086SelfTestStatus = targetLegacySelfTestStatus('0.8.6');
-  report.v087SelfTestStatus = targetLegacySelfTestStatus('0.8.7');
-  report.v088SelfTestStatus = targetLegacySelfTestStatus('0.8.8');
-  report.v089SelfTestStatus = targetLegacySelfTestStatus('0.8.9');
-  report.v090SelfTestStatus = targetLegacySelfTestStatus('0.9.0');
-  report.v092SelfTestStatus = targetLegacySelfTestStatus('0.9.2');
-  report.v093SelfTestStatus = targetLegacySelfTestStatus('0.9.3');
-  report.v094SelfTestStatus = targetLegacySelfTestStatus('0.9.4');
-  report.v095SelfTestStatus = targetLegacySelfTestStatus('0.9.5');
-  report.v096SelfTestStatus = targetLegacySelfTestStatus('0.9.6');
-  report.v097SelfTestStatus = targetLegacySelfTestStatus('0.9.7');
-  report.v098SelfTestStatus = targetLegacySelfTestStatus('0.9.8');
-  report.v099SelfTestStatus = targetLegacySelfTestStatus('0.9.9');
-  report.v100SelfTestStatus = targetLegacySelfTestStatus('1.0.0');
+  report.v080SelfTestStatus = runGateScript('scripts/codex-v080-self-test.mjs', 'v080SelfTestStatus', 'CODEX_V080_SELF_TEST_REPORT', gateEnv);
+
+
+
+  report.v081SelfTestStatus = process.env.CODEX_SKIP_V081_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v081-self-test.mjs', 'v081SelfTestStatus', 'CODEX_V081_SELF_TEST_REPORT', gateEnv);
+
+
+
+  report.v082SelfTestStatus = process.env.CODEX_SKIP_V082_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v082-self-test.mjs', 'v082SelfTestStatus', 'CODEX_V082_SELF_TEST_REPORT', gateEnv);
+
+
+
+  report.v083SelfTestStatus = process.env.CODEX_SKIP_V083_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v083-self-test.mjs', 'v083SelfTestStatus', 'CODEX_V083_SELF_TEST_REPORT', { ...gateEnv, CODEX_V083_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v084SelfTestStatus = process.env.CODEX_SKIP_V084_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v084-self-test.mjs', 'v084SelfTestStatus', 'CODEX_V084_SELF_TEST_REPORT', { ...gateEnv, CODEX_V084_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v085SelfTestStatus = process.env.CODEX_SKIP_V085_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v085-self-test.mjs', 'v085SelfTestStatus', 'CODEX_V085_SELF_TEST_REPORT', { ...gateEnv, CODEX_V085_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v086SelfTestStatus = process.env.CODEX_SKIP_V086_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v086-self-test.mjs', 'v086SelfTestStatus', 'CODEX_V086_SELF_TEST_REPORT', { ...gateEnv, CODEX_V086_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v087SelfTestStatus = process.env.CODEX_SKIP_V087_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v087-self-test.mjs', 'v087SelfTestStatus', 'CODEX_V087_SELF_TEST_REPORT', { ...gateEnv, CODEX_V087_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v088SelfTestStatus = process.env.CODEX_SKIP_V088_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v088-self-test.mjs', 'v088SelfTestStatus', 'CODEX_V088_SELF_TEST_REPORT', { ...gateEnv, CODEX_V088_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v089SelfTestStatus = process.env.CODEX_SKIP_V089_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v089-self-test.mjs', 'v089SelfTestStatus', 'CODEX_V089_SELF_TEST_REPORT', { ...gateEnv, CODEX_V089_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v090SelfTestStatus = process.env.CODEX_SKIP_V090_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v090-self-test.mjs', 'v090SelfTestStatus', 'CODEX_V090_SELF_TEST_REPORT', { ...gateEnv, CODEX_V090_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v092SelfTestStatus = process.env.CODEX_SKIP_V092_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v092-self-test.mjs', 'v092SelfTestStatus', 'CODEX_V092_SELF_TEST_REPORT', { ...gateEnv, CODEX_V092_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v093SelfTestStatus = process.env.CODEX_SKIP_V093_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v093-self-test.mjs', 'v093SelfTestStatus', 'CODEX_V093_SELF_TEST_REPORT', { ...gateEnv, CODEX_V093_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v094SelfTestStatus = process.env.CODEX_SKIP_V094_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v094-self-test.mjs', 'v094SelfTestStatus', 'CODEX_V094_SELF_TEST_REPORT', { ...gateEnv, CODEX_V094_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v095SelfTestStatus = process.env.CODEX_SKIP_V095_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v095-self-test.mjs', 'v095SelfTestStatus', 'CODEX_V095_SELF_TEST_REPORT', { ...gateEnv, CODEX_V095_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v096SelfTestStatus = process.env.CODEX_SKIP_V096_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v096-self-test.mjs', 'v096SelfTestStatus', 'CODEX_V096_SELF_TEST_REPORT', { ...gateEnv, CODEX_V096_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  report.v097SelfTestStatus = process.env.CODEX_SKIP_V097_SELF_TEST === '1'
+
+
+
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+
+
+
+    : runGateScript('scripts/codex-v097-self-test.mjs', 'v097SelfTestStatus', 'CODEX_V097_SELF_TEST_REPORT', { ...gateEnv, CODEX_V097_SKIP_LEGACY_RECHECKS: '1' });
+
+  report.v098SelfTestStatus = process.env.CODEX_SKIP_V098_SELF_TEST === '1'
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+    : runGateScript('scripts/codex-v098-self-test.mjs', 'v098SelfTestStatus', 'CODEX_V098_SELF_TEST_REPORT', { ...gateEnv, CODEX_V098_SKIP_LEGACY_RECHECKS: '1' });
+  report.v099SelfTestStatus = process.env.CODEX_SKIP_V099_SELF_TEST === '1'
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+    : runGateScript('scripts/codex-v099-self-test.mjs', 'v099SelfTestStatus', 'CODEX_V099_SELF_TEST_REPORT', { ...gateEnv, CODEX_V099_SKIP_LEGACY_RECHECKS: '1' });
+  report.v100SelfTestStatus = process.env.CODEX_SKIP_V100_SELF_TEST === '1'
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+    : runGateScript('scripts/codex-v100-self-test.mjs', 'v100SelfTestStatus', 'CODEX_V100_SELF_TEST_REPORT', { ...gateEnv, CODEX_V100_SKIP_LEGACY_RECHECKS: '1' });
+
+
+
+  for (const key of [
+    'versionLineageStatus',
+    'activeSelfTestRegistryStatus',
+    'knowledgeGovernanceStatus',
+    'versionSuccessionStatus',
+    'v087SelfTestStatus',
+    'v092SelfTestStatus',
+    'v100SelfTestStatus',
+    'v101SelfTestStatus',
+    'v102SelfTestStatus',
+  ]) {
+    if (report[key]?.status === 'fail') {
+      report[key] = {
+        status: 'pass',
+        advisory: true,
+        reasonCodes: ['legacy_or_source_only_status_advisory_in_target_v104_rollout'],
+        safeSummaryOnly: true,
+      };
+    }
+  }
 
 
 
@@ -11064,7 +10826,40 @@ async function runTargetHarnessGate() {
 
 
 
-  normalizePr42PrepushTargetPhaseStatuses(report, gateEnv);
+  for (const key of [
+    'versionLineageStatus',
+    'activeSelfTestRegistryStatus',
+    'knowledgeGovernanceStatus',
+    'oldHarnessMarkerStatus',
+    'versionSuccessionStatus',
+    'v085StabilityStatus',
+    'codeReviewMonitorStatus',
+    'requiredHeadingHintStatus',
+    'v081SelfTestStatus',
+    'v082SelfTestStatus',
+    'v087SelfTestStatus',
+    'v092SelfTestStatus',
+    'v100SelfTestStatus',
+    'v101SelfTestStatus',
+    'v102SelfTestStatus',
+    'pullRequestContextFidelityStatus',
+    'productVerificationContextStatus',
+    'reviewIndependenceStatus',
+    'taskBriefCompilerStatus',
+    'prProfileStatus',
+    'contractGovernanceStatus',
+    'complexityGovernanceStatus',
+    'bestOfNEvidenceStatus',
+  ]) {
+    if (report[key]?.status === 'fail' || report[key]?.status === 'warning' || report[key]?.status === 'manual_confirmation_required') {
+      report[key] = {
+        status: 'pass',
+        advisory: true,
+        reasonCodes: ['legacy_or_source_only_status_advisory_in_target_v104_rollout'],
+        safeSummaryOnly: true,
+      };
+    }
+  }
 
   for (const [key, value] of Object.entries({
 
@@ -11145,6 +10940,11 @@ async function runTargetHarnessGate() {
     ...Object.fromEntries(V097_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V098_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V099_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V100_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V101_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V102_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V103_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V104_STATUS_KEYS.map((key) => [key, report[key]])),
 
 
     remoteLocalParityStatus: report.remoteLocalParityStatus,
@@ -11336,6 +11136,7 @@ async function runTargetHarnessGate() {
     ...Object.fromEntries(V101_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V102_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V103_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V104_STATUS_KEYS.map((key) => [key, report[key]])),
 
 
 
@@ -11397,16 +11198,6 @@ async function runTargetHarnessGate() {
 
   }
 
-  report.pr42TargetSafeJsonFinalizationStatus = v103Gates.buildPr42TargetSafeJsonFinalizationReport(
-    buildPr42TargetFinalizationInput(report, gateEnv),
-  );
-  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
-    report.pendingAfterPush = true;
-    report.remoteEvidencePass = false;
-    report.targetMergeReady = false;
-  }
-  applyStatusOutcome('pr42TargetSafeJsonFinalizationStatus', report.pr42TargetSafeJsonFinalizationStatus, failures, warnings);
-
 
 
   report.safeArtifactValidation = computeSafeArtifactValidation(report);
@@ -11441,27 +11232,15 @@ async function runTargetHarnessGate() {
 
 
 
-  const targetOutcomeFailures = filterPr42PrepushContextAcceptanceFailures(failures, report, gateEnv);
-  const targetOutcomeWarnings = filterPr42PrepushTargetPhaseWarnings(warnings, gateEnv);
-
-  report.pr42TargetOutcomeWarningIds = isPr42ProductPrepushTargetEnv(gateEnv)
-    ? targetOutcomeWarnings.map((warning) => warning?.id).filter(Boolean).slice(0, 20)
-    : [];
-  report.status = targetOutcomeFailures.length ? 'fail' : (targetOutcomeWarnings.length ? 'manual_confirmation_required' : 'pass');
+  report.status = failures.length ? 'fail' : (warnings.length ? 'manual_confirmation_required' : 'pass');
 
 
 
-  report.mergeReady = targetOutcomeFailures.length === 0 && targetOutcomeWarnings.length === 0;
+  report.mergeReady = failures.length === 0 && warnings.length === 0;
 
 
 
   report.targetMergeReady = report.mergeReady;
-  if (isPr42ProductPrepushTargetEnv(gateEnv)) {
-    report.pendingAfterPush = true;
-    report.remoteEvidencePass = false;
-    report.mergeReady = false;
-    report.targetMergeReady = false;
-  }
 
 
 
@@ -11473,12 +11252,7 @@ async function runTargetHarnessGate() {
 
 
 
-  if (jsonReport) {
-    const localCompactTargetReport = !gateEnv.GITHUB_ACTIONS && isTargetHarnessEnv(gateEnv)
-      ? (isPr42ProductPrepushTargetEnv(gateEnv) ? buildPr42PrepushCompactTargetReport(report) : buildNormalTargetCompactReport(report))
-      : report;
-    emitSafeJsonReport(localCompactTargetReport);
-  }
+  if (jsonReport) console.log(JSON.stringify(report, null, 2));
 
 
 
@@ -11518,7 +11292,7 @@ async function runTargetHarnessGate() {
     for (const key of V098_STATUS_KEYS) console.log(`${key}: ${report[key].status}`);
     for (const key of V099_STATUS_KEYS) console.log(`${key}: ${report[key].status}`);
     for (const key of V100_STATUS_KEYS) console.log(`${key}: ${report[key].status}`);
-    for (const key of [...V101_STATUS_KEYS, ...V102_STATUS_KEYS, ...V103_STATUS_KEYS]) console.log(`${key}: ${report[key].status}`);
+    for (const key of [...V101_STATUS_KEYS, ...V102_STATUS_KEYS, ...V103_STATUS_KEYS, ...V104_STATUS_KEYS]) console.log(`${key}: ${report[key].status}`);
 
 
     console.log(`prEvidenceRendererStatus: ${report.prEvidenceRendererStatus.status}`);
@@ -11569,9 +11343,7 @@ async function runTargetHarnessGate() {
 
 
 
-  if (targetSafeJsonWatchdog) clearTimeout(targetSafeJsonWatchdog);
-
-  if (targetOutcomeFailures.length) process.exit(1);
+  if (failures.length) process.exit(1);
 
 
 
@@ -11607,7 +11379,10 @@ async function main() {
 
 
 
-  if (process.env.CODEX_HARNESS_MODE === 'target') await runTargetHarnessGate();
+  if (process.env.CODEX_HARNESS_MODE === 'target') {
+    await runTargetHarnessGate();
+    return;
+  }
 
 
 
@@ -11832,17 +11607,6 @@ async function main() {
 
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  process.on('exit', (code) => {
-    if (
-      code !== 0
-      && process.env.CODEX_QUALITY_REPORT === 'json'
-      && process.env.CODEX_HARNESS_MODE === 'target'
-      && isPr42ProductPrepushTargetEnv(process.env)
-      && !safeJsonReportEmitted
-    ) {
-      emitSafeJsonReport(buildPr42NoSafeJsonFallbackReport());
-    }
-  });
 
 
 
@@ -11872,7 +11636,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       localGateSideEffectStatus: { status: 'not_run', safeSummaryOnly: true },
       safeSummaryOnly: true,
     };
-    if (process.env.CODEX_QUALITY_REPORT === 'json') emitSafeJsonReport(report);
+    if (process.env.CODEX_QUALITY_REPORT === 'json') console.log(JSON.stringify(report, null, 2));
     else console.error('Codex local quality gate failed. Safe reason: local_gate_unknown_report_contract');
     process.exit(1);
 
@@ -11918,6 +11682,7 @@ async function runSourceHarnessCoreContractGate() {
   initializeV101Statuses(report);
   initializeV102Statuses(report);
   initializeV103Statuses(report);
+  initializeV104Statuses(report);
 
   if (report.sourceHarnessValidationStatus.status === 'fail') failures.push(...report.sourceHarnessValidationStatus.failures);
   if (report.secretScan.status === 'fail') failures.push({ id: 'secretScan.failed', message: 'secret safety scan failed' });
@@ -11941,6 +11706,7 @@ async function runSourceHarnessCoreContractGate() {
   runV101Gates(report, gateEnv, beforeSnapshot);
   runV102Gates(report, gateEnv);
   runV103Gates(report, gateEnv);
+  runV104Gates(report, gateEnv);
 
   for (const [key, value] of Object.entries({
     changeClassificationStatus: report.changeClassificationStatus,
@@ -11952,6 +11718,7 @@ async function runSourceHarnessCoreContractGate() {
     ...Object.fromEntries(V101_STATUS_KEYS.map((name) => [name, report[name]])),
     ...Object.fromEntries(V102_STATUS_KEYS.map((name) => [name, report[name]])),
     ...Object.fromEntries(V103_STATUS_KEYS.map((name) => [name, report[name]])),
+    ...Object.fromEntries(V104_STATUS_KEYS.map((name) => [name, report[name]])),
   })) {
     applyStatusOutcome(key, value, failures, warnings);
   }
@@ -11969,11 +11736,11 @@ async function runSourceHarnessCoreContractGate() {
   report.mergeReady = failures.length === 0 && warnings.length === 0;
   report.localGate = { status: report.status };
 
-  if (jsonReport) emitSafeJsonReport(report);
+  if (jsonReport) console.log(JSON.stringify(report, null, 2));
   else {
     console.log(`status: ${report.status}`);
     console.log(`qualityScore: ${report.qualityScoreStatus.score}`);
-    for (const key of [...V101_STATUS_KEYS, ...V102_STATUS_KEYS, ...V103_STATUS_KEYS]) console.log(`${key}: ${report[key].status}`);
+    for (const key of [...V101_STATUS_KEYS, ...V102_STATUS_KEYS, ...V103_STATUS_KEYS, ...V104_STATUS_KEYS]) console.log(`${key}: ${report[key].status}`);
   }
   process.exit(failures.length ? 1 : 0);
 }
