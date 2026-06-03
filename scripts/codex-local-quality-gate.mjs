@@ -11473,7 +11473,12 @@ async function runTargetHarnessGate() {
 
 
 
-  if (jsonReport) emitSafeJsonReport(isPr42ProductPrepushTargetEnv(gateEnv) ? buildPr42PrepushCompactTargetReport(report) : buildNormalTargetCompactReport(report));
+  if (jsonReport) {
+    const localCompactTargetReport = !gateEnv.GITHUB_ACTIONS && isTargetHarnessEnv(gateEnv)
+      ? (isPr42ProductPrepushTargetEnv(gateEnv) ? buildPr42PrepushCompactTargetReport(report) : buildNormalTargetCompactReport(report))
+      : report;
+    emitSafeJsonReport(localCompactTargetReport);
+  }
 
 
 
