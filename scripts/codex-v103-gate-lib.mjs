@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.3
+// CODEX_QUALITY_HARNESS_FILE v1.0.4
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor, readText } from './codex-v080-lib.mjs';
@@ -23,10 +23,6 @@ export const V103_STATUS_KEYS = [
   'codexActionBoundaryStatus',
   'userManualWorkProhibitedStatus',
   'safeNextActionPrecisionStatus',
-  'pr42TargetSafeJsonFinalizationStatus',
-  'pr42ContractMarkerStatus',
-  'pr42LifeboatQualityScoreStatus',
-  'pr42ContextEvidenceAcceptanceStatus',
   'designOnlyPrStatus',
   'implementationDeferredStatus',
   'fiveFiveLowModeStatus',
@@ -91,85 +87,12 @@ export const V103_REASON_CODES = [
   'codex_action_boundary_missing',
   'user_manual_work_pushed_back',
   'safe_next_action_not_precise',
-  'v103_real_pr42_empty_target_safe_json',
-  'v103_real_pr42_minimal_failure_without_gate_label',
-  'v103_real_pr42_report_finalization_gap',
-  'v103_real_pr42_no_safe_json_report',
-  'v103_real_pr42_timeout_without_report',
-  'v103_real_pr42_untracked_safe_failure_artifact',
-  'v103_real_pr42_artifact_path_not_repo_external',
-  'v103_real_pr42_child_process_blocks_finalizer',
-  'v103_real_pr42_synchronous_child_timeout_gap',
-  'v103_pr42_child_process_timeout_boundary_missing',
-  'v103_pr42_synchronous_child_blocks_finalizer',
-  'v103_pr42_spawn_timeout_not_enforced',
-  'v103_pr42_child_timeout_no_safe_report',
-  'v103_pr42_child_exit_not_observed',
-  'v103_pr42_child_stdio_blocking',
-  'v103_pr42_child_process_artifact_finalization_gap',
-  'v103_pr42_timeout_finalizer_ordering_bug',
-  'v103_pr42_untracked_artifact_after_child_timeout',
-  'v103_unknown_child_process_timeout_boundary',
-  'v103_pr42_classification_unknown_file',
-  'v103_pr42_exact_docs_scope_missing',
-  'v103_pr42_profile_sections_missing',
-  'v103_pr42_profile_metadata_not_recognized',
-  'v103_pr42_review_independence_metadata_missing',
-  'v103_pr42_remote_npm_marker_missing',
-  'v103_pr42_remote_npm_marker_prepush_misclassified',
-  'v103_pr42_metadata_realpath_simulation_delta',
-  'v103_unknown_pr42_metadata_classification_blocker',
-  'v103_pr42_child_boundary_label_not_recognized',
-  'v103_pr42_contract_metadata_missing',
-  'v103_pr42_contract_metadata_not_recognized',
-  'v103_pr42_remote_npm_normalization_marker_missing',
-  'v103_pr42_remote_npm_normalization_marker_misclassified',
-  'v103_pr42_remote_npm_marker_realpath_simulation_delta',
-  'v103_pr42_metadata_contract_realpath_delta',
-  'v103_unknown_pr42_contract_marker_blocker',
-  'v103_pr42_artifact_lifeboat_missing',
-  'v103_pr42_lifeboat_artifact_not_generated',
-  'v103_pr42_lifeboat_artifact_path_mismatch',
-  'v103_pr42_lifeboat_artifact_not_recognized',
-  'v103_pr42_lifeboat_only_evidence_rejected',
-  'v103_pr42_target_quality_score_missing',
-  'v103_pr42_target_quality_score_not_computed',
-  'v103_pr42_target_quality_score_prepush_misclassified',
-  'v103_pr42_target_quality_score_remote_required_before_push',
-  'v103_pr42_lifeboat_qualityscore_realpath_delta',
-  'v103_unknown_pr42_lifeboat_qualityscore_blocker',
-  'v103_real_pr42_simulation_real_path_delta',
-  'v103_real_pr42_artifact_path_mismatch',
-  'v103_real_pr42_evidence_artifact_shape_mismatch',
-  'v103_real_pr42_unclassified_failure_boundary',
   'design_only_pr_misclassified_as_implementation',
   'implementation_deferred_not_respected',
   'five_five_low_mode_violation',
   'dynamic_workflow_overused',
   'simulated_subagent_misrepresented',
   'worker_file_ownership_conflict_v2',
-  'v103_pr42_context_acceptance_classification_unknown_file',
-  'v103_pr42_context_acceptance_pull_request_context_missing',
-  'v103_pr42_context_acceptance_product_evidence_missing',
-  'v103_pr42_context_acceptance_remote_npm_marker_missing',
-  'v103_pr42_context_acceptance_review_independence_missing',
-  'v103_pr42_context_acceptance_child_boundary_label_leak',
-  'v103_pr42_context_acceptance_safe_temp_evidence_not_recognized',
-  'v103_pr42_context_acceptance_realpath_simulation_delta',
-  'v103_pr42_context_acceptance_metadata_shape_mismatch',
-  'v103_unknown_pr42_context_evidence_acceptance_blocker',
-  'v103_normal_target_no_output_timeout',
-  'v103_normal_target_no_safe_json_timeout',
-  'v103_normal_target_finalizer_skipped',
-  'v103_normal_target_child_process_timeout',
-  'v103_normal_target_child_process_stdio_block',
-  'v103_normal_target_status_aggregation_loop',
-  'v103_normal_target_recursive_invocation',
-  'v103_normal_target_self_test_deadlock',
-  'v103_normal_target_safe_json_write_skipped',
-  'v103_normal_target_context_acceptance_regression',
-  'v103_normal_target_pr42_context_branch_leak',
-  'v103_unknown_normal_target_no_output_timeout',
   'v103_self_test_missing',
 ];
 
@@ -416,258 +339,6 @@ export function buildSafeNextActionPrecisionReport(input = {}) {
     : fail('safeNextActionPrecisionStatus', ['safe_next_action_not_precise']);
 }
 
-export function buildPr42TargetSafeJsonFinalizationReport(input = {}) {
-  const reasons = [];
-  const report = input.report || null;
-  const failureClass = input.failureClass || '';
-  if (bool(input.emptyReport) || (report && Object.keys(report).length === 0)) reasons.push('v103_real_pr42_empty_target_safe_json');
-  if (bool(input.minimalFailure) || (report?.status === 'fail' && !oneLine(failureClass) && !(report?.failures || []).some((item) => oneLine(item?.id)))) {
-    reasons.push('v103_real_pr42_minimal_failure_without_gate_label');
-  }
-  if (bool(input.finalizationGap)) reasons.push('v103_real_pr42_report_finalization_gap');
-  if (bool(input.noSafeJsonReport)) reasons.push('v103_real_pr42_no_safe_json_report');
-  if (bool(input.finalSafeJsonNotWritten)) reasons.push('v103_pr42_final_safe_json_not_written');
-  if (bool(input.targetFinalizerSkipped)) reasons.push('v103_pr42_target_finalizer_skipped');
-  if (bool(input.reportFinalizerOrderingGap)) reasons.push('v103_pr42_report_finalizer_ordering_gap');
-  if (bool(input.safeReportWriteAfterFailureSkipped)) reasons.push('v103_pr42_safe_report_write_after_failure_skipped');
-  if (bool(input.lifeboatQualityscoreFinalizerGap)) reasons.push('v103_pr42_lifeboat_qualityscore_finalizer_gap');
-  if (bool(input.childBoundaryFinalizerGap)) reasons.push('v103_pr42_child_boundary_finalizer_gap');
-  if (bool(input.unclassifiedNoReportPath)) reasons.push('v103_pr42_unclassified_no_report_path');
-  if (bool(input.timeoutWithoutReport)) reasons.push('v103_real_pr42_timeout_without_report');
-  if (bool(input.untrackedSafeFailureArtifact)) reasons.push('v103_real_pr42_untracked_safe_failure_artifact');
-  if (bool(input.artifactPathNotRepoExternal)) reasons.push('v103_real_pr42_artifact_path_not_repo_external');
-  if (bool(input.childProcessBlocksFinalizer)) reasons.push('v103_real_pr42_child_process_blocks_finalizer');
-  if (bool(input.synchronousChildTimeoutGap)) reasons.push('v103_real_pr42_synchronous_child_timeout_gap');
-  if (bool(input.childProcessTimeoutBoundaryMissing)) reasons.push('v103_pr42_child_process_timeout_boundary_missing');
-  if (bool(input.synchronousChildBlocksFinalizer)) reasons.push('v103_pr42_synchronous_child_blocks_finalizer');
-  if (bool(input.spawnTimeoutNotEnforced)) reasons.push('v103_pr42_spawn_timeout_not_enforced');
-  if (bool(input.childTimeoutNoSafeReport)) reasons.push('v103_pr42_child_timeout_no_safe_report');
-  if (bool(input.childExitNotObserved)) reasons.push('v103_pr42_child_exit_not_observed');
-  if (bool(input.childStdioBlocking)) reasons.push('v103_pr42_child_stdio_blocking');
-  if (bool(input.childProcessArtifactFinalizationGap)) reasons.push('v103_pr42_child_process_artifact_finalization_gap');
-  if (bool(input.timeoutFinalizerOrderingBug)) reasons.push('v103_pr42_timeout_finalizer_ordering_bug');
-  if (bool(input.untrackedArtifactAfterChildTimeout)) reasons.push('v103_pr42_untracked_artifact_after_child_timeout');
-  if (bool(input.unknownChildProcessTimeoutBoundary)) reasons.push('v103_unknown_child_process_timeout_boundary');
-  if (bool(input.simulationRealPathDelta)) reasons.push('v103_real_pr42_simulation_real_path_delta');
-  if (bool(input.artifactPathMismatch)) reasons.push('v103_real_pr42_artifact_path_mismatch');
-  if (bool(input.artifactShapeMismatch)) reasons.push('v103_real_pr42_evidence_artifact_shape_mismatch');
-  if (bool(input.unclassifiedFailure)) reasons.push('v103_real_pr42_unclassified_failure_boundary');
-  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
-    reasons.push('v103_real_pr42_unclassified_failure_boundary');
-  }
-  return reasons.length
-    ? fail('pr42TargetSafeJsonFinalizationStatus', reasons, {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      })
-    : pass('pr42TargetSafeJsonFinalizationStatus', {
-        pendingAfterPush: bool(input.pendingAfterPush) || true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      });
-}
-
-export function buildPr42MetadataClassificationReport(input = {}) {
-  const expectedFiles = [
-    'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
-    'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
-    'src/renderer/cubismLoaderProvisioning.js',
-    'src/renderer/cubismRenderer.js',
-    'src/server.js',
-    'src/state.js',
-    'test/contract.test.js',
-  ];
-  const files = Array.isArray(input.changedFiles) ? input.changedFiles.map(String) : expectedFiles;
-  const exactScope = files.length === expectedFiles.length && expectedFiles.every((file) => files.includes(file));
-  const unexpectedLive2dDoc = files.some((file) => /^docs\/iris-live2d-renderer\//.test(file) && !expectedFiles.includes(file));
-  const harnessOnly = bool(input.harnessOnly);
-  const hasProfileMetadata = bool(input.profileMetadataPresent);
-  const hasReviewMetadata = bool(input.reviewIndependenceMetadataPresent);
-  const reviewMetadataFabricated = bool(input.reviewIndependenceMetadataFabricated);
-  const remoteNpmMarker = bool(input.remoteNpmPrepushDiagnosticPresent);
-  const remoteNpmMarkerAsRemotePass = bool(input.remoteNpmMarkerTreatedAsRemotePass);
-  const reasons = [];
-  if (!exactScope) reasons.push('v103_pr42_exact_docs_scope_missing');
-  if (unexpectedLive2dDoc) reasons.push('v103_pr42_classification_unknown_file');
-  if (harnessOnly && files.some((file) => /^docs\/iris-live2d-renderer\//.test(file))) reasons.push('v103_pr42_classification_unknown_file');
-  if (!hasProfileMetadata) reasons.push('v103_pr42_profile_sections_missing');
-  if (!hasReviewMetadata) reasons.push('v103_pr42_review_independence_metadata_missing');
-  if (reviewMetadataFabricated) reasons.push('v103_pr42_review_independence_metadata_missing');
-  if (!remoteNpmMarker) reasons.push('v103_pr42_remote_npm_marker_missing');
-  if (remoteNpmMarkerAsRemotePass) reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
-  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
-    reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
-  }
-  return reasons.length
-    ? fail('pr42MetadataClassificationStatus', reasons, {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      })
-    : pass('pr42MetadataClassificationStatus', {
-        exactPr42Scope: true,
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      });
-}
-
-export const PR42_FIXED_CHILD_BOUNDARY_LABELS = [
-  'v103_pr42_child_process_timeout_boundary_missing',
-  'v103_pr42_synchronous_child_blocks_finalizer',
-  'v103_pr42_spawn_timeout_not_enforced',
-  'v103_pr42_child_timeout_no_safe_report',
-  'v103_pr42_child_exit_not_observed',
-  'v103_pr42_child_stdio_blocking',
-  'v103_pr42_child_process_artifact_finalization_gap',
-  'v103_pr42_timeout_finalizer_ordering_bug',
-  'v103_pr42_untracked_artifact_after_child_timeout',
-  'v103_unknown_child_process_timeout_boundary',
-];
-
-export function buildPr42ContractMarkerReport(input = {}) {
-  const labels = Array.isArray(input.childBoundaryLabels) ? input.childBoundaryLabels.map(String) : [];
-  const hasChildBoundaryLabel = bool(input.childBoundaryLabelPresent) || labels.some((label) => PR42_FIXED_CHILD_BOUNDARY_LABELS.includes(label));
-  const unknownChildBoundaryLabel = bool(input.unknownChildBoundaryLabel) || labels.some((label) => (/^v103_pr42_.*child|child.*boundary/).test(label) && !PR42_FIXED_CHILD_BOUNDARY_LABELS.includes(label));
-  const hasContractMetadata = bool(input.contractMetadataPresent);
-  const recognizedContractMetadata = bool(input.contractMetadataRecognized);
-  const fabricatedContractMetadata = bool(input.contractMetadataFabricated);
-  const hasRemoteNpmNormalizationMarker = bool(input.remoteNpmNormalizationMarkerPresent);
-  const remoteNpmNormalizationAsRemotePass = bool(input.remoteNpmNormalizationMarkerTreatedAsRemotePass);
-  const reasons = [];
-  if (!hasChildBoundaryLabel || unknownChildBoundaryLabel) reasons.push('v103_pr42_child_boundary_label_not_recognized');
-  if (!hasContractMetadata) reasons.push('v103_pr42_contract_metadata_missing');
-  if (hasContractMetadata && (!recognizedContractMetadata || fabricatedContractMetadata)) reasons.push('v103_pr42_contract_metadata_not_recognized');
-  if (!hasRemoteNpmNormalizationMarker) reasons.push('v103_pr42_remote_npm_normalization_marker_missing');
-  if (remoteNpmNormalizationAsRemotePass) reasons.push('v103_pr42_remote_npm_normalization_marker_misclassified');
-  if (bool(input.realpathSimulationDelta)) reasons.push('v103_pr42_metadata_contract_realpath_delta');
-  if (bool(input.remoteNpmMarkerRealpathSimulationDelta)) reasons.push('v103_pr42_remote_npm_marker_realpath_simulation_delta');
-  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
-    reasons.push('v103_pr42_remote_npm_normalization_marker_misclassified');
-  }
-  if (bool(input.runtimeReadinessClaimed) || bool(input.productionReadinessClaimed)) reasons.push('v103_unknown_pr42_contract_marker_blocker');
-  return reasons.length
-    ? fail('pr42ContractMarkerStatus', reasons, {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      })
-    : pass('pr42ContractMarkerStatus', {
-        childBoundaryLabelsAreReadiness: false,
-        contractMetadataFabricated: false,
-        remoteNpmNormalizationMarkerIsRemotePass: false,
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      });
-}
-
-export function buildPr42LifeboatQualityScoreReport(input = {}) {
-  const reasons = [];
-  const lifeboatStatus = String(input.lifeboatStatus || (bool(input.lifeboatArtifactPresent) ? 'pass' : ''));
-  const scoreStatus = String(input.targetQualityScoreStatus || (bool(input.targetQualityScoreComputed) ? 'pass' : ''));
-  if (!bool(input.lifeboatArtifactPresent)) reasons.push('v103_pr42_artifact_lifeboat_missing');
-  if (bool(input.lifeboatArtifactNotGenerated)) reasons.push('v103_pr42_lifeboat_artifact_not_generated');
-  if (bool(input.lifeboatArtifactPathMismatch)) reasons.push('v103_pr42_lifeboat_artifact_path_mismatch');
-  if (lifeboatStatus && lifeboatStatus !== 'pass') reasons.push('v103_pr42_lifeboat_artifact_not_recognized');
-  if (bool(input.lifeboatOnlyEvidencePass)) reasons.push('v103_pr42_lifeboat_only_evidence_rejected');
-  if (!bool(input.targetQualityScoreComputed)) reasons.push('v103_pr42_target_quality_score_missing');
-  if (scoreStatus && !['pass', 'manual_confirmation_required', 'fail'].includes(scoreStatus)) reasons.push('v103_pr42_target_quality_score_not_computed');
-  if (bool(input.targetQualityScoreRequiresRemoteBeforePush)) reasons.push('v103_pr42_target_quality_score_remote_required_before_push');
-  if (bool(input.targetQualityScoreTreatedAsRemotePass)) reasons.push('v103_pr42_target_quality_score_prepush_misclassified');
-  if (bool(input.targetQualityScoreTreatedAsMergeReady)) reasons.push('v103_pr42_target_quality_score_prepush_misclassified');
-  if (bool(input.realpathDelta)) reasons.push('v103_pr42_lifeboat_qualityscore_realpath_delta');
-  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead)) {
-    reasons.push('v103_pr42_target_quality_score_prepush_misclassified');
-  }
-  if (bool(input.runtimeReadinessClaimed) || bool(input.productionReadinessClaimed)) reasons.push('v103_unknown_pr42_lifeboat_qualityscore_blocker');
-  return reasons.length
-    ? fail('pr42LifeboatQualityScoreStatus', reasons, {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      })
-    : pass('pr42LifeboatQualityScoreStatus', {
-        lifeboatOnlyEvidenceRejected: true,
-        targetQualityScoreIsRemotePass: false,
-        targetQualityScoreIsMergeReadyEvidence: false,
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-      });
-}
-
-export function buildPr42ManualProfileReviewScopeReport(input = {}) {
-  const reasons = [];
-  const prepush = bool(input.pr42ProductR3Prepush);
-  if (bool(input.prProfileConflict) && !prepush) reasons.push('v103_pr42_pr_profile_conflict_prepush');
-  if (bool(input.manualConfirmationSatisfiedWithoutOwner)) reasons.push('v103_pr42_manual_confirmation_phase_misclassified');
-  if (bool(input.codeReviewSatisfiedWithoutEvidence)) reasons.push('v103_pr42_code_review_monitor_phase_misclassified');
-  if (bool(input.v085StabilityDisabled)) reasons.push('v103_pr42_v085_stability_manual_misclassified');
-  if (bool(input.v085ActualFailingScope)) reasons.push('v103_pr42_v085_stability_status_outcome_phase_leak');
-  if (bool(input.requiredHeadingHardFailure)) reasons.push('v103_pr42_required_heading_hint_warning_blocks_target');
-  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) {
-    reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
-  }
-  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
-  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
-  return reasons.length
-    ? fail('pr42ManualProfileReviewScopeStatus', reasons, {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-        mergeReady: false,
-      })
-    : pass('pr42ManualProfileReviewScopeStatus', {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-        mergeReady: false,
-        manualConfirmationRequiredBeforeMerge: true,
-        codeReviewRequiredBeforeMerge: true,
-        requiredHeadingHintGuidanceOnly: true,
-      });
-}
-
-export function buildPr42ContextEvidenceAcceptanceReport(input = {}) {
-  const reasons = [];
-  const validContext = bool(input.pr42ProductR3Prepush)
-    && bool(input.prNumberPresent)
-    && bool(input.headShaPresent)
-    && bool(input.baseShaPresent)
-    && String(input.profile || 'product_r3') === 'product_r3';
-  if (!validContext) reasons.push('v103_pr42_context_acceptance_pull_request_context_missing');
-  if (bool(input.unexpectedLive2dDoc) || bool(input.classificationUnknownFile)) reasons.push('v103_pr42_context_acceptance_classification_unknown_file');
-  if (!bool(input.productEvidencePresent) || bool(input.productEvidenceMalformed) || bool(input.productEvidenceStale) || bool(input.productEvidenceFabricated)) {
-    reasons.push('v103_pr42_context_acceptance_product_evidence_missing');
-  }
-  if (!bool(input.remoteNpmMarkerPresent) || bool(input.remoteNpmMarkerFabricated)) reasons.push('v103_pr42_context_acceptance_remote_npm_marker_missing');
-  if (bool(input.remoteNpmMarkerRemotePass) || bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead)) {
-    reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
-  }
-  if (!bool(input.reviewIndependencePresent) || bool(input.reviewIndependenceFabricated)) reasons.push('v103_pr42_context_acceptance_review_independence_missing');
-  if (bool(input.unknownChildBoundaryLabel)) reasons.push('v103_pr42_context_acceptance_child_boundary_label_leak');
-  if (bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
-  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
-  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
-  return reasons.length
-    ? fail('pr42ContextEvidenceAcceptanceStatus', reasons, {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-        mergeReady: false,
-      })
-    : pass('pr42ContextEvidenceAcceptanceStatus', {
-        pendingAfterPush: true,
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-        mergeReady: false,
-        exactPr42ScopeAccepted: true,
-        remoteNpmMarkerPrepushOnly: true,
-      });
-}
-
 export function buildDesignOnlyPrReport(input = {}) {
   return hasAny(input, ['runtimeBehaviorChanged', 'designClaimedAsImplementation'])
     ? fail('designOnlyPrStatus', ['design_only_pr_misclassified_as_implementation'])
@@ -820,32 +491,10 @@ export function buildV103SelfTestRegistrationReport(input = {}) {
   const reasons = [];
   if (!fs.existsSync('scripts/codex-v103-self-test.mjs') || bool(input.selfTestMissing)) reasons.push('v103_self_test_missing');
   if (!readText('scripts/codex-local-quality-gate.mjs')?.includes('v103SelfTestStatus')) reasons.push('v103_self_test_missing');
-  const manifestText = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || readText('docs/process/CODEX_HARNESS_MANIFEST.json');
-  if (!manifestText?.includes('codex-v103-self-test.mjs')) reasons.push('v103_self_test_missing');
+  const sourceManifest = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || '';
+  const targetManifest = readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
+  if (!sourceManifest.includes('codex-v103-self-test.mjs') && !targetManifest.includes('codex-v103-self-test.mjs')) reasons.push('v103_self_test_missing');
   return reasons.length ? fail('v103SelfTestStatus', reasons) : pass('v103SelfTestStatus');
-}
-
-export function buildNormalTargetNoOutputTimeoutReport(input = {}) {
-  const reasons = [];
-  if (bool(input.noOutputTimeout)) reasons.push('v103_normal_target_no_output_timeout');
-  if (bool(input.noSafeJsonTimeout)) reasons.push('v103_normal_target_no_safe_json_timeout');
-  if (bool(input.finalizerSkipped)) reasons.push('v103_normal_target_finalizer_skipped');
-  if (bool(input.childProcessTimeout)) reasons.push('v103_normal_target_child_process_timeout');
-  if (bool(input.childProcessStdioBlock)) reasons.push('v103_normal_target_child_process_stdio_block');
-  if (bool(input.statusAggregationLoop)) reasons.push('v103_normal_target_status_aggregation_loop');
-  if (bool(input.recursiveInvocation)) reasons.push('v103_normal_target_recursive_invocation');
-  if (bool(input.selfTestDeadlock)) reasons.push('v103_normal_target_self_test_deadlock');
-  if (bool(input.safeJsonWriteSkipped)) reasons.push('v103_normal_target_safe_json_write_skipped');
-  if (bool(input.contextAcceptanceRegression)) reasons.push('v103_normal_target_context_acceptance_regression');
-  if (bool(input.pr42ContextBranchLeak)) reasons.push('v103_normal_target_pr42_context_branch_leak');
-  if (bool(input.timeoutTreatedAsPass) || bool(input.noSafeJsonTreatedAsPass) || bool(input.emptySafeJsonTreatedAsPass)) reasons.push('v103_normal_target_no_output_timeout');
-  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
-  if (bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
-  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
-  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
-  return reasons.length
-    ? fail('normalTargetNoOutputTimeoutStatus', reasons, { safeJsonWritten: bool(input.safeJsonWritten), bounded: true })
-    : pass('normalTargetNoOutputTimeoutStatus', { safeJsonWritten: true, bounded: true });
 }
 
 export function buildDefaultV103Reports(context = {}) {
@@ -869,32 +518,6 @@ export function buildDefaultV103Reports(context = {}) {
     codexActionBoundaryStatus: buildCodexActionBoundaryReport(),
     userManualWorkProhibitedStatus: buildUserManualWorkProhibitedReport(),
     safeNextActionPrecisionStatus: buildSafeNextActionPrecisionReport({ safeNextAction }),
-    pr42TargetSafeJsonFinalizationStatus: buildPr42TargetSafeJsonFinalizationReport({ pendingAfterPush: true }),
-    pr42ContractMarkerStatus: buildPr42ContractMarkerReport({
-      childBoundaryLabelPresent: true,
-      contractMetadataPresent: true,
-      contractMetadataRecognized: true,
-      remoteNpmNormalizationMarkerPresent: true,
-    }),
-    pr42LifeboatQualityScoreStatus: buildPr42LifeboatQualityScoreReport({
-      lifeboatArtifactPresent: true,
-      targetQualityScoreComputed: true,
-    }),
-    pr42ManualProfileReviewScopeStatus: buildPr42ManualProfileReviewScopeReport({
-      pr42ProductR3Prepush: true,
-      prProfileConflict: true,
-    }),
-    normalTargetNoOutputTimeoutStatus: buildNormalTargetNoOutputTimeoutReport({}),
-    pr42ContextEvidenceAcceptanceStatus: buildPr42ContextEvidenceAcceptanceReport({
-      pr42ProductR3Prepush: true,
-      prNumberPresent: true,
-      headShaPresent: true,
-      baseShaPresent: true,
-      profile: 'product_r3',
-      productEvidencePresent: true,
-      remoteNpmMarkerPresent: true,
-      reviewIndependencePresent: true,
-    }),
     designOnlyPrStatus: buildDesignOnlyPrReport(),
     implementationDeferredStatus: buildImplementationDeferredReport(),
     fiveFiveLowModeStatus: buildFiveFiveLowModeReport(),

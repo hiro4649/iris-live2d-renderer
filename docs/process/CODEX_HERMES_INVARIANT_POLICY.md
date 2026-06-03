@@ -1,4 +1,4 @@
-<!-- CODEX_QUALITY_HARNESS_FILE v1.0.3 -->
+<!-- CODEX_QUALITY_HARNESS_FILE v1.0.4 -->
 # Codex Hermes Invariant Policy
 
 Hermes invariant means the harness prefers external evidence over self-assertion, preserves boundaries, emits safe summaries only, exposes where human judgment is required, and refuses to hide failed evidence behind manual confirmation.
@@ -18,5 +18,5 @@ Hermes invariant means the harness prefers external evidence over self-assertion
 
 - `pass`: all relevant invariants are satisfied by safe evidence.
 - `manual_confirmation_required`: evidence source cannot be fetched but the gap is reviewable and not non-overridable.
--`not_applicable`: non-PR local execution with no risk or readiness claim.
+- `not_applicable`: non-PR local execution with no risk or readiness claim.
 - `fail`: self-assertion only, unsafe production claim, safe-summary violation, hidden residual risks, missing human review, missing plan-first evidence, missing review evidence, or production data exposure risk.

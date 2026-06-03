@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.3
+// CODEX_QUALITY_HARNESS_FILE v1.0.4
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -26,10 +26,8 @@ function artifactFound(env = process.env) {
   if (env.CODEX_ARTIFACT_FOUND === '1') return true;
   if (env.CODEX_ARTIFACT_FOUND === '0') return false;
   const runnerTempLifeboat = env.RUNNER_TEMP ? path.join(env.RUNNER_TEMP, 'codex-minimal-safe-failure.json') : '';
-  const localSafeArtifactLifeboat = path.join('.git', 'codex-safe-artifacts', 'codex-minimal-safe-failure.json');
   const candidates = [
     env.CODEX_LIFEBOAT_PATH || 'codex-minimal-safe-failure.json',
-    localSafeArtifactLifeboat,
     env.CODEX_LIFEBOAT_MIRROR_PATH,
     env.CODEX_RUNNER_TEMP_LIFEBOAT_PATH,
     runnerTempLifeboat,
