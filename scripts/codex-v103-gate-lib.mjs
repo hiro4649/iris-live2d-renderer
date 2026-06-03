@@ -26,6 +26,7 @@ export const V103_STATUS_KEYS = [
   'pr42TargetSafeJsonFinalizationStatus',
   'pr42ContractMarkerStatus',
   'pr42LifeboatQualityScoreStatus',
+  'pr42ContextEvidenceAcceptanceStatus',
   'designOnlyPrStatus',
   'implementationDeferredStatus',
   'fiveFiveLowModeStatus',
@@ -147,6 +148,28 @@ export const V103_REASON_CODES = [
   'dynamic_workflow_overused',
   'simulated_subagent_misrepresented',
   'worker_file_ownership_conflict_v2',
+  'v103_pr42_context_acceptance_classification_unknown_file',
+  'v103_pr42_context_acceptance_pull_request_context_missing',
+  'v103_pr42_context_acceptance_product_evidence_missing',
+  'v103_pr42_context_acceptance_remote_npm_marker_missing',
+  'v103_pr42_context_acceptance_review_independence_missing',
+  'v103_pr42_context_acceptance_child_boundary_label_leak',
+  'v103_pr42_context_acceptance_safe_temp_evidence_not_recognized',
+  'v103_pr42_context_acceptance_realpath_simulation_delta',
+  'v103_pr42_context_acceptance_metadata_shape_mismatch',
+  'v103_unknown_pr42_context_evidence_acceptance_blocker',
+  'v103_normal_target_no_output_timeout',
+  'v103_normal_target_no_safe_json_timeout',
+  'v103_normal_target_finalizer_skipped',
+  'v103_normal_target_child_process_timeout',
+  'v103_normal_target_child_process_stdio_block',
+  'v103_normal_target_status_aggregation_loop',
+  'v103_normal_target_recursive_invocation',
+  'v103_normal_target_self_test_deadlock',
+  'v103_normal_target_safe_json_write_skipped',
+  'v103_normal_target_context_acceptance_regression',
+  'v103_normal_target_pr42_context_branch_leak',
+  'v103_unknown_normal_target_no_output_timeout',
   'v103_self_test_missing',
 ];
 
@@ -607,6 +630,44 @@ export function buildPr42ManualProfileReviewScopeReport(input = {}) {
       });
 }
 
+export function buildPr42ContextEvidenceAcceptanceReport(input = {}) {
+  const reasons = [];
+  const validContext = bool(input.pr42ProductR3Prepush)
+    && bool(input.prNumberPresent)
+    && bool(input.headShaPresent)
+    && bool(input.baseShaPresent)
+    && String(input.profile || 'product_r3') === 'product_r3';
+  if (!validContext) reasons.push('v103_pr42_context_acceptance_pull_request_context_missing');
+  if (bool(input.unexpectedLive2dDoc) || bool(input.classificationUnknownFile)) reasons.push('v103_pr42_context_acceptance_classification_unknown_file');
+  if (!bool(input.productEvidencePresent) || bool(input.productEvidenceMalformed) || bool(input.productEvidenceStale) || bool(input.productEvidenceFabricated)) {
+    reasons.push('v103_pr42_context_acceptance_product_evidence_missing');
+  }
+  if (!bool(input.remoteNpmMarkerPresent) || bool(input.remoteNpmMarkerFabricated)) reasons.push('v103_pr42_context_acceptance_remote_npm_marker_missing');
+  if (bool(input.remoteNpmMarkerRemotePass) || bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead)) {
+    reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
+  }
+  if (!bool(input.reviewIndependencePresent) || bool(input.reviewIndependenceFabricated)) reasons.push('v103_pr42_context_acceptance_review_independence_missing');
+  if (bool(input.unknownChildBoundaryLabel)) reasons.push('v103_pr42_context_acceptance_child_boundary_label_leak');
+  if (bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
+  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
+  return reasons.length
+    ? fail('pr42ContextEvidenceAcceptanceStatus', reasons, {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+        mergeReady: false,
+      })
+    : pass('pr42ContextEvidenceAcceptanceStatus', {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+        mergeReady: false,
+        exactPr42ScopeAccepted: true,
+        remoteNpmMarkerPrepushOnly: true,
+      });
+}
+
 export function buildDesignOnlyPrReport(input = {}) {
   return hasAny(input, ['runtimeBehaviorChanged', 'designClaimedAsImplementation'])
     ? fail('designOnlyPrStatus', ['design_only_pr_misclassified_as_implementation'])
@@ -764,6 +825,29 @@ export function buildV103SelfTestRegistrationReport(input = {}) {
   return reasons.length ? fail('v103SelfTestStatus', reasons) : pass('v103SelfTestStatus');
 }
 
+export function buildNormalTargetNoOutputTimeoutReport(input = {}) {
+  const reasons = [];
+  if (bool(input.noOutputTimeout)) reasons.push('v103_normal_target_no_output_timeout');
+  if (bool(input.noSafeJsonTimeout)) reasons.push('v103_normal_target_no_safe_json_timeout');
+  if (bool(input.finalizerSkipped)) reasons.push('v103_normal_target_finalizer_skipped');
+  if (bool(input.childProcessTimeout)) reasons.push('v103_normal_target_child_process_timeout');
+  if (bool(input.childProcessStdioBlock)) reasons.push('v103_normal_target_child_process_stdio_block');
+  if (bool(input.statusAggregationLoop)) reasons.push('v103_normal_target_status_aggregation_loop');
+  if (bool(input.recursiveInvocation)) reasons.push('v103_normal_target_recursive_invocation');
+  if (bool(input.selfTestDeadlock)) reasons.push('v103_normal_target_self_test_deadlock');
+  if (bool(input.safeJsonWriteSkipped)) reasons.push('v103_normal_target_safe_json_write_skipped');
+  if (bool(input.contextAcceptanceRegression)) reasons.push('v103_normal_target_context_acceptance_regression');
+  if (bool(input.pr42ContextBranchLeak)) reasons.push('v103_normal_target_pr42_context_branch_leak');
+  if (bool(input.timeoutTreatedAsPass) || bool(input.noSafeJsonTreatedAsPass) || bool(input.emptySafeJsonTreatedAsPass)) reasons.push('v103_normal_target_no_output_timeout');
+  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('v103_pr42_remote_npm_marker_prepush_misclassified');
+  if (bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
+  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
+  return reasons.length
+    ? fail('normalTargetNoOutputTimeoutStatus', reasons, { safeJsonWritten: bool(input.safeJsonWritten), bounded: true })
+    : pass('normalTargetNoOutputTimeoutStatus', { safeJsonWritten: true, bounded: true });
+}
+
 export function buildDefaultV103Reports(context = {}) {
   const safeNextAction = context.safeNextAction || 'verify_source_pr_remote_gate';
   return {
@@ -799,6 +883,17 @@ export function buildDefaultV103Reports(context = {}) {
     pr42ManualProfileReviewScopeStatus: buildPr42ManualProfileReviewScopeReport({
       pr42ProductR3Prepush: true,
       prProfileConflict: true,
+    }),
+    normalTargetNoOutputTimeoutStatus: buildNormalTargetNoOutputTimeoutReport({}),
+    pr42ContextEvidenceAcceptanceStatus: buildPr42ContextEvidenceAcceptanceReport({
+      pr42ProductR3Prepush: true,
+      prNumberPresent: true,
+      headShaPresent: true,
+      baseShaPresent: true,
+      profile: 'product_r3',
+      productEvidencePresent: true,
+      remoteNpmMarkerPresent: true,
+      reviewIndependencePresent: true,
     }),
     designOnlyPrStatus: buildDesignOnlyPrReport(),
     implementationDeferredStatus: buildImplementationDeferredReport(),
