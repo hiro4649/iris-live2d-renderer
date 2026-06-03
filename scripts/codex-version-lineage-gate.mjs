@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.4
+// CODEX_QUALITY_HARNESS_FILE v1.0.5
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -53,18 +53,6 @@ function requiredPaths(env = process.env) {
   ];
 }
 
-function isTargetManagedMarkerFile(file, env = process.env) {
-  if (env.CODEX_HARNESS_MODE !== 'target') return true;
-  if (file === 'AGENTS.md') return true;
-  if (file === '.github/pull_request_template.md') return true;
-  if (file === '.github/workflows/quality-gate.yml') return true;
-  if (file.startsWith('docs/codex/')) return true;
-  if (file.startsWith('docs/process/') && !file.startsWith('docs/process/skills/')) return true;
-  if (file.startsWith('scripts/codex-')) return true;
-  if (file === '.agents/skills/codex-bugfix/SKILL.md') return true;
-  return false;
-}
-
 export function buildVersionLineageReport(env = process.env) {
   const failures = [];
   const warnings = [];
@@ -102,7 +90,6 @@ export function buildVersionLineageReport(env = process.env) {
   }
 
   for (const file of listRepoFiles()) {
-    if (!isTargetManagedMarkerFile(file, env)) continue;
     if (!fs.existsSync(file) || !fs.statSync(file).isFile()) continue;
     const version = firstMarkerVersion(file);
     if (!version) continue;
