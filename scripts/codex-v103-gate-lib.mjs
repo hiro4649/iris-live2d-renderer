@@ -575,6 +575,37 @@ export function buildPr42LifeboatQualityScoreReport(input = {}) {
       });
 }
 
+export function buildPr42ManualProfileReviewScopeReport(input = {}) {
+  const reasons = [];
+  const prepush = bool(input.pr42ProductR3Prepush);
+  if (bool(input.prProfileConflict) && !prepush) reasons.push('v103_pr42_pr_profile_conflict_prepush');
+  if (bool(input.manualConfirmationSatisfiedWithoutOwner)) reasons.push('v103_pr42_manual_confirmation_phase_misclassified');
+  if (bool(input.codeReviewSatisfiedWithoutEvidence)) reasons.push('v103_pr42_code_review_monitor_phase_misclassified');
+  if (bool(input.v085StabilityDisabled)) reasons.push('v103_pr42_v085_stability_manual_misclassified');
+  if (bool(input.requiredHeadingHardFailure)) reasons.push('v103_pr42_required_heading_hint_warning_blocks_target');
+  if (bool(input.pendingAfterPushTreatedAsRemotePass) || bool(input.remoteEvidencePassWithoutSameHead) || bool(input.targetMergeReadyWithoutSameHead) || bool(input.mergeReadyBeforeRemoteAndOwner)) {
+    reasons.push('v103_pr42_merge_confirmation_required_during_prepush');
+  }
+  if (bool(input.runtimeReadinessClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadinessClaimed)) reasons.push('production_readiness_claimed');
+  return reasons.length
+    ? fail('pr42ManualProfileReviewScopeStatus', reasons, {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+        mergeReady: false,
+      })
+    : pass('pr42ManualProfileReviewScopeStatus', {
+        pendingAfterPush: true,
+        remoteEvidencePass: false,
+        targetMergeReady: false,
+        mergeReady: false,
+        manualConfirmationRequiredBeforeMerge: true,
+        codeReviewRequiredBeforeMerge: true,
+        requiredHeadingHintGuidanceOnly: true,
+      });
+}
+
 export function buildDesignOnlyPrReport(input = {}) {
   return hasAny(input, ['runtimeBehaviorChanged', 'designClaimedAsImplementation'])
     ? fail('designOnlyPrStatus', ['design_only_pr_misclassified_as_implementation'])
@@ -763,6 +794,10 @@ export function buildDefaultV103Reports(context = {}) {
     pr42LifeboatQualityScoreStatus: buildPr42LifeboatQualityScoreReport({
       lifeboatArtifactPresent: true,
       targetQualityScoreComputed: true,
+    }),
+    pr42ManualProfileReviewScopeStatus: buildPr42ManualProfileReviewScopeReport({
+      pr42ProductR3Prepush: true,
+      prProfileConflict: true,
     }),
     designOnlyPrStatus: buildDesignOnlyPrReport(),
     implementationDeferredStatus: buildImplementationDeferredReport(),

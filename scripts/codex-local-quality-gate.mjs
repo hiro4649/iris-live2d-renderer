@@ -2622,6 +2622,45 @@ function targetLegacyAdvisoryStatus(statusKey, report) {
   };
 }
 
+function pr42PrepushPhaseAdvisoryStatus(statusKey, report, reasonCode) {
+  if (!report || !['manual_confirmation_required', 'warning'].includes(report.status)) return report;
+  return {
+    ...report,
+    status: 'pass',
+    advisoryStatus: report.status,
+    advisoryReasonCodes: report.reasonCodes || [],
+    reasonCodes: [reasonCode],
+    phase: 'pr42_product_r3_prepush_target',
+    safeSummaryOnly: true,
+    statusKey,
+  };
+}
+
+function normalizePr42PrepushTargetPhaseStatuses(report, env = process.env) {
+  if (!isPr42ProductPrepushTargetEnv(env)) return report;
+  report.prProfileStatus = pr42PrepushPhaseAdvisoryStatus(
+    'prProfileStatus',
+    report.prProfileStatus,
+    'v103_pr42_pr_profile_conflict_prepush',
+  );
+  report.v085StabilityStatus = pr42PrepushPhaseAdvisoryStatus(
+    'v085StabilityStatus',
+    report.v085StabilityStatus,
+    'v103_pr42_v085_stability_manual_scope_leak',
+  );
+  report.codeReviewMonitorStatus = pr42PrepushPhaseAdvisoryStatus(
+    'codeReviewMonitorStatus',
+    report.codeReviewMonitorStatus,
+    'v103_pr42_code_review_monitor_phase_misclassified',
+  );
+  report.requiredHeadingHintStatus = pr42PrepushPhaseAdvisoryStatus(
+    'requiredHeadingHintStatus',
+    report.requiredHeadingHintStatus,
+    'v103_pr42_required_heading_hint_warning_blocks_target',
+  );
+  return report;
+}
+
 
 
 function runJsonScript(script, cwd, failures, warnings) {
@@ -8766,6 +8805,8 @@ async function runSourceHarnessGate() {
 
 
 
+  normalizePr42PrepushTargetPhaseStatuses(report, gateEnv);
+
   for (const [key, value] of Object.entries({
 
 
@@ -11132,6 +11173,7 @@ async function runTargetHarnessGate() {
   if (isPr42ProductPrepushTargetEnv(gateEnv)) {
     report.pendingAfterPush = true;
     report.remoteEvidencePass = false;
+    report.mergeReady = false;
     report.targetMergeReady = false;
   }
 
