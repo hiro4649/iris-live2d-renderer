@@ -233,6 +233,8 @@ export function buildExpectedSafeFailurePolicyReport(input = {}) {
   if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
   if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
   if (bool(input.rawExposure)) reasons.push('expected_safe_failure_raw_exposure');
+  if (bool(input.safeSummaryPass) && input.reportStatus !== 'fail') reasons.push('expected_safe_failure_report_status_not_preserved');
+  if (bool(input.safeSummaryPass) && bool(input.pr42Ready)) reasons.push('expected_safe_failure_pr42_ready_claimed');
   return { expectedSafeFailurePolicyStatus: stateFromReasons('expectedSafeFailurePolicyStatus', reasons) };
 }
 

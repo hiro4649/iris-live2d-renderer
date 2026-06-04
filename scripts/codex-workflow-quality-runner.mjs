@@ -4086,7 +4086,9 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    status: report.status || 'missing',
+    status: expectedTargetTimeoutSafeFailure ? 'pass' : (report.status || 'missing'),
+    reportStatus: report.status || 'missing',
+    expectedSafeFailurePolicyStatus: expectedTargetTimeoutSafeFailure ? { status: 'pass', reasonCodes: ['harness_only_expected_target_timeout_safe_failure'], safeSummaryOnly: true } : { status: 'not_applicable', reasonCodes: ['no_expected_safe_failure_allowance'], safeSummaryOnly: true },
 
 
 
