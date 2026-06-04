@@ -196,6 +196,25 @@ export function buildPr73SafeMetadataStatusReport(input = {}) {
   return { pr73SafeMetadataStatus: stateFromReasons('pr73SafeMetadataStatus', reasons) };
 }
 
+export function buildReasonSummaryAggregationV105Report(input = {}) {
+  const reasons = [];
+  if (!bool(input.present)) reasons.push('reason_summary_missing');
+  if (bool(input.malformed)) reasons.push('reason_summary_malformed');
+  if (!bool(input.fixedSafeClass)) reasons.push('reason_summary_fixed_safe_class_missing');
+  if (bool(input.targetTimeoutPass)) reasons.push('reason_summary_target_timeout_treated_as_pass');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('reason_summary_runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('reason_summary_production_readiness_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('reason_summary_priority1_resolved');
+  if (bool(input.motionDatasetExecutable)) reasons.push('reason_summary_motion_dataset_executable');
+  if (bool(input.rawLogExposure)) reasons.push('reason_summary_raw_log_exposure');
+  if (bool(input.rawDiffExposure)) reasons.push('reason_summary_raw_diff_exposure');
+  if (bool(input.secretOrPrivateExposure)) reasons.push('reason_summary_secret_or_private_exposure');
+  if (bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
+  if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
+  return { reasonSummaryAggregationV105Status: stateFromReasons('reasonSummaryAggregationV105Status', reasons) };
+}
+
 export function buildSourceOnlyCompatibilityReport(input = {}) {
   const reasons = [];
   if (!bool(input.targetSafeJson ?? true)) reasons.push('source_only_target_safe_json_missing');
