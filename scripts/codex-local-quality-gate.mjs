@@ -9718,6 +9718,10 @@ async function runTargetHarnessGate() {
     ...process.env,
     CODEX_CHANGED_FILES: targetChangedFilesFallback(process.env),
   };
+  const changedFiles = String(gateEnv.CODEX_CHANGED_FILES || '')
+    .split(/\r?\n|,/)
+    .map((file) => file.trim())
+    .filter(Boolean);
 
 
 
@@ -9734,6 +9738,7 @@ async function runTargetHarnessGate() {
 
 
     status: 'running',
+    changedFiles,
 
 
 

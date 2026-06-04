@@ -215,6 +215,27 @@ export function buildReasonSummaryAggregationV105Report(input = {}) {
   return { reasonSummaryAggregationV105Status: stateFromReasons('reasonSummaryAggregationV105Status', reasons) };
 }
 
+export function buildExpectedSafeFailurePolicyReport(input = {}) {
+  const reasons = [];
+  const harnessOnly = bool(input.harnessOnly);
+  if (!harnessOnly) reasons.push('expected_safe_failure_not_harness_only');
+  if (!bool(input.reasonSummaryValid)) reasons.push('expected_safe_failure_reason_summary_missing');
+  if (!bool(input.safeArtifactClassifierValid)) reasons.push('expected_safe_failure_classifier_missing');
+  if (!bool(input.targetSafeReportContractFail)) reasons.push('expected_safe_failure_target_contract_not_fail');
+  if (!bool(input.fixedSafeClass)) reasons.push('expected_safe_failure_fixed_class_missing');
+  if (bool(input.targetTimeoutPass)) reasons.push('expected_safe_failure_target_timeout_pass');
+  if (bool(input.noSafeReportPass)) reasons.push('expected_safe_failure_no_safe_report_pass');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('expected_safe_failure_runtime_ready_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('expected_safe_failure_production_ready_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('expected_safe_failure_priority1_resolved');
+  if (bool(input.motionDatasetExecutable)) reasons.push('expected_safe_failure_motion_dataset_executable');
+  if (bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
+  if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
+  if (bool(input.rawExposure)) reasons.push('expected_safe_failure_raw_exposure');
+  return { expectedSafeFailurePolicyStatus: stateFromReasons('expectedSafeFailurePolicyStatus', reasons) };
+}
+
 export function buildSourceOnlyCompatibilityReport(input = {}) {
   const reasons = [];
   if (!bool(input.targetSafeJson ?? true)) reasons.push('source_only_target_safe_json_missing');

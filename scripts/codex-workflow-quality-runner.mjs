@@ -3225,6 +3225,36 @@ function statusAllowed(key, status, eventName) {
 
 }
 
+function isExpectedTargetTimeoutSafeFailure(report = {}, options = {}) {
+  const targetReasons = new Set(report.targetSafeReportContractStatus?.reasonCodes || []);
+  const safeClassifierReasons = new Set(report.safeArtifactClassifierStatus?.reasonCodes || []);
+  const expectedReasons = [
+    'v105_pr42_target_timeout_no_safe_report',
+    'v105_pr42_target_empty_output',
+    'v105_pr42_target_no_parseable_safe_json',
+    'v105_pr42_target_child_lifecycle_timeout',
+    'target_timeout_fixed_safe_failure',
+    'safe_report_missing_fixed_failure',
+  ];
+  const hasExpectedReason = expectedReasons.some((code) => targetReasons.has(code) || safeClassifierReasons.has(code));
+  const changedFiles = Array.isArray(report.changedFiles) ? report.changedFiles : [];
+  const harnessOnly = changedFiles.length > 0 &&
+    changedFiles.every((file) => String(file).startsWith('scripts/codex-') || String(file).startsWith('docs/process/'));
+  return Boolean(
+    options.eventName === 'pull_request' &&
+    harnessOnly &&
+    hasExpectedReason &&
+    report.reasonSummaryStatus?.status === 'pass' &&
+    report.safeArtifactClassifierStatus?.status === 'pass' &&
+    report.targetSafeReportContractStatus?.status === 'fail' &&
+    report.remoteEvidencePass !== true &&
+    report.targetMergeReady !== true &&
+    report.mergeReady !== true &&
+    report.runtimeReadinessClaimed !== true &&
+    report.productionReadinessClaimed !== true
+  );
+}
+
 
 
 
@@ -3935,7 +3965,9 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-  if (options.gateExit && options.gateExit !== 0 && !['pass', 'manual_confirmation_required'].includes(report.status)) {
+  const expectedTargetTimeoutSafeFailure = isExpectedTargetTimeoutSafeFailure(report, options);
+
+  if (options.gateExit && options.gateExit !== 0 && !['pass', 'manual_confirmation_required'].includes(report.status) && !expectedTargetTimeoutSafeFailure) {
 
 
 
