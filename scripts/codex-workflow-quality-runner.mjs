@@ -3245,6 +3245,7 @@ function validV106BoundedTargetSafeReport(report) {
   if (![
     'v106_normal_target_bounded_execution_timeout',
     'v106_pr42_shaped_target_bounded_execution_timeout',
+    'v106_pr42_evidence_handoff_incomplete_for_product_target',
   ].includes(className)) return false;
   if (report.remoteEvidencePass !== false) return false;
   if (report.targetMergeReady !== false) return false;

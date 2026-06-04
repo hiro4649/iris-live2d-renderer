@@ -209,6 +209,24 @@
       "requiresProductVerification": false,
       "allowsFastPath": false,
       "notes": "Codex v1.0.2 source harness scripts."
+    },
+    {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md",
+      "classification": "product_relevant",
+      "surface": "product_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Exact PR42 Live2D loader preflight doc; no docs/iris-live2d-renderer wildcard."
+    },
+    {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md",
+      "classification": "product_relevant",
+      "surface": "product_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Exact PR42 Live2D renderer schedule doc; no docs/iris-live2d-renderer wildcard."
     }
   ],
   "safeSummaryOnly": true

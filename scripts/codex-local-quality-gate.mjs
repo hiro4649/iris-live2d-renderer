@@ -1598,6 +1598,56 @@ function isPr42ProductTargetPrePush(env = process.env) {
     String(env.CODEX_REMOTE_EVIDENCE_PHASE || '') === 'remote_evidence_required_after_push';
 }
 
+function pr42ExpectedChangedFiles() {
+  return [
+    'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+    'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+    'src/renderer/cubismLoaderProvisioning.js',
+    'src/renderer/cubismRenderer.js',
+    'src/server.js',
+    'src/state.js',
+    'test/contract.test.js',
+  ].join('\n');
+}
+
+function pr42ProductTargetExecutionSafeReport(report, failures = []) {
+  const reasonCodes = ['v106_pr42_product_target_execution_reached'];
+  if (report.classificationCoverageStatus?.status === 'fail') {
+    reasonCodes.push('v106_pr42_classification_docs_exact_scope_needed');
+  }
+  if (report.noArtifactFailureStatus?.status === 'fail' || report.artifactLifeboatStatus?.status === 'fail') {
+    reasonCodes.push('v106_pr42_evidence_handoff_incomplete_for_product_target');
+  }
+  if (failures.length && reasonCodes.length === 1) {
+    reasonCodes.push('v106_pr42_product_target_safe_report_contract_still_failing');
+  }
+  const exactFailureClass = failures.length
+    ? [...new Set(reasonCodes)].find((code) => code !== 'v106_pr42_product_target_execution_reached')
+    : 'none';
+  return {
+    status: failures.length ? 'fail' : 'pass',
+    reasonCodes: failures.length ? [...new Set(reasonCodes)] : ['v106_pr42_product_target_execution_passed'],
+    exactFailureClass,
+    actionableContractReason: failures.length
+      ? 'pr42_product_target_execution_reached_safe_json_with_remaining_real_blocker'
+      : 'pr42_product_target_execution_passed_local_gate_only',
+    allowedNextRepairScope: v106Gates.PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE,
+    forbiddenFiles: v106Gates.PR42_TARGET_BOUNDED_FORBIDDEN_FILES,
+    expectedChangedFiles: pr42ExpectedChangedFiles(),
+    pendingAfterPush: process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push',
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    mergeReady: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetExecutable: false,
+    safeNextAction: failures.length
+      ? 'Repair the remaining harness-only evidence handoff or classification blocker before PR42 browser/API smoke, PR body update, or push.'
+      : 'Run PR42 browser/API smoke before PR42 body update or push.',
+    safeSummaryOnly: true,
+  };
+}
 function targetBoundedExecutionReport(env = process.env) {
   const pr42 = isPr42ProductTargetPrePush(env);
   const bounded = v106Gates.buildTargetBoundedExecutionSafeReport({
@@ -10015,6 +10065,8 @@ async function runTargetHarnessGate() {
   initializeV099Statuses(report);
   initializeV100Statuses(report);
 
+  const pr42ProductTargetPrePush = isPr42ProductTargetPrePush(process.env);
+
   if (process.env.CODEX_TARGET_FULL_RUN !== '1') {
     const boundedReport = targetBoundedExecutionReport(process.env);
     Object.assign(report, boundedReport);
@@ -10778,6 +10830,7 @@ async function runTargetHarnessGate() {
 
 
 
+
   report.gateDecisionTraceStatus = runGateScript('scripts/codex-gate-decision-trace.mjs', 'gateDecisionTraceStatus', 'CODEX_GATE_DECISION_TRACE_REPORT', {
 
 
@@ -11342,6 +11395,19 @@ async function runTargetHarnessGate() {
 
 
   report.scoreDecompositionStatus = computeScoreDecompositionStatus(report, report.targetQualityScoreStatus);
+
+  if (typeof pr42ProductTargetPrePush !== 'undefined' && pr42ProductTargetPrePush) {
+    report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+    report.remoteEvidencePass = false;
+    report.runtimeReadinessClaimed = false;
+    report.productionReadinessClaimed = false;
+    report.priority1Status = 'BLOCKED';
+    report.motionDatasetExecutable = false;
+    report.pr42ProductTargetExecutionSafeReportStatus = pr42ProductTargetExecutionSafeReport(report, failures);
+    if (report.pr42ProductTargetExecutionSafeReportStatus.status === 'fail') {
+      failures.push({ id: 'pr42ProductTargetExecutionSafeReportStatus.failed', message: 'pr42 product target execution safe report failed' });
+    }
+  }
 
 
 

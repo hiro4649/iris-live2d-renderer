@@ -155,7 +155,7 @@ export function buildTargetBoundedExecutionSafeReport(input = {}) {
   if (bool(input.priority1Resolved)) reasons.push('priority1_resolved_without_real_evidence');
   if (bool(input.motionDatasetExecutable)) reasons.push('motion_dataset_executable_without_rows');
   const exactFailureClass = input.pr42
-    ? 'v106_pr42_shaped_target_bounded_execution_timeout'
+    ? 'v106_pr42_evidence_handoff_incomplete_for_product_target'
     : 'v106_normal_target_bounded_execution_timeout';
   return {
     targetBoundedExecutionSafeReportStatus: fail('targetBoundedExecutionSafeReportStatus', reasons.length ? reasons : [exactFailureClass], {
@@ -177,6 +177,45 @@ export function buildTargetBoundedExecutionSafeReport(input = {}) {
   };
 }
 
+export function buildPr42ProductTargetExecutionSafeReport(input = {}) {
+  const reasons = ['v106_pr42_product_target_execution_reached'];
+  if (bool(input.classificationDocsNeeded)) reasons.push('v106_pr42_classification_docs_exact_scope_needed');
+  if (bool(input.evidenceHandoffIncomplete)) reasons.push('v106_pr42_evidence_handoff_incomplete_for_product_target');
+  if (bool(input.targetTimeout)) reasons.push('pr42_product_target_timeout_not_pass');
+  if (bool(input.noSafeReport)) reasons.push('pr42_product_target_no_safe_report_not_pass');
+  if (bool(input.emptyOutput)) reasons.push('pr42_product_target_empty_output_not_pass');
+  if (bool(input.harnessOnlyExpectedFailureApplied)) reasons.push('pr42_product_target_harness_only_policy_applied');
+  if (bool(input.remoteEvidencePass)) reasons.push('pr42_product_target_remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReady) || bool(input.mergeReady)) reasons.push('pr42_product_target_timeout_merge_ready');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('pr42_product_target_runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('pr42_product_target_production_readiness_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('pr42_product_target_priority1_resolved');
+  if (bool(input.motionDatasetExecutable)) reasons.push('pr42_product_target_motion_dataset_executable');
+  if (bool(input.rawExposure)) reasons.push('pr42_product_target_raw_exposure');
+  const failReasons = reasons.filter((code) => code !== 'v106_pr42_product_target_execution_reached');
+  return {
+    pr42ProductTargetExecutionSafeReportStatus: fromReasons('pr42ProductTargetExecutionSafeReportStatus', failReasons, {
+      reasonCodes: failReasons.length ? reasons : ['v106_pr42_product_target_execution_passed'],
+      exactFailureClass: failReasons[0] || 'none',
+      actionableContractReason: failReasons.length
+        ? 'pr42_product_target_execution_reached_safe_json_with_remaining_real_blocker'
+        : 'pr42_product_target_execution_passed_local_gate_only',
+      allowedNextRepairScope: PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE,
+      forbiddenFiles: PR42_TARGET_BOUNDED_FORBIDDEN_FILES,
+      pendingAfterPush: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+      runtimeReadinessClaimed: false,
+      productionReadinessClaimed: false,
+      priority1Status: 'BLOCKED',
+      motionDatasetExecutable: false,
+      safeNextAction: failReasons.length
+        ? 'repair_v106_pr42_target_evidence_handoff_before_pr42_browser_smoke_or_push'
+        : 'run_pr42_browser_api_smoke_before_pr42_body_update_or_push',
+    }),
+  };
+}
 export function buildDevelopmentLaneSeparationReport(input = {}) {
   const lane = input.lane || 'docs_only_planning';
   const reasons = [];
