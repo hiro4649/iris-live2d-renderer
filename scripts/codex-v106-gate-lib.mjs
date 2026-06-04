@@ -162,8 +162,11 @@ export function buildTargetBoundedExecutionSafeReport(input = {}) {
       exactFailureClass,
       allowedNextRepairScope: PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE,
       forbiddenFiles: PR42_TARGET_BOUNDED_FORBIDDEN_FILES,
+      harnessOnlyNextBlocker: bool(input.pr42),
+      productFilesRequired: false,
+      pr42PushAllowed: false,
       safeNextAction: input.pr42
-        ? 'repair_v106_pr42_target_evidence_handoff_before_pr42_browser_smoke_or_push'
+        ? 'create_owner_confirmed_harness_only_pr_before_pr42_browser_smoke_or_push'
         : 'repair_v106_target_bounded_execution_before_replacement_pr',
       pendingAfterPush: bool(input.pendingAfterPush),
       remoteEvidencePass: false,
