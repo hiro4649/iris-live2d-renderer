@@ -11220,15 +11220,25 @@ async function runTargetHarnessGate() {
 
 
 
+  report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+
+  report.remoteEvidencePass = false;
+
+  report.runtimeReadinessClaimed = false;
+
+  report.productionReadinessClaimed = false;
+
+
+
   report.status = failures.length ? 'fail' : (warnings.length ? 'manual_confirmation_required' : 'pass');
 
 
 
-  report.mergeReady = failures.length === 0 && warnings.length === 0;
+  report.mergeReady = failures.length === 0 && warnings.length === 0 && report.remoteEvidencePass === true;
 
 
 
-  report.targetMergeReady = report.mergeReady;
+  report.targetMergeReady = report.mergeReady && report.remoteEvidencePass === true;
 
 
 
@@ -11739,6 +11749,8 @@ async function runSourceHarnessCoreContractGate() {
     safeSummaryOnly: true,
   };
   report.productCodeChanged = false;
+  report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+  report.remoteEvidencePass = false;
   report.runtimeReadinessClaimed = false;
   report.productionReadinessClaimed = false;
   report.targetRollout = 'not_started';
@@ -11746,6 +11758,7 @@ async function runSourceHarnessCoreContractGate() {
   report.syntheticRepresentativeValidation = report.representativeProductPrValidationStatus?.status === 'pass' ? 'pass' : 'fail';
   report.status = failures.length ? 'fail' : (warnings.length ? 'manual_confirmation_required' : 'pass');
   report.mergeReady = failures.length === 0 && warnings.length === 0;
+  report.targetMergeReady = report.mergeReady && report.remoteEvidencePass === true;
   report.localGate = { status: report.status };
 
   if (jsonReport) console.log(JSON.stringify(report, null, 2));
