@@ -11177,6 +11177,8 @@ async function runTargetHarnessGate() {
   }
   for (let i = warnings.length - 1; i >= 0; i--) {
     if ([
+      'changeClassificationStatus.manual',
+      'classificationCoverageStatus.manual',
       'promptGovernanceStatus.manual',
       'v085StabilityStatus.manual',
       'codeReviewMonitorStatus.manual',
