@@ -100,6 +100,43 @@ function stateFromReasons(statusKey, reasonCodes, payload = {}) {
   return reasonCodes.length ? fail(statusKey, reasonCodes, payload) : pass(statusKey, payload);
 }
 
+export const PR42_TARGET_SAFE_REPORT_ALLOWED_REPAIR_SCOPE = [
+  'scripts/codex-local-quality-gate.mjs',
+  'scripts/codex-v105-gate-lib.mjs',
+  'scripts/codex-v105-self-test.mjs',
+  'docs/process/CODEX_V105_EVAL_CASES.json',
+];
+
+export const PR42_TARGET_SAFE_REPORT_FORBIDDEN_FILES = [
+  'src/**',
+  'test/**',
+  'tests/**',
+  'docs/iris-live2d-renderer/**',
+  'package.json',
+  'package-lock.json',
+  'runtime assets',
+  'SDK/vendor files',
+  'hiro4649/iris',
+];
+
+export function buildPr42TargetSafeReportRepairMetadata(input = {}) {
+  const pendingAfterPush = bool(input.pendingAfterPush);
+  return {
+    actionableContractReason: 'pr42_product_target_requires_pass_or_fixed_safe_failure_with_repair_scope',
+    allowedNextRepairScope: PR42_TARGET_SAFE_REPORT_ALLOWED_REPAIR_SCOPE,
+    forbiddenFiles: PR42_TARGET_SAFE_REPORT_FORBIDDEN_FILES,
+    pendingAfterPush,
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    mergeReady: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetExecutable: false,
+    safeNextAction: 'Repair the harness-only target safe-report contract before PR42 browser/API smoke, PR body update, or push.',
+  };
+}
+
 function hasSecretLike(value) {
   return SECRET_PATTERNS.some((pattern) => pattern.test(String(value || '')));
 }
@@ -164,7 +201,10 @@ export function buildTargetSafeReportContractReport(input = {}) {
   if (bool(input.childNoOutput)) reasons.push('child_process_no_output_fixed_failure');
   if (bool(input.targetTimeout)) reasons.push('target_timeout_fixed_safe_failure');
   if (bool(input.pr42PrePush) && !bool(input.pendingAfterPush)) reasons.push('pr42_prepush_pending_after_push_missing');
-  return { targetSafeReportContractStatus: stateFromReasons('targetSafeReportContractStatus', reasons) };
+  const metadata = bool(input.pr42PrePush) && reasons.length
+    ? buildPr42TargetSafeReportRepairMetadata(input)
+    : {};
+  return { targetSafeReportContractStatus: stateFromReasons('targetSafeReportContractStatus', reasons, metadata) };
 }
 
 export function buildPr73SafeMetadataStatusReport(input = {}) {
