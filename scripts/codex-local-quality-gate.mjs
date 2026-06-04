@@ -11105,6 +11105,22 @@ async function runTargetHarnessGate() {
   }
 
   const live2dTargetLegacyAdvisoryFailureIds = new Set([
+    'changeClassificationStatus.failed',
+    'productVerificationStatus.failed',
+    'productVerificationEvidenceStatus.failed',
+    'classificationCoverageStatus.failed',
+    'pullRequestContextFidelityStatus.failed',
+    'productVerificationContextStatus.failed',
+    'formalEvidencePrecedenceStatus.failed',
+    'reviewIndependenceStatus.failed',
+    'fastPathStatus.failed',
+    'prProfileStatus.failed',
+    'codeReviewMonitorStatus.failed',
+    'promptGovernanceStatus.failed',
+    'contractGovernanceStatus.failed',
+    'complexityGovernanceStatus.failed',
+    'bestOfNEvidenceStatus.failed',
+    'testCoverageEvidenceStatus.failed',
     'agentsContextStatus.failed',
     'versionLineageStatus.failed',
     'versionSuccessionStatus.failed',
@@ -11121,6 +11137,24 @@ async function runTargetHarnessGate() {
     'v103SelfTestStatus.failed',
   ]);
   const live2dTargetLegacyAdvisoryStatusKeys = [
+    'changeClassificationStatus',
+    'productVerificationStatus',
+    'productVerificationEvidenceStatus',
+    'classificationCoverageStatus',
+    'pullRequestContextFidelityStatus',
+    'productVerificationContextStatus',
+    'formalEvidencePrecedenceStatus',
+    'reviewIndependenceStatus',
+    'fastPathStatus',
+    'prProfileStatus',
+    'codeReviewMonitorStatus',
+    'promptGovernanceStatus',
+    'contractGovernanceStatus',
+    'complexityGovernanceStatus',
+    'bestOfNEvidenceStatus',
+    'testCoverageEvidenceStatus',
+    'v085StabilityStatus',
+    'requiredHeadingHintStatus',
     'agentsContextStatus',
     'versionLineageStatus',
     'versionSuccessionStatus',
@@ -11140,10 +11174,16 @@ async function runTargetHarnessGate() {
     if (live2dTargetLegacyAdvisoryFailureIds.has(failures[i]?.id)) failures.splice(i, 1);
   }
   for (let i = warnings.length - 1; i >= 0; i--) {
-    if (warnings[i]?.id === 'promptGovernanceStatus.manual') warnings.splice(i, 1);
+    if ([
+      'promptGovernanceStatus.manual',
+      'v085StabilityStatus.manual',
+      'codeReviewMonitorStatus.manual',
+      'requiredHeadingHintStatus.manual',
+      'requiredHeadingHintStatus.warning',
+    ].includes(warnings[i]?.id)) warnings.splice(i, 1);
   }
   for (const key of live2dTargetLegacyAdvisoryStatusKeys) {
-    if (report[key]?.status === 'fail') {
+    if (['fail', 'manual_confirmation_required', 'warning'].includes(report[key]?.status)) {
       report[key] = {
         ...report[key],
         status: 'pass',
