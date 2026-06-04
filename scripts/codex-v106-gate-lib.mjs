@@ -122,6 +122,61 @@ function hasSecretLike(value) {
   return SECRET_PATTERNS.some((pattern) => pattern.test(String(value || '')));
 }
 
+export const PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE = [
+  'scripts/codex-local-quality-gate.mjs',
+  'scripts/codex-v106-gate-lib.mjs',
+  'scripts/codex-v106-self-test.mjs',
+  'docs/process/CODEX_V106_EVAL_CASES.json',
+];
+
+export const PR42_TARGET_BOUNDED_FORBIDDEN_FILES = [
+  'src/**',
+  'test/**',
+  'tests/**',
+  'docs/iris-live2d-renderer/**',
+  'package.json',
+  'package-lock.json',
+  'runtime assets',
+  'SDK/vendor files',
+  'hiro4649/iris',
+];
+
+export function buildTargetBoundedExecutionSafeReport(input = {}) {
+  const reasons = [];
+  if (bool(input.targetTimeout)) reasons.push('v106_target_timeout_not_pass');
+  if (bool(input.noSafeReport)) reasons.push('v106_target_no_safe_report_not_pass');
+  if (bool(input.emptyOutput)) reasons.push('v106_target_empty_output_not_pass');
+  if (bool(input.noConsolePayload)) reasons.push('v106_target_no_console_payload_not_pass');
+  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('pending_after_push_remote_pass_blocked');
+  if (bool(input.remoteEvidencePass)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReady) || bool(input.mergeReady)) reasons.push('target_merge_ready_without_remote_pass');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('production_readiness_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('priority1_resolved_without_real_evidence');
+  if (bool(input.motionDatasetExecutable)) reasons.push('motion_dataset_executable_without_rows');
+  const exactFailureClass = input.pr42
+    ? 'v106_pr42_shaped_target_bounded_execution_timeout'
+    : 'v106_normal_target_bounded_execution_timeout';
+  return {
+    targetBoundedExecutionSafeReportStatus: fail('targetBoundedExecutionSafeReportStatus', reasons.length ? reasons : [exactFailureClass], {
+      exactFailureClass,
+      allowedNextRepairScope: PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE,
+      forbiddenFiles: PR42_TARGET_BOUNDED_FORBIDDEN_FILES,
+      safeNextAction: input.pr42
+        ? 'repair_v106_pr42_target_evidence_handoff_before_pr42_browser_smoke_or_push'
+        : 'repair_v106_target_bounded_execution_before_replacement_pr',
+      pendingAfterPush: bool(input.pendingAfterPush),
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+      runtimeReadinessClaimed: false,
+      productionReadinessClaimed: false,
+      priority1Status: 'BLOCKED',
+      motionDatasetExecutable: false,
+    }),
+  };
+}
+
 export function buildDevelopmentLaneSeparationReport(input = {}) {
   const lane = input.lane || 'docs_only_planning';
   const reasons = [];

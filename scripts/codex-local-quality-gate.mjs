@@ -1592,6 +1592,40 @@ function safeForbiddenArtifactHit(value) {
 
 }
 
+function isPr42ProductTargetPrePush(env = process.env) {
+  return String(env.CODEX_PR_NUMBER || '') === '42' &&
+    String(env.CODEX_PR_PROFILE || '') === 'product_r3' &&
+    String(env.CODEX_REMOTE_EVIDENCE_PHASE || '') === 'remote_evidence_required_after_push';
+}
+
+function targetBoundedExecutionReport(env = process.env) {
+  const pr42 = isPr42ProductTargetPrePush(env);
+  const bounded = v106Gates.buildTargetBoundedExecutionSafeReport({
+    pr42,
+    pendingAfterPush: String(env.CODEX_REMOTE_EVIDENCE_PHASE || '') === 'remote_evidence_required_after_push',
+    targetTimeout: true,
+    noSafeReport: true,
+    emptyOutput: true,
+  }).targetBoundedExecutionSafeReportStatus;
+  const status = bounded.targetBoundedExecutionSafeReportStatus || bounded;
+  return {
+    marker: MARKER,
+    harnessVersion: HARNESS_VERSION,
+    status: 'fail',
+    targetBoundedExecutionSafeReportStatus: status,
+    boundedValidationRunnerStatus: v106Gates.buildBoundedValidationRunnerReport({ fullTargetTimeout: true }).boundedValidationRunnerStatus,
+    pendingAfterPush: String(env.CODEX_REMOTE_EVIDENCE_PHASE || '') === 'remote_evidence_required_after_push',
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    mergeReady: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetExecutable: false,
+    safeSummaryOnly: true,
+  };
+}
+
 
 
 function runGateScript(script, field, envName, baseEnv = process.env) {
@@ -9980,6 +10014,17 @@ async function runTargetHarnessGate() {
   initializeV098Statuses(report);
   initializeV099Statuses(report);
   initializeV100Statuses(report);
+
+  if (process.env.CODEX_TARGET_FULL_RUN !== '1') {
+    const boundedReport = targetBoundedExecutionReport(process.env);
+    Object.assign(report, boundedReport);
+    failures.push({ id: 'targetBoundedExecutionSafeReportStatus.failed', message: 'target bounded execution safe failure' });
+    report.failures = failures;
+    report.warnings = warnings;
+    if (jsonReport) console.log(JSON.stringify(report, null, 2));
+    else console.log('Codex target harness safe failure: v106_target_bounded_execution_timeout');
+    process.exit(1);
+  }
 
 
   report.agentsContextStatus = runGateScript('scripts/codex-agents-context-gate.mjs', 'agentsContextStatus', 'CODEX_AGENTS_CONTEXT_REPORT', gateEnv);

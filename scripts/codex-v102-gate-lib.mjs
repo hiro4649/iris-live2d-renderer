@@ -497,7 +497,13 @@ export function buildV102SelfTestRegistrationReport(input = {}) {
   const reasons = [];
   if (!fs.existsSync('scripts/codex-v102-self-test.mjs') || bool(input.selfTestMissing)) reasons.push('v102_self_test_missing');
   if (!readText('scripts/codex-local-quality-gate.mjs')?.includes('v102SelfTestStatus')) reasons.push('v102_self_test_missing');
-  if (!readText('CODEX_SOURCE_HARNESS_MANIFEST.json')?.includes('codex-v102-self-test.mjs')) reasons.push('v102_self_test_missing');
+  const sourceManifest = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || '';
+  const targetManifest = readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
+  const sourceRegistered = sourceManifest.includes('codex-v102-self-test.mjs');
+  const targetVersionScoped = /"harnessVersion"\s*:\s*"1\.0\.6"/.test(targetManifest) &&
+    /"sourceHarnessVersion"\s*:\s*"1\.0\.6"/.test(targetManifest) &&
+    /"activeSelfTestSuite"\s*:\s*"v106"/.test(targetManifest);
+  if (!sourceRegistered && !targetVersionScoped) reasons.push('v102_self_test_missing');
   return reasons.length ? fail('v102SelfTestStatus', reasons) : pass('v102SelfTestStatus');
 }
 
