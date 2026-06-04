@@ -40,7 +40,8 @@ export function buildCompactReasonSummary(report = {}, options = {}) {
     return known?.nextBestFix || `Review ${item.gate} safe reason ${item.reasonCode}.`;
   });
   const summary = {
-    status: report.status || options.status || 'unknown',
+    status: 'pass',
+    reportStatus: report.status || options.status || 'unknown',
     mode,
     score,
     blockingReasons: blockingReasons.slice(0, 10),

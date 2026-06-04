@@ -162,7 +162,81 @@ export function buildTargetSafeReportContractReport(input = {}) {
   if (bool(input.emptySafeJson)) reasons.push('empty_safe_json_fixed_failure');
   if (bool(input.finalizerSkipped)) reasons.push('target_finalizer_skipped_fixed_failure');
   if (bool(input.childNoOutput)) reasons.push('child_process_no_output_fixed_failure');
+  if (bool(input.targetTimeout)) reasons.push('target_timeout_fixed_safe_failure');
+  if (bool(input.pr42PrePush) && !bool(input.pendingAfterPush)) reasons.push('pr42_prepush_pending_after_push_missing');
   return { targetSafeReportContractStatus: stateFromReasons('targetSafeReportContractStatus', reasons) };
+}
+
+export function buildPr73SafeMetadataStatusReport(input = {}) {
+  const required = [
+    'reasonSummaryStatus',
+    'versionLineageStatus',
+    'prEvidenceRendererStatus',
+    'safeArtifactClassifierStatus',
+    'securityLifecycleStatus',
+    'reviewIndependenceStatus',
+    'taskBriefCompilerStatus',
+    'bestOfNDecisionStatus',
+    'environmentProfileStatus',
+    'agentsContextBudgetStatus',
+    'evidenceAutoRepairHintStatus',
+  ];
+  const reasons = [];
+  for (const key of required) {
+    if (!bool(input[key])) reasons.push(`${key}_missing`);
+  }
+  if (bool(input.rawLogExposure)) reasons.push('raw_log_exposure');
+  if (bool(input.rawDiffExposure)) reasons.push('raw_diff_exposure');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('production_readiness_claimed');
+  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('pending_after_push_as_remote_pass');
+  if (bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
+  if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
+  return { pr73SafeMetadataStatus: stateFromReasons('pr73SafeMetadataStatus', reasons) };
+}
+
+export function buildReasonSummaryAggregationV105Report(input = {}) {
+  const reasons = [];
+  if (!bool(input.present)) reasons.push('reason_summary_missing');
+  if (bool(input.malformed)) reasons.push('reason_summary_malformed');
+  if (!bool(input.fixedSafeClass)) reasons.push('reason_summary_fixed_safe_class_missing');
+  if (bool(input.targetTimeoutPass)) reasons.push('reason_summary_target_timeout_treated_as_pass');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('reason_summary_runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('reason_summary_production_readiness_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('reason_summary_priority1_resolved');
+  if (bool(input.motionDatasetExecutable)) reasons.push('reason_summary_motion_dataset_executable');
+  if (bool(input.rawLogExposure)) reasons.push('reason_summary_raw_log_exposure');
+  if (bool(input.rawDiffExposure)) reasons.push('reason_summary_raw_diff_exposure');
+  if (bool(input.secretOrPrivateExposure)) reasons.push('reason_summary_secret_or_private_exposure');
+  if (bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
+  if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
+  return { reasonSummaryAggregationV105Status: stateFromReasons('reasonSummaryAggregationV105Status', reasons) };
+}
+
+export function buildExpectedSafeFailurePolicyReport(input = {}) {
+  const reasons = [];
+  const harnessOnly = bool(input.harnessOnly);
+  if (!harnessOnly) reasons.push('expected_safe_failure_not_harness_only');
+  if (!bool(input.reasonSummaryValid)) reasons.push('expected_safe_failure_reason_summary_missing');
+  if (!bool(input.safeArtifactClassifierValid)) reasons.push('expected_safe_failure_classifier_missing');
+  if (!bool(input.targetSafeReportContractFail)) reasons.push('expected_safe_failure_target_contract_not_fail');
+  if (!bool(input.fixedSafeClass)) reasons.push('expected_safe_failure_fixed_class_missing');
+  if (bool(input.targetTimeoutPass)) reasons.push('expected_safe_failure_target_timeout_pass');
+  if (bool(input.noSafeReportPass)) reasons.push('expected_safe_failure_no_safe_report_pass');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('expected_safe_failure_runtime_ready_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('expected_safe_failure_production_ready_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('expected_safe_failure_priority1_resolved');
+  if (bool(input.motionDatasetExecutable)) reasons.push('expected_safe_failure_motion_dataset_executable');
+  if (bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
+  if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
+  if (bool(input.rawExposure)) reasons.push('expected_safe_failure_raw_exposure');
+  if (bool(input.safeSummaryPass) && input.reportStatus !== 'fail') reasons.push('expected_safe_failure_report_status_not_preserved');
+  if (bool(input.safeSummaryPass) && bool(input.pr42Ready)) reasons.push('expected_safe_failure_pr42_ready_claimed');
+  if (bool(input.workflowExitSuccess) && input.reportStatus !== 'fail') reasons.push('expected_safe_failure_exit_without_report_failure');
+  return { expectedSafeFailurePolicyStatus: stateFromReasons('expectedSafeFailurePolicyStatus', reasons) };
 }
 
 export function buildSourceOnlyCompatibilityReport(input = {}) {
