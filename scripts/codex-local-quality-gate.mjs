@@ -10067,12 +10067,41 @@ async function runTargetHarnessGate() {
         'safe_report_missing_fixed_failure',
       ],
       safeSummaryOnly: true,
+      actionableContractReason: 'pr42_product_target_requires_pass_or_fixed_safe_failure_with_repair_scope',
+      allowedNextRepairScope: [
+        'scripts/codex-local-quality-gate.mjs',
+        'scripts/codex-v105-gate-lib.mjs',
+        'scripts/codex-v105-self-test.mjs',
+        'docs/process/CODEX_V105_EVAL_CASES.json',
+      ],
+      forbiddenFiles: [
+        'src/**',
+        'test/**',
+        'tests/**',
+        'docs/iris-live2d-renderer/**',
+        'package.json',
+        'package-lock.json',
+        'runtime assets',
+        'SDK/vendor files',
+        'hiro4649/iris',
+      ],
+      pendingAfterPush: process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push',
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+      runtimeReadinessClaimed: false,
+      productionReadinessClaimed: false,
+      priority1Status: 'BLOCKED',
+      motionDatasetExecutable: false,
+      safeNextAction: 'Repair the harness-only target safe-report contract before PR42 browser/API smoke, PR body update, or push.',
     };
     failures.push({ id: 'targetSafeReportContractStatus.failed', message: 'target safe report contract failed' });
     report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
     report.remoteEvidencePass = false;
     report.runtimeReadinessClaimed = false;
     report.productionReadinessClaimed = false;
+    report.priority1Status = 'BLOCKED';
+    report.motionDatasetExecutable = false;
     report.targetMergeReady = false;
     report.mergeReady = false;
     report.status = 'fail';

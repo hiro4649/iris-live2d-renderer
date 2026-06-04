@@ -213,6 +213,49 @@ const results = CASES.map(([name, builder, input, key, expected, category]) => {
   return { name, category, status: actual === expected ? 'pass' : 'fail', expected, actual, safeSummaryOnly: true };
 });
 
+const pr42TargetContractReport = gates.buildTargetSafeReportContractReport({
+  targetTimeout: true,
+  noSafeReport: true,
+  pr42PrePush: true,
+  pendingAfterPush: true,
+});
+const pr42TargetContract =
+  pr42TargetContractReport.targetSafeReportContractStatus?.targetSafeReportContractStatus ||
+  pr42TargetContractReport.targetSafeReportContractStatus ||
+  {};
+const metadataResults = [
+  [
+    'pr42_product_target_fixed_safe_failure_has_actionable_reason',
+    pr42TargetContract.actionableContractReason === 'pr42_product_target_requires_pass_or_fixed_safe_failure_with_repair_scope',
+    pr42TargetContract.actionableContractReason || 'missing',
+  ],
+  [
+    'pr42_product_target_fixed_safe_failure_has_allowed_scope',
+    Array.isArray(pr42TargetContract.allowedNextRepairScope) && pr42TargetContract.allowedNextRepairScope.includes('scripts/codex-local-quality-gate.mjs'),
+    Array.isArray(pr42TargetContract.allowedNextRepairScope) ? 'present' : 'missing',
+  ],
+  [
+    'pr42_product_target_fixed_safe_failure_has_forbidden_files',
+    Array.isArray(pr42TargetContract.forbiddenFiles) && pr42TargetContract.forbiddenFiles.includes('src/**') && pr42TargetContract.forbiddenFiles.includes('docs/iris-live2d-renderer/**'),
+    Array.isArray(pr42TargetContract.forbiddenFiles) ? 'present' : 'missing',
+  ],
+  ['pr42_product_target_fixed_safe_failure_preserves_pending_after_push', pr42TargetContract.pendingAfterPush === true, String(pr42TargetContract.pendingAfterPush)],
+  ['pr42_product_target_fixed_safe_failure_preserves_remote_evidence_false', pr42TargetContract.remoteEvidencePass === false, String(pr42TargetContract.remoteEvidencePass)],
+  ['pr42_product_target_fixed_safe_failure_preserves_target_merge_ready_false', pr42TargetContract.targetMergeReady === false, String(pr42TargetContract.targetMergeReady)],
+  ['pr42_product_target_fixed_safe_failure_preserves_merge_ready_false', pr42TargetContract.mergeReady === false, String(pr42TargetContract.mergeReady)],
+  ['pr42_product_target_fixed_safe_failure_preserves_runtime_readiness_false', pr42TargetContract.runtimeReadinessClaimed === false, String(pr42TargetContract.runtimeReadinessClaimed)],
+  ['pr42_product_target_fixed_safe_failure_preserves_production_readiness_false', pr42TargetContract.productionReadinessClaimed === false, String(pr42TargetContract.productionReadinessClaimed)],
+  ['pr42_product_target_fixed_safe_failure_preserves_priority1_blocked', pr42TargetContract.priority1Status === 'BLOCKED', pr42TargetContract.priority1Status || 'missing'],
+  ['pr42_product_target_fixed_safe_failure_preserves_motion_dataset_non_executable', pr42TargetContract.motionDatasetExecutable === false, String(pr42TargetContract.motionDatasetExecutable)],
+].map(([name, ok, actual]) => ({
+  name,
+  category: 'target_safe_report_contract',
+  status: ok ? 'pass' : 'fail',
+  expected: 'contract_metadata_present',
+  actual,
+  safeSummaryOnly: true,
+}));
+
 const coveredStatuses = new Set(CASES.map(([, , , key]) => key));
 const coverageFailures = gates.V105_STATUS_KEYS
   .filter((key) => !coveredStatuses.has(key))
@@ -221,7 +264,7 @@ const categoryFailures = requiredCategories
   .filter((category) => !results.some((item) => item.category === category))
   .map((category) => ({ name: `missing_category_${category}`, category, status: 'fail', expected: 'covered', actual: 'missing', safeSummaryOnly: true }));
 
-const allResults = [...results, ...coverageFailures, ...categoryFailures];
+const allResults = [...results, ...metadataResults, ...coverageFailures, ...categoryFailures];
 const failures = allResults.filter((item) => item.status !== 'pass');
 const report = {
   marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.5',
