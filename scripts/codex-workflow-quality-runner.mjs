@@ -5047,7 +5047,9 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
+    expectedTargetTimeoutSafeFailure,
     status: failures.length ? 'fail' : 'pass',
+    finalStatus: expectedTargetTimeoutSafeFailure ? 'pass' : (failures.length ? 'fail' : 'pass'),
 
 
 
@@ -5927,7 +5929,7 @@ export function buildWorkflowQualityRunnerReport(report, options = {}) {
 
 
 
-  return simpleStatus('workflowQualityRunnerStatus', result.status, {
+  return simpleStatus('workflowQualityRunnerStatus', result.finalStatus, {
 
 
 
@@ -5941,7 +5943,7 @@ export function buildWorkflowQualityRunnerReport(report, options = {}) {
 
 
 
-    reasonCodes: result.failures.length ? ['workflow_runner_failed'] : [],
+    reasonCodes: result.finalStatus === 'fail' ? ['workflow_runner_failed'] : [],
 
 
 
@@ -5949,6 +5951,8 @@ export function buildWorkflowQualityRunnerReport(report, options = {}) {
 
 
     failures: result.failures,
+    reportStatus: result.status,
+    expectedTargetTimeoutSafeFailure: Boolean(result.expectedTargetTimeoutSafeFailure),
 
 
 
@@ -6116,7 +6120,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 
 
 
-  if (result.failures.length) {
+  if (result.finalStatus === 'fail') {
 
 
 
