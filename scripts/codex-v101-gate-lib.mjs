@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.5
+// CODEX_QUALITY_HARNESS_FILE v1.0.6
 import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -387,9 +387,7 @@ export function buildV101SelfTestRegistrationReport(input = {}) {
   const reasons = [];
   if (!fs.existsSync('scripts/codex-v101-self-test.mjs') || bool(input.selfTestMissing)) reasons.push('v101_self_test_missing');
   if (!readText('scripts/codex-local-quality-gate.mjs')?.includes('v101SelfTestStatus')) reasons.push('v101_self_test_missing');
-  const sourceManifest = readText('CODEX_SOURCE_HARNESS_MANIFEST.json') || '';
-  const targetManifest = readText('docs/process/CODEX_HARNESS_MANIFEST.json') || '';
-  if (!sourceManifest.includes('codex-v101-self-test.mjs') && !targetManifest.includes('codex-v101-self-test.mjs')) reasons.push('v101_self_test_missing');
+  if (!readText('CODEX_SOURCE_HARNESS_MANIFEST.json')?.includes('codex-v101-self-test.mjs')) reasons.push('v101_self_test_missing');
   return reasons.length ? fail('v101SelfTestStatus', reasons) : pass('v101SelfTestStatus');
 }
 

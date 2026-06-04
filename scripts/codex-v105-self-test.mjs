@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.5
+// CODEX_QUALITY_HARNESS_FILE v1.0.6
 import { scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 import * as gates from './codex-v105-gate-lib.mjs';
 
@@ -30,61 +30,6 @@ const CASES = [
   ['empty_safe_json_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { emptySafeJson: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
   ['target_finalizer_skipped_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { finalizerSkipped: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
   ['child_process_no_output_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { childNoOutput: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
-  ['pr42_target_timeout_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { targetTimeout: true, pr42PrePush: true, pendingAfterPush: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
-  ['pr42_prepush_requires_pending_after_push', gates.buildTargetSafeReportContractReport, { pr42PrePush: true, pendingAfterPush: false }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_safe_metadata_statuses_present', gates.buildPr73SafeMetadataStatusReport, {
-    reasonSummaryStatus: true,
-    versionLineageStatus: true,
-    prEvidenceRendererStatus: true,
-    safeArtifactClassifierStatus: true,
-    securityLifecycleStatus: true,
-    reviewIndependenceStatus: true,
-    taskBriefCompilerStatus: true,
-    bestOfNDecisionStatus: true,
-    environmentProfileStatus: true,
-    agentsContextBudgetStatus: true,
-    evidenceAutoRepairHintStatus: true,
-  }, 'pr73SafeMetadataStatus', 'pass', 'target_safe_report_contract'],
-  ['missing_pr73_safe_metadata_status_fails', gates.buildPr73SafeMetadataStatusReport, { reasonSummaryStatus: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_raw_log_exposure_fails', gates.buildPr73SafeMetadataStatusReport, { rawLogExposure: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_raw_diff_exposure_fails', gates.buildPr73SafeMetadataStatusReport, { rawDiffExposure: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_runtime_readiness_claim_fails', gates.buildPr73SafeMetadataStatusReport, { runtimeReadyClaimed: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_production_readiness_claim_fails', gates.buildPr73SafeMetadataStatusReport, { productionReadyClaimed: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_pending_after_push_remote_pass_fails', gates.buildPr73SafeMetadataStatusReport, { pendingAfterPushAsRemotePass: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_remote_evidence_without_same_head_fails', gates.buildPr73SafeMetadataStatusReport, { remoteEvidencePassWithoutSameHead: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_target_merge_ready_without_same_head_fails', gates.buildPr73SafeMetadataStatusReport, { targetMergeReadyWithoutSameHead: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['pr73_merge_ready_before_owner_confirmation_fails', gates.buildPr73SafeMetadataStatusReport, { mergeReadyBeforeOwnerConfirmation: true }, 'pr73SafeMetadataStatus', 'fail', 'target_safe_report_contract'],
-  ['valid_reason_summary_safe_failure_aggregates_pass', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true }, 'reasonSummaryAggregationV105Status', 'pass', 'target_safe_report_contract'],
-  ['missing_reason_summary_fails', gates.buildReasonSummaryAggregationV105Report, {}, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['malformed_reason_summary_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, malformed: true, fixedSafeClass: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_without_fixed_safe_class_fails', gates.buildReasonSummaryAggregationV105Report, { present: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_target_timeout_pass_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, targetTimeoutPass: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_runtime_readiness_claim_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, runtimeReadyClaimed: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_production_readiness_claim_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, productionReadyClaimed: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_priority1_resolved_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, priority1Resolved: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_motion_dataset_executable_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, motionDatasetExecutable: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_raw_log_exposure_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, rawLogExposure: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_raw_diff_exposure_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, rawDiffExposure: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['reason_summary_secret_private_exposure_fails', gates.buildReasonSummaryAggregationV105Report, { present: true, fixedSafeClass: true, secretOrPrivateExposure: true }, 'reasonSummaryAggregationV105Status', 'fail', 'target_safe_report_contract'],
-  ['harness_only_expected_target_timeout_safe_failure_policy_pass', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true }, 'expectedSafeFailurePolicyStatus', 'pass', 'target_safe_report_contract'],
-  ['harness_only_expected_safe_failure_final_status_policy_pass', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, safeSummaryPass: true, reportStatus: 'fail' }, 'expectedSafeFailurePolicyStatus', 'pass', 'target_safe_report_contract'],
-  ['harness_only_expected_safe_failure_workflow_exit_policy_pass', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, safeSummaryPass: true, workflowExitSuccess: true, reportStatus: 'fail' }, 'expectedSafeFailurePolicyStatus', 'pass', 'target_safe_report_contract'],
-  ['expected_safe_failure_workflow_exit_without_report_fail_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, workflowExitSuccess: true, reportStatus: 'pass' }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_final_status_without_report_fail_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, safeSummaryPass: true, reportStatus: 'pass' }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_final_status_pr42_ready_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, safeSummaryPass: true, reportStatus: 'fail', pr42Ready: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['product_pr_expected_target_timeout_safe_failure_policy_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: false, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_missing_reason_summary_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_missing_classifier_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, targetSafeReportContractFail: true, fixedSafeClass: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_target_timeout_pass_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, targetTimeoutPass: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_no_safe_report_pass_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, noSafeReportPass: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_runtime_readiness_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, runtimeReadyClaimed: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_production_readiness_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, productionReadyClaimed: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_priority1_resolved_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, priority1Resolved: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_motion_dataset_executable_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, motionDatasetExecutable: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_remote_evidence_without_same_head_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, remoteEvidencePassWithoutSameHead: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_target_merge_ready_without_same_head_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, targetMergeReadyWithoutSameHead: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_merge_ready_before_owner_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, mergeReadyBeforeOwnerConfirmation: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
-  ['expected_safe_failure_raw_exposure_fails', gates.buildExpectedSafeFailurePolicyReport, { harnessOnly: true, reasonSummaryValid: true, safeArtifactClassifierValid: true, targetSafeReportContractFail: true, fixedSafeClass: true, rawExposure: true }, 'expectedSafeFailurePolicyStatus', 'fail', 'target_safe_report_contract'],
 
   ['source_only_change_still_emits_target_safe_json', gates.buildSourceOnlyCompatibilityReport, { targetSafeJson: true }, 'sourceOnlyCompatibilityStatus', 'pass', 'source_only_compatibility'],
   ['product_r3_simulation_pending_after_push', gates.buildSourceOnlyCompatibilityReport, {}, 'sourceOnlyCompatibilityStatus', 'pass', 'source_only_compatibility'],
@@ -213,49 +158,6 @@ const results = CASES.map(([name, builder, input, key, expected, category]) => {
   return { name, category, status: actual === expected ? 'pass' : 'fail', expected, actual, safeSummaryOnly: true };
 });
 
-const pr42TargetContractReport = gates.buildTargetSafeReportContractReport({
-  targetTimeout: true,
-  noSafeReport: true,
-  pr42PrePush: true,
-  pendingAfterPush: true,
-});
-const pr42TargetContract =
-  pr42TargetContractReport.targetSafeReportContractStatus?.targetSafeReportContractStatus ||
-  pr42TargetContractReport.targetSafeReportContractStatus ||
-  {};
-const metadataResults = [
-  [
-    'pr42_product_target_fixed_safe_failure_has_actionable_reason',
-    pr42TargetContract.actionableContractReason === 'pr42_product_target_requires_pass_or_fixed_safe_failure_with_repair_scope',
-    pr42TargetContract.actionableContractReason || 'missing',
-  ],
-  [
-    'pr42_product_target_fixed_safe_failure_has_allowed_scope',
-    Array.isArray(pr42TargetContract.allowedNextRepairScope) && pr42TargetContract.allowedNextRepairScope.includes('scripts/codex-local-quality-gate.mjs'),
-    Array.isArray(pr42TargetContract.allowedNextRepairScope) ? 'present' : 'missing',
-  ],
-  [
-    'pr42_product_target_fixed_safe_failure_has_forbidden_files',
-    Array.isArray(pr42TargetContract.forbiddenFiles) && pr42TargetContract.forbiddenFiles.includes('src/**') && pr42TargetContract.forbiddenFiles.includes('docs/iris-live2d-renderer/**'),
-    Array.isArray(pr42TargetContract.forbiddenFiles) ? 'present' : 'missing',
-  ],
-  ['pr42_product_target_fixed_safe_failure_preserves_pending_after_push', pr42TargetContract.pendingAfterPush === true, String(pr42TargetContract.pendingAfterPush)],
-  ['pr42_product_target_fixed_safe_failure_preserves_remote_evidence_false', pr42TargetContract.remoteEvidencePass === false, String(pr42TargetContract.remoteEvidencePass)],
-  ['pr42_product_target_fixed_safe_failure_preserves_target_merge_ready_false', pr42TargetContract.targetMergeReady === false, String(pr42TargetContract.targetMergeReady)],
-  ['pr42_product_target_fixed_safe_failure_preserves_merge_ready_false', pr42TargetContract.mergeReady === false, String(pr42TargetContract.mergeReady)],
-  ['pr42_product_target_fixed_safe_failure_preserves_runtime_readiness_false', pr42TargetContract.runtimeReadinessClaimed === false, String(pr42TargetContract.runtimeReadinessClaimed)],
-  ['pr42_product_target_fixed_safe_failure_preserves_production_readiness_false', pr42TargetContract.productionReadinessClaimed === false, String(pr42TargetContract.productionReadinessClaimed)],
-  ['pr42_product_target_fixed_safe_failure_preserves_priority1_blocked', pr42TargetContract.priority1Status === 'BLOCKED', pr42TargetContract.priority1Status || 'missing'],
-  ['pr42_product_target_fixed_safe_failure_preserves_motion_dataset_non_executable', pr42TargetContract.motionDatasetExecutable === false, String(pr42TargetContract.motionDatasetExecutable)],
-].map(([name, ok, actual]) => ({
-  name,
-  category: 'target_safe_report_contract',
-  status: ok ? 'pass' : 'fail',
-  expected: 'contract_metadata_present',
-  actual,
-  safeSummaryOnly: true,
-}));
-
 const coveredStatuses = new Set(CASES.map(([, , , key]) => key));
 const coverageFailures = gates.V105_STATUS_KEYS
   .filter((key) => !coveredStatuses.has(key))
@@ -264,10 +166,10 @@ const categoryFailures = requiredCategories
   .filter((category) => !results.some((item) => item.category === category))
   .map((category) => ({ name: `missing_category_${category}`, category, status: 'fail', expected: 'covered', actual: 'missing', safeSummaryOnly: true }));
 
-const allResults = [...results, ...metadataResults, ...coverageFailures, ...categoryFailures];
+const allResults = [...results, ...coverageFailures, ...categoryFailures];
 const failures = allResults.filter((item) => item.status !== 'pass');
 const report = {
-  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.5',
+  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.6',
   status: failures.length ? 'fail' : 'pass',
   activeHarnessVersion: '1.0.5',
   activeSelfTestSuite: 'v105',

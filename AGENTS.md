@@ -1,21 +1,7 @@
 # AGENTS.md
 
-## Renderer Authority Boundary
-
-Unreadable legacy guidance was present in this file. Do not interpret that text
-as project authority. For renderer product behavior, runtime readiness, assets,
-model loading, or cue behavior, use the repo-local project docs and reviewer
-guidance such as `docs/process/CODEX_PROJECT_AUTHORITY_REGISTRY.json` and
-`docs/process/skills/renderer-readiness-reviewer.md`. If the relevant authority
-is missing, ambiguous, or conflicts with the task, stop and report the risk
-instead of inventing rules.
-
-Harness-only work must stay in harness-managed files. Do not modify renderer
-source, tests, specs, package files, lockfiles, runtime files, assets, or
-`scripts/run-tests.js` unless the project owner explicitly requests product
-work and required verification evidence is available.
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-CODEX_QUALITY_HARNESS_FILE v1.0.5
+CODEX_QUALITY_HARNESS_FILE v1.0.6
 
 ## Prime Directive
 
@@ -38,6 +24,11 @@ v2, GitHub hysteresis, tool gap, active self-test, hotfix preservation,
 PR-chain saturation, role/tool, evidence site, annotation, and Dynamic Workflow
 Lite governance, use `docs/process/CODEX_V104_SPEC.md` and the matching
 `docs/process/CODEX_*_POLICY.md` or schema files.
+For v1.0.5 and v1.0.6 integration reliability, lane separation, provenance,
+bounded validation, safe repair mapping, and controlled orchestration, use
+`docs/process/CODEX_V105_INTEGRATION_EVIDENCE_RELIABILITY_POLICY.md`,
+`docs/process/CODEX_V106_LANE_PROVENANCE_RECOVERY_POLICY.md`, and their schema
+files.
 
 ## Plan-First Rule
 

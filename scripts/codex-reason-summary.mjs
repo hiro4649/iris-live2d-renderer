@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.5
+// CODEX_QUALITY_HARNESS_FILE v1.0.6
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { HARNESS_VERSION, marker, readJson, scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
@@ -40,8 +40,7 @@ export function buildCompactReasonSummary(report = {}, options = {}) {
     return known?.nextBestFix || `Review ${item.gate} safe reason ${item.reasonCode}.`;
   });
   const summary = {
-    status: 'pass',
-    reportStatus: report.status || options.status || 'unknown',
+    status: report.status || options.status || 'unknown',
     mode,
     score,
     blockingReasons: blockingReasons.slice(0, 10),

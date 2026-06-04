@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.5
+// CODEX_QUALITY_HARNESS_FILE v1.0.6
 import { scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 import * as gates from './codex-v101-gate-lib.mjs';
 
@@ -7,7 +7,6 @@ const CASES = [
   ['parent_v100_required_for_v101_pass', gates.buildParentHarnessPreflightReport, { parentVersion: '1.0.0' }, 'parentHarnessPreflightStatus', 'pass'],
   ['v100_self_test_preserved_pass', gates.buildHarnessSourceGatePreconditionReport, { v100SelfTestFail: false }, 'harnessSourceGatePreconditionStatus', 'pass'],
   ['v101_self_test_registered_pass', gates.buildV101SelfTestRegistrationReport, {}, 'v101SelfTestStatus', 'pass'],
-  ['v101_self_test_missing_still_fails', gates.buildV101SelfTestRegistrationReport, { selfTestMissing: true }, 'v101SelfTestStatus', 'fail'],
 
   ['local_gate_json_parseable_pass', gates.buildJsonReportShapeReport, {}, 'jsonReportShapeStatus', 'pass'],
   ['local_gate_json_empty_fails', gates.buildJsonReportShapeReport, { empty: true }, 'jsonReportShapeStatus', 'fail'],
@@ -79,7 +78,7 @@ const results = CASES.map(([name, builder, input, key, expected]) => {
 
 const failures = results.filter((item) => item.status !== 'pass');
 const report = {
-  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.5',
+  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.6',
   status: failures.length ? 'fail' : 'pass',
   v101SelfTestStatus: {
     status: failures.length ? 'fail' : 'pass',

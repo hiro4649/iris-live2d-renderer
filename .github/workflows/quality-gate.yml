@@ -1,4 +1,4 @@
-# CODEX_QUALITY_HARNESS_FILE v1.0.5
+# CODEX_QUALITY_HARNESS_FILE v1.0.6
 name: quality-gate
 
 on:
@@ -79,6 +79,7 @@ jobs:
           CODEX_PR_NUMBER: ${{ github.event.pull_request.number || '' }}
           CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
           CODEX_REPOSITORY: ${{ github.repository }}
+          CODEX_DEV_MODE: "5_5_LOW"
           CODEX_LIFEBOAT_PATH: ${{ runner.temp }}/codex-minimal-safe-failure.json
         run: |
           node scripts/codex-artifact-lifeboat.mjs > "$RUNNER_TEMP/codex-artifact-lifeboat.json" || true
@@ -109,6 +110,7 @@ jobs:
           CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           CODEX_PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
           CODEX_REPOSITORY: ${{ github.repository }}
+          CODEX_DEV_MODE: "5_5_LOW"
         run: |
           set -euo pipefail
           echo "CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH=$RUNNER_TEMP/codex-product-verification-evidence.remote.json" >> "$GITHUB_ENV"
@@ -153,6 +155,7 @@ jobs:
           CODEX_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
           CODEX_PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
           CODEX_REPOSITORY: ${{ github.repository }}
+          CODEX_DEV_MODE: "5_5_LOW"
           CODEX_LIFEBOAT_PATH: ${{ runner.temp }}/codex-minimal-safe-failure.json
           GITHUB_TOKEN: ${{ github.token }}
         run: |
