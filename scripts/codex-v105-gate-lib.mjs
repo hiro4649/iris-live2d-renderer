@@ -162,6 +162,8 @@ export function buildTargetSafeReportContractReport(input = {}) {
   if (bool(input.emptySafeJson)) reasons.push('empty_safe_json_fixed_failure');
   if (bool(input.finalizerSkipped)) reasons.push('target_finalizer_skipped_fixed_failure');
   if (bool(input.childNoOutput)) reasons.push('child_process_no_output_fixed_failure');
+  if (bool(input.targetTimeout)) reasons.push('target_timeout_fixed_safe_failure');
+  if (bool(input.pr42PrePush) && !bool(input.pendingAfterPush)) reasons.push('pr42_prepush_pending_after_push_missing');
   return { targetSafeReportContractStatus: stateFromReasons('targetSafeReportContractStatus', reasons) };
 }
 

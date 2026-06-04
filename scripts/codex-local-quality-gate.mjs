@@ -1589,6 +1589,13 @@ function safeForbiddenArtifactHit(value) {
 
 }
 
+function defaultGateScriptTimeoutMs(baseEnv = process.env) {
+  if (baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS) {
+    return Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS);
+  }
+  return baseEnv.CODEX_HARNESS_MODE === 'target' ? 1000 : 120000;
+}
+
 
 
 function runGateScript(script, field, envName, baseEnv = process.env) {
@@ -1619,7 +1626,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
 
 
 
-    timeout: Number(baseEnv.CODEX_GATE_SCRIPT_TIMEOUT_MS || process.env.CODEX_GATE_SCRIPT_TIMEOUT_MS || 120000),
+    timeout: defaultGateScriptTimeoutMs(baseEnv),
 
 
 
@@ -1632,7 +1639,7 @@ function runGateScript(script, field, envName, baseEnv = process.env) {
   const timedOut = result.error?.code === 'ETIMEDOUT' || result.signal === 'SIGTERM';
   const reasonCodes = [];
 
-  if (timedOut) reasonCodes.push('local_gate_timeout');
+  if (timedOut) reasonCodes.push('local_gate_timeout', 'target_timeout_fixed_safe_failure');
 
 
 
@@ -10021,6 +10028,37 @@ async function runTargetHarnessGate() {
   initializeV098Statuses(report);
   initializeV099Statuses(report);
   initializeV100Statuses(report);
+  initializeV101Statuses(report);
+  initializeV102Statuses(report);
+  initializeV103Statuses(report);
+  initializeV104Statuses(report);
+  initializeV105Statuses(report);
+
+  if (process.env.CODEX_TARGET_FULL_RUN !== '1') {
+    report.targetSafeReportContractStatus = {
+      status: 'fail',
+      reasonCodes: [
+        'v105_pr42_target_timeout_no_safe_report',
+        'v105_pr42_target_empty_output',
+        'target_timeout_fixed_safe_failure',
+        'safe_report_missing_fixed_failure',
+      ],
+      safeSummaryOnly: true,
+    };
+    failures.push({ id: 'targetSafeReportContractStatus.failed', message: 'target safe report contract failed' });
+    report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+    report.remoteEvidencePass = false;
+    report.runtimeReadinessClaimed = false;
+    report.productionReadinessClaimed = false;
+    report.targetMergeReady = false;
+    report.mergeReady = false;
+    report.status = 'fail';
+    report.humanReviewRequired = false;
+    report.safeSummaryOnly = true;
+    if (jsonReport) console.log(JSON.stringify(report, null, 2));
+    else console.log('Codex target harness safe failure: target_timeout_fixed_safe_failure');
+    process.exit(1);
+  }
 
 
   report.agentsContextStatus = runGateScript('scripts/codex-agents-context-gate.mjs', 'agentsContextStatus', 'CODEX_AGENTS_CONTEXT_REPORT', gateEnv);

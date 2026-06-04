@@ -30,6 +30,8 @@ const CASES = [
   ['empty_safe_json_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { emptySafeJson: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
   ['target_finalizer_skipped_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { finalizerSkipped: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
   ['child_process_no_output_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { childNoOutput: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
+  ['pr42_target_timeout_emits_fixed_safe_failure', gates.buildTargetSafeReportContractReport, { targetTimeout: true, pr42PrePush: true, pendingAfterPush: true }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
+  ['pr42_prepush_requires_pending_after_push', gates.buildTargetSafeReportContractReport, { pr42PrePush: true, pendingAfterPush: false }, 'targetSafeReportContractStatus', 'fail', 'target_safe_report_contract'],
 
   ['source_only_change_still_emits_target_safe_json', gates.buildSourceOnlyCompatibilityReport, { targetSafeJson: true }, 'sourceOnlyCompatibilityStatus', 'pass', 'source_only_compatibility'],
   ['product_r3_simulation_pending_after_push', gates.buildSourceOnlyCompatibilityReport, {}, 'sourceOnlyCompatibilityStatus', 'pass', 'source_only_compatibility'],
