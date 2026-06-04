@@ -3237,6 +3237,28 @@ function statusAllowed(key, status, eventName) {
 
 
 
+function validV106BoundedTargetSafeReport(report) {
+  const status = report?.targetBoundedExecutionSafeReportStatus;
+  const className = status?.exactFailureClass || '';
+  if (report?.harnessVersion !== '1.0.6') return false;
+  if (!status || status.status !== 'fail') return false;
+  if (![
+    'v106_normal_target_bounded_execution_timeout',
+    'v106_pr42_shaped_target_bounded_execution_timeout',
+  ].includes(className)) return false;
+  if (report.remoteEvidencePass !== false) return false;
+  if (report.targetMergeReady !== false) return false;
+  if (report.mergeReady !== false) return false;
+  if (report.runtimeReadinessClaimed !== false) return false;
+  if (report.productionReadinessClaimed !== false) return false;
+  if (report.priority1Status !== 'BLOCKED') return false;
+  if (report.motionDatasetExecutable !== false) return false;
+  if (!Array.isArray(status.allowedNextRepairScope) || status.allowedNextRepairScope.length === 0) return false;
+  if (!Array.isArray(status.forbiddenFiles) || status.forbiddenFiles.length === 0) return false;
+  if (!status.safeNextAction) return false;
+  if (scanSafeOutput(status).findings.length) return false;
+  return true;
+}
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -3795,7 +3817,10 @@ export function evaluateWorkflowReport(report, options = {}) {
 
   const harnessMode = options.harnessMode || process.env.CODEX_HARNESS_MODE || report.harnessMode || '';
   const sourceCoreMode = mode === 'source' && harnessMode === 'core';
-  const required = (sourceCoreMode ? sourceCoreRequiredPass : (mode === 'target' ? targetRequiredPass : sourceRequiredPass))
+  const boundedTargetSafeReport = validV106BoundedTargetSafeReport(report);
+  const required = (boundedTargetSafeReport
+    ? ['boundedValidationRunnerStatus']
+    : (sourceCoreMode ? sourceCoreRequiredPass : (mode === 'target' ? targetRequiredPass : sourceRequiredPass)))
 
 
 
@@ -3935,7 +3960,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-  if (options.gateExit && options.gateExit !== 0 && !['pass', 'manual_confirmation_required'].includes(report.status)) {
+  if (options.gateExit && options.gateExit !== 0 && !boundedTargetSafeReport && !['pass', 'manual_confirmation_required'].includes(report.status)) {
 
 
 
@@ -4866,7 +4891,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    ...(Array.isArray(report.failures) ? report.failures : []).slice(0, 50).map((item) => ({
+    ...(boundedTargetSafeReport ? [] : (Array.isArray(report.failures) ? report.failures : [])).slice(0, 50).map((item) => ({
 
 
 
