@@ -103,6 +103,24 @@
       "notes": "Known dev server entrypoint, not a Codex harness script."
     },
     {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md",
+      "classification": "product_relevant",
+      "surface": "product_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Expected PR42 loader provisioning preflight documentation; product-relevant and not a global docs allowlist."
+    },
+    {
+      "pathPattern": "docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md",
+      "classification": "product_relevant",
+      "surface": "product_docs",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Expected PR42 renderer schedule documentation; product-relevant and not a global docs allowlist."
+    },
+    {
       "pathPattern": "src/**",
       "classification": "product_source",
       "surface": "runtime",

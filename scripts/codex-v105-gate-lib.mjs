@@ -279,6 +279,36 @@ export function buildExpectedSafeFailurePolicyReport(input = {}) {
   return { expectedSafeFailurePolicyStatus: stateFromReasons('expectedSafeFailurePolicyStatus', reasons) };
 }
 
+export function buildPr42ProductTargetExecutionReport(input = {}) {
+  const reasons = [];
+  if (bool(input.targetTimeout)) reasons.push('pr42_product_target_timeout_not_pass');
+  if (bool(input.noSafeReport)) reasons.push('pr42_product_target_no_safe_report_not_pass');
+  if (bool(input.emptyOutput)) reasons.push('pr42_product_target_empty_output_not_pass');
+  if (bool(input.harnessOnlyExpectedFailureApplied)) reasons.push('pr42_product_target_harness_only_policy_applied');
+  if (bool(input.mergeReady) || bool(input.targetMergeReady)) reasons.push('pr42_product_target_timeout_merge_ready');
+  if (!bool(input.pendingAfterPush)) reasons.push('pr42_product_target_pending_after_push_missing');
+  if (bool(input.remoteEvidencePass)) reasons.push('pr42_product_target_remote_evidence_pass_without_same_head');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('pr42_product_target_runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('pr42_product_target_production_readiness_claimed');
+  if (bool(input.priority1Resolved)) reasons.push('pr42_product_target_priority1_resolved');
+  if (bool(input.motionDatasetExecutable)) reasons.push('pr42_product_target_motion_dataset_executable');
+  if (bool(input.classificationUnknownSuppressed)) reasons.push('pr42_product_target_classification_unknown_suppressed');
+  if (!bool(input.expectedDocsClassified)) reasons.push('pr42_product_target_expected_docs_not_classified');
+  if (bool(input.rawExposure)) reasons.push('pr42_product_target_raw_exposure');
+  return {
+    pr42ProductTargetExecutionStatus: stateFromReasons('pr42ProductTargetExecutionStatus', reasons, {
+      pendingAfterPush: bool(input.pendingAfterPush),
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+      runtimeReadinessClaimed: false,
+      productionReadinessClaimed: false,
+      priority1Status: 'BLOCKED',
+      motionDatasetExecutable: false,
+    }),
+  };
+}
+
 export function buildSourceOnlyCompatibilityReport(input = {}) {
   const reasons = [];
   if (!bool(input.targetSafeJson ?? true)) reasons.push('source_only_target_safe_json_missing');
