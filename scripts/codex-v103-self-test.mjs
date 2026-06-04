@@ -7,6 +7,7 @@ const CASES = [
   ['parent_v102_required_for_v103_pass', gates.buildActiveSelfTestArtifactSourceReport, {}, 'activeSelfTestArtifactSourceStatus', 'pass'],
   ['v102_self_test_preserved_pass', gates.buildReasonSummaryFinalAggregationReport, {}, 'reasonSummaryFinalAggregationStatus', 'pass'],
   ['v103_self_test_registered_pass', gates.buildV103SelfTestRegistrationReport, {}, 'v103SelfTestStatus', 'pass'],
+  ['v103_self_test_missing_still_fails', gates.buildV103SelfTestRegistrationReport, { selfTestMissing: true }, 'v103SelfTestStatus', 'fail'],
 
   ['reason_summary_final_aggregation_pass', gates.buildReasonSummaryFinalAggregationReport, {}, 'reasonSummaryFinalAggregationStatus', 'pass'],
   ['target_quality_pass_final_status_pass', gates.buildReasonSummaryFinalAggregationReport, { targetQualityScoreStatus: 'pass', reportStatus: 'pass' }, 'reasonSummaryFinalAggregationStatus', 'pass'],

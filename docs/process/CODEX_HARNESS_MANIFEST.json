@@ -178,5 +178,11 @@
     "productPrMergeReadyByRollout": false
   },
   "safeSummaryOnly": true,
-  "targetRepoMode": true
+  "targetRepoMode": true,
+  "legacySelfTestScripts": [
+    "scripts/codex-v101-self-test.mjs",
+    "scripts/codex-v102-self-test.mjs",
+    "scripts/codex-v103-self-test.mjs",
+    "scripts/codex-v104-self-test.mjs"
+  ]
 }
