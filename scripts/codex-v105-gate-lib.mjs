@@ -167,6 +167,35 @@ export function buildTargetSafeReportContractReport(input = {}) {
   return { targetSafeReportContractStatus: stateFromReasons('targetSafeReportContractStatus', reasons) };
 }
 
+export function buildPr73SafeMetadataStatusReport(input = {}) {
+  const required = [
+    'reasonSummaryStatus',
+    'versionLineageStatus',
+    'prEvidenceRendererStatus',
+    'safeArtifactClassifierStatus',
+    'securityLifecycleStatus',
+    'reviewIndependenceStatus',
+    'taskBriefCompilerStatus',
+    'bestOfNDecisionStatus',
+    'environmentProfileStatus',
+    'agentsContextBudgetStatus',
+    'evidenceAutoRepairHintStatus',
+  ];
+  const reasons = [];
+  for (const key of required) {
+    if (!bool(input[key])) reasons.push(`${key}_missing`);
+  }
+  if (bool(input.rawLogExposure)) reasons.push('raw_log_exposure');
+  if (bool(input.rawDiffExposure)) reasons.push('raw_diff_exposure');
+  if (bool(input.runtimeReadyClaimed)) reasons.push('runtime_readiness_claimed');
+  if (bool(input.productionReadyClaimed)) reasons.push('production_readiness_claimed');
+  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('pending_after_push_as_remote_pass');
+  if (bool(input.remoteEvidencePassWithoutSameHead)) reasons.push('remote_evidence_pass_without_same_head');
+  if (bool(input.targetMergeReadyWithoutSameHead)) reasons.push('target_merge_ready_without_same_head');
+  if (bool(input.mergeReadyBeforeOwnerConfirmation)) reasons.push('merge_ready_before_owner_confirmation');
+  return { pr73SafeMetadataStatus: stateFromReasons('pr73SafeMetadataStatus', reasons) };
+}
+
 export function buildSourceOnlyCompatibilityReport(input = {}) {
   const reasons = [];
   if (!bool(input.targetSafeJson ?? true)) reasons.push('source_only_target_safe_json_missing');
