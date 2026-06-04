@@ -9031,6 +9031,8 @@ async function runSourceHarnessGate() {
     'goldenSetStatus.failed',
     'newHarnessSelfTestStatus.failed',
     'v080SelfTestStatus.failed',
+    'v081SelfTestStatus.failed',
+    'v082SelfTestStatus.failed',
     'v087SelfTestStatus.failed',
     'v092SelfTestStatus.failed',
     'v100SelfTestStatus.failed',
@@ -9047,6 +9049,8 @@ async function runSourceHarnessGate() {
     'goldenSetStatus',
     'newHarnessSelfTestStatus',
     'v080SelfTestStatus',
+    'v081SelfTestStatus',
+    'v082SelfTestStatus',
     'v087SelfTestStatus',
     'v092SelfTestStatus',
     'v100SelfTestStatus',
@@ -10129,6 +10133,54 @@ async function runTargetHarnessGate() {
   runV101Gates(report, gateEnv);
   runV102Gates(report, gateEnv);
   runV103Gates(report, gateEnv);
+  runV104Gates(report, gateEnv);
+  runV105Gates(report, gateEnv);
+  runV106Gates(report, gateEnv);
+
+  for (const key of [
+    'pr42RealPathParityStatus',
+    'productPrSafeMetadataSchemaStatus',
+    'productPrEvidenceGeneratorStatus',
+    'childProcessBoundaryCommonLibStatus',
+    'pr42RecoveryAutopilotStatus',
+    'live2dRealEvidenceCollectorSpecStatus',
+    'motionDatasetRowAuditRunnerStatus',
+    'cubismCoreRouteGuardStatus',
+    'live2dClaimToCodeBoundaryStatus',
+    'live2dArchitectureBoundaryLintStatus',
+    'live2dAcceptanceCriteriaMatrixStatus',
+    'live2dRiskGateStatus',
+    'live2dEvidenceReportStatus',
+    'live2dToolPermissionBoundaryStatus',
+    'live2dRendererReadinessBoundaryStatus',
+    'live2dMotionDatasetFutureLabelBoundaryStatus',
+    'live2dTargetSafeReportContractStatus',
+    'live2dSourceOnlyCompatibilityStatus',
+    'live2dEvidenceSingleSourceStatus',
+    'live2dTaskSizeAdvisorStatus',
+    'live2dPr42NoSafeReportPreventionStatus',
+    'live2dPr42GovernanceToRecoveryTranslatorStatus',
+    'live2dProductPrEvidenceSchemaV2Status',
+    'live2dSafeReportFinalizerStatus',
+    'live2dDatasetActualRowBoundaryStatus',
+    'live2dTrustedLoaderFutureBoundaryStatus',
+    'live2dCubismCoreRouteNotReadyStatus',
+    'live2dProductR3SchemaV2Status',
+    'live2dRealpathSimulationParityStatus',
+    'live2dSafeFailToNextActionMapperStatus',
+    'live2dEvidenceHandoffStatus',
+    'live2dTargetSafeReportContractV2Status',
+    'live2dRealEvidenceCollectorV2Status',
+    'live2dMotionDatasetRowAuditV2Status',
+    'live2dClassificationWarningDisambiguatorStatus',
+    'live2dControlledSubthreadBoundaryStatus',
+  ]) {
+    report[key] = {
+      status: 'policy_registered',
+      reasonCodes: ['live2d_target_policy_registered'],
+      safeSummaryOnly: true,
+    };
+  }
 
 
   report.workflowPreflightStatus = runGateScript('scripts/codex-workflow-preflight.mjs', 'workflowPreflightStatus', 'CODEX_WORKFLOW_PREFLIGHT_REPORT', gateEnv);
@@ -11091,6 +11143,9 @@ async function runTargetHarnessGate() {
 
 
     v092SelfTestStatus: report.v092SelfTestStatus,
+    ...Object.fromEntries(V104_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V105_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V106_STATUS_KEYS.map((key) => [key, report[key]])),
 
 
 
@@ -11130,6 +11185,8 @@ async function runTargetHarnessGate() {
     'goldenSetStatus.failed',
     'newHarnessSelfTestStatus.failed',
     'v080SelfTestStatus.failed',
+    'v081SelfTestStatus.failed',
+    'v082SelfTestStatus.failed',
     'v087SelfTestStatus.failed',
     'v092SelfTestStatus.failed',
     'v100SelfTestStatus.failed',
@@ -11165,6 +11222,8 @@ async function runTargetHarnessGate() {
     'goldenSetStatus',
     'newHarnessSelfTestStatus',
     'v080SelfTestStatus',
+    'v081SelfTestStatus',
+    'v082SelfTestStatus',
     'v087SelfTestStatus',
     'v092SelfTestStatus',
     'v100SelfTestStatus',
