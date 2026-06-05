@@ -134,6 +134,7 @@ export const V107_STATUS_KEYS = [
   'artifactUploadIntegrityStatus',
   'negativeFixtureStatus',
   'bypassPhraseScanStatus',
+  'targetHarnessWorkspaceMutationStatus',
 ];
 
 export const V107_REPO_STATUS_KEYS = [
@@ -554,6 +555,26 @@ export function buildSecurityAndSelfProtectionReport(input = {}) {
   };
 }
 
+export function buildTargetHarnessWorkspaceMutationReport(input = {}) {
+  const reasons = [];
+  if (input.branchChanged) reasons.push('target_harness_branch_mutation_detected');
+  if (input.headChanged) reasons.push('target_harness_head_mutation_detected');
+  if (input.trackedFilesChanged) reasons.push('target_harness_tracked_file_mutation_detected');
+  if (input.timeoutTreatedAsPass) reasons.push('target_timeout_not_pass');
+  if (input.noSafeReportTreatedAsPass) reasons.push('no_safe_report_not_pass');
+  if (input.pendingAfterPushTreatedAsRemotePass) reasons.push('pending_after_push_not_remote_pass');
+  if (input.remoteEvidencePassWithoutSameHead) reasons.push('remote_evidence_requires_same_head');
+  if (input.targetMergeReadyWithoutSameHead) reasons.push('target_merge_ready_requires_same_head');
+  if (input.mergeReadyBeforeOwnerConfirmation) reasons.push('merge_ready_requires_owner_confirmation');
+  if (input.runtimeReadinessClaimed) reasons.push('runtime_readiness_not_claimed');
+  if (input.productionReadinessClaimed) reasons.push('production_readiness_not_claimed');
+  if (input.priority1Resolved) reasons.push('priority1_must_remain_blocked');
+  if (input.motionDatasetExecutable) reasons.push('motion_dataset_not_executable');
+  return reasons.length
+    ? typedStatus('targetHarnessWorkspaceMutationStatus', 'fail', { blocking: true, reasonCodes: reasons })
+    : pass('targetHarnessWorkspaceMutationStatus', { safeSummary: { workspaceMutationBlocked: true } });
+}
+
 export function buildRepoSpecificRegistrationReports() {
   return Object.fromEntries(V107_REPO_STATUS_KEYS.map((key) => [key, typedStatus(key, 'policy_registered', { blocking: false, safeSummary: { registration: 'policy_registered' } })[key]]));
 }
@@ -579,6 +600,7 @@ export function buildDefaultV107Reports(input = {}) {
     ...buildTraceToEvalReport({}),
     ...buildModerationAndAsrReport({}),
     ...buildSecurityAndSelfProtectionReport({}),
+    ...buildTargetHarnessWorkspaceMutationReport({}),
     ...buildRepoSpecificRegistrationReports(),
   };
   report.v107SelfTestStatus = typedStatus('v107SelfTestStatus', 'pass', {
