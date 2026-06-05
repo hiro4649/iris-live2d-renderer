@@ -128,3 +128,15 @@ Candidate presence remains diagnostic only. Unknown loader kinds, future-only lo
 This preflight does not bundle, download, redistribute, commit, or quote Cubism SDK or vendor files. It must not expose raw loader candidates, loader errors, SDK paths, endpoint values, token values, model paths, motion paths, raw cue payloads, raw renderer payloads, or raw evidence bodies.
 
 The preflight does not make `renderer_ready`, `model_loaded`, `scene_loaded`, or `browser_cue_delivery_ready` true, does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable. Future trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and owner confirmation.
+
+## Trusted Loader Enablement Gate
+
+`LIVE2D-TRUSTED-LOADER-ENABLEMENT-GATE1` is a fail-closed safety preflight for future trusted loader enablement. It does not enable the trusted loader allowlist, does not trust any loader, and does not execute any loader candidate.
+
+The gate exposes only safe labels for enablement status, blocked reason, required prerequisites, missing prerequisites, route guard status, real evidence status, owner confirmation status, license status, candidate kind status, allowlist status, freshness status, safe next action, and readiness claim status.
+
+The route guard, real evidence collector, trusted loader allowlist preflight, fresh real evidence, owner confirmation, license boundary, known supported loader kind, safe public summaries, no raw path exposure, no env value exposure, no raw loader candidate exposure, and no SDK/vendor exposure remain required prerequisites. Missing, fixture, dry-run, stale, unknown-loader, future-only, license-attention, allowlist-disabled, priority1-unresolved, or motion-dataset-non-executable states remain blocked.
+
+The gate does not bundle, download, redistribute, commit, copy, or quote Cubism SDK or vendor files. Owner-provided file values remain private, and public summaries may expose only environment names and safe status labels.
+
+The gate does not make `renderer_ready`, `model_loaded`, `scene_loaded`, or `browser_cue_delivery_ready` true, does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable. Future actual trusted loader enablement still requires a separate owner-confirmed PR with fresh real evidence and owner confirmation.
