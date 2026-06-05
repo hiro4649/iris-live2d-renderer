@@ -75,6 +75,16 @@ production_readiness_claimed: no
 - Readiness: provisioning does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, or production readiness.
 - Next gate: a later PR may enable a trusted loader kind only with license/provisioning confirmation, owner approval, and same-head tests.
 
+## Inserted Preflight: LIVE2D-CUBISM-CORE-ROUTE-GUARD9
+
+- Position: after loader provisioning and before trusted loader allowlist work.
+- Scope: harden `/renderer/cubism-core.js` with loopback/local route guard and safe owner-provided Cubism Core candidate handling.
+- License boundary: Cubism SDK / Core files remain owner-provided licensed material outside the repo; this repo must not download, redistribute, commit, or quote vendor files.
+- Privacy boundary: env values and local file locations stay private; public route statuses expose only env names and safe labels.
+- Allowlist: trusted loader allowlist remains disabled; route guard does not make a loader trusted.
+- Readiness: route guard does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, or production readiness.
+- Next gate: trusted loader allowlist and Live2D real evidence collector require separate owner-confirmed PRs.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。
