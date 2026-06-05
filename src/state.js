@@ -106,7 +106,9 @@ export function createRendererState({
           browser_cue_delivery_ready: heartbeatStatus.browser_cue_delivery_ready,
           last_cue_applied: heartbeatStatus.last_cue_applied,
           last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
+          live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         },
+        live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -149,6 +151,7 @@ export function createRendererState({
         trusted_loader_policy_gate: status.renderer_health.trusted_loader_policy_gate,
         trusted_loader_ready_candidate: status.renderer_health.trusted_loader_ready_candidate,
         trusted_loader_error_kind: status.renderer_health.trusted_loader_error_kind,
+        live2d_evidence_summary: status.renderer_health.live2d_evidence_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -217,6 +220,7 @@ export function createRendererState({
     },
 
     browserRuntimeConfig() {
+      const heartbeatStatus = getHeartbeatStatus(state, now());
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -229,6 +233,7 @@ export function createRendererState({
         model3BrowserLoadSupported: state.model3AssetRegistry?.available === true,
         loaderProvisioning: state.cubismLoaderProvisioning,
       });
+      response.live2d_evidence_summary = heartbeatStatus.live2d_evidence_summary;
       assertSafePublicObject(response, "browser runtime config");
       return response;
     },
@@ -300,7 +305,9 @@ export function createRendererState({
           cue_capability_confirmed: heartbeatStatus.cue_capability_confirmed,
           last_cue_applied: heartbeatStatus.last_cue_applied,
           last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
+          live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         },
+        live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");

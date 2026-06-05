@@ -108,3 +108,11 @@ Loader provisioning does not imply `model_loaded`, `scene_loaded`, `browser_cue_
 The guard does not bundle, download, redistribute, commit, or quote Cubism SDK or vendor files. Public responses may expose only configured environment names and safe status labels. Candidate presence is diagnostic only, and the trusted loader allowlist remains disabled.
 
 This route guard does not make the loader trusted and does not imply `model_loaded`, `scene_loaded`, `browser_cue_delivery_ready`, `renderer_ready`, runtime readiness, or production readiness. Real Live2D readiness still requires a separate fresh evidence collector, owner confirmation, and same-head evidence in a later PR.
+
+## Live2D Real Evidence Collector
+
+`LIVE2D-REAL-EVIDENCE-COLLECTOR1` is a safe-summary preflight for future readiness decisions. It exposes only labels for heartbeat presence, evidence freshness, configured model status, model/scene evidence, cue capability, recovery capability, last cue application, source type, blocked/attention reason, and safe next action.
+
+Fixture evidence, dry-run evidence, stale evidence, missing timestamps, and incomplete real-probe evidence are not real readiness evidence. The collector does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable.
+
+The collector must not expose raw model paths, motion paths, endpoint values, token values, private local paths, raw cue payloads, raw renderer payloads, raw evidence bodies, SDK/vendor paths, or vendor source. Fresh resident real evidence and owner confirmation remain required before readiness can be considered. Trusted loader allowlist work remains separate and disabled.

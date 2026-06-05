@@ -85,6 +85,15 @@ production_readiness_claimed: no
 - Readiness: route guard does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, or production readiness.
 - Next gate: trusted loader allowlist and Live2D real evidence collector require separate owner-confirmed PRs.
 
+## Inserted Preflight: LIVE2D-REAL-EVIDENCE-COLLECTOR1
+
+- Position: after Cubism Core route guard and before any readiness claim or trusted loader allowlist work.
+- Scope: add a safe-summary-only evidence collector contract for heartbeat freshness, model/scene evidence labels, cue capability labels, recovery capability labels, last cue application labels, source type, blocked/attention reason, and safe next action.
+- Evidence boundary: fixture evidence, dry-run evidence, stale evidence, missing timestamps, and incomplete real-probe evidence are not real readiness evidence.
+- Privacy boundary: raw model paths, motion paths, endpoints, tokens, private paths, raw cue payloads, raw renderer payloads, raw evidence bodies, SDK/vendor paths, and vendor source stay private.
+- Readiness: the collector does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
+- Next gate: fresh resident real evidence, trusted loader allowlist, and owner confirmation require separate PRs.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。

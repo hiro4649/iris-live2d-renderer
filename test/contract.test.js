@@ -1309,8 +1309,93 @@ try {
 
   const readyHealth = await ready.getJson("/health");
   assert.equal(readyHealth.renderer_ready, false);
+  assert.equal(readyHealth.live2d_evidence_summary.safe_summary_only, true);
+  assert.equal(readyHealth.live2d_evidence_summary.live2d_priority1_status, "BLOCKED");
+  assert.equal(readyHealth.live2d_evidence_summary.live2d_runtime_readiness_claimed, false);
   assertSafe(JSON.stringify(readyHealth));
   assertNoModelPathLeak(JSON.stringify(readyHealth));
+
+  const missingEvidenceHarness = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  const missingEvidenceStatus = await missingEvidenceHarness.getJson("/status");
+  assert.equal(missingEvidenceStatus.live2d_evidence_summary.live2d_evidence_status, "blocked");
+  assert.equal(missingEvidenceStatus.live2d_evidence_summary.blocked_or_attention_reason, "missing_evidence");
+  assert.equal(missingEvidenceStatus.live2d_evidence_summary.renderer_ready, false);
+  assert.equal(missingEvidenceStatus.live2d_evidence_summary.model_loaded, false);
+  assert.equal(missingEvidenceStatus.live2d_evidence_summary.scene_loaded, false);
+  assert.equal(missingEvidenceStatus.live2d_evidence_summary.browser_cue_delivery_ready, false);
+  assertSafe(JSON.stringify(missingEvidenceStatus.live2d_evidence_summary));
+  await missingEvidenceHarness.close();
+
+  const fixtureEvidenceHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+    evidence_source_type: "fixture",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(fixtureEvidenceHeartbeat.live2d_evidence_summary.collector_source_type, "fixture");
+  assert.equal(fixtureEvidenceHeartbeat.live2d_evidence_summary.fixture_evidence_status, "fixture_only");
+  assert.equal(fixtureEvidenceHeartbeat.live2d_evidence_summary.blocked_or_attention_reason, "fixture_only");
+  assert.equal(fixtureEvidenceHeartbeat.renderer_ready, false);
+  assert.equal(fixtureEvidenceHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(fixtureEvidenceHeartbeat.renderer_health.scene_loaded, false);
+  assert.equal(fixtureEvidenceHeartbeat.renderer_health.browser_cue_delivery_ready, false);
+  assertSafe(JSON.stringify(fixtureEvidenceHeartbeat));
+  assertNoModelPathLeak(JSON.stringify(fixtureEvidenceHeartbeat));
+
+  const dryRunEvidenceHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+    evidence_source_type: "dry_run",
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(dryRunEvidenceHeartbeat.live2d_evidence_summary.collector_source_type, "dry_run");
+  assert.equal(dryRunEvidenceHeartbeat.live2d_evidence_summary.dry_run_evidence_status, "dry_run_only");
+  assert.equal(dryRunEvidenceHeartbeat.live2d_evidence_summary.blocked_or_attention_reason, "dry_run_only");
+  assert.equal(dryRunEvidenceHeartbeat.live2d_evidence_summary.live2d_runtime_readiness_claimed, false);
+  assert.equal(dryRunEvidenceHeartbeat.renderer_ready, false);
+  assertSafe(JSON.stringify(dryRunEvidenceHeartbeat));
+
+  const missingTimestampEvidenceHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+    evidence_source_type: "real_probe",
+    heartbeat_timestamp_ms: undefined,
+  }));
+  assert.equal(missingTimestampEvidenceHeartbeat.live2d_evidence_summary.evidence_timestamp_status, "missing");
+  assert.equal(missingTimestampEvidenceHeartbeat.live2d_evidence_summary.blocked_or_attention_reason, "missing_timestamp");
+  assert.equal(missingTimestampEvidenceHeartbeat.renderer_ready, false);
+  assertSafe(JSON.stringify(missingTimestampEvidenceHeartbeat));
+
+  const staleEvidenceSummary = staleRealModelHeartbeat.live2d_evidence_summary;
+  assert.equal(staleEvidenceSummary.evidence_freshness_status, "stale");
+  assert.equal(staleEvidenceSummary.blocked_or_attention_reason, "stale_evidence");
+  assert.equal(staleEvidenceSummary.live2d_runtime_readiness_claimed, false);
+  assertSafe(JSON.stringify(staleEvidenceSummary));
+
+  const incompleteRealProbeHeartbeat = await ready.postJson("/renderer/heartbeat", browserHeartbeat({
+    evidence_source_type: "real_probe",
+    real_model_loaded: false,
+    real_scene_loaded: false,
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.collector_source_type, "real_probe");
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.blocked_or_attention_reason, "real_probe_incomplete");
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.model_configured_status, "configured");
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.cue_capability_status, "claimed");
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.recovery_capability_status, "claimed");
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.last_cue_applied_status, "not_confirmed");
+  assert.equal(incompleteRealProbeHeartbeat.live2d_evidence_summary.motion_dataset_executable, false);
+  assert.equal(incompleteRealProbeHeartbeat.renderer_ready, false);
+  assert.equal(incompleteRealProbeHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(incompleteRealProbeHeartbeat.renderer_health.scene_loaded, false);
+  assert.equal(incompleteRealProbeHeartbeat.renderer_health.browser_cue_delivery_ready, false);
+  assertSafe(JSON.stringify(incompleteRealProbeHeartbeat));
+  assertNoModelPathLeak(JSON.stringify(incompleteRealProbeHeartbeat));
+
+  const evidenceRuntimeConfig = await ready.getJson("/renderer/runtime-config");
+  assert.equal(evidenceRuntimeConfig.live2d_evidence_summary.safe_summary_only, true);
+  assert.equal(evidenceRuntimeConfig.live2d_evidence_summary.live2d_fixture_evidence_ignored_for_readiness, true);
+  assert.equal(evidenceRuntimeConfig.live2d_evidence_summary.live2d_priority1_status, "BLOCKED");
+  assertSafe(JSON.stringify(evidenceRuntimeConfig.live2d_evidence_summary));
 
   const noAppliedAtState = createRendererState({
     modelId: "iris_default",
@@ -1491,6 +1576,11 @@ try {
       "cubism_loader_provisioning_no_readiness_sweetening",
       "loader_shape_remains_diagnostic_without_allowlist",
       "fake_loader_detection_is_diagnostic_only",
+      "live2d_real_evidence_safe_summary",
+      "fixture_evidence_not_runtime_readiness",
+      "dry_run_evidence_not_runtime_readiness",
+      "stale_evidence_not_fresh",
+      "real_probe_incomplete_not_ready",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
     ],
