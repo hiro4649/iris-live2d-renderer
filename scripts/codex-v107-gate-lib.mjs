@@ -560,8 +560,13 @@ export function buildTargetHarnessWorkspaceMutationReport(input = {}) {
   if (input.branchChanged) reasons.push('target_harness_branch_mutation_detected');
   if (input.headChanged) reasons.push('target_harness_head_mutation_detected');
   if (input.trackedFilesChanged) reasons.push('target_harness_tracked_file_mutation_detected');
+  if (input.parentBranchMutationAfterRepair) reasons.push('target_harness_branch_mutation_detected');
+  if (input.parentHeadMutationAfterRepair) reasons.push('target_harness_head_mutation_detected');
+  if (input.parentTrackedFileMutationAfterRepair) reasons.push('target_harness_tracked_file_mutation_detected');
+  if (input.branchRestoreFailed) reasons.push('target_harness_branch_restore_failed');
   if (input.timeoutTreatedAsPass) reasons.push('target_timeout_not_pass');
   if (input.noSafeReportTreatedAsPass) reasons.push('no_safe_report_not_pass');
+  if (input.emptyOutputTreatedAsPass) reasons.push('empty_output_not_pass');
   if (input.pendingAfterPushTreatedAsRemotePass) reasons.push('pending_after_push_not_remote_pass');
   if (input.remoteEvidencePassWithoutSameHead) reasons.push('remote_evidence_requires_same_head');
   if (input.targetMergeReadyWithoutSameHead) reasons.push('target_merge_ready_requires_same_head');
@@ -572,7 +577,7 @@ export function buildTargetHarnessWorkspaceMutationReport(input = {}) {
   if (input.motionDatasetExecutable) reasons.push('motion_dataset_not_executable');
   return reasons.length
     ? typedStatus('targetHarnessWorkspaceMutationStatus', 'fail', { blocking: true, reasonCodes: reasons })
-    : pass('targetHarnessWorkspaceMutationStatus', { safeSummary: { workspaceMutationBlocked: true } });
+    : pass('targetHarnessWorkspaceMutationStatus', { safeSummary: { workspaceMutationBlocked: true, childBranchMutationIsolated: Boolean(input.childBranchMutationIsolated) } });
 }
 
 export function buildRepoSpecificRegistrationReports() {

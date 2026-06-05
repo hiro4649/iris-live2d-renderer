@@ -1103,6 +1103,35 @@ function spawn(cmd, args, options = {}) {
 
 }
 
+function restoreTargetWorkspaceSnapshot(beforeSnapshot) {
+  const before = beforeSnapshot || {};
+  const current = v101Gates.captureLocalGateSideEffectSnapshot();
+  const attempted = [];
+  const failures = [];
+  if (current.branch !== before.branch && before.branch) {
+    attempted.push('branch');
+    const result = spawnSync('git', ['switch', before.branch], {
+      encoding: 'utf8',
+      stdio: 'pipe',
+      timeout: 30000,
+    });
+    if (result.status !== 0) failures.push('target_harness_branch_restore_failed');
+  }
+  const restored = v101Gates.captureLocalGateSideEffectSnapshot();
+  if (restored.branch !== before.branch) failures.push('target_harness_branch_mutation_detected');
+  if (restored.head !== before.head) failures.push('target_harness_head_mutation_detected');
+  const beforeTracked = [...(before.trackedFiles || [])].sort().join('\n');
+  const restoredTracked = [...(restored.trackedFiles || [])].sort().join('\n');
+  if (restored.statusShort !== before.statusShort || restoredTracked !== beforeTracked) {
+    failures.push('target_harness_tracked_file_mutation_detected');
+  }
+  return {
+    attempted,
+    failures: [...new Set(failures)],
+    restored,
+  };
+}
+
 
 
 function run(cmd, args, cwd = '.') {
@@ -11217,13 +11246,17 @@ async function runTargetHarnessGate() {
   const targetWorkspaceAfterSnapshot = v101Gates.captureLocalGateSideEffectSnapshot();
   const beforeTracked = [...(targetWorkspaceBeforeSnapshot.trackedFiles || [])].sort().join('\n');
   const afterTracked = [...(targetWorkspaceAfterSnapshot.trackedFiles || [])].sort().join('\n');
-  const workspaceMutationReasons = [];
-  if (targetWorkspaceAfterSnapshot.branch !== targetWorkspaceBeforeSnapshot.branch) workspaceMutationReasons.push('target_harness_branch_mutation_detected');
-  if (targetWorkspaceAfterSnapshot.head !== targetWorkspaceBeforeSnapshot.head) workspaceMutationReasons.push('target_harness_head_mutation_detected');
-  if (targetWorkspaceAfterSnapshot.statusShort !== targetWorkspaceBeforeSnapshot.statusShort || afterTracked !== beforeTracked) workspaceMutationReasons.push('target_harness_tracked_file_mutation_detected');
+  const detectedWorkspaceMutationReasons = [];
+  if (targetWorkspaceAfterSnapshot.branch !== targetWorkspaceBeforeSnapshot.branch) detectedWorkspaceMutationReasons.push('target_harness_branch_mutation_detected');
+  if (targetWorkspaceAfterSnapshot.head !== targetWorkspaceBeforeSnapshot.head) detectedWorkspaceMutationReasons.push('target_harness_head_mutation_detected');
+  if (targetWorkspaceAfterSnapshot.statusShort !== targetWorkspaceBeforeSnapshot.statusShort || afterTracked !== beforeTracked) detectedWorkspaceMutationReasons.push('target_harness_tracked_file_mutation_detected');
+  const restoreResult = detectedWorkspaceMutationReasons.length
+    ? restoreTargetWorkspaceSnapshot(targetWorkspaceBeforeSnapshot)
+    : { attempted: [], failures: [], restored: targetWorkspaceAfterSnapshot };
+  const workspaceMutationReasons = [...new Set([...detectedWorkspaceMutationReasons, ...restoreResult.failures])];
   report.targetHarnessWorkspaceMutationStatus = workspaceMutationReasons.length
-    ? { status: 'fail', reasonCodes: workspaceMutationReasons, safeSummaryOnly: true }
-    : { status: 'pass', reasonCodes: ['target_harness_workspace_unchanged'], safeSummaryOnly: true };
+    ? { status: 'fail', reasonCodes: workspaceMutationReasons, restoreAttempted: restoreResult.attempted, safeSummaryOnly: true }
+    : { status: 'pass', reasonCodes: ['target_harness_workspace_unchanged'], restoreAttempted: restoreResult.attempted, safeSummaryOnly: true };
   if (workspaceMutationReasons.length) failures.push({ id: 'targetHarnessWorkspaceMutationStatus.failed', message: 'target harness workspace mutation detected' });
 
 
