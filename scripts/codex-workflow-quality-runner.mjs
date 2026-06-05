@@ -3253,7 +3253,9 @@ const targetRolloutAdvisoryRequired = new Set([
 function targetRolloutRequiredStatusAllowed(key, status, options = {}, report = {}) {
   const eventName = options.eventName || process.env.CODEX_EVENT_NAME || '';
   const harnessMode = options.harnessMode || process.env.CODEX_HARNESS_MODE || report.harnessMode || '';
-  if (eventName !== 'target_rollout' || harnessMode !== 'target') return false;
+  const reportMode = report.targetQualityScoreStatus && !report.sourceHarnessValidationStatus ? 'target' : report.mode;
+  const isTargetRollout = harnessMode === 'target' || reportMode === 'target' || eventName === 'target_rollout';
+  if (!isTargetRollout) return false;
   if (!targetRolloutAdvisoryRequired.has(key)) return false;
   return ['advisory', 'fail', 'manual_confirmation_required', 'warning'].includes(status);
 }
