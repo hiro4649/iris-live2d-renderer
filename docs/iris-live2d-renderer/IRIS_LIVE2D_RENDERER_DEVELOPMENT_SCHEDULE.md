@@ -65,6 +65,16 @@ production_readiness_claimed: no
 - Allowlist: trusted loader allowlist remains disabled until owner-confirmed real loader evidence is available.
 - Production: no runtime readiness claim and no production readiness claim.
 
+## Inserted Preflight: LIVE2D-CUBISM-LOADER-PROVISIONING8
+
+- Position: after loader integration selection and before enabling any trusted loader kind.
+- Scope: verify owner-provided Cubism Framework loader provisioning through safe environment names only.
+- License boundary: Cubism SDK / Framework files are owner-provided licensed material; this repo must not download, redistribute, commit, or quote vendor files.
+- Privacy boundary: env values and local file locations stay private; runtime summaries expose only env names and safe status labels.
+- Allowlist: trusted loader allowlist remains disabled; provisioning does not enable `cubism_framework_model_loader_v1`.
+- Readiness: provisioning does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, or production readiness.
+- Next gate: a later PR may enable a trusted loader kind only with license/provisioning confirmation, owner approval, and same-head tests.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。

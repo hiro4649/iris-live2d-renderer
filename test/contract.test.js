@@ -4,6 +4,12 @@ import { join } from "node:path";
 import { createLive2dRendererServer, listen } from "../src/server.js";
 import { createRendererState } from "../src/state.js";
 import {
+  ALLOWED_CUBISM_LOADER_ENV_NAMES,
+  CUBISM_LOADER_KIND_CANDIDATES,
+  CUBISM_LOADER_PROVISIONING_SCHEMA,
+  inspectCubismLoaderProvisioning,
+} from "../src/renderer/cubismLoaderProvisioning.js";
+import {
   TRUSTED_LOADER_EVIDENCE_SCHEMA,
   TRUSTED_LOADER_KINDS,
   createTrustedLoaderEvidenceSummary,
@@ -28,6 +34,7 @@ await rm(tmpDir, { recursive: true, force: true });
 await mkdir(tmpDir, { recursive: true });
 const model3Path = join(tmpDir, "avatar.model3.json");
 const sdkCorePath = join(tmpDir, "live2dcubismcore.js");
+const ownerFrameworkLoaderPath = join(tmpDir, "owner-framework-loader.js");
 await mkdir(join(tmpDir, "textures"), { recursive: true });
 await mkdir(join(tmpDir, "motions"), { recursive: true });
 await mkdir(join(tmpDir, "expressions"), { recursive: true });
@@ -45,6 +52,7 @@ await writeFile(model3Path, JSON.stringify({
   },
 }));
 await writeFile(sdkCorePath, "globalThis.Live2DCubismCore = { Version: 'contract' };\n");
+await writeFile(ownerFrameworkLoaderPath, "globalThis.OwnerProvidedCubismFramework = true;\n");
 
 try {
   const loaderPreflightDoc = await readFile(
@@ -63,6 +71,13 @@ try {
     "cubism_moc_create",
     "missing_dependency",
     "operator_attention_required",
+    "LIVE2D-CUBISM-LOADER-PROVISIONING8",
+    "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
+    "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
+    "IRIS_LIVE2D_CUBISM_LOADER_KIND",
+    "owner-provided",
+    "candidate_present",
+    "license_attention_required",
     "model_load_supported",
     "real_model_load_supported",
     "runtime_motion_allowlist",
@@ -91,9 +106,102 @@ try {
       scheduleDoc.indexOf("MICRO-REACTION-PACK5"),
     true
   );
+  assert.equal(
+    scheduleDoc.indexOf("LIVE2D-CUBISM-LOADER-PROVISIONING8") >
+      scheduleDoc.indexOf("LIVE2D-CUBISM-LOADER-INTEGRATION7"),
+    true
+  );
+  assert.equal(
+    scheduleDoc.indexOf("LIVE2D-CUBISM-LOADER-PROVISIONING8") <
+      scheduleDoc.indexOf("## Phase 6: MICRO-REACTION-PACK5"),
+    true
+  );
 
   assert.equal(TRUSTED_LOADER_EVIDENCE_SCHEMA, "iris_live2d_trusted_loader_evidence_v1");
   assert.equal(TRUSTED_LOADER_KINDS.length, 0);
+  assert.equal(CUBISM_LOADER_PROVISIONING_SCHEMA, "iris_live2d_cubism_loader_provisioning_v1");
+  assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
+    "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
+    "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
+    "IRIS_LIVE2D_CUBISM_LOADER_KIND",
+  ]);
+  assert.deepEqual(CUBISM_LOADER_KIND_CANDIDATES, [
+    "cubism_framework_model_loader_v1",
+    "cubism_moc_create",
+  ]);
+
+  const noLoaderProvisioning = inspectCubismLoaderProvisioning({});
+  assert.equal(noLoaderProvisioning.provisioning_status, "not_configured");
+  assert.equal(noLoaderProvisioning.loader_dependency_status, "missing_dependency");
+  assert.equal(noLoaderProvisioning.operator_attention_required, true);
+  assert.equal(noLoaderProvisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(noLoaderProvisioning.configured_env_count, 0);
+  assertSafe(JSON.stringify(noLoaderProvisioning));
+
+  const ownerProvidedProvisioning = inspectCubismLoaderProvisioning({
+    IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: ownerFrameworkLoaderPath,
+    IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
+  });
+  assert.equal(ownerProvidedProvisioning.provisioning_status, "candidate_present");
+  assert.equal(ownerProvidedProvisioning.loader_dependency_status, "candidate_present");
+  assert.equal(ownerProvidedProvisioning.license_status, "license_attention_required");
+  assert.equal(ownerProvidedProvisioning.loader_kind, "cubism_framework_model_loader_v1");
+  assert.equal(ownerProvidedProvisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(ownerProvidedProvisioning.operator_attention_required, true);
+  assert.equal(ownerProvidedProvisioning.configured_env_names.includes("IRIS_LIVE2D_CUBISM_FRAMEWORK_JS"), true);
+  assert.equal(ownerProvidedProvisioning.configured_env_names.includes("IRIS_LIVE2D_CUBISM_LOADER_KIND"), true);
+  assert.equal(JSON.stringify(ownerProvidedProvisioning).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(ownerProvidedProvisioning));
+  assertNoModelPathLeak(JSON.stringify(ownerProvidedProvisioning));
+
+  const missingOwnerProvidedProvisioning = inspectCubismLoaderProvisioning({
+    IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: join(tmpDir, "missing-owner-framework-loader.js"),
+    IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
+  });
+  assert.equal(missingOwnerProvidedProvisioning.provisioning_status, "operator_attention_required");
+  assert.equal(missingOwnerProvidedProvisioning.loader_dependency_status, "operator_attention_required");
+  assert.equal(JSON.stringify(missingOwnerProvidedProvisioning).includes("missing-owner-framework-loader"), false);
+  assertSafe(JSON.stringify(missingOwnerProvidedProvisioning));
+
+  const moduleEnvProvisioning = inspectCubismLoaderProvisioning({
+    IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE: ownerFrameworkLoaderPath,
+  });
+  assert.equal(moduleEnvProvisioning.provisioning_status, "candidate_present");
+  assert.equal(moduleEnvProvisioning.loader_kind, "cubism_framework_model_loader_v1");
+  assert.equal(moduleEnvProvisioning.configured_env_names.includes("IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE"), true);
+  assert.equal(JSON.stringify(moduleEnvProvisioning).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(moduleEnvProvisioning));
+
+  const mocCreateProvisioning = inspectCubismLoaderProvisioning({
+    IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_moc_create",
+  });
+  assert.equal(mocCreateProvisioning.provisioning_status, "future_only");
+  assert.equal(mocCreateProvisioning.loader_dependency_status, "future_only");
+  assert.equal(mocCreateProvisioning.loader_kind, "cubism_moc_create");
+  assert.equal(mocCreateProvisioning.trusted_loader_allowlist_enabled, false);
+  assertSafe(JSON.stringify(mocCreateProvisioning));
+
+  const unsupportedProvisioning = inspectCubismLoaderProvisioning({
+    IRIS_LIVE2D_CUBISM_LOADER_KIND: "unknown_loader",
+  });
+  assert.equal(unsupportedProvisioning.provisioning_status, "unsupported_loader_kind");
+  assert.equal(unsupportedProvisioning.loader_kind, "unsupported_loader_kind");
+  assertSafe(JSON.stringify(unsupportedProvisioning));
+
+  for (const unsafeValue of [
+    "https://secret.example/framework.js",
+    "secret-token",
+    "raw loader error stack trace",
+  ]) {
+    const unsafeProvisioning = inspectCubismLoaderProvisioning({
+      IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: unsafeValue,
+      IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
+    });
+    assert.equal(unsafeProvisioning.provisioning_status, "unsafe_configuration");
+    const serializedProvisioning = JSON.stringify(unsafeProvisioning);
+    assert.equal(serializedProvisioning.includes(unsafeValue), false);
+    assertSafe(serializedProvisioning);
+  }
   const missingTrustedEvidence = validateTrustedLoaderEvidence(null, { nowMs });
   assert.equal(missingTrustedEvidence.error_kind, "trusted_loader_evidence_missing");
   assert.equal(missingTrustedEvidence.status, "missing");
@@ -201,6 +309,8 @@ try {
   assert.equal(health.renderer_process_alive, true);
   assert.equal(health.renderer_ready, false);
   assert.equal(health.model3_manifest_available, false);
+  assert.equal(health.loader_provisioning.provisioning_status, "not_configured");
+  assert.equal(health.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assertSafe(JSON.stringify(health));
 
   const statusBefore = await missing.getJson("/status");
@@ -208,6 +318,9 @@ try {
   assert.equal(statusBefore.scene_id, "main_scene");
   assert.equal(statusBefore.renderer_ready, false);
   assert.equal(statusBefore.renderer_health.model3_manifest_available, false);
+  assert.equal(statusBefore.renderer_health.loader_provisioning.provisioning_status, "not_configured");
+  assert.equal(statusBefore.renderer_health.loader_provisioning.loader_dependency_status, "missing_dependency");
+  assert.equal(statusBefore.renderer_health.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assert.equal(statusBefore.renderer_health.trusted_loader_evidence_status, "missing");
   assert.equal(statusBefore.renderer_health.trusted_loader_ready_candidate, false);
   assert.equal(statusBefore.last_cue_received_at, null);
@@ -223,6 +336,10 @@ try {
   assert.equal(missingRuntimeConfig.loader_selection.fallback_loader_kind, "cubism_moc_create");
   assert.equal(missingRuntimeConfig.loader_selection.dependency_status, "missing_dependency");
   assert.equal(missingRuntimeConfig.loader_selection.trusted_loader_allowlist_enabled, false);
+  assert.equal(missingRuntimeConfig.loader_provisioning.provisioning_status, "not_configured");
+  assert.equal(missingRuntimeConfig.loader_provisioning.loader_dependency_status, "missing_dependency");
+  assert.equal(missingRuntimeConfig.loader_provisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(missingRuntimeConfig.loader_provisioning.configured_env_count, 0);
   assertSafe(JSON.stringify(missingRuntimeConfig));
   const missingModel3 = await fetchJsonStatus(`${missing.baseUrl}/renderer/model3`);
   assert.equal(missingModel3.status, 404);
@@ -866,8 +983,61 @@ try {
   assert.equal(readyRuntimeConfig.model3.asset_route, "renderer_model_asset");
   assert.equal(readyRuntimeConfig.model3.browser_load_supported, true);
   assert.equal(readyRuntimeConfig.model3.real_model_loaded, false);
+  assert.equal(readyRuntimeConfig.loader_provisioning.provisioning_status, "not_configured");
+  assert.equal(readyRuntimeConfig.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assertSafe(JSON.stringify(readyRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(readyRuntimeConfig));
+
+  const provisioned = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    cubismCoreJsPath: sdkCorePath,
+    model3JsonPath: model3Path,
+    cubismLoaderEnv: {
+      IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: ownerFrameworkLoaderPath,
+      IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
+    },
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  const provisionedRuntimeConfig = await provisioned.getJson("/renderer/runtime-config");
+  assert.equal(provisionedRuntimeConfig.loader_provisioning.provisioning_status, "candidate_present");
+  assert.equal(provisionedRuntimeConfig.loader_provisioning.loader_dependency_status, "candidate_present");
+  assert.equal(provisionedRuntimeConfig.loader_provisioning.license_status, "license_attention_required");
+  assert.equal(provisionedRuntimeConfig.loader_provisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.model3.real_model_loaded, false);
+  assert.equal(provisionedRuntimeConfig.loader_selection.trusted_loader_allowlist_enabled, false);
+  assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(provisionedRuntimeConfig));
+  assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
+  const provisionedStatus = await provisioned.getJson("/status");
+  assert.equal(provisionedStatus.renderer_ready, false);
+  assert.equal(provisionedStatus.renderer_health.loader_provisioning.provisioning_status, "candidate_present");
+  assert.equal(provisionedStatus.renderer_health.model_loaded, false);
+  assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
+  assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
+  assert.equal(JSON.stringify(provisionedStatus).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(provisionedStatus));
+  assertNoModelPathLeak(JSON.stringify(provisionedStatus));
+  const provisionedHealth = await provisioned.getJson("/health");
+  assert.equal(provisionedHealth.renderer_ready, false);
+  assert.equal(provisionedHealth.loader_provisioning.provisioning_status, "candidate_present");
+  assert.equal(provisionedHealth.loader_provisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(provisionedHealth));
+  assertNoModelPathLeak(JSON.stringify(provisionedHealth));
+  const provisionedHeartbeat = await provisioned.postJson("/renderer/heartbeat", syntheticRealModelHeartbeat({
+    heartbeat_timestamp_ms: nowMs,
+  }));
+  assert.equal(provisionedHeartbeat.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.renderer_health.model_loaded, false);
+  assert.equal(provisionedHeartbeat.renderer_health.scene_loaded, false);
+  assert.equal(provisionedHeartbeat.renderer_health.browser_cue_delivery_ready, false);
+  assert.equal(provisionedHeartbeat.renderer_health.loader_provisioning.provisioning_status, "candidate_present");
+  assertSafe(JSON.stringify(provisionedHeartbeat));
+  assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
+  await provisioned.close();
+
   const safeModel3 = await ready.getJson("/renderer/model3");
   assert.equal(safeModel3.ok, true);
   assert.equal(safeModel3.load_route, "renderer_model3_manifest");
@@ -1235,6 +1405,9 @@ try {
       "trusted_loader_evidence_gate_diagnostic_only",
       "trusted_loader_evidence_forbidden_material_rejected",
       "cubism_loader_integration_candidate_missing_dependency",
+      "cubism_loader_provisioning_safe_summary",
+      "cubism_loader_provisioning_owner_file_policy",
+      "cubism_loader_provisioning_no_readiness_sweetening",
       "loader_shape_remains_diagnostic_without_allowlist",
       "fake_loader_detection_is_diagnostic_only",
       "future_micro_label_not_runtime_executable",

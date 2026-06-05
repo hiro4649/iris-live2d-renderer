@@ -1,5 +1,9 @@
 import { existsSync } from "node:fs";
 import { safeText } from "../contracts.js";
+import {
+  createCubismLoaderProvisioningSummary,
+  inspectCubismLoaderProvisioning,
+} from "./cubismLoaderProvisioning.js";
 import { createSafeModelAssetRegistry } from "./modelAssets.js";
 
 export function createCubismRendererConfig({
@@ -7,10 +11,12 @@ export function createCubismRendererConfig({
   sceneId = "",
   cubismCoreJsPath = "",
   model3JsonPath = "",
+  cubismLoaderEnv = {},
   heartbeatMaxAgeMs,
 } = {}) {
   const sdk = inspectLocalFile(cubismCoreJsPath);
   const manifest = createSafeModelAssetRegistry(model3JsonPath);
+  const loaderProvisioning = inspectCubismLoaderProvisioning(cubismLoaderEnv);
   return {
     model_id: safeText(modelId, 160),
     scene_id: safeText(sceneId, 160),
@@ -22,6 +28,7 @@ export function createCubismRendererConfig({
     model3_manifest_available: manifest.available,
     model3_manifest_status: manifest.status,
     model3_asset_registry: manifest,
+    cubism_loader_provisioning: loaderProvisioning,
     heartbeat_max_age_ms: Number.isFinite(heartbeatMaxAgeMs) ? heartbeatMaxAgeMs : undefined,
   };
 }
@@ -36,8 +43,10 @@ export function createBrowserRuntimeConfig({
   model3ManifestAvailable,
   model3ManifestStatus,
   model3BrowserLoadSupported = false,
+  loaderProvisioning,
 }) {
   const browserLoadSupported = Boolean(model3BrowserLoadSupported);
+  const safeLoaderProvisioning = createCubismLoaderProvisioningSummary(loaderProvisioning);
   const config = {
     ok: true,
     schema: "iris_live2d_browser_runtime_config_v1",
@@ -65,9 +74,10 @@ export function createBrowserRuntimeConfig({
     loader_selection: {
       selected_loader_kind: "cubism_framework_model_loader_v1",
       fallback_loader_kind: "cubism_moc_create",
-      dependency_status: cubismSdkAvailable ? "operator_attention_required" : "missing_dependency",
+      dependency_status: safeLoaderProvisioning.loader_dependency_status,
       trusted_loader_allowlist_enabled: false,
     },
+    loader_provisioning: safeLoaderProvisioning,
     cue_capability_required: [
       "live2d_engine_request",
       "renderer_cue_delivery",

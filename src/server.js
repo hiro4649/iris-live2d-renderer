@@ -240,6 +240,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     sceneId: process.env.IRIS_LOCAL_LIVE2D_SCENE_ID ?? "",
     cubismCoreJsPath: process.env.IRIS_LIVE2D_CUBISM_CORE_JS ?? "",
     model3JsonPath: process.env.IRIS_LIVE2D_MODEL3_JSON ?? "",
+    cubismLoaderEnv: process.env,
     heartbeatMaxAgeMs: Number(process.env.IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS || 5000),
   });
   const server = createLive2dRendererServer({
@@ -273,6 +274,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       "IRIS_LOCAL_LIVE2D_MODEL_ID",
       "IRIS_LOCAL_LIVE2D_SCENE_ID",
       "IRIS_LIVE2D_CUBISM_CORE_JS",
+      "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
+      "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
+      "IRIS_LIVE2D_CUBISM_LOADER_KIND",
       "IRIS_LIVE2D_MODEL3_JSON",
       "IRIS_LIVE2D_RENDERER_API_KEY",
       "IRIS_LOCAL_ENGINE_API_KEY",
