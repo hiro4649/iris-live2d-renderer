@@ -126,6 +126,22 @@ export function createHeartbeatStatus({
     browserCueDeliveryReady &&
       lastCueApplied
   );
+  const live2dEvidenceSummary = createLive2dEvidenceSummary({
+    heartbeat,
+    heartbeatPresent: Boolean(heartbeat),
+    hasTimestamp,
+    freshHeartbeat,
+    modelConfigured: Boolean(expectedModelId),
+    modelMatches,
+    sceneMatches,
+    cueCapabilityClaimed,
+    recoveryCueSupport,
+    lastCueApplied,
+    modelLoadedClaimed,
+    sceneLoadedClaimed,
+    realModelLoadedClaimed,
+    realSceneLoadedClaimed,
+  });
 
   return {
     heartbeat_present: Boolean(heartbeat),
@@ -163,7 +179,81 @@ export function createHeartbeatStatus({
     last_cue_applied: lastCueApplied,
     last_cue_applied_at: lastCueApplied ? cueAppliedAtMs : null,
     renderer_ready_candidate: rendererReady,
+    live2d_evidence_summary: live2dEvidenceSummary,
   };
+}
+
+function createLive2dEvidenceSummary({
+  heartbeat,
+  heartbeatPresent,
+  hasTimestamp,
+  freshHeartbeat,
+  modelConfigured,
+  modelMatches,
+  sceneMatches,
+  cueCapabilityClaimed,
+  recoveryCueSupport,
+  lastCueApplied,
+  modelLoadedClaimed,
+  sceneLoadedClaimed,
+  realModelLoadedClaimed,
+  realSceneLoadedClaimed,
+} = {}) {
+  const sourceType = safeEvidenceSourceType(heartbeat?.evidence_source_type ?? heartbeat?.collector_source_type);
+  const fixtureOnly = sourceType === "fixture" || heartbeat?.fixture_evidence === true;
+  const dryRunOnly = sourceType === "dry_run" || heartbeat?.dry_run_evidence === true;
+  const realProbe = sourceType === "real_probe";
+  const missingRequiredRealProbeFields = Boolean(realProbe && (!realModelLoadedClaimed || !realSceneLoadedClaimed || !cueCapabilityClaimed));
+  const blockedReason = !heartbeatPresent
+    ? "missing_evidence"
+    : !hasTimestamp
+      ? "missing_timestamp"
+      : !freshHeartbeat
+        ? "stale_evidence"
+        : fixtureOnly
+          ? "fixture_only"
+          : dryRunOnly
+            ? "dry_run_only"
+            : missingRequiredRealProbeFields
+              ? "real_probe_incomplete"
+              : "real_evidence_required";
+  const evidenceStatus = blockedReason === "real_evidence_required" ? "attention_required" : "blocked";
+  const summary = {
+    schema: "iris_live2d_real_evidence_summary_v1",
+    safe_summary_only: true,
+    live2d_evidence_status: evidenceStatus,
+    collector_source_type: fixtureOnly ? "fixture" : dryRunOnly ? "dry_run" : sourceType,
+    evidence_timestamp_status: hasTimestamp ? "present" : "missing",
+    evidence_freshness_status: freshHeartbeat ? "fresh" : hasTimestamp ? "stale" : "missing",
+    renderer_heartbeat_evidence: heartbeatPresent ? "present" : "missing",
+    model_configured_status: modelConfigured ? "configured" : "not_configured",
+    model_loaded_evidence: realModelLoadedClaimed ? "claimed" : modelLoadedClaimed ? "claimed_without_real_gate" : "missing",
+    scene_loaded_evidence: realSceneLoadedClaimed ? "claimed" : sceneLoadedClaimed ? "claimed_without_real_gate" : "missing",
+    model_matches_expected: modelMatches === true ? "match" : "not_confirmed",
+    scene_matches_expected: sceneMatches === true ? "match" : "not_confirmed",
+    cue_capability_status: cueCapabilityClaimed ? "claimed" : "missing",
+    recovery_capability_status: recoveryCueSupport ? "claimed" : "missing",
+    last_cue_applied_status: lastCueApplied ? "applied" : "not_confirmed",
+    fixture_evidence_status: fixtureOnly ? "fixture_only" : "not_fixture",
+    dry_run_evidence_status: dryRunOnly ? "dry_run_only" : "not_dry_run",
+    blocked_or_attention_reason: blockedReason,
+    safe_next_action: "collect_fresh_real_resident_evidence_with_owner_confirmation",
+    live2d_real_evidence_required: true,
+    live2d_fixture_evidence_ignored_for_readiness: true,
+    live2d_priority1_status: "BLOCKED",
+    live2d_runtime_readiness_claimed: false,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+  };
+  return summary;
+}
+
+function safeEvidenceSourceType(value) {
+  const text = String(value ?? "").trim();
+  return ["missing", "fixture", "dry_run", "operator_provided", "real_probe"].includes(text) ? text : "missing";
 }
 
 function safeModelLoadStatus(value) {
