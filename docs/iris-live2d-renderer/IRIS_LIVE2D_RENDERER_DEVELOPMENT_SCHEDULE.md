@@ -105,6 +105,18 @@ production_readiness_claimed: no
 - Readiness: this preflight does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
 - Next gate: actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and same-head checks.
 
+## Inserted Preflight: LIVE2D-TRUSTED-LOADER-ENABLEMENT-GATE1
+
+- Position: after trusted loader allowlist preflight and before any actual trusted loader enablement.
+- Scope: add a fail-closed enablement gate that reports safe labels for enablement status, blockers, required prerequisites, missing prerequisites, route guard status, real evidence status, owner confirmation status, license status, candidate kind status, allowlist status, freshness status, safe next action, and readiness claim status.
+- Gate boundary: trusted loader allowlist remains disabled, no loader is trusted, no loader candidate is executed, and candidate_present remains diagnostic only.
+- Prerequisites: route guard, real evidence collector, allowlist preflight, fresh real evidence, owner confirmation, license boundary, known supported loader kind, safe public summaries, and no raw exposure remain required.
+- Evidence boundary: fixture evidence, dry-run evidence, stale evidence, missing owner confirmation, expired owner confirmation, unknown loader kind, future-only loader kind, license attention, allowlist disabled, priority1 unresolved, and motion dataset non-executable states all stay blocked.
+- License boundary: Cubism SDK / Framework files remain owner-provided licensed material outside the repo; this repo must not download, redistribute, commit, copy, or quote vendor files.
+- Privacy boundary: owner-provided values, raw loader candidates, loader errors, SDK paths, endpoints, tokens, raw cues, raw renderer payloads, raw evidence bodies, local paths, and vendor source stay private.
+- Readiness: this gate does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
+- Next gate: actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and same-head checks.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。

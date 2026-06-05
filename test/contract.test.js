@@ -7,8 +7,10 @@ import {
   ALLOWED_CUBISM_LOADER_ENV_NAMES,
   CUBISM_LOADER_KIND_CANDIDATES,
   CUBISM_LOADER_PROVISIONING_SCHEMA,
+  TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
   createTrustedLoaderAllowlistPreflightSummary,
+  createTrustedLoaderEnablementGateSummary,
   inspectCubismLoaderProvisioning,
 } from "../src/renderer/cubismLoaderProvisioning.js";
 import {
@@ -127,6 +129,7 @@ try {
   assert.equal(TRUSTED_LOADER_KINDS.length, 0);
   assert.equal(CUBISM_LOADER_PROVISIONING_SCHEMA, "iris_live2d_cubism_loader_provisioning_v1");
   assert.equal(TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA, "iris_live2d_trusted_loader_allowlist_preflight_v1");
+  assert.equal(TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA, "iris_live2d_trusted_loader_enablement_gate_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -188,6 +191,46 @@ try {
   assertSafe(JSON.stringify(ownerProvidedAllowlistPreflight));
   assertNoModelPathLeak(JSON.stringify(ownerProvidedAllowlistPreflight));
 
+  const ownerProvidedEnablementGate = createTrustedLoaderEnablementGateSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    allowlistPreflightSummary: ownerProvidedAllowlistPreflight,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "missing",
+      fixture_evidence_status: "fixture_only",
+      dry_run_evidence_status: "not_dry_run",
+    },
+  });
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_gate_status, "blocked");
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_ready_candidate, false);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_allowlist_enabled, false);
+  assert.equal(ownerProvidedEnablementGate.no_loader_trusted, true);
+  assert.equal(ownerProvidedEnablementGate.candidate_present_diagnostic_only, true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_allowlist_disabled"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("candidate_present_diagnostic_only"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_fixture_evidence_only"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_missing_owner_confirmation"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_license_attention_required"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_priority1_unresolved"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_motion_dataset_non_executable"), true);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_runtime_readiness_claimed, false);
+  assert.equal(ownerProvidedEnablementGate.trusted_loader_enablement_production_readiness_claimed, false);
+  assert.equal(ownerProvidedEnablementGate.renderer_ready, false);
+  assert.equal(ownerProvidedEnablementGate.model_loaded, false);
+  assert.equal(ownerProvidedEnablementGate.scene_loaded, false);
+  assert.equal(ownerProvidedEnablementGate.browser_cue_delivery_ready, false);
+  assert.equal(JSON.stringify(ownerProvidedEnablementGate).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(ownerProvidedEnablementGate));
+  assertNoModelPathLeak(JSON.stringify(ownerProvidedEnablementGate));
+
+  const routeGuardMissingGate = createTrustedLoaderEnablementGateSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    live2dEvidenceSummary: ownerProvidedAllowlistPreflight,
+    routeGuardStatus: "missing",
+  });
+  assert.equal(routeGuardMissingGate.trusted_loader_enablement_blockers.includes("blocked_missing_route_guard"), true);
+  assertSafe(JSON.stringify(routeGuardMissingGate));
+
   const missingOwnerProvidedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: join(tmpDir, "missing-owner-framework-loader.js"),
     IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
@@ -219,6 +262,10 @@ try {
   assert.equal(mocCreatePreflight.trusted_loader_allowlist_status, "disabled");
   assert.equal(mocCreatePreflight.renderer_ready, false);
   assertSafe(JSON.stringify(mocCreatePreflight));
+  const mocCreateEnablementGate = createTrustedLoaderEnablementGateSummary({ loaderProvisioning: mocCreateProvisioning });
+  assert.equal(mocCreateEnablementGate.trusted_loader_enablement_blockers.includes("blocked_future_only_loader_kind"), true);
+  assert.equal(mocCreateEnablementGate.renderer_ready, false);
+  assertSafe(JSON.stringify(mocCreateEnablementGate));
 
   const unsupportedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_LOADER_KIND: "unknown_loader",
@@ -231,6 +278,37 @@ try {
   assert.equal(unsupportedPreflight.trusted_loader_allowlist_status, "disabled");
   assert.equal(unsupportedPreflight.renderer_ready, false);
   assertSafe(JSON.stringify(unsupportedPreflight));
+  const unsupportedEnablementGate = createTrustedLoaderEnablementGateSummary({ loaderProvisioning: unsupportedProvisioning });
+  assert.equal(unsupportedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_unknown_loader_kind"), true);
+  assert.equal(unsupportedEnablementGate.renderer_ready, false);
+  assertSafe(JSON.stringify(unsupportedEnablementGate));
+
+  const staleEnablementGate = createTrustedLoaderEnablementGateSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "stale",
+      fixture_evidence_status: "not_fixture",
+      dry_run_evidence_status: "not_dry_run",
+    },
+  });
+  assert.equal(staleEnablementGate.trusted_loader_enablement_blockers.includes("blocked_stale_real_evidence"), true);
+  const dryRunEnablementGate = createTrustedLoaderEnablementGateSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "fresh",
+      fixture_evidence_status: "not_fixture",
+      dry_run_evidence_status: "dry_run_only",
+    },
+  });
+  assert.equal(dryRunEnablementGate.trusted_loader_enablement_blockers.includes("blocked_dry_run_evidence_only"), true);
+  const expiredOwnerConfirmationGate = createTrustedLoaderEnablementGateSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    ownerConfirmation: true,
+    ownerConfirmationFresh: false,
+  });
+  assert.equal(expiredOwnerConfirmationGate.trusted_loader_enablement_blockers.includes("blocked_owner_confirmation_expired"), true);
 
   for (const unsafeValue of [
     "https://secret.example/framework.js",
@@ -1132,6 +1210,10 @@ try {
   assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_candidate_status, "candidate_present_diagnostic_only");
   assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_ready_candidate, false);
   assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_real_evidence_prerequisite, "real_evidence_required");
+  assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_gate_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_allowlist_disabled"), true);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_runtime_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1141,6 +1223,9 @@ try {
   assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
   assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_candidate_status, "candidate_present_diagnostic_only");
   assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_readiness_claimed, false);
+  assert.equal(provisionedStatus.trusted_loader_enablement_gate_summary.trusted_loader_enablement_gate_status, "blocked");
+  assert.equal(provisionedStatus.trusted_loader_enablement_gate_summary.no_loader_trusted, true);
+  assert.equal(provisionedStatus.trusted_loader_enablement_gate_summary.candidate_present_diagnostic_only, true);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1153,6 +1238,8 @@ try {
   assert.equal(provisionedHealth.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_owner_confirmation_status, "owner_confirmation_required");
+  assert.equal(provisionedHealth.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_missing_owner_confirmation"), true);
+  assert.equal(provisionedHealth.trusted_loader_enablement_gate_summary.trusted_loader_enablement_production_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1167,6 +1254,9 @@ try {
   assert.equal(provisionedHeartbeat.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
   assert.equal(provisionedHeartbeat.trusted_loader_preflight_summary.trusted_loader_real_evidence_prerequisite, "fresh_real_evidence_attention_required");
   assert.equal(provisionedHeartbeat.trusted_loader_preflight_summary.trusted_loader_readiness_claimed, false);
+  assert.equal(provisionedHeartbeat.trusted_loader_enablement_gate_summary.trusted_loader_enablement_gate_status, "blocked");
+  assert.equal(provisionedHeartbeat.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_priority1_unresolved"), true);
+  assert.equal(provisionedHeartbeat.trusted_loader_enablement_gate_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
@@ -1637,6 +1727,10 @@ try {
       "trusted_loader_allowlist_disabled_boundary",
       "trusted_loader_candidate_diagnostic_boundary",
       "trusted_loader_prerequisites_preserved",
+      "trusted_loader_enablement_gate_blocked_by_default",
+      "trusted_loader_enablement_gate_fail_closed",
+      "trusted_loader_enablement_prerequisites_required",
+      "trusted_loader_enablement_no_readiness_sweetening",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
     ],
