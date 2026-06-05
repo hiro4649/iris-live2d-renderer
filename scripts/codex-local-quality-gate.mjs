@@ -10830,9 +10830,12 @@ async function runTargetHarnessGate() {
   report.classificationCoverageStatus = targetHarnessRolloutAdvisoryStatus(report.classificationCoverageStatus, 'target_rollout_classification_advisory');
   report.promptGovernanceStatus = targetHarnessRolloutAdvisoryStatus(report.promptGovernanceStatus, 'target_rollout_prompt_governance_advisory');
   report.sameHeadArtifactEvidenceStatus = targetHarnessRolloutAdvisoryStatus(report.sameHeadArtifactEvidenceStatus, 'target_rollout_pr_context_advisory');
+  report.pullRequestContextFidelityStatus = targetHarnessRolloutAdvisoryStatus(report.pullRequestContextFidelityStatus, 'target_rollout_pr_context_advisory');
+  report.productVerificationContextStatus = targetHarnessRolloutAdvisoryStatus(report.productVerificationContextStatus, 'target_rollout_pr_context_advisory');
   report.reviewIndependenceStatus = targetHarnessRolloutAdvisoryStatus(report.reviewIndependenceStatus, 'target_rollout_pr_context_advisory');
   report.taskBriefCompilerStatus = targetHarnessRolloutAdvisoryStatus(report.taskBriefCompilerStatus, 'target_rollout_pr_context_advisory');
   report.prProfileStatus = targetHarnessRolloutAdvisoryStatus(report.prProfileStatus, 'target_rollout_pr_context_advisory');
+  report.contractGovernanceStatus = targetHarnessRolloutAdvisoryStatus(report.contractGovernanceStatus, 'target_rollout_pr_context_advisory');
   report.complexityGovernanceStatus = targetHarnessRolloutAdvisoryStatus(report.complexityGovernanceStatus, 'target_rollout_pr_context_advisory');
   report.requiredHeadingHintStatus = targetHarnessRolloutAdvisoryStatus(report.requiredHeadingHintStatus, 'target_rollout_pr_context_advisory');
   report.bestOfNEvidenceStatus = targetHarnessRolloutAdvisoryStatus(report.bestOfNEvidenceStatus, 'target_rollout_pr_context_advisory');
