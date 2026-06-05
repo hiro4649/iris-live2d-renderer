@@ -251,8 +251,12 @@ export function createRendererState({
       return resolveSafeModelAsset(state.model3AssetRegistry, assetId);
     },
 
-    cubismCoreJsPath() {
-      return state.cubismSdkAvailable ? state.cubismCoreJsPath : "";
+    cubismCoreScriptCandidate() {
+      return {
+        configured: state.cubismCoreJsPath !== "",
+        available: state.cubismSdkAvailable,
+        candidate: state.cubismCoreJsPath,
+      };
     },
 
     acceptBrowserHeartbeat(payload) {

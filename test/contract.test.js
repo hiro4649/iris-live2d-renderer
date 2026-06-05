@@ -33,7 +33,9 @@ const tmpDir = join(process.cwd(), ".tmp-live2d-renderer-contract");
 await rm(tmpDir, { recursive: true, force: true });
 await mkdir(tmpDir, { recursive: true });
 const model3Path = join(tmpDir, "avatar.model3.json");
-const sdkCorePath = join(tmpDir, "live2dcubismcore.js");
+const sdkCorePath = join(tmpDir, "CubismCore.js");
+const unsafeCorePath = join(tmpDir, "arbitrary-core.js");
+const unsafeCoreExtensionPath = join(tmpDir, "CubismCore.txt");
 const ownerFrameworkLoaderPath = join(tmpDir, "owner-framework-loader.js");
 await mkdir(join(tmpDir, "textures"), { recursive: true });
 await mkdir(join(tmpDir, "motions"), { recursive: true });
@@ -52,6 +54,8 @@ await writeFile(model3Path, JSON.stringify({
   },
 }));
 await writeFile(sdkCorePath, "globalThis.Live2DCubismCore = { Version: 'contract' };\n");
+await writeFile(unsafeCorePath, "globalThis.NotApproved = true;\n");
+await writeFile(unsafeCoreExtensionPath, "not-js");
 await writeFile(ownerFrameworkLoaderPath, "globalThis.OwnerProvidedCubismFramework = true;\n");
 
 try {
@@ -987,6 +991,83 @@ try {
   assert.equal(readyRuntimeConfig.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assertSafe(JSON.stringify(readyRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(readyRuntimeConfig));
+  const readyCoreScript = await ready.getText("/renderer/cubism-core.js");
+  assert.equal(readyCoreScript.includes("Live2DCubismCore"), true);
+  const readyCoreTraversal = await fetchJsonStatus(`${ready.baseUrl}/renderer/cubism-core.js?asset=../CubismCore.js`);
+  assert.equal(readyCoreTraversal.status, 403);
+  assert.equal(readyCoreTraversal.body.core_route_status, "blocked_traversal");
+  assertSafe(JSON.stringify(readyCoreTraversal.body));
+  assertNoModelPathLeak(JSON.stringify(readyCoreTraversal.body));
+  const readyCoreNonLoopback = await fetch(`${ready.baseUrl}/renderer/cubism-core.js`, {
+    headers: { "x-forwarded-for": "203.0.113.10" },
+  });
+  const readyCoreNonLoopbackBody = await readyCoreNonLoopback.json();
+  assert.equal(readyCoreNonLoopback.status, 403);
+  assert.equal(readyCoreNonLoopbackBody.core_route_status, "blocked_non_loopback");
+  assertSafe(JSON.stringify(readyCoreNonLoopbackBody));
+  assertNoModelPathLeak(JSON.stringify(readyCoreNonLoopbackBody));
+
+  const noCoreRoute = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    model3JsonPath: model3Path,
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  const noCoreRouteStatus = await fetchJsonStatus(`${noCoreRoute.baseUrl}/renderer/cubism-core.js`);
+  assert.equal(noCoreRouteStatus.status, 404);
+  assert.equal(noCoreRouteStatus.body.core_route_status, "not_configured");
+  assert.deepEqual(noCoreRouteStatus.body.configured_env_names, []);
+  assertSafe(JSON.stringify(noCoreRouteStatus.body));
+  assertNoModelPathLeak(JSON.stringify(noCoreRouteStatus.body));
+  await noCoreRoute.close();
+
+  const missingCoreRoute = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    cubismCoreJsPath: join(tmpDir, "Live2DCubismCore.min.js"),
+    model3JsonPath: model3Path,
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  const missingCoreRouteStatus = await fetchJsonStatus(`${missingCoreRoute.baseUrl}/renderer/cubism-core.js`);
+  assert.equal(missingCoreRouteStatus.status, 404);
+  assert.equal(missingCoreRouteStatus.body.core_route_status, "operator_attention_required");
+  assert.deepEqual(missingCoreRouteStatus.body.configured_env_names, ["IRIS_LIVE2D_CUBISM_CORE_JS"]);
+  assertSafe(JSON.stringify(missingCoreRouteStatus.body));
+  assertNoModelPathLeak(JSON.stringify(missingCoreRouteStatus.body));
+  await missingCoreRoute.close();
+
+  for (const unsafeCandidate of [unsafeCorePath, unsafeCoreExtensionPath]) {
+    const unsafeCoreRoute = await startHarness(createRendererState({
+      modelId: "iris_default",
+      sceneId: "main_scene",
+      cubismCoreJsPath: unsafeCandidate,
+      model3JsonPath: model3Path,
+      heartbeatMaxAgeMs: 2_000,
+      now: () => nowMs,
+    }));
+    const unsafeCoreRouteStatus = await fetchJsonStatus(`${unsafeCoreRoute.baseUrl}/renderer/cubism-core.js`);
+    assert.equal(unsafeCoreRouteStatus.status, 409);
+    assert.equal(unsafeCoreRouteStatus.body.core_route_status, "unsafe_configuration");
+    assertSafe(JSON.stringify(unsafeCoreRouteStatus.body));
+    assertNoModelPathLeak(JSON.stringify(unsafeCoreRouteStatus.body));
+    await unsafeCoreRoute.close();
+  }
+  const traversalCoreRoute = await startHarness(createRendererState({
+    modelId: "iris_default",
+    sceneId: "main_scene",
+    cubismCoreJsPath: `${tmpDir}/../CubismCore.js`,
+    model3JsonPath: model3Path,
+    heartbeatMaxAgeMs: 2_000,
+    now: () => nowMs,
+  }));
+  const traversalCoreRouteStatus = await fetchJsonStatus(`${traversalCoreRoute.baseUrl}/renderer/cubism-core.js`);
+  assert.equal(traversalCoreRouteStatus.status, 403);
+  assert.equal(traversalCoreRouteStatus.body.core_route_status, "blocked_traversal");
+  assertSafe(JSON.stringify(traversalCoreRouteStatus.body));
+  assertNoModelPathLeak(JSON.stringify(traversalCoreRouteStatus.body));
+  await traversalCoreRoute.close();
 
   const provisioned = await startHarness(createRendererState({
     modelId: "iris_default",

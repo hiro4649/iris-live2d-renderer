@@ -100,3 +100,11 @@ Allowed configuration names are `IRIS_LIVE2D_CUBISM_FRAMEWORK_JS`, `IRIS_LIVE2D_
 Provisioning statuses are diagnostic only. `candidate_present` means an owner-provided file appears to be present and still requires `license_attention_required`, owner confirmation, and a future trusted loader policy gate. `cubism_moc_create` remains diagnostic-only. `cubism_framework_model_loader_v1` remains a future loader path until the trusted loader allowlist is explicitly enabled in a later PR with same-head evidence.
 
 Loader provisioning does not imply `model_loaded`, `scene_loaded`, `browser_cue_delivery_ready`, `renderer_ready`, runtime readiness, or production readiness. The next PR may enable a trusted loader kind only after license/provisioning review, owner confirmation, and passing same-head tests.
+
+## Cubism Core Route Guard
+
+`LIVE2D-CUBISM-CORE-ROUTE-GUARD9` is a route safety hardening step before any trusted loader allowlist work. It restricts `/renderer/cubism-core.js` to loopback/local requests and safe owner-provided Cubism Core candidates while keeping owner-provided SDK/Core file values private and external to this repository.
+
+The guard does not bundle, download, redistribute, commit, or quote Cubism SDK or vendor files. Public responses may expose only configured environment names and safe status labels. Candidate presence is diagnostic only, and the trusted loader allowlist remains disabled.
+
+This route guard does not make the loader trusted and does not imply `model_loaded`, `scene_loaded`, `browser_cue_delivery_ready`, `renderer_ready`, runtime readiness, or production readiness. Real Live2D readiness still requires a separate fresh evidence collector, owner confirmation, and same-head evidence in a later PR.
