@@ -2591,9 +2591,6 @@ function validateSourceHarness() {
 
 
   const warnings = [];
-
-
-
   const manifest = safeJsonRead(SOURCE_MANIFEST, failures, 'sourceManifest.parse') || {};
 
 
@@ -9665,6 +9662,7 @@ async function runTargetHarnessGate() {
 
 
   const warnings = [];
+  const targetWorkspaceBeforeSnapshot = v101Gates.captureLocalGateSideEffectSnapshot();
 
 
 
@@ -11215,6 +11213,18 @@ async function runTargetHarnessGate() {
 
 
   }
+
+  const targetWorkspaceAfterSnapshot = v101Gates.captureLocalGateSideEffectSnapshot();
+  const beforeTracked = [...(targetWorkspaceBeforeSnapshot.trackedFiles || [])].sort().join('\n');
+  const afterTracked = [...(targetWorkspaceAfterSnapshot.trackedFiles || [])].sort().join('\n');
+  const workspaceMutationReasons = [];
+  if (targetWorkspaceAfterSnapshot.branch !== targetWorkspaceBeforeSnapshot.branch) workspaceMutationReasons.push('target_harness_branch_mutation_detected');
+  if (targetWorkspaceAfterSnapshot.head !== targetWorkspaceBeforeSnapshot.head) workspaceMutationReasons.push('target_harness_head_mutation_detected');
+  if (targetWorkspaceAfterSnapshot.statusShort !== targetWorkspaceBeforeSnapshot.statusShort || afterTracked !== beforeTracked) workspaceMutationReasons.push('target_harness_tracked_file_mutation_detected');
+  report.targetHarnessWorkspaceMutationStatus = workspaceMutationReasons.length
+    ? { status: 'fail', reasonCodes: workspaceMutationReasons, safeSummaryOnly: true }
+    : { status: 'pass', reasonCodes: ['target_harness_workspace_unchanged'], safeSummaryOnly: true };
+  if (workspaceMutationReasons.length) failures.push({ id: 'targetHarnessWorkspaceMutationStatus.failed', message: 'target harness workspace mutation detected' });
 
 
 
