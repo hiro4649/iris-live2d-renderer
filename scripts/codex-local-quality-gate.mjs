@@ -1598,6 +1598,11 @@ function isPr42ProductTargetPrePush(env = process.env) {
     String(env.CODEX_REMOTE_EVIDENCE_PHASE || '') === 'remote_evidence_required_after_push';
 }
 
+function isProductR3TargetPrePush(env = process.env) {
+  return String(env.CODEX_PR_PROFILE || '') === 'product_r3' &&
+    String(env.CODEX_REMOTE_EVIDENCE_PHASE || '') === 'remote_evidence_required_after_push';
+}
+
 function pr42ExpectedChangedFiles() {
   return [
     'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
@@ -10066,8 +10071,9 @@ async function runTargetHarnessGate() {
   initializeV100Statuses(report);
 
   const pr42ProductTargetPrePush = isPr42ProductTargetPrePush(process.env);
+  const productR3TargetPrePush = isProductR3TargetPrePush(process.env);
 
-  if (process.env.CODEX_TARGET_FULL_RUN !== '1' && pr42ProductTargetPrePush) {
+  if (process.env.CODEX_TARGET_FULL_RUN !== '1' && productR3TargetPrePush) {
     report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
     report.remoteEvidencePass = false;
     report.targetMergeReady = false;
