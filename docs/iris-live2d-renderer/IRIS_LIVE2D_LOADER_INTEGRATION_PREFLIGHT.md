@@ -116,3 +116,15 @@ This route guard does not make the loader trusted and does not imply `model_load
 Fixture evidence, dry-run evidence, stale evidence, missing timestamps, and incomplete real-probe evidence are not real readiness evidence. The collector does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable.
 
 The collector must not expose raw model paths, motion paths, endpoint values, token values, private local paths, raw cue payloads, raw renderer payloads, raw evidence bodies, SDK/vendor paths, or vendor source. Fresh resident real evidence and owner confirmation remain required before readiness can be considered. Trusted loader allowlist work remains separate and disabled.
+
+## Trusted Loader Allowlist Preflight
+
+`LIVE2D-TRUSTED-LOADER-ALLOWLIST-PREFLIGHT1` is a safety boundary for future trusted loader work, not trusted loader enablement. The trusted loader allowlist remains disabled, no loader is trusted, and no loader candidate is executed by this preflight.
+
+The preflight reports only safe labels for allowlist status, candidate kind/status, route guard prerequisite, real evidence prerequisite, owner confirmation prerequisite, license attention, blocker reason, and safe next action. Owner-provided file values stay private; public summaries may expose only configured environment names and safe statuses.
+
+Candidate presence remains diagnostic only. Unknown loader kinds, future-only loader kinds, missing route guard evidence, missing real evidence, stale/fixture/dry-run evidence, missing owner confirmation, or license attention must keep trust blocked.
+
+This preflight does not bundle, download, redistribute, commit, or quote Cubism SDK or vendor files. It must not expose raw loader candidates, loader errors, SDK paths, endpoint values, token values, model paths, motion paths, raw cue payloads, raw renderer payloads, or raw evidence bodies.
+
+The preflight does not make `renderer_ready`, `model_loaded`, `scene_loaded`, or `browser_cue_delivery_ready` true, does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable. Future trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and owner confirmation.

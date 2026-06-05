@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { assertSafePublicObject, createBoundaryPolicy, safeText } from "../contracts.js";
 
 export const CUBISM_LOADER_PROVISIONING_SCHEMA = "iris_live2d_cubism_loader_provisioning_v1";
+export const TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA = "iris_live2d_trusted_loader_allowlist_preflight_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -167,6 +168,80 @@ export function createCubismLoaderProvisioningSummary(input = {}) {
   };
   assertSafePublicObject(summary, "cubism loader provisioning summary");
   return summary;
+}
+
+export function createTrustedLoaderAllowlistPreflightSummary({
+  loaderProvisioning,
+  live2dEvidenceSummary,
+  routeGuardStatus = "available",
+  ownerConfirmation = false,
+} = {}) {
+  const provisioning = createCubismLoaderProvisioningSummary(loaderProvisioning);
+  const evidence = live2dEvidenceSummary && typeof live2dEvidenceSummary === "object" ? live2dEvidenceSummary : {};
+  const allowlistStatus = "disabled";
+  const candidateStatus = trustedLoaderCandidateStatus(provisioning);
+  const routeGuardPrerequisite = routeGuardStatus === "available" ? "available" : "route_guard_attention_required";
+  const realEvidencePrerequisite = evidence.live2d_evidence_status === "attention_required" &&
+    evidence.evidence_freshness_status === "fresh" &&
+    evidence.fixture_evidence_status === "not_fixture" &&
+    evidence.dry_run_evidence_status === "not_dry_run"
+    ? "fresh_real_evidence_attention_required"
+    : "real_evidence_required";
+  const ownerConfirmationStatus = ownerConfirmation === true ? "confirmed_future_only" : "owner_confirmation_required";
+  const blockerStatus = allowlistStatus === "disabled"
+    ? "allowlist_disabled"
+    : routeGuardPrerequisite !== "available"
+      ? "route_guard_required"
+      : realEvidencePrerequisite !== "fresh_real_evidence_attention_required"
+        ? "real_evidence_required"
+        : ownerConfirmationStatus;
+  const summary = {
+    schema: TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
+    safe_summary_only: true,
+    trusted_loader_allowlist_status: allowlistStatus,
+    trusted_loader_candidate_kind: provisioning.loader_kind,
+    trusted_loader_candidate_status: candidateStatus,
+    trusted_loader_blocker_status: blockerStatus,
+    trusted_loader_safe_next_action: "separate_owner_confirmed_trusted_loader_enablement_pr_required",
+    trusted_loader_route_guard_prerequisite: routeGuardPrerequisite,
+    trusted_loader_real_evidence_prerequisite: realEvidencePrerequisite,
+    trusted_loader_license_status: provisioning.license_status,
+    trusted_loader_owner_confirmation_status: ownerConfirmationStatus,
+    trusted_loader_readiness_claimed: false,
+    trusted_loader_ready_candidate: false,
+    trusted_loader_allowlist_enabled: false,
+    candidate_present_diagnostic_only: provisioning.provisioning_status === "candidate_present",
+    owner_provided_file_policy: "env_name_only",
+    configured_env_names: provisioning.configured_env_names,
+    configured_env_count: provisioning.configured_env_count,
+    route_guard_required: routeGuardPrerequisite !== "available",
+    real_evidence_required: true,
+    priority1_status: "BLOCKED",
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      no_env_values: true,
+      no_sdk_vendor_files: true,
+      owner_provided_files_only: true,
+      license_confirmation_required: true,
+    },
+  };
+  assertSafePublicObject(summary, "trusted loader allowlist preflight summary");
+  return summary;
+}
+
+function trustedLoaderCandidateStatus(provisioning) {
+  if (provisioning.provisioning_status === "candidate_present") return "candidate_present_diagnostic_only";
+  if (provisioning.loader_kind === "unsupported_loader_kind") return "blocked_unknown_loader";
+  if (provisioning.provisioning_status === "future_only") return "future_only";
+  if (provisioning.provisioning_status === "operator_attention_required") return "operator_attention_required";
+  if (provisioning.provisioning_status === "unsafe_configuration") return "unsafe_configuration";
+  if (provisioning.provisioning_status === "not_configured") return "not_configured";
+  return "license_attention_required";
 }
 
 function configuredLoaderEnvNames(env) {

@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { assertSafeInput, assertSafePublicObject, createBoundaryPolicy, safeText } from "./contracts.js";
 import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
+import { createTrustedLoaderAllowlistPreflightSummary } from "./renderer/cubismLoaderProvisioning.js";
 import { validateRendererCueEnvelope } from "./renderer/cueValidation.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
 import { resolveSafeModelAsset } from "./renderer/modelAssets.js";
@@ -53,6 +54,10 @@ export function createRendererState({
   return {
     status() {
       const heartbeatStatus = getHeartbeatStatus(state, now());
+      const trustedLoaderPreflight = createTrustedLoaderAllowlistPreflightSummary({
+        loaderProvisioning: state.cubismLoaderProvisioning,
+        live2dEvidenceSummary: heartbeatStatus.live2d_evidence_summary,
+      });
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -107,8 +112,10 @@ export function createRendererState({
           last_cue_applied: heartbeatStatus.last_cue_applied,
           last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
           live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
+          trusted_loader_preflight_summary: trustedLoaderPreflight,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
+        trusted_loader_preflight_summary: trustedLoaderPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -152,6 +159,7 @@ export function createRendererState({
         trusted_loader_ready_candidate: status.renderer_health.trusted_loader_ready_candidate,
         trusted_loader_error_kind: status.renderer_health.trusted_loader_error_kind,
         live2d_evidence_summary: status.renderer_health.live2d_evidence_summary,
+        trusted_loader_preflight_summary: status.renderer_health.trusted_loader_preflight_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -221,6 +229,10 @@ export function createRendererState({
 
     browserRuntimeConfig() {
       const heartbeatStatus = getHeartbeatStatus(state, now());
+      const trustedLoaderPreflight = createTrustedLoaderAllowlistPreflightSummary({
+        loaderProvisioning: state.cubismLoaderProvisioning,
+        live2dEvidenceSummary: heartbeatStatus.live2d_evidence_summary,
+      });
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -234,6 +246,7 @@ export function createRendererState({
         loaderProvisioning: state.cubismLoaderProvisioning,
       });
       response.live2d_evidence_summary = heartbeatStatus.live2d_evidence_summary;
+      response.trusted_loader_preflight_summary = trustedLoaderPreflight;
       assertSafePublicObject(response, "browser runtime config");
       return response;
     },
@@ -268,6 +281,10 @@ export function createRendererState({
       assertSafeInput(payload, "browser heartbeat");
       state.lastHeartbeat = payload;
       const heartbeatStatus = getHeartbeatStatus(state, now());
+      const trustedLoaderPreflight = createTrustedLoaderAllowlistPreflightSummary({
+        loaderProvisioning: state.cubismLoaderProvisioning,
+        live2dEvidenceSummary: heartbeatStatus.live2d_evidence_summary,
+      });
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -306,8 +323,10 @@ export function createRendererState({
           last_cue_applied: heartbeatStatus.last_cue_applied,
           last_cue_applied_at: heartbeatStatus.last_cue_applied_at,
           live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
+          trusted_loader_preflight_summary: trustedLoaderPreflight,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
+        trusted_loader_preflight_summary: trustedLoaderPreflight,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");
