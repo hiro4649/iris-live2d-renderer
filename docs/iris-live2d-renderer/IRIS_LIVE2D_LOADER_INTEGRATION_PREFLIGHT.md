@@ -140,3 +140,17 @@ The route guard, real evidence collector, trusted loader allowlist preflight, fr
 The gate does not bundle, download, redistribute, commit, copy, or quote Cubism SDK or vendor files. Owner-provided file values remain private, and public summaries may expose only environment names and safe status labels.
 
 The gate does not make `renderer_ready`, `model_loaded`, `scene_loaded`, or `browser_cue_delivery_ready` true, does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable. Future actual trusted loader enablement still requires a separate owner-confirmed PR with fresh real evidence and owner confirmation.
+
+## Trusted Loader Owner Handoff
+
+`LIVE2D-TRUSTED-LOADER-OWNER-HANDOFF1` is review preparation for a future trusted loader decision, not trusted loader enablement. It does not enable the trusted loader allowlist, does not trust any loader, does not execute a loader candidate, and does not perform a live handoff or go/no-go.
+
+The handoff packet exposes only safe labels for handoff status, blocked reason, required owner confirmations, required real evidence, route guard status, evidence collector status, allowlist preflight status, enablement gate status, license boundary, SDK/vendor boundary, candidate status, freshness status, priority1 status, motion dataset status, safe next action, and residual risks.
+
+The route guard, real evidence collector, trusted loader allowlist preflight, trusted loader enablement gate, fresh real evidence, owner confirmation, license boundary, SDK/vendor boundary, known supported loader kind, safe public summaries, no raw path exposure, no env value exposure, no raw loader candidate exposure, no owner private note exposure, and no SDK/vendor exposure remain required prerequisites.
+
+Fixture evidence, dry-run evidence, stale evidence, mock owner confirmation, missing owner confirmation, expired owner confirmation, unknown loader kind, future-only loader kind, license attention, allowlist disabled, enablement-gate-blocked, priority1-unresolved, and motion-dataset-non-executable states remain blocked.
+
+The handoff does not bundle, download, redistribute, commit, copy, or quote Cubism SDK or vendor files. Owner-provided file values remain private, and public summaries may expose only environment names and safe status labels.
+
+The handoff does not make `renderer_ready`, `model_loaded`, `scene_loaded`, or `browser_cue_delivery_ready` true, does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable. Future actual trusted loader enablement still requires a separate owner-confirmed PR with fresh real evidence and owner confirmation.

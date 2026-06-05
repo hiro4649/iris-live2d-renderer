@@ -117,6 +117,18 @@ production_readiness_claimed: no
 - Readiness: this gate does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
 - Next gate: actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and same-head checks.
 
+## Inserted Preflight: LIVE2D-TRUSTED-LOADER-OWNER-HANDOFF1
+
+- Position: after trusted loader enablement gate and before any actual trusted loader enablement or live handoff.
+- Scope: add a safe owner handoff packet for review preparation, required confirmations, required real evidence, route guard status, evidence collector status, allowlist preflight status, enablement gate status, license boundary, SDK/vendor boundary, candidate status, freshness status, priority1 status, motion dataset status, safe next action, and residual risks.
+- Handoff boundary: this is review preparation only; trusted loader allowlist remains disabled, no loader is trusted, no loader candidate is executed, no live handoff is performed, and no production go/no-go is created.
+- Prerequisites: route guard, real evidence collector, allowlist preflight, enablement gate, fresh real evidence, owner confirmation, license boundary, SDK/vendor boundary, known supported loader kind, safe public summaries, and no raw exposure remain required.
+- Evidence boundary: fixture evidence, dry-run evidence, stale evidence, mock owner confirmation, missing owner confirmation, expired owner confirmation, unknown loader kind, future-only loader kind, license attention, allowlist disabled, enablement gate blocked, priority1 unresolved, and motion dataset non-executable states all stay blocked.
+- License boundary: Cubism SDK / Framework files remain owner-provided licensed material outside the repo; this repo must not download, redistribute, commit, copy, or quote vendor files.
+- Privacy boundary: owner-provided values, owner private notes, raw loader candidates, loader errors, SDK paths, endpoints, tokens, raw cues, raw renderer payloads, raw evidence bodies, local paths, and vendor source stay private.
+- Readiness: this handoff does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
+- Next gate: actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and same-head checks.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。

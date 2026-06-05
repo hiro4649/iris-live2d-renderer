@@ -4,6 +4,7 @@ import { assertSafePublicObject, createBoundaryPolicy, safeText } from "../contr
 export const CUBISM_LOADER_PROVISIONING_SCHEMA = "iris_live2d_cubism_loader_provisioning_v1";
 export const TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA = "iris_live2d_trusted_loader_allowlist_preflight_v1";
 export const TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA = "iris_live2d_trusted_loader_enablement_gate_v1";
+export const TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA = "iris_live2d_trusted_loader_owner_handoff_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -316,6 +317,152 @@ export function createTrustedLoaderEnablementGateSummary({
   };
   assertSafePublicObject(summary, "trusted loader enablement gate summary");
   return summary;
+}
+
+export function createTrustedLoaderOwnerHandoffSummary({
+  loaderProvisioning,
+  live2dEvidenceSummary,
+  allowlistPreflightSummary,
+  enablementGateSummary,
+  routeGuardStatus = "available",
+  ownerConfirmation = false,
+  ownerConfirmationFresh = false,
+  mockOwnerConfirmation = false,
+  licenseBoundaryAcknowledged = false,
+  sdkVendorBoundaryStatus = "clear",
+} = {}) {
+  const preflight = allowlistPreflightSummary && typeof allowlistPreflightSummary === "object"
+    ? allowlistPreflightSummary
+    : createTrustedLoaderAllowlistPreflightSummary({
+      loaderProvisioning,
+      live2dEvidenceSummary,
+      routeGuardStatus,
+      ownerConfirmation,
+    });
+  const gate = enablementGateSummary && typeof enablementGateSummary === "object"
+    ? enablementGateSummary
+    : createTrustedLoaderEnablementGateSummary({
+      loaderProvisioning,
+      live2dEvidenceSummary,
+      allowlistPreflightSummary: preflight,
+      routeGuardStatus,
+      ownerConfirmation,
+      ownerConfirmationFresh,
+      sdkVendorBoundaryStatus,
+    });
+  const provisioning = createCubismLoaderProvisioningSummary(loaderProvisioning);
+  const evidence = live2dEvidenceSummary && typeof live2dEvidenceSummary === "object" ? live2dEvidenceSummary : {};
+  const blockers = trustedLoaderOwnerHandoffBlockers({
+    provisioning,
+    evidence,
+    preflight,
+    gate,
+    routeGuardStatus,
+    ownerConfirmation,
+    ownerConfirmationFresh,
+    mockOwnerConfirmation,
+    licenseBoundaryAcknowledged,
+    sdkVendorBoundaryStatus,
+  });
+  const summary = {
+    schema: TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
+    safe_summary_only: true,
+    trusted_loader_owner_handoff_status: "blocked",
+    trusted_loader_owner_handoff_ready_candidate: false,
+    trusted_loader_owner_handoff_blocked_reason: blockers[0] ?? "handoff_blocked_enablement_gate_blocked",
+    trusted_loader_owner_handoff_blockers: blockers,
+    trusted_loader_owner_handoff_required_confirmations: [
+      "owner_confirmation_required",
+      "fresh_real_evidence_required",
+      "license_boundary_acknowledgement_required",
+      "separate_owner_confirmed_enablement_pr_required",
+    ],
+    trusted_loader_owner_handoff_safe_next_action: "prepare_owner_review_only_no_enablement",
+    trusted_loader_owner_handoff_runtime_readiness_claimed: false,
+    trusted_loader_owner_handoff_production_readiness_claimed: false,
+    handoff_status: "blocked",
+    handoff_ready_candidate: false,
+    handoff_blocked_reason: blockers[0] ?? "handoff_blocked_enablement_gate_blocked",
+    required_owner_confirmations: "owner_confirmation_required",
+    required_real_evidence: "fresh_real_evidence_required",
+    required_route_guard_status: routeGuardStatus === "available" ? "available" : "handoff_blocked_missing_route_guard",
+    required_evidence_collector_status: safeGateEvidenceStatus(evidence),
+    required_allowlist_preflight_status: preflight.schema === TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA ? "available_disabled" : "handoff_blocked_missing_allowlist_preflight",
+    required_enablement_gate_status: gate.trusted_loader_enablement_gate_status === "blocked" ? "handoff_blocked_enablement_gate_blocked" : "available_future_only",
+    license_boundary_status: licenseBoundaryAcknowledged === true ? "acknowledged_future_only" : "handoff_blocked_license_attention_required",
+    sdk_vendor_boundary_status: sdkVendorBoundaryStatus === "clear" ? "clear" : "handoff_blocked_sdk_vendor_boundary",
+    candidate_status: trustedLoaderCandidateStatus(provisioning),
+    freshness_status: evidence.evidence_freshness_status === "fresh" ? "fresh" : evidence.evidence_freshness_status ?? "missing",
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    safe_next_action: "owner_review_preparation_only",
+    residual_risks: [
+      "fresh_real_evidence_required",
+      "owner_confirmation_required",
+      "actual_enablement_requires_separate_pr",
+    ],
+    do_not_continue_without_owner_confirmation: true,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    candidate_present_diagnostic_only: provisioning.provisioning_status === "candidate_present",
+    mock_owner_confirmation_rejected: mockOwnerConfirmation === true,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    motion_dataset_executable: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      no_env_values: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      owner_provided_files_only: true,
+      license_confirmation_required: true,
+    },
+  };
+  assertSafePublicObject(summary, "trusted loader owner handoff summary");
+  return summary;
+}
+
+function trustedLoaderOwnerHandoffBlockers({
+  provisioning,
+  evidence,
+  preflight,
+  gate,
+  routeGuardStatus,
+  ownerConfirmation,
+  ownerConfirmationFresh,
+  mockOwnerConfirmation,
+  licenseBoundaryAcknowledged,
+  sdkVendorBoundaryStatus,
+}) {
+  const blockers = [];
+  if (routeGuardStatus !== "available") blockers.push("handoff_blocked_missing_route_guard");
+  if (preflight.schema !== TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA) blockers.push("handoff_blocked_missing_allowlist_preflight");
+  if (gate.schema !== TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA || gate.trusted_loader_enablement_gate_status === "blocked") blockers.push("handoff_blocked_enablement_gate_blocked");
+  if (preflight.trusted_loader_allowlist_status === "disabled") blockers.push("handoff_blocked_allowlist_disabled");
+  if (provisioning.provisioning_status === "candidate_present") blockers.push("handoff_candidate_present_diagnostic_only");
+  if (provisioning.loader_kind === "unsupported_loader_kind") blockers.push("handoff_blocked_unknown_loader_kind");
+  if (provisioning.provisioning_status === "future_only") blockers.push("handoff_blocked_future_only_loader_kind");
+  if (licenseBoundaryAcknowledged !== true || provisioning.license_status !== "not_applicable") blockers.push("handoff_blocked_license_attention_required");
+  if (sdkVendorBoundaryStatus !== "clear") blockers.push("handoff_blocked_sdk_vendor_boundary");
+  if (mockOwnerConfirmation === true) blockers.push("handoff_blocked_mock_owner_confirmation");
+  if (ownerConfirmation !== true) blockers.push("handoff_blocked_missing_owner_confirmation");
+  if (ownerConfirmation === true && ownerConfirmationFresh !== true) blockers.push("handoff_blocked_expired_owner_confirmation");
+  if (!evidence || evidence.live2d_evidence_status !== "attention_required") blockers.push("handoff_blocked_missing_real_evidence");
+  if (evidence.evidence_freshness_status === "stale") blockers.push("handoff_blocked_stale_real_evidence");
+  if (evidence.evidence_freshness_status !== "fresh") blockers.push("handoff_blocked_missing_real_evidence");
+  if (evidence.fixture_evidence_status === "fixture_only") blockers.push("handoff_blocked_fixture_evidence_only");
+  if (evidence.dry_run_evidence_status === "dry_run_only") blockers.push("handoff_blocked_dry_run_evidence_only");
+  blockers.push("handoff_blocked_priority1_unresolved");
+  blockers.push("handoff_blocked_motion_dataset_non_executable");
+  blockers.push("handoff_not_runtime_ready");
+  blockers.push("handoff_not_production_ready");
+  return [...new Set(blockers)];
 }
 
 function trustedLoaderEnablementBlockers({

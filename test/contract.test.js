@@ -8,9 +8,11 @@ import {
   CUBISM_LOADER_KIND_CANDIDATES,
   CUBISM_LOADER_PROVISIONING_SCHEMA,
   TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
+  TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
+  createTrustedLoaderOwnerHandoffSummary,
   inspectCubismLoaderProvisioning,
 } from "../src/renderer/cubismLoaderProvisioning.js";
 import {
@@ -130,6 +132,7 @@ try {
   assert.equal(CUBISM_LOADER_PROVISIONING_SCHEMA, "iris_live2d_cubism_loader_provisioning_v1");
   assert.equal(TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA, "iris_live2d_trusted_loader_allowlist_preflight_v1");
   assert.equal(TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA, "iris_live2d_trusted_loader_enablement_gate_v1");
+  assert.equal(TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA, "iris_live2d_trusted_loader_owner_handoff_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -231,6 +234,54 @@ try {
   assert.equal(routeGuardMissingGate.trusted_loader_enablement_blockers.includes("blocked_missing_route_guard"), true);
   assertSafe(JSON.stringify(routeGuardMissingGate));
 
+  const ownerProvidedOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    allowlistPreflightSummary: ownerProvidedAllowlistPreflight,
+    enablementGateSummary: ownerProvidedEnablementGate,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "missing",
+      fixture_evidence_status: "fixture_only",
+      dry_run_evidence_status: "not_dry_run",
+    },
+  });
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_status, "blocked");
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_ready_candidate, false);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_allowlist_enabled, false);
+  assert.equal(ownerProvidedOwnerHandoff.no_loader_trusted, true);
+  assert.equal(ownerProvidedOwnerHandoff.candidate_present_diagnostic_only, true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_allowlist_disabled"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_candidate_present_diagnostic_only"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_enablement_gate_blocked"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_fixture_evidence_only"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_missing_owner_confirmation"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_license_attention_required"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_priority1_unresolved"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_motion_dataset_non_executable"), true);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_runtime_readiness_claimed, false);
+  assert.equal(ownerProvidedOwnerHandoff.trusted_loader_owner_handoff_production_readiness_claimed, false);
+  assert.equal(ownerProvidedOwnerHandoff.do_not_continue_without_owner_confirmation, true);
+  assert.equal(ownerProvidedOwnerHandoff.renderer_ready, false);
+  assert.equal(ownerProvidedOwnerHandoff.model_loaded, false);
+  assert.equal(ownerProvidedOwnerHandoff.scene_loaded, false);
+  assert.equal(ownerProvidedOwnerHandoff.browser_cue_delivery_ready, false);
+  assert.equal(JSON.stringify(ownerProvidedOwnerHandoff).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(ownerProvidedOwnerHandoff));
+  assertNoModelPathLeak(JSON.stringify(ownerProvidedOwnerHandoff));
+
+  const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    mockOwnerConfirmation: true,
+  });
+  assert.equal(mockOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_mock_owner_confirmation"), true);
+  assert.equal(mockOwnerHandoff.mock_owner_confirmation_rejected, true);
+  const routeGuardMissingHandoff = createTrustedLoaderOwnerHandoffSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    routeGuardStatus: "missing",
+  });
+  assert.equal(routeGuardMissingHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_missing_route_guard"), true);
+  assertSafe(JSON.stringify(routeGuardMissingHandoff));
+
   const missingOwnerProvidedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: join(tmpDir, "missing-owner-framework-loader.js"),
     IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
@@ -266,6 +317,10 @@ try {
   assert.equal(mocCreateEnablementGate.trusted_loader_enablement_blockers.includes("blocked_future_only_loader_kind"), true);
   assert.equal(mocCreateEnablementGate.renderer_ready, false);
   assertSafe(JSON.stringify(mocCreateEnablementGate));
+  const mocCreateHandoff = createTrustedLoaderOwnerHandoffSummary({ loaderProvisioning: mocCreateProvisioning });
+  assert.equal(mocCreateHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_future_only_loader_kind"), true);
+  assert.equal(mocCreateHandoff.renderer_ready, false);
+  assertSafe(JSON.stringify(mocCreateHandoff));
 
   const unsupportedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_LOADER_KIND: "unknown_loader",
@@ -282,6 +337,10 @@ try {
   assert.equal(unsupportedEnablementGate.trusted_loader_enablement_blockers.includes("blocked_unknown_loader_kind"), true);
   assert.equal(unsupportedEnablementGate.renderer_ready, false);
   assertSafe(JSON.stringify(unsupportedEnablementGate));
+  const unsupportedHandoff = createTrustedLoaderOwnerHandoffSummary({ loaderProvisioning: unsupportedProvisioning });
+  assert.equal(unsupportedHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_unknown_loader_kind"), true);
+  assert.equal(unsupportedHandoff.renderer_ready, false);
+  assertSafe(JSON.stringify(unsupportedHandoff));
 
   const staleEnablementGate = createTrustedLoaderEnablementGateSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -293,6 +352,16 @@ try {
     },
   });
   assert.equal(staleEnablementGate.trusted_loader_enablement_blockers.includes("blocked_stale_real_evidence"), true);
+  const staleOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "stale",
+      fixture_evidence_status: "not_fixture",
+      dry_run_evidence_status: "not_dry_run",
+    },
+  });
+  assert.equal(staleOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_stale_real_evidence"), true);
   const dryRunEnablementGate = createTrustedLoaderEnablementGateSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     live2dEvidenceSummary: {
@@ -303,12 +372,28 @@ try {
     },
   });
   assert.equal(dryRunEnablementGate.trusted_loader_enablement_blockers.includes("blocked_dry_run_evidence_only"), true);
+  const dryRunOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "fresh",
+      fixture_evidence_status: "not_fixture",
+      dry_run_evidence_status: "dry_run_only",
+    },
+  });
+  assert.equal(dryRunOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_dry_run_evidence_only"), true);
   const expiredOwnerConfirmationGate = createTrustedLoaderEnablementGateSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     ownerConfirmation: true,
     ownerConfirmationFresh: false,
   });
   assert.equal(expiredOwnerConfirmationGate.trusted_loader_enablement_blockers.includes("blocked_owner_confirmation_expired"), true);
+  const expiredOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    ownerConfirmation: true,
+    ownerConfirmationFresh: false,
+  });
+  assert.equal(expiredOwnerHandoff.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_expired_owner_confirmation"), true);
 
   for (const unsafeValue of [
     "https://secret.example/framework.js",
@@ -1214,6 +1299,10 @@ try {
   assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_ready_candidate, false);
   assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_allowlist_disabled"), true);
   assert.equal(provisionedRuntimeConfig.trusted_loader_enablement_gate_summary.trusted_loader_enablement_runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_enablement_gate_blocked"), true);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_runtime_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1226,6 +1315,9 @@ try {
   assert.equal(provisionedStatus.trusted_loader_enablement_gate_summary.trusted_loader_enablement_gate_status, "blocked");
   assert.equal(provisionedStatus.trusted_loader_enablement_gate_summary.no_loader_trusted, true);
   assert.equal(provisionedStatus.trusted_loader_enablement_gate_summary.candidate_present_diagnostic_only, true);
+  assert.equal(provisionedStatus.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_status, "blocked");
+  assert.equal(provisionedStatus.trusted_loader_owner_handoff_summary.no_loader_trusted, true);
+  assert.equal(provisionedStatus.trusted_loader_owner_handoff_summary.candidate_present_diagnostic_only, true);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1240,6 +1332,8 @@ try {
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_owner_confirmation_status, "owner_confirmation_required");
   assert.equal(provisionedHealth.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_missing_owner_confirmation"), true);
   assert.equal(provisionedHealth.trusted_loader_enablement_gate_summary.trusted_loader_enablement_production_readiness_claimed, false);
+  assert.equal(provisionedHealth.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_missing_owner_confirmation"), true);
+  assert.equal(provisionedHealth.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_production_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1257,6 +1351,9 @@ try {
   assert.equal(provisionedHeartbeat.trusted_loader_enablement_gate_summary.trusted_loader_enablement_gate_status, "blocked");
   assert.equal(provisionedHeartbeat.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_priority1_unresolved"), true);
   assert.equal(provisionedHeartbeat.trusted_loader_enablement_gate_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_status, "blocked");
+  assert.equal(provisionedHeartbeat.trusted_loader_owner_handoff_summary.trusted_loader_owner_handoff_blockers.includes("handoff_blocked_priority1_unresolved"), true);
+  assert.equal(provisionedHeartbeat.trusted_loader_owner_handoff_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
@@ -1731,6 +1828,10 @@ try {
       "trusted_loader_enablement_gate_fail_closed",
       "trusted_loader_enablement_prerequisites_required",
       "trusted_loader_enablement_no_readiness_sweetening",
+      "trusted_loader_owner_handoff_blocked_by_default",
+      "trusted_loader_owner_handoff_safe_packet",
+      "trusted_loader_owner_handoff_mock_confirmation_rejected",
+      "trusted_loader_owner_handoff_no_readiness_sweetening",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
     ],
