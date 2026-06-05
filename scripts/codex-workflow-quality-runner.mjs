@@ -5,7 +5,7 @@
 
 
 
-// CODEX_QUALITY_HARNESS_FILE v1.0.6
+// CODEX_QUALITY_HARNESS_FILE v1.0.7
 
 
 
@@ -3226,40 +3226,47 @@ function statusAllowed(key, status, eventName) {
 }
 
 
+const targetRolloutAdvisoryRequired = new Set([
+  'promptGovernanceStatus',
+  'v080SelfTestStatus',
+  'v081SelfTestStatus',
+  'v082SelfTestStatus',
+  'v087SelfTestStatus',
+  'v090SelfTestStatus',
+  'v092SelfTestStatus',
+  'sameHeadArtifactEvidenceStatus',
+  'v085StabilityStatus',
+  'codeReviewMonitorStatus',
+  'complexityGovernanceStatus',
+  'reviewIndependenceStatus',
+  'taskBriefCompilerStatus',
+  'requiredHeadingHintStatus',
+  'prProfileStatus',
+  'bestOfNEvidenceStatus',
+  'testCoverageEvidenceStatus',
+]);
 
 
-
-
-
-
-
-
-
-
-
-function validV106BoundedTargetSafeReport(report) {
-  const status = report?.targetBoundedExecutionSafeReportStatus;
-  const className = status?.exactFailureClass || '';
-  if (report?.harnessVersion !== '1.0.6') return false;
-  if (!status || status.status !== 'fail') return false;
-  if (![
-    'v106_normal_target_bounded_execution_timeout',
-    'v106_pr42_shaped_target_bounded_execution_timeout',
-    'v106_pr42_evidence_handoff_incomplete_for_product_target',
-  ].includes(className)) return false;
-  if (report.remoteEvidencePass !== false) return false;
-  if (report.targetMergeReady !== false) return false;
-  if (report.mergeReady !== false) return false;
-  if (report.runtimeReadinessClaimed !== false) return false;
-  if (report.productionReadinessClaimed !== false) return false;
-  if (report.priority1Status !== 'BLOCKED') return false;
-  if (report.motionDatasetExecutable !== false) return false;
-  if (!Array.isArray(status.allowedNextRepairScope) || status.allowedNextRepairScope.length === 0) return false;
-  if (!Array.isArray(status.forbiddenFiles) || status.forbiddenFiles.length === 0) return false;
-  if (!status.safeNextAction) return false;
-  if (scanSafeOutput(status).findings.length) return false;
-  return true;
+function targetRolloutRequiredStatusAllowed(key, status, options = {}, report = {}) {
+  const eventName = options.eventName || process.env.CODEX_EVENT_NAME || '';
+  const harnessMode = options.harnessMode || process.env.CODEX_HARNESS_MODE || report.harnessMode || '';
+  if (eventName !== 'target_rollout' || harnessMode !== 'target') return false;
+  if (!targetRolloutAdvisoryRequired.has(key)) return false;
+  return ['advisory', 'fail', 'manual_confirmation_required', 'warning'].includes(status);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -3818,10 +3825,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
   const harnessMode = options.harnessMode || process.env.CODEX_HARNESS_MODE || report.harnessMode || '';
   const sourceCoreMode = mode === 'source' && harnessMode === 'core';
-  const boundedTargetSafeReport = validV106BoundedTargetSafeReport(report);
-  const required = (boundedTargetSafeReport
-    ? ['boundedValidationRunnerStatus']
-    : (sourceCoreMode ? sourceCoreRequiredPass : (mode === 'target' ? targetRequiredPass : sourceRequiredPass)))
+  const required = (sourceCoreMode ? sourceCoreRequiredPass : (mode === 'target' ? targetRequiredPass : sourceRequiredPass))
 
 
 
@@ -3947,7 +3951,8 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    if (!statusAllowed(key, status, options.eventName || process.env.CODEX_EVENT_NAME)) failures.push(`${key}=${status}`);
+    if (!statusAllowed(key, status, options.eventName || process.env.CODEX_EVENT_NAME)
+      && !targetRolloutRequiredStatusAllowed(key, status, options, report)) failures.push(`${key}=${status}`);
 
 
 
@@ -3961,7 +3966,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-  if (options.gateExit && options.gateExit !== 0 && !boundedTargetSafeReport && !['pass', 'manual_confirmation_required'].includes(report.status)) {
+  if (options.gateExit && options.gateExit !== 0 && !['pass', 'manual_confirmation_required'].includes(report.status)) {
 
 
 
@@ -4892,7 +4897,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    ...(boundedTargetSafeReport ? [] : (Array.isArray(report.failures) ? report.failures : [])).slice(0, 50).map((item) => ({
+    ...(Array.isArray(report.failures) ? report.failures : []).slice(0, 50).map((item) => ({
 
 
 

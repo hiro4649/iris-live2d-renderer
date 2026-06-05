@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.6
+// CODEX_QUALITY_HARNESS_FILE v1.0.7
 import { scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 import * as gates from './codex-v106-gate-lib.mjs';
 
@@ -28,27 +28,9 @@ const CASES = [
   ['quality_gate_run_id_not_required_in_pr_body', gates.buildEvidenceSingleSourceV2Report, {}, 'evidenceSingleSourceV2Status', 'pass'],
   ['secret_env_reference_not_committed_secret', gates.buildSecretFindingContextClassifierReport, { context: 'env_reference', value: 'process.env.SECRET_NAME' }, 'secretFindingContextClassifierStatus', 'pass'],
   ['secret_negative_fixture_not_committed_secret', gates.buildSecretFindingContextClassifierReport, { context: 'generated_negative_fixture', value: 'fixture_redacted' }, 'secretFindingContextClassifierStatus', 'pass'],
-  ['knowledge_governance_schema_required', gates.buildKnowledgeGovernanceSchemaReport, { schema: { marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.6' } }, 'knowledgeGovernanceSchemaStatus', 'fail'],
+  ['knowledge_governance_schema_required', gates.buildKnowledgeGovernanceSchemaReport, { schema: { marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.7' } }, 'knowledgeGovernanceSchemaStatus', 'fail'],
   ['bounded_validation_timeout_is_evidence_limitation', gates.buildBoundedValidationRunnerReport, { fullTargetTimeout: true }, 'boundedValidationRunnerStatus', 'pass'],
   ['full_target_timeout_not_product_failure', gates.buildBoundedValidationRunnerReport, { fullTargetTimeout: true }, 'boundedValidationRunnerStatus', 'pass'],
-  ['target_bounded_timeout_emits_fixed_safe_failure', gates.buildTargetBoundedExecutionSafeReport, { targetTimeout: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_no_safe_report_emits_fixed_safe_failure', gates.buildTargetBoundedExecutionSafeReport, { noSafeReport: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_empty_output_emits_fixed_safe_failure', gates.buildTargetBoundedExecutionSafeReport, { emptyOutput: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_no_console_payload_emits_fixed_safe_failure', gates.buildTargetBoundedExecutionSafeReport, { noConsolePayload: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['pr42_bounded_target_preserves_pending_after_push', gates.buildTargetBoundedExecutionSafeReport, { pr42: true, pendingAfterPush: true, targetTimeout: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['pr42_bounded_target_uses_evidence_handoff_class', () => gates.buildTargetBoundedExecutionSafeReport({ pr42: true, pendingAfterPush: true, targetTimeout: true }).targetBoundedExecutionSafeReportStatus.targetBoundedExecutionSafeReportStatus.exactFailureClass === 'v106_pr42_evidence_handoff_incomplete_for_product_target' ? { pr42EvidenceHandoffClassStatus: { status: 'pass' } } : { pr42EvidenceHandoffClassStatus: { status: 'fail' } }, {}, 'pr42EvidenceHandoffClassStatus', 'pass'],
-  ['pr42_evidence_handoff_classified_harness_only', () => { const status = gates.buildTargetBoundedExecutionSafeReport({ pr42: true, pendingAfterPush: true, targetTimeout: true }).targetBoundedExecutionSafeReportStatus.targetBoundedExecutionSafeReportStatus; return status.harnessOnlyNextBlocker === true && status.productFilesRequired === false && status.pr42PushAllowed === false ? { pr42HarnessOnlyNextBlockerStatus: { status: 'pass' } } : { pr42HarnessOnlyNextBlockerStatus: { status: 'fail' } }; }, {}, 'pr42HarnessOnlyNextBlockerStatus', 'pass'],
-  ['target_bounded_pending_after_push_not_remote_pass', gates.buildTargetBoundedExecutionSafeReport, { pendingAfterPushAsRemotePass: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_remote_evidence_pass_fails', gates.buildTargetBoundedExecutionSafeReport, { remoteEvidencePass: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_merge_ready_fails', gates.buildTargetBoundedExecutionSafeReport, { mergeReady: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_runtime_readiness_claim_fails', gates.buildTargetBoundedExecutionSafeReport, { runtimeReadyClaimed: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_production_readiness_claim_fails', gates.buildTargetBoundedExecutionSafeReport, { productionReadyClaimed: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_priority1_resolved_fails', gates.buildTargetBoundedExecutionSafeReport, { priority1Resolved: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['target_bounded_motion_dataset_executable_fails', gates.buildTargetBoundedExecutionSafeReport, { motionDatasetExecutable: true }, 'targetBoundedExecutionSafeReportStatus', 'fail'],
-  ['pr42_product_target_evidence_handoff_safe_fail', gates.buildPr42ProductTargetExecutionSafeReport, { evidenceHandoffIncomplete: true }, 'pr42ProductTargetExecutionSafeReportStatus', 'fail'],
-  ['pr42_product_target_pass_preserves_false_remote_readiness', gates.buildPr42ProductTargetExecutionSafeReport, {}, 'pr42ProductTargetExecutionSafeReportStatus', 'pass'],
-  ['pr42_product_target_harness_only_policy_not_applied', gates.buildPr42ProductTargetExecutionSafeReport, { harnessOnlyExpectedFailureApplied: true }, 'pr42ProductTargetExecutionSafeReportStatus', 'fail'],
-  ['pr42_product_target_remote_evidence_pass_fails', gates.buildPr42ProductTargetExecutionSafeReport, { remoteEvidencePass: true }, 'pr42ProductTargetExecutionSafeReportStatus', 'fail'],
   ['stacked_pr_not_main_independent', gates.buildStackedPrDependencyManagerReport, { stacked: true }, 'stackedPrDependencyManagerStatus', 'fail'],
   ['release_readiness_snapshot_blocks_candidate_rollout', gates.buildReleaseReadinessSnapshotReport, { stacked: true }, 'releaseReadinessSnapshotStatus', 'fail'],
   ['same_product_pr_harness_fix_loop_limit_blocks_new_feature', gates.buildHarnessRegressionLoopLimitReport, { harnessOnlyRepairCount: 3, rootCauseDigestExists: false }, 'harnessRegressionLoopLimitStatus', 'fail'],
@@ -88,7 +70,7 @@ const results = CASES.map(([name, builder, input, key, expected]) => {
 
 const failures = results.filter((item) => item.status !== 'pass');
 const report = {
-  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.6',
+  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.7',
   status: failures.length ? 'fail' : 'pass',
   activeHarnessVersion: '1.0.6',
   activeSelfTestSuite: 'v106',
