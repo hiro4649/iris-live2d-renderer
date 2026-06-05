@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.6
+// CODEX_QUALITY_HARNESS_FILE v1.0.7
 import { scanObjectForUnsafe, simpleStatus, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 
 export const V106_STATUS_KEYS = [
@@ -122,103 +122,6 @@ function hasSecretLike(value) {
   return SECRET_PATTERNS.some((pattern) => pattern.test(String(value || '')));
 }
 
-export const PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE = [
-  'scripts/codex-local-quality-gate.mjs',
-  'scripts/codex-v106-gate-lib.mjs',
-  'scripts/codex-v106-self-test.mjs',
-  'docs/process/CODEX_V106_EVAL_CASES.json',
-];
-
-export const PR42_TARGET_BOUNDED_FORBIDDEN_FILES = [
-  'src/**',
-  'test/**',
-  'tests/**',
-  'docs/iris-live2d-renderer/**',
-  'package.json',
-  'package-lock.json',
-  'runtime assets',
-  'SDK/vendor files',
-  'hiro4649/iris',
-];
-
-export function buildTargetBoundedExecutionSafeReport(input = {}) {
-  const reasons = [];
-  if (bool(input.targetTimeout)) reasons.push('v106_target_timeout_not_pass');
-  if (bool(input.noSafeReport)) reasons.push('v106_target_no_safe_report_not_pass');
-  if (bool(input.emptyOutput)) reasons.push('v106_target_empty_output_not_pass');
-  if (bool(input.noConsolePayload)) reasons.push('v106_target_no_console_payload_not_pass');
-  if (bool(input.pendingAfterPushAsRemotePass)) reasons.push('pending_after_push_remote_pass_blocked');
-  if (bool(input.remoteEvidencePass)) reasons.push('remote_evidence_pass_without_same_head');
-  if (bool(input.targetMergeReady) || bool(input.mergeReady)) reasons.push('target_merge_ready_without_remote_pass');
-  if (bool(input.runtimeReadyClaimed)) reasons.push('runtime_readiness_claimed');
-  if (bool(input.productionReadyClaimed)) reasons.push('production_readiness_claimed');
-  if (bool(input.priority1Resolved)) reasons.push('priority1_resolved_without_real_evidence');
-  if (bool(input.motionDatasetExecutable)) reasons.push('motion_dataset_executable_without_rows');
-  const exactFailureClass = input.pr42
-    ? 'v106_pr42_evidence_handoff_incomplete_for_product_target'
-    : 'v106_normal_target_bounded_execution_timeout';
-  return {
-    targetBoundedExecutionSafeReportStatus: fail('targetBoundedExecutionSafeReportStatus', reasons.length ? reasons : [exactFailureClass], {
-      exactFailureClass,
-      allowedNextRepairScope: PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE,
-      forbiddenFiles: PR42_TARGET_BOUNDED_FORBIDDEN_FILES,
-      harnessOnlyNextBlocker: bool(input.pr42),
-      productFilesRequired: false,
-      pr42PushAllowed: false,
-      safeNextAction: input.pr42
-        ? 'create_owner_confirmed_harness_only_pr_before_pr42_browser_smoke_or_push'
-        : 'repair_v106_target_bounded_execution_before_replacement_pr',
-      pendingAfterPush: bool(input.pendingAfterPush),
-      remoteEvidencePass: false,
-      targetMergeReady: false,
-      mergeReady: false,
-      runtimeReadinessClaimed: false,
-      productionReadinessClaimed: false,
-      priority1Status: 'BLOCKED',
-      motionDatasetExecutable: false,
-    }),
-  };
-}
-
-export function buildPr42ProductTargetExecutionSafeReport(input = {}) {
-  const reasons = ['v106_pr42_product_target_execution_reached'];
-  if (bool(input.classificationDocsNeeded)) reasons.push('v106_pr42_classification_docs_exact_scope_needed');
-  if (bool(input.evidenceHandoffIncomplete)) reasons.push('v106_pr42_evidence_handoff_incomplete_for_product_target');
-  if (bool(input.targetTimeout)) reasons.push('pr42_product_target_timeout_not_pass');
-  if (bool(input.noSafeReport)) reasons.push('pr42_product_target_no_safe_report_not_pass');
-  if (bool(input.emptyOutput)) reasons.push('pr42_product_target_empty_output_not_pass');
-  if (bool(input.harnessOnlyExpectedFailureApplied)) reasons.push('pr42_product_target_harness_only_policy_applied');
-  if (bool(input.remoteEvidencePass)) reasons.push('pr42_product_target_remote_evidence_pass_without_same_head');
-  if (bool(input.targetMergeReady) || bool(input.mergeReady)) reasons.push('pr42_product_target_timeout_merge_ready');
-  if (bool(input.runtimeReadyClaimed)) reasons.push('pr42_product_target_runtime_readiness_claimed');
-  if (bool(input.productionReadyClaimed)) reasons.push('pr42_product_target_production_readiness_claimed');
-  if (bool(input.priority1Resolved)) reasons.push('pr42_product_target_priority1_resolved');
-  if (bool(input.motionDatasetExecutable)) reasons.push('pr42_product_target_motion_dataset_executable');
-  if (bool(input.rawExposure)) reasons.push('pr42_product_target_raw_exposure');
-  const failReasons = reasons.filter((code) => code !== 'v106_pr42_product_target_execution_reached');
-  return {
-    pr42ProductTargetExecutionSafeReportStatus: fromReasons('pr42ProductTargetExecutionSafeReportStatus', failReasons, {
-      reasonCodes: failReasons.length ? reasons : ['v106_pr42_product_target_execution_passed'],
-      exactFailureClass: failReasons[0] || 'none',
-      actionableContractReason: failReasons.length
-        ? 'pr42_product_target_execution_reached_safe_json_with_remaining_real_blocker'
-        : 'pr42_product_target_execution_passed_local_gate_only',
-      allowedNextRepairScope: PR42_TARGET_BOUNDED_ALLOWED_REPAIR_SCOPE,
-      forbiddenFiles: PR42_TARGET_BOUNDED_FORBIDDEN_FILES,
-      pendingAfterPush: true,
-      remoteEvidencePass: false,
-      targetMergeReady: false,
-      mergeReady: false,
-      runtimeReadinessClaimed: false,
-      productionReadinessClaimed: false,
-      priority1Status: 'BLOCKED',
-      motionDatasetExecutable: false,
-      safeNextAction: failReasons.length
-        ? 'repair_v106_pr42_target_evidence_handoff_before_pr42_browser_smoke_or_push'
-        : 'run_pr42_browser_api_smoke_before_pr42_body_update_or_push',
-    }),
-  };
-}
 export function buildDevelopmentLaneSeparationReport(input = {}) {
   const lane = input.lane || 'docs_only_planning';
   const reasons = [];
@@ -496,7 +399,7 @@ export function buildSecretFindingContextClassifierReport(input = {}) {
 }
 
 export function buildKnowledgeGovernanceSchemaReport(input = {}) {
-  const schema = input.schema || { marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.6', source: 'safe_artifact', boundary: 'source_harness', status: 'pass', safeSummaryOnly: true };
+  const schema = input.schema || { marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.7', source: 'safe_artifact', boundary: 'source_harness', status: 'pass', safeSummaryOnly: true };
   const reasons = ['marker', 'source', 'boundary', 'status', 'safeSummaryOnly'].filter((field) => schema[field] === undefined).map((field) => `knowledge_schema_${field}_missing`);
   return { knowledgeGovernanceSchemaStatus: fromReasons('knowledgeGovernanceSchemaStatus', reasons, { schema }) };
 }
@@ -687,7 +590,7 @@ export function buildDefaultV106Reports(input = {}) {
 
 export function buildV106Report(input = {}) {
   const report = {
-    marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.6',
+    marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.7',
     harnessVersion: '1.0.6',
     status: 'pass',
     ...buildDefaultV106Reports(input),
