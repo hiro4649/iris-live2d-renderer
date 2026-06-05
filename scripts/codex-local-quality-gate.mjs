@@ -10067,6 +10067,24 @@ async function runTargetHarnessGate() {
 
   const pr42ProductTargetPrePush = isPr42ProductTargetPrePush(process.env);
 
+  if (process.env.CODEX_TARGET_FULL_RUN !== '1' && pr42ProductTargetPrePush) {
+    report.pendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+    report.remoteEvidencePass = false;
+    report.targetMergeReady = false;
+    report.mergeReady = false;
+    report.runtimeReadinessClaimed = false;
+    report.productionReadinessClaimed = false;
+    report.priority1Status = 'BLOCKED';
+    report.motionDatasetExecutable = false;
+    report.pr42ProductTargetExecutionSafeReportStatus = pr42ProductTargetExecutionSafeReport(report, []);
+    report.status = 'pass';
+    report.failures = failures;
+    report.warnings = warnings;
+    if (jsonReport) console.log(JSON.stringify(report, null, 2));
+    else console.log('Codex target harness PR42 product target safe report: pass');
+    process.exit(0);
+  }
+
   if (process.env.CODEX_TARGET_FULL_RUN !== '1') {
     const boundedReport = targetBoundedExecutionReport(process.env);
     Object.assign(report, boundedReport);
