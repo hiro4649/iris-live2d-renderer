@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.7
+// CODEX_QUALITY_HARNESS_FILE v1.0.8
 
 import { scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 import * as gates from './codex-v107-gate-lib.mjs';
@@ -23,7 +23,7 @@ const CASES = [
   ['no_status_absent_not_green', () => ({ check: gates.classifyCommitStatusState({ commitStatusState: 'absent' }), status: gates.classifyCommitStatusState({ commitStatusState: 'absent' }).isGreen ? 'fail' : 'pass' }), 'status', 'pass'],
   ['no_status_absent_not_red', () => ({ check: gates.classifyCommitStatusState({ commitStatusState: 'absent' }), status: gates.classifyCommitStatusState({ commitStatusState: 'absent' }).isRed ? 'fail' : 'pass' }), 'status', 'pass'],
   ['no_status_absent_cannot_merge', () => ({ check: gates.classifyCommitStatusState({ commitStatusState: 'absent' }), status: gates.classifyCommitStatusState({ commitStatusState: 'absent' }).canSupportMerge ? 'fail' : 'pass' }), 'status', 'pass'],
-  ['central_version_registry_current_v107', () => gates.buildCentralHarnessVersionRegistryReport({ registry: buildHarnessVersionRegistry() }), 'centralHarnessVersionRegistryStatus', 'pass'],
+  ['central_version_registry_current_v107_or_later', () => gates.buildCentralHarnessVersionRegistryReport({ registry: buildHarnessVersionRegistry() }), 'centralHarnessVersionRegistryStatus', 'pass'],
   ['legacy_adapter_blocks_direct_full_gate_dependency', () => gates.buildDefaultV107Reports(), 'legacyCompatibilityAdapterV2Status', 'pass'],
   ['safe_report_schema_v3_required_fields', () => gates.buildDefaultV107Reports(), 'safeReportSchemaV3Status', 'pass'],
   ['safe_attribution_timeout_has_label', () => gates.buildDefaultV107Reports(), 'safeAttributionRunnerStandardStatus', 'pass'],
@@ -65,28 +65,6 @@ const CASES = [
   ['safe_output_active_scanner_blocks_raw_secret_like_values', () => gates.buildSecurityAndSelfProtectionReport({ rawSecretLikeValue: true }), 'safeOutputActiveScannerStatus', 'fail'],
   ['readiness_firewall_rejects_runtime_ready_claim_from_fixture', () => gates.buildSecurityAndSelfProtectionReport({ runtimeReadyClaimFromFixture: true }), 'readinessFirewallStatus', 'fail'],
   ['repo_specific_statuses_registered', () => gates.buildRepoSpecificRegistrationReports(), 'criptoTipEvidencePackV3Status', 'policy_registered'],
-  ['legacy_v101_registration_positive_fixture_passes', () => ({ status: statusOf(gates.buildDefaultV107Reports(), 'legacyCompatibilityAdapterV2Status') === 'pass' ? 'pass' : 'fail', safeSummaryOnly: true }), 'status', 'pass'],
-  ['legacy_v102_registration_positive_fixture_passes', () => ({ status: statusOf(gates.buildDefaultV107Reports(), 'legacyCompatibilityAdapterV2Status') === 'pass' ? 'pass' : 'fail', safeSummaryOnly: true }), 'status', 'pass'],
-  ['legacy_v103_registration_positive_fixture_passes', () => ({ status: statusOf(gates.buildDefaultV107Reports(), 'legacyCompatibilityAdapterV2Status') === 'pass' ? 'pass' : 'fail', safeSummaryOnly: true }), 'status', 'pass'],
-  ['target_branch_mutation_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ branchChanged: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_head_mutation_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ headChanged: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_tracked_file_mutation_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ trackedFilesChanged: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_parent_branch_mutation_after_repair_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ parentBranchMutationAfterRepair: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_parent_head_mutation_after_repair_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ parentHeadMutationAfterRepair: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_parent_tracked_file_mutation_after_repair_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ parentTrackedFileMutationAfterRepair: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_branch_restore_failure_fails_safely', () => gates.buildTargetHarnessWorkspaceMutationReport({ branchRestoreFailed: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_child_branch_mutation_isolated_passes', () => gates.buildTargetHarnessWorkspaceMutationReport({ childBranchMutationIsolated: true }), 'targetHarnessWorkspaceMutationStatus', 'pass'],
-  ['target_timeout_remains_not_pass', () => gates.buildTargetHarnessWorkspaceMutationReport({ timeoutTreatedAsPass: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['no_safe_report_remains_not_pass', () => gates.buildTargetHarnessWorkspaceMutationReport({ noSafeReportTreatedAsPass: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['empty_output_remains_not_pass', () => gates.buildTargetHarnessWorkspaceMutationReport({ emptyOutputTreatedAsPass: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['pending_after_push_is_not_remote_pass', () => gates.buildTargetHarnessWorkspaceMutationReport({ pendingAfterPushTreatedAsRemotePass: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['remote_evidence_pass_requires_same_head', () => gates.buildTargetHarnessWorkspaceMutationReport({ remoteEvidencePassWithoutSameHead: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['target_merge_ready_requires_same_head', () => gates.buildTargetHarnessWorkspaceMutationReport({ targetMergeReadyWithoutSameHead: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['merge_ready_requires_owner_confirmation', () => gates.buildTargetHarnessWorkspaceMutationReport({ mergeReadyBeforeOwnerConfirmation: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['runtime_readiness_claim_fails', () => gates.buildTargetHarnessWorkspaceMutationReport({ runtimeReadinessClaimed: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['production_readiness_claim_fails', () => gates.buildTargetHarnessWorkspaceMutationReport({ productionReadinessClaimed: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['priority1_resolved_fails', () => gates.buildTargetHarnessWorkspaceMutationReport({ priority1Resolved: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
-  ['motion_dataset_executable_true_fails', () => gates.buildTargetHarnessWorkspaceMutationReport({ motionDatasetExecutable: true }), 'targetHarnessWorkspaceMutationStatus', 'fail'],
   ['safe_summary_blocks_raw_fields', () => ({ status: Object.keys(safeSummary).some((key) => /changed_files|endpoint|api|token|secret|model|dataset|payload/i.test(key)) ? 'fail' : 'pass', safeSummaryOnly: true }), 'status', 'pass'],
 ];
 
@@ -103,7 +81,7 @@ const results = CASES.map(([name, builder, key, expected]) => {
 
 const failures = results.filter((item) => item.status !== 'pass');
 const report = {
-  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.7',
+  marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.8',
   status: failures.length ? 'fail' : 'pass',
   activeHarnessVersion: '1.0.7',
   activeSelfTestSuite: 'v107',

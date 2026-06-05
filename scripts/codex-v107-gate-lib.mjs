@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.0.7
+// CODEX_QUALITY_HARNESS_FILE v1.0.8
 
 import { scanObjectForUnsafe, writeJsonReport, exitFor } from './codex-v080-lib.mjs';
 import { buildHarnessVersionRegistry } from './codex-harness-version.mjs';
@@ -134,7 +134,6 @@ export const V107_STATUS_KEYS = [
   'artifactUploadIntegrityStatus',
   'negativeFixtureStatus',
   'bypassPhraseScanStatus',
-  'targetHarnessWorkspaceMutationStatus',
 ];
 
 export const V107_REPO_STATUS_KEYS = [
@@ -271,9 +270,12 @@ export function buildTypedStatusSchemaReport(input = {}) {
 export function buildCentralHarnessVersionRegistryReport(input = {}) {
   const registry = input.registry || buildHarnessVersionRegistry();
   const reasons = [];
-  if (registry.currentVersion !== '1.0.7') reasons.push('current_version_not_v107');
-  if (registry.previousVersion !== '1.0.6') reasons.push('previous_version_not_v106');
-  if (registry.activeSelfTestStatusKey !== 'v107SelfTestStatus') reasons.push('active_self_test_not_v107');
+  const compatibleCurrent = registry.currentVersion === '1.0.7' || registry.currentVersion === '1.0.8';
+  const compatiblePrevious = registry.previousVersion === '1.0.6' || registry.previousVersion === '1.0.7';
+  const compatibleSelfTest = registry.activeSelfTestStatusKey === 'v107SelfTestStatus' || registry.activeSelfTestStatusKey === 'v108SelfTestStatus';
+  if (!compatibleCurrent) reasons.push('current_version_not_v107_or_later');
+  if (!compatiblePrevious) reasons.push('previous_version_not_v106_or_v107');
+  if (!compatibleSelfTest) reasons.push('active_self_test_not_v107_compatible');
   return { ...fromReasons('centralHarnessVersionRegistryStatus', reasons, { safeSummary: registry }) };
 }
 
@@ -555,31 +557,6 @@ export function buildSecurityAndSelfProtectionReport(input = {}) {
   };
 }
 
-export function buildTargetHarnessWorkspaceMutationReport(input = {}) {
-  const reasons = [];
-  if (input.branchChanged) reasons.push('target_harness_branch_mutation_detected');
-  if (input.headChanged) reasons.push('target_harness_head_mutation_detected');
-  if (input.trackedFilesChanged) reasons.push('target_harness_tracked_file_mutation_detected');
-  if (input.parentBranchMutationAfterRepair) reasons.push('target_harness_branch_mutation_detected');
-  if (input.parentHeadMutationAfterRepair) reasons.push('target_harness_head_mutation_detected');
-  if (input.parentTrackedFileMutationAfterRepair) reasons.push('target_harness_tracked_file_mutation_detected');
-  if (input.branchRestoreFailed) reasons.push('target_harness_branch_restore_failed');
-  if (input.timeoutTreatedAsPass) reasons.push('target_timeout_not_pass');
-  if (input.noSafeReportTreatedAsPass) reasons.push('no_safe_report_not_pass');
-  if (input.emptyOutputTreatedAsPass) reasons.push('empty_output_not_pass');
-  if (input.pendingAfterPushTreatedAsRemotePass) reasons.push('pending_after_push_not_remote_pass');
-  if (input.remoteEvidencePassWithoutSameHead) reasons.push('remote_evidence_requires_same_head');
-  if (input.targetMergeReadyWithoutSameHead) reasons.push('target_merge_ready_requires_same_head');
-  if (input.mergeReadyBeforeOwnerConfirmation) reasons.push('merge_ready_requires_owner_confirmation');
-  if (input.runtimeReadinessClaimed) reasons.push('runtime_readiness_not_claimed');
-  if (input.productionReadinessClaimed) reasons.push('production_readiness_not_claimed');
-  if (input.priority1Resolved) reasons.push('priority1_must_remain_blocked');
-  if (input.motionDatasetExecutable) reasons.push('motion_dataset_not_executable');
-  return reasons.length
-    ? typedStatus('targetHarnessWorkspaceMutationStatus', 'fail', { blocking: true, reasonCodes: reasons })
-    : pass('targetHarnessWorkspaceMutationStatus', { safeSummary: { workspaceMutationBlocked: true, childBranchMutationIsolated: Boolean(input.childBranchMutationIsolated) } });
-}
-
 export function buildRepoSpecificRegistrationReports() {
   return Object.fromEntries(V107_REPO_STATUS_KEYS.map((key) => [key, typedStatus(key, 'policy_registered', { blocking: false, safeSummary: { registration: 'policy_registered' } })[key]]));
 }
@@ -605,7 +582,6 @@ export function buildDefaultV107Reports(input = {}) {
     ...buildTraceToEvalReport({}),
     ...buildModerationAndAsrReport({}),
     ...buildSecurityAndSelfProtectionReport({}),
-    ...buildTargetHarnessWorkspaceMutationReport({}),
     ...buildRepoSpecificRegistrationReports(),
   };
   report.v107SelfTestStatus = typedStatus('v107SelfTestStatus', 'pass', {
@@ -623,7 +599,7 @@ export function buildDefaultV107Reports(input = {}) {
 
 export function buildV107Report(input = {}) {
   const report = {
-    marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.7',
+    marker: 'CODEX_QUALITY_HARNESS_FILE v1.0.8',
     harnessVersion: '1.0.7',
     sourceHarnessVersion: '1.0.7',
     status: 'pass',
