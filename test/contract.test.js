@@ -7,6 +7,8 @@ import {
   ALLOWED_CUBISM_LOADER_ENV_NAMES,
   CUBISM_LOADER_KIND_CANDIDATES,
   CUBISM_LOADER_PROVISIONING_SCHEMA,
+  TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
+  createTrustedLoaderAllowlistPreflightSummary,
   inspectCubismLoaderProvisioning,
 } from "../src/renderer/cubismLoaderProvisioning.js";
 import {
@@ -124,6 +126,7 @@ try {
   assert.equal(TRUSTED_LOADER_EVIDENCE_SCHEMA, "iris_live2d_trusted_loader_evidence_v1");
   assert.equal(TRUSTED_LOADER_KINDS.length, 0);
   assert.equal(CUBISM_LOADER_PROVISIONING_SCHEMA, "iris_live2d_cubism_loader_provisioning_v1");
+  assert.equal(TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA, "iris_live2d_trusted_loader_allowlist_preflight_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -158,6 +161,33 @@ try {
   assertSafe(JSON.stringify(ownerProvidedProvisioning));
   assertNoModelPathLeak(JSON.stringify(ownerProvidedProvisioning));
 
+  const ownerProvidedAllowlistPreflight = createTrustedLoaderAllowlistPreflightSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "missing",
+      fixture_evidence_status: "fixture_only",
+      dry_run_evidence_status: "not_dry_run",
+    },
+  });
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_allowlist_status, "disabled");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_candidate_status, "candidate_present_diagnostic_only");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_blocker_status, "allowlist_disabled");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_license_status, "license_attention_required");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_route_guard_prerequisite, "available");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_real_evidence_prerequisite, "real_evidence_required");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_owner_confirmation_status, "owner_confirmation_required");
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_ready_candidate, false);
+  assert.equal(ownerProvidedAllowlistPreflight.trusted_loader_allowlist_enabled, false);
+  assert.equal(ownerProvidedAllowlistPreflight.candidate_present_diagnostic_only, true);
+  assert.equal(ownerProvidedAllowlistPreflight.renderer_ready, false);
+  assert.equal(ownerProvidedAllowlistPreflight.model_loaded, false);
+  assert.equal(ownerProvidedAllowlistPreflight.scene_loaded, false);
+  assert.equal(ownerProvidedAllowlistPreflight.browser_cue_delivery_ready, false);
+  assert.equal(JSON.stringify(ownerProvidedAllowlistPreflight).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(ownerProvidedAllowlistPreflight));
+  assertNoModelPathLeak(JSON.stringify(ownerProvidedAllowlistPreflight));
+
   const missingOwnerProvidedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: join(tmpDir, "missing-owner-framework-loader.js"),
     IRIS_LIVE2D_CUBISM_LOADER_KIND: "cubism_framework_model_loader_v1",
@@ -184,6 +214,11 @@ try {
   assert.equal(mocCreateProvisioning.loader_kind, "cubism_moc_create");
   assert.equal(mocCreateProvisioning.trusted_loader_allowlist_enabled, false);
   assertSafe(JSON.stringify(mocCreateProvisioning));
+  const mocCreatePreflight = createTrustedLoaderAllowlistPreflightSummary({ loaderProvisioning: mocCreateProvisioning });
+  assert.equal(mocCreatePreflight.trusted_loader_candidate_status, "future_only");
+  assert.equal(mocCreatePreflight.trusted_loader_allowlist_status, "disabled");
+  assert.equal(mocCreatePreflight.renderer_ready, false);
+  assertSafe(JSON.stringify(mocCreatePreflight));
 
   const unsupportedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_LOADER_KIND: "unknown_loader",
@@ -191,6 +226,11 @@ try {
   assert.equal(unsupportedProvisioning.provisioning_status, "unsupported_loader_kind");
   assert.equal(unsupportedProvisioning.loader_kind, "unsupported_loader_kind");
   assertSafe(JSON.stringify(unsupportedProvisioning));
+  const unsupportedPreflight = createTrustedLoaderAllowlistPreflightSummary({ loaderProvisioning: unsupportedProvisioning });
+  assert.equal(unsupportedPreflight.trusted_loader_candidate_status, "blocked_unknown_loader");
+  assert.equal(unsupportedPreflight.trusted_loader_allowlist_status, "disabled");
+  assert.equal(unsupportedPreflight.renderer_ready, false);
+  assertSafe(JSON.stringify(unsupportedPreflight));
 
   for (const unsafeValue of [
     "https://secret.example/framework.js",
@@ -1088,12 +1128,19 @@ try {
   assert.equal(provisionedRuntimeConfig.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.model3.real_model_loaded, false);
   assert.equal(provisionedRuntimeConfig.loader_selection.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
+  assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_candidate_status, "candidate_present_diagnostic_only");
+  assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.trusted_loader_preflight_summary.trusted_loader_real_evidence_prerequisite, "real_evidence_required");
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
   const provisionedStatus = await provisioned.getJson("/status");
   assert.equal(provisionedStatus.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.loader_provisioning.provisioning_status, "candidate_present");
+  assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
+  assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_candidate_status, "candidate_present_diagnostic_only");
+  assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_readiness_claimed, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1104,6 +1151,8 @@ try {
   assert.equal(provisionedHealth.renderer_ready, false);
   assert.equal(provisionedHealth.loader_provisioning.provisioning_status, "candidate_present");
   assert.equal(provisionedHealth.loader_provisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
+  assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_owner_confirmation_status, "owner_confirmation_required");
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1115,6 +1164,9 @@ try {
   assert.equal(provisionedHeartbeat.renderer_health.scene_loaded, false);
   assert.equal(provisionedHeartbeat.renderer_health.browser_cue_delivery_ready, false);
   assert.equal(provisionedHeartbeat.renderer_health.loader_provisioning.provisioning_status, "candidate_present");
+  assert.equal(provisionedHeartbeat.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
+  assert.equal(provisionedHeartbeat.trusted_loader_preflight_summary.trusted_loader_real_evidence_prerequisite, "fresh_real_evidence_attention_required");
+  assert.equal(provisionedHeartbeat.trusted_loader_preflight_summary.trusted_loader_readiness_claimed, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
@@ -1581,6 +1633,10 @@ try {
       "dry_run_evidence_not_runtime_readiness",
       "stale_evidence_not_fresh",
       "real_probe_incomplete_not_ready",
+      "trusted_loader_allowlist_preflight_safe_summary",
+      "trusted_loader_allowlist_disabled_boundary",
+      "trusted_loader_candidate_diagnostic_boundary",
+      "trusted_loader_prerequisites_preserved",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
     ],

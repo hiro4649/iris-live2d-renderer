@@ -94,6 +94,17 @@ production_readiness_claimed: no
 - Readiness: the collector does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
 - Next gate: fresh resident real evidence, trusted loader allowlist, and owner confirmation require separate PRs.
 
+## Inserted Preflight: LIVE2D-TRUSTED-LOADER-ALLOWLIST-PREFLIGHT1
+
+- Position: after the real evidence collector and before any trusted loader enablement.
+- Scope: add safe allowlist preflight labels for disabled allowlist status, candidate kind/status, route guard prerequisite, real evidence prerequisite, owner confirmation prerequisite, license attention, blocker reason, and safe next action.
+- Allowlist boundary: trusted loader allowlist remains disabled, no loader is trusted, no loader candidate is executed, and candidate_present remains diagnostic only.
+- License boundary: Cubism SDK / Framework files are owner-provided licensed material outside the repo; this repo must not download, redistribute, commit, or quote vendor files.
+- Privacy boundary: owner-provided values, raw loader candidates, loader errors, SDK paths, endpoints, tokens, raw cues, raw renderer payloads, and raw evidence bodies stay private; public summaries expose only env names and safe status labels.
+- Prerequisites: route guard, real evidence collector, fresh real evidence, license attention, and owner confirmation remain required before future enablement.
+- Readiness: this preflight does not set model_loaded, scene_loaded, browser_cue_delivery_ready, renderer_ready, runtime readiness, production readiness, or priority1 completion.
+- Next gate: actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence and same-head checks.
+
 ## Phase 6: MICRO-REACTION-PACK5
 
 - Scope: instant nonverbal cue pack。
