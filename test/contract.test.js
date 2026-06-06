@@ -15,6 +15,7 @@ import {
   TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
   TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
+  createCubismLoaderProvisioningSummary,
   createFreshEvidenceBundleSummary,
   createGoNoGoPreflightSummary,
   createOwnerConfirmationEnvelopeSummary,
@@ -181,6 +182,21 @@ try {
   assert.equal(JSON.stringify(ownerProvidedProvisioning).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(ownerProvidedProvisioning));
   assertNoModelPathLeak(JSON.stringify(ownerProvidedProvisioning));
+
+  const attemptedAllowlistProvisioning = createCubismLoaderProvisioningSummary({
+    configured_env_names: ALLOWED_CUBISM_LOADER_ENV_NAMES,
+    loader_kind: "cubism_framework_model_loader_v1",
+    loader_dependency_status: "candidate_present",
+    license_status: "license_attention_required",
+    provisioning_status: "candidate_present",
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(attemptedAllowlistProvisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(
+    attemptedAllowlistProvisioning.trusted_loader_allowlist_request_status,
+    "ignored_requires_separate_owner_confirmed_enablement_pr"
+  );
+  assertSafe(JSON.stringify(attemptedAllowlistProvisioning));
 
   const ownerProvidedAllowlistPreflight = createTrustedLoaderAllowlistPreflightSummary({
     loaderProvisioning: ownerProvidedProvisioning,
