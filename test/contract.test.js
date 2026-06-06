@@ -8,10 +8,12 @@ import {
   CUBISM_LOADER_KIND_CANDIDATES,
   CUBISM_LOADER_PROVISIONING_SCHEMA,
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
+  GO_NOGO_PREFLIGHT_SCHEMA,
   TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
   TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
   createFreshEvidenceBundleSummary,
+  createGoNoGoPreflightSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -136,6 +138,7 @@ try {
   assert.equal(TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA, "iris_live2d_trusted_loader_enablement_gate_v1");
   assert.equal(TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA, "iris_live2d_trusted_loader_owner_handoff_v1");
   assert.equal(FRESH_EVIDENCE_BUNDLE_SCHEMA, "iris_live2d_fresh_evidence_bundle_v1");
+  assert.equal(GO_NOGO_PREFLIGHT_SCHEMA, "iris_live2d_go_nogo_preflight_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -312,6 +315,45 @@ try {
   assertSafe(JSON.stringify(defaultFreshEvidenceBundle));
   assertNoModelPathLeak(JSON.stringify(defaultFreshEvidenceBundle));
 
+  const defaultGoNoGo = createGoNoGoPreflightSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    allowlistPreflightSummary: ownerProvidedAllowlistPreflight,
+    enablementGateSummary: ownerProvidedEnablementGate,
+    ownerHandoffSummary: ownerProvidedOwnerHandoff,
+    freshEvidenceBundleSummary: defaultFreshEvidenceBundle,
+    live2dEvidenceSummary: {
+      live2d_evidence_status: "blocked",
+      evidence_freshness_status: "missing",
+      fixture_evidence_status: "fixture_only",
+      dry_run_evidence_status: "not_dry_run",
+    },
+  });
+  assert.equal(defaultGoNoGo.go_nogo_status, "no_go");
+  assert.equal(defaultGoNoGo.go_candidate, false);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_missing_fresh_real_evidence"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_fixture_evidence_only"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_missing_owner_confirmation"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_license_attention_required"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_priority1_unresolved"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_motion_dataset_non_executable"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_runtime_not_ready"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("no_go_production_not_ready"), true);
+  assert.equal(defaultGoNoGo.no_go_reasons.includes("degraded_mode_available_not_go"), true);
+  assert.equal(defaultGoNoGo.degraded_mode_available, true);
+  assert.equal(defaultGoNoGo.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultGoNoGo.no_loader_trusted, true);
+  assert.equal(defaultGoNoGo.renderer_ready, false);
+  assert.equal(defaultGoNoGo.model_loaded, false);
+  assert.equal(defaultGoNoGo.scene_loaded, false);
+  assert.equal(defaultGoNoGo.browser_cue_delivery_ready, false);
+  assert.equal(defaultGoNoGo.runtime_readiness_claimed, false);
+  assert.equal(defaultGoNoGo.production_readiness_claimed, false);
+  assert.equal(defaultGoNoGo.priority1_status, "BLOCKED");
+  assert.equal(defaultGoNoGo.motion_dataset_executable, false);
+  assert.equal(JSON.stringify(defaultGoNoGo).includes(ownerFrameworkLoaderPath), false);
+  assertSafe(JSON.stringify(defaultGoNoGo));
+  assertNoModelPathLeak(JSON.stringify(defaultGoNoGo));
+
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     mockOwnerConfirmation: true,
@@ -324,6 +366,11 @@ try {
     mockOwnerConfirmation: true,
   });
   assert.equal(mockOwnerBundle.bundle_blocked_reasons.includes("bundle_blocked_mock_owner_confirmation"), true);
+  const mockOwnerGoNoGo = createGoNoGoPreflightSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    mockOwnerConfirmation: true,
+  });
+  assert.equal(mockOwnerGoNoGo.no_go_reasons.includes("no_go_mock_owner_confirmation"), true);
   const routeGuardMissingHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     routeGuardStatus: "missing",
@@ -335,6 +382,11 @@ try {
     routeGuardStatus: "missing",
   });
   assert.equal(routeGuardMissingBundle.bundle_blocked_reasons.includes("bundle_blocked_missing_route_guard"), true);
+  const routeGuardMissingGoNoGo = createGoNoGoPreflightSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    routeGuardStatus: "missing",
+  });
+  assert.equal(routeGuardMissingGoNoGo.no_go_reasons.includes("no_go_missing_route_guard"), true);
   const missingComponentBundle = createFreshEvidenceBundleSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     allowlistPreflightSummary: {},
@@ -344,6 +396,17 @@ try {
   assert.equal(missingComponentBundle.bundle_blocked_reasons.includes("bundle_blocked_missing_allowlist_preflight"), true);
   assert.equal(missingComponentBundle.bundle_blocked_reasons.includes("bundle_blocked_missing_enablement_gate"), true);
   assert.equal(missingComponentBundle.bundle_blocked_reasons.includes("bundle_blocked_missing_owner_handoff"), true);
+  const missingComponentGoNoGo = createGoNoGoPreflightSummary({
+    loaderProvisioning: ownerProvidedProvisioning,
+    allowlistPreflightSummary: {},
+    enablementGateSummary: {},
+    ownerHandoffSummary: {},
+    freshEvidenceBundleSummary: {},
+  });
+  assert.equal(missingComponentGoNoGo.no_go_reasons.includes("no_go_missing_allowlist_preflight"), true);
+  assert.equal(missingComponentGoNoGo.no_go_reasons.includes("no_go_missing_enablement_gate"), true);
+  assert.equal(missingComponentGoNoGo.no_go_reasons.includes("no_go_missing_owner_handoff"), true);
+  assert.equal(missingComponentGoNoGo.no_go_reasons.includes("no_go_missing_fresh_evidence_bundle"), true);
 
   const missingOwnerProvidedProvisioning = inspectCubismLoaderProvisioning({
     IRIS_LIVE2D_CUBISM_FRAMEWORK_JS: join(tmpDir, "missing-owner-framework-loader.js"),
@@ -1373,6 +1436,12 @@ try {
   assert.equal(provisionedRuntimeConfig.fresh_evidence_bundle_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.fresh_evidence_bundle_summary.production_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.fresh_evidence_bundle_summary.no_loader_trusted, true);
+  assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.go_candidate, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.degraded_mode_available, true);
+  assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.no_go_reasons.includes("degraded_mode_available_not_go"), true);
+  assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.production_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1395,6 +1464,14 @@ try {
   assert.equal(provisionedStatus.fresh_evidence_bundle_summary.model_loaded, false);
   assert.equal(provisionedStatus.fresh_evidence_bundle_summary.scene_loaded, false);
   assert.equal(provisionedStatus.fresh_evidence_bundle_summary.browser_cue_delivery_ready, false);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.go_candidate, false);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.no_loader_trusted, true);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.model_loaded, false);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.scene_loaded, false);
+  assert.equal(provisionedStatus.go_nogo_preflight_summary.browser_cue_delivery_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1414,6 +1491,9 @@ try {
   assert.equal(provisionedHealth.fresh_evidence_bundle_summary.bundle_status, "blocked");
   assert.equal(provisionedHealth.fresh_evidence_bundle_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedHealth.fresh_evidence_bundle_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedHealth.go_nogo_preflight_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHealth.go_nogo_preflight_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1438,6 +1518,10 @@ try {
   assert.equal(provisionedHeartbeat.fresh_evidence_bundle_summary.bundle_blocked_reasons.includes("bundle_blocked_priority1_unresolved"), true);
   assert.equal(provisionedHeartbeat.fresh_evidence_bundle_summary.bundle_blocked_reasons.includes("bundle_blocked_motion_dataset_non_executable"), true);
   assert.equal(provisionedHeartbeat.fresh_evidence_bundle_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.no_go_reasons.includes("no_go_priority1_unresolved"), true);
+  assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.no_go_reasons.includes("no_go_motion_dataset_non_executable"), true);
+  assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
