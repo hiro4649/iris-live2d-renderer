@@ -198,6 +198,21 @@ try {
   );
   assertSafe(JSON.stringify(attemptedAllowlistProvisioning));
 
+  const attemptedCamelCaseAllowlistProvisioning = createCubismLoaderProvisioningSummary({
+    configured_env_names: ALLOWED_CUBISM_LOADER_ENV_NAMES,
+    loader_kind: "cubism_framework_model_loader_v1",
+    loader_dependency_status: "candidate_present",
+    license_status: "license_attention_required",
+    provisioning_status: "candidate_present",
+    trustedLoaderAllowlistEnabled: true,
+  });
+  assert.equal(attemptedCamelCaseAllowlistProvisioning.trusted_loader_allowlist_enabled, false);
+  assert.equal(
+    attemptedCamelCaseAllowlistProvisioning.trusted_loader_allowlist_request_status,
+    "ignored_requires_separate_owner_confirmed_enablement_pr"
+  );
+  assertSafe(JSON.stringify(attemptedCamelCaseAllowlistProvisioning));
+
   const ownerProvidedAllowlistPreflight = createTrustedLoaderAllowlistPreflightSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     live2dEvidenceSummary: {
