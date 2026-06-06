@@ -8,6 +8,7 @@ export const TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA = "iris_live2d_trusted_loader_o
 export const FRESH_EVIDENCE_BUNDLE_SCHEMA = "iris_live2d_fresh_evidence_bundle_v1";
 export const GO_NOGO_PREFLIGHT_SCHEMA = "iris_live2d_go_nogo_preflight_v1";
 export const REAL_EVIDENCE_INTAKE_SCHEMA = "iris_live2d_real_evidence_intake_v1";
+export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmation_envelope_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -64,6 +65,24 @@ const RAW_EVIDENCE_FIELD_NAMES = new Set([
   "sdk_path",
   "vendor_source",
 ]);
+
+const OWNER_CONFIRMATION_SCOPES = Object.freeze([
+  "route_guard_review",
+  "real_evidence_collector_review",
+  "fresh_evidence_bundle_review",
+  "real_evidence_intake_review",
+  "go_nogo_preflight_review",
+  "trusted_loader_preflight_review",
+  "trusted_loader_enablement_gate_review",
+  "trusted_loader_owner_handoff_review",
+  "actual_trusted_loader_enablement",
+  "runtime_readiness",
+  "production_readiness",
+  "priority1_resolution",
+  "motion_dataset_execution",
+]);
+
+const OWNER_CONFIRMATION_SCOPE_SET = new Set(OWNER_CONFIRMATION_SCOPES);
 
 const PROVISIONING_STATUS = new Set([
   "not_configured",
@@ -759,6 +778,134 @@ export function createRealEvidenceIntakeSummary(evidence = {}, {
   };
   assertSafePublicObject(summary, "real evidence intake summary");
   return summary;
+}
+
+export function createOwnerConfirmationEnvelopeSummary(envelope = {}, {
+  requiredScopes = OWNER_CONFIRMATION_SCOPES,
+  requestedScope = "",
+  nowMs = Date.now(),
+} = {}) {
+  const source = envelope && typeof envelope === "object" ? envelope : {};
+  const required = requiredScopes.filter((scope) => OWNER_CONFIRMATION_SCOPE_SET.has(scope));
+  const confirmationScope = safeEvidenceLabel(source.confirmation_scope, "missing_confirmation_scope");
+  const confirmedByRole = safeEvidenceLabel(source.confirmed_by_role, "missing_confirmed_by_role");
+  const sourceKind = safeEvidenceLabel(source.confirmation_source_kind, "missing_confirmation_source_kind");
+  const timestampMs = Number.isFinite(source.confirmation_timestamp_ms) ? Math.trunc(source.confirmation_timestamp_ms) : null;
+  const expiryMs = Number.isFinite(source.confirmation_expires_at_ms) ? Math.trunc(source.confirmation_expires_at_ms) : null;
+  const scopeMismatch = requestedScope && confirmationScope !== requestedScope;
+  const revoked = source.revoked === true || source.confirmation_status === "revoked";
+  const mock = source.mock_confirmation === true || source.confirmation_source_kind === "mock";
+  const fixture = source.confirmation_source_kind === "fixture";
+  const dryRun = source.confirmation_source_kind === "dry_run";
+  const expired = expiryMs !== null && expiryMs <= nowMs;
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source);
+  const scopeConfirmed = false;
+  const reasons = ownerConfirmationEnvelopeReasons({
+    source,
+    confirmationScope,
+    confirmedByRole,
+    sourceKind,
+    timestampMs,
+    expiryMs,
+    scopeMismatch,
+    revoked,
+    mock,
+    fixture,
+    dryRun,
+    expired,
+    unsafeMaterialRejected,
+  });
+  const summary = {
+    schema: OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
+    safe_summary_only: true,
+    owner_confirmation_envelope_status: "blocked",
+    confirmation_ready_candidate: false,
+    confirmation_blocked_reason: reasons[0] ?? "confirmation_blocked_no_real_owner_confirmation",
+    confirmation_blocked_reasons: reasons,
+    required_confirmation_scopes: required,
+    missing_confirmation_scopes: required,
+    confirmed_scopes: scopeConfirmed ? [confirmationScope] : [],
+    expired_scopes: expired && OWNER_CONFIRMATION_SCOPE_SET.has(confirmationScope) ? [confirmationScope] : [],
+    revoked_scopes: revoked && OWNER_CONFIRMATION_SCOPE_SET.has(confirmationScope) ? [confirmationScope] : [],
+    scope_mismatch_status: scopeMismatch ? "scope_mismatch_rejected" : "scope_specific_required",
+    confirmed_by_role_status: confirmedByRole === "owner" ? "owner_role_required_future_only" : "wrong_role_rejected",
+    confirmation_timestamp_ms: timestampMs === null ? "missing" : "present",
+    confirmation_expiry_status: expired ? "expired_rejected" : expiryMs === null ? "expiry_required" : "not_expired_but_not_confirmed",
+    confirmation_source_kind: sourceKind,
+    confirmation_audit_ref_status: source.audit_ref ? "present" : "missing_audit_ref",
+    mock_confirmation_status: mock ? "mock_confirmation_rejected" : "not_mock",
+    owner_private_note_redaction_status: unsafeMaterialRejected ? "unsafe_material_rejected" : source.redaction_status === "pass" ? "pass" : "redaction_status_required",
+    fresh_evidence_binding_status: "fresh_real_evidence_required",
+    go_nogo_binding_status: "go_nogo_required_no_go_by_default",
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    safe_next_action: "obtain_future_scope_specific_owner_confirmation_after_real_evidence_review",
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    motion_dataset_executable: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      no_env_values: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      owner_provided_files_only: true,
+      review_preparation_only: true,
+      no_unsafe_confirmation_material: true,
+    },
+  };
+  assertSafePublicObject(summary, "owner confirmation envelope summary");
+  return summary;
+}
+
+function ownerConfirmationEnvelopeReasons({
+  source,
+  confirmationScope,
+  confirmedByRole,
+  sourceKind,
+  timestampMs,
+  expiryMs,
+  scopeMismatch,
+  revoked,
+  mock,
+  fixture,
+  dryRun,
+  expired,
+  unsafeMaterialRejected,
+}) {
+  const reasons = [];
+  if (!source.confirmation_scope) reasons.push("confirmation_blocked_missing_scope");
+  if (source.confirmation_scope && !OWNER_CONFIRMATION_SCOPE_SET.has(confirmationScope)) reasons.push("confirmation_blocked_unknown_scope");
+  if (timestampMs === null) reasons.push("confirmation_blocked_missing_timestamp");
+  if (!source.confirmed_by_role) reasons.push("confirmation_blocked_missing_role");
+  if (confirmedByRole !== "owner") reasons.push("confirmation_blocked_wrong_role");
+  if (!source.confirmation_source_kind) reasons.push("confirmation_blocked_missing_source_kind");
+  if (!source.audit_ref) reasons.push("confirmation_blocked_missing_audit_ref");
+  if (source.redaction_status !== "pass") reasons.push("confirmation_blocked_redaction_status_required");
+  if (mock) reasons.push("confirmation_blocked_mock_confirmation");
+  if (fixture) reasons.push("confirmation_blocked_fixture_confirmation");
+  if (dryRun) reasons.push("confirmation_blocked_dry_run_confirmation");
+  if (expiryMs === null) reasons.push("confirmation_blocked_missing_expiry");
+  if (expired) reasons.push("confirmation_blocked_expired_confirmation");
+  if (revoked) reasons.push("confirmation_blocked_revoked_confirmation");
+  if (scopeMismatch) reasons.push("confirmation_blocked_scope_mismatch");
+  if (unsafeMaterialRejected) reasons.push("confirmation_blocked_unsafe_material_rejected");
+  reasons.push("confirmation_blocked_no_real_owner_confirmation");
+  reasons.push("confirmation_blocked_priority1_unresolved");
+  reasons.push("confirmation_blocked_motion_dataset_non_executable");
+  reasons.push("confirmation_not_runtime_ready");
+  reasons.push("confirmation_not_production_ready");
+  if (sourceKind === "remote_quality_gate" || sourceKind === "local_check" || sourceKind === "target_harness" || sourceKind === "browser_smoke") {
+    reasons.push("confirmation_blocked_auto_confirmation_source");
+  }
+  return [...new Set(reasons)];
 }
 
 function realEvidenceIntakeReasons({

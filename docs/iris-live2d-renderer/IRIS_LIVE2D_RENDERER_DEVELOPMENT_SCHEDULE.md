@@ -186,3 +186,13 @@ Only safe summarized metadata is in scope. Owner-provided file values remain pri
 Route guard, real evidence collector, Fresh Evidence Bundle, and go/no-go preflight remain prerequisites, and the go/no-go preflight remains no_go by default. Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED, and the motion dataset remains non-executable while checked_row_count is 0.
 
 Future trusted loader enablement remains a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
+
+## LIVE2D-OWNER-CONFIRMATION-ENVELOPE1 schedule note
+
+LIVE2D-OWNER-CONFIRMATION-ENVELOPE1 adds a safe owner confirmation envelope for future Live2D readiness review. It is not real owner confirmation and does not auto-confirm from PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture, dry-run, or mock data.
+
+Confirmation remains scope-specific, expiry-aware, revocation-aware, and role-bound. Wrong-role, expired, revoked, mock, and scope-mismatched confirmation states remain blocked. Raw owner notes and owner-provided values stay private.
+
+Real evidence intake remains schema-only, Fresh Evidence Bundle remains review-preparation only, go/no-go preflight remains no_go, trusted loader allowlist remains disabled, and no loader is trusted.
+
+Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED, and the motion dataset remains non-executable while checked_row_count is 0. Future trusted loader enablement remains a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
