@@ -154,3 +154,13 @@ Fixture evidence, dry-run evidence, stale evidence, mock owner confirmation, mis
 The handoff does not bundle, download, redistribute, commit, copy, or quote Cubism SDK or vendor files. Owner-provided file values remain private, and public summaries may expose only environment names and safe status labels.
 
 The handoff does not make `renderer_ready`, `model_loaded`, `scene_loaded`, or `browser_cue_delivery_ready` true, does not claim runtime readiness, does not claim production readiness, does not resolve priority1, and does not make the motion dataset executable. Future actual trusted loader enablement still requires a separate owner-confirmed PR with fresh real evidence and owner confirmation.
+
+## LIVE2D-FRESH-EVIDENCE-BUNDLE1 review-preparation boundary
+
+The fresh evidence bundle is review preparation only, not runtime readiness and not production readiness. It aggregates safe statuses for the route guard, real evidence collector, trusted loader allowlist preflight, trusted loader enablement gate, owner handoff, fresh real evidence prerequisite, owner confirmation prerequisite, license boundary, SDK/vendor boundary, priority1 status, and motion dataset status.
+
+The bundle does not enable the trusted loader allowlist, does not trust any loader, does not load Cubism SDK or Framework files, does not call Cubism SDK, and does not bundle, download, quote, copy, or commit SDK/vendor files. Owner-provided file values remain private. Public responses may expose only environment names and safe status labels. `candidate_present` remains diagnostic only.
+
+Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation. Runtime readiness is not claimed, production readiness is not claimed, priority1 remains BLOCKED, and the motion dataset remains non-executable.
+
+Future actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence, owner confirmation, and go/no-go review.

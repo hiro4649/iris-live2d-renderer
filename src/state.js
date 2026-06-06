@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { assertSafeInput, assertSafePublicObject, createBoundaryPolicy, safeText } from "./contracts.js";
 import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
 import {
+  createFreshEvidenceBundleSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -73,6 +74,13 @@ export function createRendererState({
         allowlistPreflightSummary: trustedLoaderPreflight,
         enablementGateSummary: trustedLoaderEnablementGate,
       });
+      const freshEvidenceBundle = createFreshEvidenceBundleSummary({
+        loaderProvisioning: state.cubismLoaderProvisioning,
+        live2dEvidenceSummary: heartbeatStatus.live2d_evidence_summary,
+        allowlistPreflightSummary: trustedLoaderPreflight,
+        enablementGateSummary: trustedLoaderEnablementGate,
+        ownerHandoffSummary: trustedLoaderOwnerHandoff,
+      });
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -130,11 +138,13 @@ export function createRendererState({
           trusted_loader_preflight_summary: trustedLoaderPreflight,
           trusted_loader_enablement_gate_summary: trustedLoaderEnablementGate,
           trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
+          fresh_evidence_bundle_summary: freshEvidenceBundle,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
         trusted_loader_enablement_gate_summary: trustedLoaderEnablementGate,
         trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
+        fresh_evidence_bundle_summary: freshEvidenceBundle,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -181,6 +191,7 @@ export function createRendererState({
         trusted_loader_preflight_summary: status.renderer_health.trusted_loader_preflight_summary,
         trusted_loader_enablement_gate_summary: status.renderer_health.trusted_loader_enablement_gate_summary,
         trusted_loader_owner_handoff_summary: status.renderer_health.trusted_loader_owner_handoff_summary,
+        fresh_evidence_bundle_summary: status.renderer_health.fresh_evidence_bundle_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -265,6 +276,13 @@ export function createRendererState({
         allowlistPreflightSummary: trustedLoaderPreflight,
         enablementGateSummary: trustedLoaderEnablementGate,
       });
+      const freshEvidenceBundle = createFreshEvidenceBundleSummary({
+        loaderProvisioning: state.cubismLoaderProvisioning,
+        live2dEvidenceSummary: heartbeatStatus.live2d_evidence_summary,
+        allowlistPreflightSummary: trustedLoaderPreflight,
+        enablementGateSummary: trustedLoaderEnablementGate,
+        ownerHandoffSummary: trustedLoaderOwnerHandoff,
+      });
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -281,6 +299,7 @@ export function createRendererState({
       response.trusted_loader_preflight_summary = trustedLoaderPreflight;
       response.trusted_loader_enablement_gate_summary = trustedLoaderEnablementGate;
       response.trusted_loader_owner_handoff_summary = trustedLoaderOwnerHandoff;
+      response.fresh_evidence_bundle_summary = freshEvidenceBundle;
       assertSafePublicObject(response, "browser runtime config");
       return response;
     },
@@ -330,6 +349,13 @@ export function createRendererState({
         allowlistPreflightSummary: trustedLoaderPreflight,
         enablementGateSummary: trustedLoaderEnablementGate,
       });
+      const freshEvidenceBundle = createFreshEvidenceBundleSummary({
+        loaderProvisioning: state.cubismLoaderProvisioning,
+        live2dEvidenceSummary: heartbeatStatus.live2d_evidence_summary,
+        allowlistPreflightSummary: trustedLoaderPreflight,
+        enablementGateSummary: trustedLoaderEnablementGate,
+        ownerHandoffSummary: trustedLoaderOwnerHandoff,
+      });
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -371,11 +397,13 @@ export function createRendererState({
           trusted_loader_preflight_summary: trustedLoaderPreflight,
           trusted_loader_enablement_gate_summary: trustedLoaderEnablementGate,
           trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
+          fresh_evidence_bundle_summary: freshEvidenceBundle,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
         trusted_loader_enablement_gate_summary: trustedLoaderEnablementGate,
         trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
+        fresh_evidence_bundle_summary: freshEvidenceBundle,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");
