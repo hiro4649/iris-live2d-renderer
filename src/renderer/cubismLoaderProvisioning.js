@@ -230,7 +230,7 @@ export function createCubismLoaderProvisioningSummary(input = {}) {
   const loaderDependencyStatus = source.loaderDependencyStatus ?? source.loader_dependency_status ?? "not_configured";
   const licenseStatus = source.licenseStatus ?? source.license_status ?? "not_applicable";
   const provisioningStatus = source.provisioningStatus ?? source.provisioning_status ?? "not_configured";
-  const trustedLoaderAllowlistEnabled = source.trustedLoaderAllowlistEnabled ?? source.trusted_loader_allowlist_enabled ?? false;
+  const requestedTrustedLoaderAllowlistEnabled = source.trustedLoaderAllowlistEnabled === true || source.trusted_loader_allowlist_enabled === true;
   const operatorAttentionRequired = source.operatorAttentionRequired ?? source.operator_attention_required ?? true;
   const safeConfiguredEnvNames = safeEnvNames(configuredEnvNames);
   const summary = {
@@ -241,7 +241,10 @@ export function createCubismLoaderProvisioningSummary(input = {}) {
     loader_dependency_status: safeLoaderDependencyStatus(loaderDependencyStatus),
     license_status: safeLicenseStatus(licenseStatus),
     provisioning_status: safeProvisioningStatus(provisioningStatus),
-    trusted_loader_allowlist_enabled: trustedLoaderAllowlistEnabled === true,
+    trusted_loader_allowlist_enabled: false,
+    trusted_loader_allowlist_request_status: requestedTrustedLoaderAllowlistEnabled
+      ? "ignored_requires_separate_owner_confirmed_enablement_pr"
+      : "not_requested",
     operator_attention_required: operatorAttentionRequired !== false,
     boundary_policy: {
       ...createBoundaryPolicy(),
