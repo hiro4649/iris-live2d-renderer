@@ -10,6 +10,7 @@ export const GO_NOGO_PREFLIGHT_SCHEMA = "iris_live2d_go_nogo_preflight_v1";
 export const REAL_EVIDENCE_INTAKE_SCHEMA = "iris_live2d_real_evidence_intake_v1";
 export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmation_envelope_v1";
 export const REAL_EVIDENCE_REQUEST_PACKET_SCHEMA = "iris_live2d_real_evidence_request_packet_v1";
+export const REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA = "iris_live2d_real_resident_evidence_collection_plan_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -106,6 +107,57 @@ const REAL_EVIDENCE_REQUEST_COMPONENTS = Object.freeze([
   "sdk_vendor_boundary",
   "priority1_real_resident_evidence",
   "motion_dataset_row_evidence",
+]);
+
+const REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES = Object.freeze([
+  "real_probe_summary",
+  "operator_confirmed_summary",
+  "manual_upload_summary",
+  "audit_reference",
+  "owner_confirmed_reference",
+]);
+
+const REJECTED_REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES = Object.freeze([
+  "fixture",
+  "dry_run",
+  "mock",
+  "stale",
+  "unsafe_material",
+  "unknown_source_type",
+]);
+
+const REAL_RESIDENT_EVIDENCE_COLLECTION_FORBIDDEN_MATERIAL_CLASSES = Object.freeze([
+  "cue_body_material",
+  "renderer_body_material",
+  "evidence_body_material",
+  "loader_candidate_material",
+  "loader_error_material",
+  "owner_note_material",
+  "request_note_material",
+  "model_location_material",
+  "motion_location_material",
+  "service_location_value",
+  "auth_value",
+  "private_value",
+  "sdk_vendor_location_material",
+  "local_machine_location_material",
+  "shell_invocation_body",
+  "obs_invocation",
+  "world_invocation",
+]);
+
+const REAL_RESIDENT_EVIDENCE_COLLECTION_SEQUENCE = Object.freeze([
+  "verify_route_guard",
+  "verify_renderer_heartbeat_summary",
+  "verify_model_configured_summary",
+  "verify_cue_capability_summary",
+  "verify_recovery_capability_summary",
+  "verify_evidence_collector_summary",
+  "submit_safe_evidence_intake",
+  "bind_owner_confirmation_scope",
+  "run_go_nogo_preflight_review",
+  "keep_priority1_blocked_until_real_fresh_evidence",
+  "keep_motion_dataset_non_executable_until_row_schema_and_rows_exist",
 ]);
 
 const PROVISIONING_STATUS = new Set([
@@ -984,6 +1036,116 @@ export function createRealEvidenceRequestPacketSummary(packet = {}, {
   return summary;
 }
 
+export function createRealResidentEvidenceCollectionPlanSummary(plan = {}, {
+  requiredComponents = REAL_EVIDENCE_REQUEST_COMPONENTS,
+  requiredScopes = OWNER_CONFIRMATION_SCOPES,
+} = {}) {
+  const source = plan && typeof plan === "object" ? plan : {};
+  const sourceType = safeEvidenceLabel(source.source_type ?? source.source_kind, "unknown_source_type");
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source) || hasCollectionPlanForbiddenMaterial(source);
+  const rejectedSourceType = REJECTED_REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES.includes(sourceType);
+  const componentStatuses = Object.fromEntries(requiredComponents.map((component) => [component, "missing_required"]));
+  const scopeStatuses = Object.fromEntries(requiredScopes.map((scope) => [scope, "pending_required"]));
+  const blockedReasons = [
+    "collection_plan_only_not_collection",
+    "collection_plan_blocked_missing_real_resident_evidence",
+    "collection_plan_blocked_missing_owner_confirmation",
+    "collection_plan_blocked_priority1_unresolved",
+    "collection_plan_blocked_motion_dataset_non_executable",
+    "collection_plan_not_runtime_ready",
+    "collection_plan_not_production_ready",
+  ];
+  if (rejectedSourceType) blockedReasons.push(`collection_plan_rejected_${sourceType}`);
+  if (unsafeMaterialRejected) blockedReasons.push("collection_plan_rejected_forbidden_raw_field");
+  const summary = {
+    schema: REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA,
+    safe_summary_only: true,
+    real_resident_evidence_collection_plan_status: "planning_only",
+    planning_only_boundary: true,
+    collection_plan_ready_candidate: false,
+    ready_candidate: false,
+    collection_started: false,
+    real_probe_started: false,
+    live_probe_started: false,
+    real_renderer_call_started: false,
+    real_sdk_call_started: false,
+    external_service_call_started: false,
+    blocked_reason: blockedReasons[0],
+    blocked_reasons: [...new Set(blockedReasons)],
+    required_components: requiredComponents,
+    missing_components: requiredComponents,
+    component_statuses: componentStatuses,
+    required_freshness_thresholds: {
+      live2d_renderer_heartbeat: "fresh_real_resident_summary_required",
+      live2d_model_configured_status: "fresh_real_resident_summary_required",
+      live2d_cue_capability: "fresh_real_resident_summary_required",
+      live2d_recovery_capability: "fresh_real_resident_summary_required",
+      priority1: "real_resident_fresh_evidence_required",
+      motion_dataset: "real_rows_required_checked_row_count_gt_0",
+    },
+    required_owner_confirmation_scopes: requiredScopes,
+    owner_confirmation_scope_statuses: scopeStatuses,
+    required_audit_refs: [
+      "route_guard_review",
+      "real_evidence_collector_review",
+      "real_evidence_intake_review",
+      "owner_confirmation_envelope_review",
+      "go_nogo_preflight_review",
+    ],
+    required_redaction_status: "pass_required",
+    accepted_source_types: REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES,
+    rejected_source_types: REJECTED_REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES,
+    source_type_status: rejectedSourceType ? `rejected_${sourceType}` : "future_source_type_required",
+    forbidden_material_classes: REAL_RESIDENT_EVIDENCE_COLLECTION_FORBIDDEN_MATERIAL_CLASSES,
+    forbidden_material_status: unsafeMaterialRejected ? "forbidden_material_rejected" : "not_present",
+    safe_collection_sequence: REAL_RESIDENT_EVIDENCE_COLLECTION_SEQUENCE,
+    safe_next_action: "prepare_owner_confirmed_future_collection_task_after_plan_review",
+    request_packet_status: "request_only_no_collection",
+    real_evidence_intake_status: "schema_only",
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    fresh_evidence_bundle_status: "review_preparation_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    trusted_loader_allowlist_enabled: false,
+    trusted_loader_allowlist_status: "disabled",
+    no_loader_trusted: true,
+    candidate_present_diagnostic_only: true,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    motion_dataset_executable: false,
+    assistant_review_is_owner_confirmation: false,
+    pr_merge_is_owner_confirmation: false,
+    remote_pass_is_owner_confirmation: false,
+    collection_plan_collects_real_evidence: false,
+    collection_plan_performs_live_probes: false,
+    collection_plan_creates_owner_confirmation: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only_no_collection: true,
+      no_live_probe: true,
+      no_real_renderer_call: true,
+      no_real_sdk_call: true,
+      no_external_service_call: true,
+      no_trusted_loader_enablement: true,
+      no_owner_confirmation_creation: true,
+      no_env_values: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      no_shell_command_bodies: true,
+    },
+  };
+  assertSafePublicObject(summary, "real resident evidence collection plan summary");
+  return summary;
+}
+
 function realEvidenceRequestPacketReasons({ source, unsafeMaterialRejected, redactionStatus }) {
   const reasons = [
     "request_packet_blocked_missing_real_resident_evidence",
@@ -1113,6 +1275,31 @@ function hasRawEvidenceMaterial(source) {
       const normalizedKey = key.replace(/[A-Z]/g, (char) => `_${char.toLowerCase()}`).toLowerCase();
       if (RAW_EVIDENCE_FIELD_NAMES.has(normalizedKey)) return true;
       if (typeof value === "string" && UNSAFE_ENV_VALUE_PATTERNS.some((pattern) => pattern.test(value))) return true;
+      if (value && typeof value === "object") stack.push(value);
+    }
+  }
+  return false;
+}
+
+function hasCollectionPlanForbiddenMaterial(source) {
+  const stack = [source];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || typeof current !== "object") continue;
+    for (const [key, value] of Object.entries(current)) {
+      const normalizedKey = key.replace(/[A-Z]/g, (char) => `_${char.toLowerCase()}`).toLowerCase();
+      if (RAW_EVIDENCE_FIELD_NAMES.has(normalizedKey)) return true;
+      if ([
+        "model_path",
+        "motion_path",
+        "endpoint_value",
+        "token_value",
+        "secret_value",
+        "private_local_path",
+        "shell_command_body",
+        "obs_command",
+        "world_command",
+      ].includes(normalizedKey)) return true;
       if (value && typeof value === "object") stack.push(value);
     }
   }

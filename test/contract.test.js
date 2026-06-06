@@ -12,6 +12,7 @@ import {
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
+  REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA,
   TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
   TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
@@ -21,6 +22,7 @@ import {
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceIntakeSummary,
   createRealEvidenceRequestPacketSummary,
+  createRealResidentEvidenceCollectionPlanSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -149,6 +151,7 @@ try {
   assert.equal(REAL_EVIDENCE_INTAKE_SCHEMA, "iris_live2d_real_evidence_intake_v1");
   assert.equal(OWNER_CONFIRMATION_ENVELOPE_SCHEMA, "iris_live2d_owner_confirmation_envelope_v1");
   assert.equal(REAL_EVIDENCE_REQUEST_PACKET_SCHEMA, "iris_live2d_real_evidence_request_packet_v1");
+  assert.equal(REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA, "iris_live2d_real_resident_evidence_collection_plan_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -676,6 +679,97 @@ try {
   assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_mock_owner_confirmation"), true);
   assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_wrong_role_confirmation"), true);
   assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_revoked_confirmation"), true);
+
+  const defaultCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
+  assert.equal(defaultCollectionPlan.real_resident_evidence_collection_plan_status, "planning_only");
+  assert.equal(defaultCollectionPlan.planning_only_boundary, true);
+  assert.equal(defaultCollectionPlan.collection_started, false);
+  assert.equal(defaultCollectionPlan.real_probe_started, false);
+  assert.equal(defaultCollectionPlan.ready_candidate, false);
+  assert.equal(defaultCollectionPlan.runtime_readiness_claimed, false);
+  assert.equal(defaultCollectionPlan.production_readiness_claimed, false);
+  assert.equal(defaultCollectionPlan.priority1_status, "BLOCKED");
+  assert.equal(defaultCollectionPlan.motion_dataset_status, "non_executable");
+  assert.equal(defaultCollectionPlan.motion_dataset_executable, false);
+  assert.equal(defaultCollectionPlan.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultCollectionPlan.go_nogo_status, "no_go");
+  assert.equal(defaultCollectionPlan.go_candidate, false);
+  assert.equal(defaultCollectionPlan.collection_plan_collects_real_evidence, false);
+  assert.equal(defaultCollectionPlan.collection_plan_performs_live_probes, false);
+  assert.equal(defaultCollectionPlan.collection_plan_creates_owner_confirmation, false);
+  assert.equal(defaultCollectionPlan.request_packet_status, "request_only_no_collection");
+  assert.equal(defaultCollectionPlan.real_evidence_intake_status, "schema_only");
+  assert.equal(defaultCollectionPlan.owner_confirmation_envelope_status, "schema_only_blocked_or_pending");
+  assert.equal(defaultCollectionPlan.fresh_evidence_bundle_status, "review_preparation_only");
+  assert.equal(defaultCollectionPlan.accepted_source_types.includes("real_probe_summary"), true);
+  assert.equal(defaultCollectionPlan.accepted_source_types.includes("operator_confirmed_summary"), true);
+  assert.equal(defaultCollectionPlan.accepted_source_types.includes("manual_upload_summary"), true);
+  assert.equal(defaultCollectionPlan.accepted_source_types.includes("audit_reference"), true);
+  assert.equal(defaultCollectionPlan.accepted_source_types.includes("owner_confirmed_reference"), true);
+  for (const rejectedSourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
+    assert.equal(defaultCollectionPlan.rejected_source_types.includes(rejectedSourceType), true);
+  }
+  for (const forbiddenField of [
+    "cue_body_material",
+    "renderer_body_material",
+    "evidence_body_material",
+    "owner_note_material",
+    "request_note_material",
+    "loader_candidate_material",
+    "loader_error_material",
+    "model_location_material",
+    "motion_location_material",
+    "service_location_value",
+    "auth_value",
+    "private_value",
+    "sdk_vendor_location_material",
+    "shell_invocation_body",
+  ]) {
+    assert.equal(defaultCollectionPlan.forbidden_material_classes.includes(forbiddenField), true);
+  }
+  for (const stepLabel of [
+    "verify_route_guard",
+    "verify_renderer_heartbeat_summary",
+    "submit_safe_evidence_intake",
+    "bind_owner_confirmation_scope",
+    "run_go_nogo_preflight_review",
+    "keep_priority1_blocked_until_real_fresh_evidence",
+    "keep_motion_dataset_non_executable_until_row_schema_and_rows_exist",
+  ]) {
+    assert.equal(defaultCollectionPlan.safe_collection_sequence.includes(stepLabel), true);
+  }
+  assert.equal(defaultCollectionPlan.assistant_review_is_owner_confirmation, false);
+  assert.equal(defaultCollectionPlan.pr_merge_is_owner_confirmation, false);
+  assert.equal(defaultCollectionPlan.remote_pass_is_owner_confirmation, false);
+  assertSafe(JSON.stringify(defaultCollectionPlan));
+
+  for (const rejectedSourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
+    const rejectedCollectionPlan = createRealResidentEvidenceCollectionPlanSummary({ source_type: rejectedSourceType });
+    assert.equal(rejectedCollectionPlan.source_type_status, `rejected_${rejectedSourceType}`);
+    assert.equal(rejectedCollectionPlan.blocked_reasons.includes(`collection_plan_rejected_${rejectedSourceType}`), true);
+    assertSafe(JSON.stringify(rejectedCollectionPlan));
+  }
+
+  const unsafeCollectionPlan = createRealResidentEvidenceCollectionPlanSummary({
+    raw_cue_payload: "unsafe_fixture_value",
+    raw_renderer_payload: "unsafe_fixture_value",
+    raw_evidence_body: "unsafe_fixture_value",
+    raw_owner_note: "unsafe_fixture_value",
+    raw_request_note: "unsafe_fixture_value",
+    raw_loader_candidate: "unsafe_fixture_value",
+    raw_loader_error: "unsafe_fixture_value",
+    model_path: "unsafe_fixture_value",
+    motion_path: "unsafe_fixture_value",
+    endpoint_value: "unsafe_fixture_value",
+    token_value: "unsafe_fixture_value",
+    secret_value: "unsafe_fixture_value",
+    sdk_vendor_path: "unsafe_fixture_value",
+    shell_command_body: "unsafe_fixture_value",
+  });
+  assert.equal(unsafeCollectionPlan.forbidden_material_status, "forbidden_material_rejected");
+  assert.equal(unsafeCollectionPlan.blocked_reasons.includes("collection_plan_rejected_forbidden_raw_field"), true);
+  assert.equal(JSON.stringify(unsafeCollectionPlan).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(unsafeCollectionPlan));
 
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -1783,6 +1877,16 @@ try {
   assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.required_confirmation_scopes.includes("owner_confirmation_envelope_review"), true);
   assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.real_resident_evidence_collection_plan_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.collection_started, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.go_nogo_status, "no_go");
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1829,6 +1933,12 @@ try {
   assert.equal(provisionedStatus.real_evidence_request_packet_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.real_evidence_request_packet_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedStatus.real_evidence_request_packet_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.real_resident_evidence_collection_plan_status, "planning_only");
+  assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_started, false);
+  assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.real_probe_started, false);
+  assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_plan_collects_real_evidence, false);
+  assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_plan_creates_owner_confirmation, false);
+  assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1861,6 +1971,10 @@ try {
   assert.equal(provisionedHealth.real_evidence_request_packet_summary.request_packet_ready_candidate, false);
   assert.equal(provisionedHealth.real_evidence_request_packet_summary.request_packet_collects_real_evidence, false);
   assert.equal(provisionedHealth.real_evidence_request_packet_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.real_resident_evidence_collection_plan_status, "planning_only");
+  assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.collection_started, false);
+  assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1898,6 +2012,10 @@ try {
   assert.equal(provisionedHeartbeat.real_evidence_request_packet_summary.real_evidence_request_packet_status, "blocked");
   assert.equal(provisionedHeartbeat.real_evidence_request_packet_summary.request_packet_ready_candidate, false);
   assert.equal(provisionedHeartbeat.real_evidence_request_packet_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.real_resident_evidence_collection_plan_status, "planning_only");
+  assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.collection_started, false);
+  assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();

@@ -212,3 +212,13 @@ The trusted loader allowlist remains disabled, no loader is trusted, no SDK/vend
 Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation. Raw request notes, raw owner notes, raw evidence bodies, raw renderer payloads, raw cue payloads, raw loader candidates, raw loader errors, endpoint values, tokens, secrets, SDK paths, and vendor paths are rejected from the public packet surface.
 
 Real evidence intake remains schema-only, the owner confirmation envelope remains schema-only, the go/no-go preflight remains no_go, runtime readiness is not claimed, production readiness is not claimed, priority1 remains BLOCKED, and the motion dataset remains non-executable. Future actual trusted loader enablement requires a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
+
+## LIVE2D-REAL-RESIDENT-EVIDENCE-COLLECTION-PLAN1
+
+The real resident evidence collection plan is planning only. It does not collect real evidence, does not perform live probes, does not call the real renderer, does not call Cubism SDK or vendor files, and does not call external services.
+
+The plan keeps trusted loader allowlist disabled and does not trust any loader. Owner-provided file values remain private; public summaries expose only env names and safe statuses. Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation.
+
+Assistant review, PR merge, local checks, target harness, browser/API smoke, and remote quality-gate PASS are not owner confirmation. Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED, and the motion dataset remains non-executable while checked_row_count is 0.
+
+Future actual evidence collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
