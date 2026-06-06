@@ -11,6 +11,7 @@ import {
   GO_NOGO_PREFLIGHT_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
+  REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
   TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
   TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
@@ -18,6 +19,7 @@ import {
   createGoNoGoPreflightSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceIntakeSummary,
+  createRealEvidenceRequestPacketSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -145,6 +147,7 @@ try {
   assert.equal(GO_NOGO_PREFLIGHT_SCHEMA, "iris_live2d_go_nogo_preflight_v1");
   assert.equal(REAL_EVIDENCE_INTAKE_SCHEMA, "iris_live2d_real_evidence_intake_v1");
   assert.equal(OWNER_CONFIRMATION_ENVELOPE_SCHEMA, "iris_live2d_owner_confirmation_envelope_v1");
+  assert.equal(REAL_EVIDENCE_REQUEST_PACKET_SCHEMA, "iris_live2d_real_evidence_request_packet_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -580,6 +583,68 @@ try {
   assert.equal(unsafeOwnerConfirmationEnvelope.owner_private_note_redaction_status, "unsafe_material_rejected");
   assert.equal(unsafeOwnerConfirmationEnvelope.confirmation_blocked_reasons.includes("confirmation_blocked_unsafe_material_rejected"), true);
   assert.equal(JSON.stringify(unsafeOwnerConfirmationEnvelope).includes("secret.example"), false);
+
+  const defaultEvidenceRequestPacket = createRealEvidenceRequestPacketSummary();
+  assert.equal(defaultEvidenceRequestPacket.real_evidence_request_packet_status, "blocked");
+  assert.equal(defaultEvidenceRequestPacket.request_packet_ready_candidate, false);
+  assert.equal(defaultEvidenceRequestPacket.request_packet_collects_real_evidence, false);
+  assert.equal(defaultEvidenceRequestPacket.request_packet_performs_live_probes, false);
+  assert.equal(defaultEvidenceRequestPacket.request_packet_creates_owner_confirmation, false);
+  assert.equal(defaultEvidenceRequestPacket.request_packet_completeness_is_readiness, false);
+  assert.equal(defaultEvidenceRequestPacket.required_evidence_components.includes("priority1_real_resident_evidence"), true);
+  assert.equal(defaultEvidenceRequestPacket.required_evidence_components.includes("motion_dataset_row_evidence"), true);
+  assert.equal(defaultEvidenceRequestPacket.missing_evidence_components.length, defaultEvidenceRequestPacket.required_evidence_components.length);
+  assert.equal(defaultEvidenceRequestPacket.required_confirmation_scopes.includes("owner_confirmation_envelope_review"), true);
+  assert.equal(defaultEvidenceRequestPacket.required_confirmation_scopes.includes("runtime_readiness"), true);
+  assert.equal(defaultEvidenceRequestPacket.required_confirmation_scopes.includes("production_readiness"), true);
+  assert.equal(defaultEvidenceRequestPacket.missing_confirmation_scopes.length, defaultEvidenceRequestPacket.required_confirmation_scopes.length);
+  assert.equal(defaultEvidenceRequestPacket.fixture_evidence_status, "fixture_not_real_evidence");
+  assert.equal(defaultEvidenceRequestPacket.dry_run_evidence_status, "dry_run_not_real_evidence");
+  assert.equal(defaultEvidenceRequestPacket.stale_evidence_status, "stale_not_fresh_evidence");
+  assert.equal(defaultEvidenceRequestPacket.mock_owner_confirmation_status, "mock_owner_confirmation_not_real");
+  assert.equal(defaultEvidenceRequestPacket.wrong_role_confirmation_status, "wrong_role_confirmation_rejected");
+  assert.equal(defaultEvidenceRequestPacket.expired_confirmation_status, "expired_confirmation_rejected");
+  assert.equal(defaultEvidenceRequestPacket.revoked_confirmation_status, "revoked_confirmation_rejected");
+  assert.equal(defaultEvidenceRequestPacket.owner_confirmation_envelope_status, "schema_only_blocked_or_pending");
+  assert.equal(defaultEvidenceRequestPacket.real_evidence_intake_status, "schema_only_blocked_or_attention");
+  assert.equal(defaultEvidenceRequestPacket.go_nogo_status, "no_go");
+  assert.equal(defaultEvidenceRequestPacket.priority1_status, "BLOCKED");
+  assert.equal(defaultEvidenceRequestPacket.motion_dataset_executable, false);
+  assert.equal(defaultEvidenceRequestPacket.renderer_ready, false);
+  assert.equal(defaultEvidenceRequestPacket.model_loaded, false);
+  assert.equal(defaultEvidenceRequestPacket.scene_loaded, false);
+  assert.equal(defaultEvidenceRequestPacket.browser_cue_delivery_ready, false);
+  assert.equal(defaultEvidenceRequestPacket.runtime_readiness_claimed, false);
+  assert.equal(defaultEvidenceRequestPacket.production_readiness_claimed, false);
+  assertSafe(JSON.stringify(defaultEvidenceRequestPacket));
+
+  const unsafeEvidenceRequestPacket = createRealEvidenceRequestPacketSummary({
+    audit_ref: "safe_audit_ref",
+    redaction_status: "pass",
+    source_kind: "fixture",
+    raw_request_note: "https://secret.example/request-note",
+    raw_owner_note: "private owner note",
+  });
+  assert.equal(unsafeEvidenceRequestPacket.unsafe_request_note_status, "unsafe_material_rejected");
+  assert.equal(unsafeEvidenceRequestPacket.unsafe_owner_note_status, "unsafe_material_rejected");
+  assert.equal(unsafeEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_unsafe_material_rejected"), true);
+  assert.equal(unsafeEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_fixture_evidence_only"), true);
+  assert.equal(JSON.stringify(unsafeEvidenceRequestPacket).includes("secret.example"), false);
+
+  const staleMockEvidenceRequestPacket = createRealEvidenceRequestPacketSummary({
+    audit_ref: "safe_audit_ref",
+    redaction_status: "pass",
+    source_kind: "dry_run",
+    freshness_status: "stale",
+    mock_owner_confirmation: true,
+    confirmed_by_role: "reviewer",
+    confirmation_status: "revoked",
+  });
+  assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_dry_run_evidence_only"), true);
+  assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_stale_evidence"), true);
+  assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_mock_owner_confirmation"), true);
+  assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_wrong_role_confirmation"), true);
+  assert.equal(staleMockEvidenceRequestPacket.request_packet_blocked_reasons.includes("request_packet_blocked_revoked_confirmation"), true);
 
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -1679,6 +1744,14 @@ try {
   assert.equal(provisionedRuntimeConfig.owner_confirmation_envelope_summary.confirmed_scopes.length, 0);
   assert.equal(provisionedRuntimeConfig.owner_confirmation_envelope_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.owner_confirmation_envelope_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.real_evidence_request_packet_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.request_packet_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.request_packet_collects_real_evidence, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.request_packet_creates_owner_confirmation, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.required_evidence_components.includes("live2d_owner_confirmation_envelope"), true);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.required_confirmation_scopes.includes("owner_confirmation_envelope_review"), true);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_request_packet_summary.production_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1719,6 +1792,12 @@ try {
   assert.equal(provisionedStatus.owner_confirmation_envelope_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.owner_confirmation_envelope_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedStatus.owner_confirmation_envelope_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_evidence_request_packet_summary.real_evidence_request_packet_status, "blocked");
+  assert.equal(provisionedStatus.real_evidence_request_packet_summary.request_packet_ready_candidate, false);
+  assert.equal(provisionedStatus.real_evidence_request_packet_summary.request_packet_completeness_is_readiness, false);
+  assert.equal(provisionedStatus.real_evidence_request_packet_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.real_evidence_request_packet_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedStatus.real_evidence_request_packet_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1747,6 +1826,10 @@ try {
   assert.equal(provisionedHealth.owner_confirmation_envelope_summary.owner_confirmation_envelope_status, "blocked");
   assert.equal(provisionedHealth.owner_confirmation_envelope_summary.confirmation_ready_candidate, false);
   assert.equal(provisionedHealth.owner_confirmation_envelope_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_evidence_request_packet_summary.real_evidence_request_packet_status, "blocked");
+  assert.equal(provisionedHealth.real_evidence_request_packet_summary.request_packet_ready_candidate, false);
+  assert.equal(provisionedHealth.real_evidence_request_packet_summary.request_packet_collects_real_evidence, false);
+  assert.equal(provisionedHealth.real_evidence_request_packet_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1781,6 +1864,9 @@ try {
   assert.equal(provisionedHeartbeat.owner_confirmation_envelope_summary.owner_confirmation_envelope_status, "blocked");
   assert.equal(provisionedHeartbeat.owner_confirmation_envelope_summary.confirmation_ready_candidate, false);
   assert.equal(provisionedHeartbeat.owner_confirmation_envelope_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_request_packet_summary.real_evidence_request_packet_status, "blocked");
+  assert.equal(provisionedHeartbeat.real_evidence_request_packet_summary.request_packet_ready_candidate, false);
+  assert.equal(provisionedHeartbeat.real_evidence_request_packet_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();

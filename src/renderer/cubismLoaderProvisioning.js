@@ -9,6 +9,7 @@ export const FRESH_EVIDENCE_BUNDLE_SCHEMA = "iris_live2d_fresh_evidence_bundle_v
 export const GO_NOGO_PREFLIGHT_SCHEMA = "iris_live2d_go_nogo_preflight_v1";
 export const REAL_EVIDENCE_INTAKE_SCHEMA = "iris_live2d_real_evidence_intake_v1";
 export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmation_envelope_v1";
+export const REAL_EVIDENCE_REQUEST_PACKET_SCHEMA = "iris_live2d_real_evidence_request_packet_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -60,7 +61,9 @@ const RAW_EVIDENCE_FIELD_NAMES = new Set([
   "secret",
   "raw_loader_candidate",
   "raw_loader_error",
+  "raw_request_note",
   "owner_private_note",
+  "raw_owner_note",
   "sdk_vendor_path",
   "sdk_path",
   "vendor_source",
@@ -72,6 +75,7 @@ const OWNER_CONFIRMATION_SCOPES = Object.freeze([
   "fresh_evidence_bundle_review",
   "real_evidence_intake_review",
   "go_nogo_preflight_review",
+  "owner_confirmation_envelope_review",
   "trusted_loader_preflight_review",
   "trusted_loader_enablement_gate_review",
   "trusted_loader_owner_handoff_review",
@@ -83,6 +87,26 @@ const OWNER_CONFIRMATION_SCOPES = Object.freeze([
 ]);
 
 const OWNER_CONFIRMATION_SCOPE_SET = new Set(OWNER_CONFIRMATION_SCOPES);
+
+const REAL_EVIDENCE_REQUEST_COMPONENTS = Object.freeze([
+  "live2d_route_guard",
+  "live2d_renderer_heartbeat",
+  "live2d_model_configured_status",
+  "live2d_cue_capability",
+  "live2d_recovery_capability",
+  "live2d_evidence_collector",
+  "live2d_fresh_evidence_bundle",
+  "live2d_real_evidence_intake",
+  "live2d_go_nogo_preflight",
+  "live2d_owner_confirmation_envelope",
+  "trusted_loader_preflight",
+  "trusted_loader_enablement_gate",
+  "trusted_loader_owner_handoff",
+  "license_boundary",
+  "sdk_vendor_boundary",
+  "priority1_real_resident_evidence",
+  "motion_dataset_row_evidence",
+]);
 
 const PROVISIONING_STATUS = new Set([
   "not_configured",
@@ -863,6 +887,120 @@ export function createOwnerConfirmationEnvelopeSummary(envelope = {}, {
   };
   assertSafePublicObject(summary, "owner confirmation envelope summary");
   return summary;
+}
+
+export function createRealEvidenceRequestPacketSummary(packet = {}, {
+  requiredComponents = REAL_EVIDENCE_REQUEST_COMPONENTS,
+  requiredScopes = OWNER_CONFIRMATION_SCOPES,
+} = {}) {
+  const source = packet && typeof packet === "object" ? packet : {};
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source);
+  const redactionStatus = source.redaction_status === "pass" ? "pass" : "redaction_status_required";
+  const reasons = realEvidenceRequestPacketReasons({ source, unsafeMaterialRejected, redactionStatus });
+  const componentStatuses = Object.fromEntries(requiredComponents.map((component) => [component, "pending_required"]));
+  const scopeStatuses = Object.fromEntries(requiredScopes.map((scope) => [scope, "pending_required"]));
+  const summary = {
+    schema: REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
+    safe_summary_only: true,
+    real_evidence_request_packet_status: "blocked",
+    request_packet_ready_candidate: false,
+    request_packet_blocked_reason: reasons[0] ?? "request_packet_blocked_missing_real_resident_evidence",
+    request_packet_blocked_reasons: reasons,
+    required_evidence_components: requiredComponents,
+    missing_evidence_components: requiredComponents,
+    required_confirmation_scopes: requiredScopes,
+    missing_confirmation_scopes: requiredScopes,
+    required_freshness_thresholds: {
+      live2d_renderer_heartbeat: "fresh_real_resident_evidence_required",
+      cue_capability: "fresh_real_resident_evidence_required",
+      recovery_capability: "fresh_real_resident_evidence_required",
+      priority1: "real_resident_fresh_evidence_required",
+      motion_dataset: "real_rows_required_checked_row_count_gt_0",
+    },
+    required_audit_refs: "required_pending",
+    required_redaction_status: "pass_required",
+    route_guard_evidence_request: componentStatuses.live2d_route_guard,
+    real_evidence_collector_request: componentStatuses.live2d_evidence_collector,
+    fresh_evidence_bundle_request: componentStatuses.live2d_fresh_evidence_bundle,
+    real_evidence_intake_request: componentStatuses.live2d_real_evidence_intake,
+    go_nogo_preflight_request: componentStatuses.live2d_go_nogo_preflight,
+    owner_confirmation_envelope_request: componentStatuses.live2d_owner_confirmation_envelope,
+    trusted_loader_preflight_request: componentStatuses.trusted_loader_preflight,
+    enablement_gate_request: componentStatuses.trusted_loader_enablement_gate,
+    owner_handoff_request: componentStatuses.trusted_loader_owner_handoff,
+    license_boundary_request: componentStatuses.license_boundary,
+    sdk_vendor_boundary_request: componentStatuses.sdk_vendor_boundary,
+    priority1_evidence_request: componentStatuses.priority1_real_resident_evidence,
+    motion_dataset_evidence_request: componentStatuses.motion_dataset_row_evidence,
+    evidence_component_statuses: componentStatuses,
+    confirmation_scope_statuses: scopeStatuses,
+    fixture_evidence_status: "fixture_not_real_evidence",
+    dry_run_evidence_status: "dry_run_not_real_evidence",
+    stale_evidence_status: "stale_not_fresh_evidence",
+    mock_owner_confirmation_status: "mock_owner_confirmation_not_real",
+    wrong_role_confirmation_status: "wrong_role_confirmation_rejected",
+    expired_confirmation_status: "expired_confirmation_rejected",
+    revoked_confirmation_status: "revoked_confirmation_rejected",
+    unsafe_request_note_status: unsafeMaterialRejected ? "unsafe_material_rejected" : "request_note_forbidden",
+    unsafe_owner_note_status: unsafeMaterialRejected ? "unsafe_material_rejected" : "owner_note_forbidden",
+    unsafe_evidence_body_status: unsafeMaterialRejected ? "unsafe_material_rejected" : "evidence_body_forbidden",
+    redaction_status: redactionStatus,
+    request_packet_collects_real_evidence: false,
+    request_packet_performs_live_probes: false,
+    request_packet_creates_owner_confirmation: false,
+    request_packet_completeness_is_readiness: false,
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    real_evidence_intake_status: "schema_only_blocked_or_attention",
+    go_nogo_status: "no_go",
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    safe_next_action: "owner_operator_supplies_future_fresh_real_evidence_after_review",
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    motion_dataset_executable: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      no_env_values: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      owner_provided_files_only: true,
+      review_preparation_only: true,
+      no_unsafe_evidence_material: true,
+      request_only_no_collection: true,
+    },
+  };
+  assertSafePublicObject(summary, "real evidence request packet summary");
+  return summary;
+}
+
+function realEvidenceRequestPacketReasons({ source, unsafeMaterialRejected, redactionStatus }) {
+  const reasons = [
+    "request_packet_blocked_missing_real_resident_evidence",
+    "request_packet_blocked_missing_owner_confirmation",
+    "request_packet_blocked_priority1_unresolved",
+    "request_packet_blocked_motion_dataset_non_executable",
+    "request_packet_not_runtime_ready",
+    "request_packet_not_production_ready",
+  ];
+  if (!source.audit_ref) reasons.push("request_packet_blocked_missing_audit_ref");
+  if (redactionStatus !== "pass") reasons.push("request_packet_blocked_redaction_status_required");
+  if (unsafeMaterialRejected) reasons.push("request_packet_blocked_unsafe_material_rejected");
+  if (source.source_kind === "fixture") reasons.push("request_packet_blocked_fixture_evidence_only");
+  if (source.source_kind === "dry_run") reasons.push("request_packet_blocked_dry_run_evidence_only");
+  if (source.freshness_status === "stale") reasons.push("request_packet_blocked_stale_evidence");
+  if (source.mock_owner_confirmation === true) reasons.push("request_packet_blocked_mock_owner_confirmation");
+  if (source.confirmed_by_role && source.confirmed_by_role !== "owner") reasons.push("request_packet_blocked_wrong_role_confirmation");
+  if (source.confirmation_status === "expired") reasons.push("request_packet_blocked_expired_confirmation");
+  if (source.confirmation_status === "revoked") reasons.push("request_packet_blocked_revoked_confirmation");
+  return [...new Set(reasons)];
 }
 
 function ownerConfirmationEnvelopeReasons({

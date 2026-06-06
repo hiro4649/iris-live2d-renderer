@@ -200,3 +200,15 @@ Real evidence intake remains schema-only, Fresh Evidence Bundle remains review-p
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0.
 
 Future actual trusted loader enablement requires a separate owner-confirmed PR after real fresh evidence exists and go/no-go blockers are resolved.
+
+## LIVE2D-REAL-EVIDENCE-REQUEST-PACKET1 safe boundary
+
+LIVE2D-REAL-EVIDENCE-REQUEST-PACKET1 is request preparation only. It defines the safe evidence components, freshness requirements, audit references, redaction requirements, and owner confirmation scopes that must be supplied later for Live2D readiness review.
+
+This packet does not collect real evidence, does not perform live probes, does not call the real renderer, does not call the Cubism SDK, does not create real owner confirmation, and does not auto-confirm from PR merge, remote quality-gate PASS, local checks, target harness, browser/API smoke, fixture, dry-run, or mock data. Request packet completeness is not readiness.
+
+The trusted loader allowlist remains disabled, no loader is trusted, no SDK/vendor files are bundled, downloaded, quoted, copied, or committed, and owner-provided file values remain private. Only environment variable names and safe status labels may be public.
+
+Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation. Raw request notes, raw owner notes, raw evidence bodies, raw renderer payloads, raw cue payloads, raw loader candidates, raw loader errors, endpoint values, tokens, secrets, SDK paths, and vendor paths are rejected from the public packet surface.
+
+Real evidence intake remains schema-only, the owner confirmation envelope remains schema-only, the go/no-go preflight remains no_go, runtime readiness is not claimed, production readiness is not claimed, priority1 remains BLOCKED, and the motion dataset remains non-executable. Future actual trusted loader enablement requires a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
