@@ -188,3 +188,15 @@ The route guard, real evidence collector, Fresh Evidence Bundle, and go/no-go pr
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0.
 
 Future actual trusted loader enablement requires a separate owner-confirmed PR after real fresh evidence exists and go/no-go blockers are resolved.
+
+## LIVE2D-OWNER-CONFIRMATION-ENVELOPE1 safe boundary
+
+The owner confirmation envelope is schema and safety preparation only. It does not create real owner confirmation, does not auto-confirm from PR merge, remote quality-gate PASS, local checks, target harness, browser smoke, fixture, dry-run, or mock data, and does not enable the trusted loader allowlist.
+
+Owner confirmation is scope-specific. Wrong-role confirmation, expired confirmation, revoked confirmation, mock confirmation, and scope-mismatched confirmation are rejected. Raw owner notes and owner-provided values remain private; public surfaces expose only safe status labels.
+
+Real evidence intake remains schema-only, Fresh Evidence Bundle remains review-preparation only, and go/no-go preflight remains no_go by default. Trusted loader allowlist remains disabled and no loader is trusted.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0.
+
+Future actual trusted loader enablement requires a separate owner-confirmed PR after real fresh evidence exists and go/no-go blockers are resolved.
