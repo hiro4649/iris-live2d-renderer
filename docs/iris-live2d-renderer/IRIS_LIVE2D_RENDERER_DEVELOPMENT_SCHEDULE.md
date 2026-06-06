@@ -176,3 +176,13 @@ The schedule remains blocked on route guard, real evidence collector, allowlist 
 Runtime readiness and production readiness are not claimed by this work. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0, and degraded_mode_available is not a go signal.
 
 Actual trusted loader enablement remains future work and requires a separate owner-confirmed PR after all no-go blockers are resolved.
+
+## LIVE2D-REAL-EVIDENCE-INTAKE1 schedule note
+
+LIVE2D-REAL-EVIDENCE-INTAKE1 adds a safe schema and redaction intake surface for future Live2D readiness review. It is not real collection, does not perform live probes, does not enable trusted loader allowlist, does not trust any loader, and does not load or call SDK/vendor files.
+
+Only safe summarized metadata is in scope. Owner-provided file values remain private; public summaries expose only env names and safe statuses. Fixture evidence, dry-run evidence, stale evidence, manual summary without owner confirmation, and mock owner confirmation do not become fresh real evidence.
+
+Route guard, real evidence collector, Fresh Evidence Bundle, and go/no-go preflight remain prerequisites, and the go/no-go preflight remains no_go by default. Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED, and the motion dataset remains non-executable while checked_row_count is 0.
+
+Future trusted loader enablement remains a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.

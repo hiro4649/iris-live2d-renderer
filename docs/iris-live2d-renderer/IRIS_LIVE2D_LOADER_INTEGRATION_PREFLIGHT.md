@@ -176,3 +176,15 @@ The preflight stays fail-closed until route guard, real evidence collector, allo
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. degraded_mode_available is a fallback/status separation and is not a go decision.
 
 Future actual trusted loader enablement requires a separate owner-confirmed PR after all no-go blockers are resolved with fresh real evidence, owner confirmation, and go/no-go review.
+
+## LIVE2D-REAL-EVIDENCE-INTAKE1 safe boundary
+
+The real evidence intake layer is schema and redaction preparation only. It does not collect real evidence, does not perform live probes, does not enable the trusted loader allowlist, does not trust any loader, and does not load, bundle, download, quote, copy, or commit SDK/vendor files.
+
+Owner-provided file values remain private. Public surfaces may expose only env names and safe status labels. Fixture evidence is not real evidence, dry-run evidence is not real evidence, manual summary is not fresh real evidence without owner confirmation, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation.
+
+The route guard, real evidence collector, Fresh Evidence Bundle, and go/no-go preflight remain prerequisites. The go/no-go preflight remains no_go by default. Raw evidence payloads, raw cue payloads, raw renderer payloads, raw paths, endpoint values, token values, loader candidates, loader errors, SDK/vendor paths, vendor source, and owner private notes are rejected or summarized only as safe blocked labels.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0.
+
+Future actual trusted loader enablement requires a separate owner-confirmed PR after real fresh evidence exists and go/no-go blockers are resolved.

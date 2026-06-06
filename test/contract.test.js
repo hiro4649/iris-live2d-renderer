@@ -9,11 +9,13 @@ import {
   CUBISM_LOADER_PROVISIONING_SCHEMA,
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
+  REAL_EVIDENCE_INTAKE_SCHEMA,
   TRUSTED_LOADER_ENABLEMENT_GATE_SCHEMA,
   TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA,
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
   createFreshEvidenceBundleSummary,
   createGoNoGoPreflightSummary,
+  createRealEvidenceIntakeSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -139,6 +141,7 @@ try {
   assert.equal(TRUSTED_LOADER_OWNER_HANDOFF_SCHEMA, "iris_live2d_trusted_loader_owner_handoff_v1");
   assert.equal(FRESH_EVIDENCE_BUNDLE_SCHEMA, "iris_live2d_fresh_evidence_bundle_v1");
   assert.equal(GO_NOGO_PREFLIGHT_SCHEMA, "iris_live2d_go_nogo_preflight_v1");
+  assert.equal(REAL_EVIDENCE_INTAKE_SCHEMA, "iris_live2d_real_evidence_intake_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -353,6 +356,115 @@ try {
   assert.equal(JSON.stringify(defaultGoNoGo).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(defaultGoNoGo));
   assertNoModelPathLeak(JSON.stringify(defaultGoNoGo));
+
+  const defaultRealEvidenceIntake = createRealEvidenceIntakeSummary();
+  assert.equal(defaultRealEvidenceIntake.evidence_intake_status, "blocked");
+  assert.equal(defaultRealEvidenceIntake.intake_ready_candidate, false);
+  assert.equal(defaultRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_missing_schema_version"), true);
+  assert.equal(defaultRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_missing_timestamp"), true);
+  assert.equal(defaultRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_priority1_unresolved"), true);
+  assert.equal(defaultRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_motion_dataset_non_executable"), true);
+  assert.equal(defaultRealEvidenceIntake.intake_blocked_reasons.includes("intake_not_runtime_ready"), true);
+  assert.equal(defaultRealEvidenceIntake.intake_blocked_reasons.includes("intake_not_production_ready"), true);
+  assert.equal(defaultRealEvidenceIntake.runtime_readiness_claimed, false);
+  assert.equal(defaultRealEvidenceIntake.production_readiness_claimed, false);
+  assert.equal(defaultRealEvidenceIntake.renderer_ready, false);
+  assert.equal(defaultRealEvidenceIntake.model_loaded, false);
+  assert.equal(defaultRealEvidenceIntake.scene_loaded, false);
+  assert.equal(defaultRealEvidenceIntake.browser_cue_delivery_ready, false);
+  assert.equal(defaultRealEvidenceIntake.priority1_status, "BLOCKED");
+  assert.equal(defaultRealEvidenceIntake.motion_dataset_executable, false);
+  assertSafe(JSON.stringify(defaultRealEvidenceIntake));
+  assertNoModelPathLeak(JSON.stringify(defaultRealEvidenceIntake));
+
+  const fixtureRealEvidenceIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "fixture",
+    component: "live2d_renderer",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+  }, { nowMs });
+  assert.equal(fixtureRealEvidenceIntake.fixture_evidence_status, "fixture_not_real_evidence");
+  assert.equal(fixtureRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_fixture_evidence_only"), true);
+  assert.equal(fixtureRealEvidenceIntake.intake_ready_candidate, false);
+
+  const dryRunRealEvidenceIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "dry_run",
+    component: "live2d_renderer",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+  }, { nowMs });
+  assert.equal(dryRunRealEvidenceIntake.dry_run_evidence_status, "dry_run_not_real_evidence");
+  assert.equal(dryRunRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_dry_run_evidence_only"), true);
+
+  const staleRealEvidenceIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "real_probe_summary",
+    component: "live2d_renderer",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs - 600_000,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+  }, { nowMs });
+  assert.equal(staleRealEvidenceIntake.freshness_status, "stale");
+  assert.equal(staleRealEvidenceIntake.intake_blocked_reasons.includes("intake_blocked_stale_evidence"), true);
+
+  const manualSummaryIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "manual_summary",
+    component: "live2d_renderer",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+  }, { nowMs });
+  assert.equal(manualSummaryIntake.intake_blocked_reasons.includes("intake_blocked_manual_summary_without_owner_confirmation"), true);
+  assert.equal(manualSummaryIntake.intake_ready_candidate, false);
+
+  const rawPayloadIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "real_probe_summary",
+    component: "live2d_renderer",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+    raw_renderer_payload: { model_path: ownerFrameworkLoaderPath },
+  }, { nowMs });
+  assert.equal(rawPayloadIntake.unsafe_material_rejected, true);
+  assert.equal(rawPayloadIntake.intake_blocked_reasons.includes("intake_blocked_unsafe_material_rejected"), true);
+  assert.equal(JSON.stringify(rawPayloadIntake).includes(ownerFrameworkLoaderPath), false);
+
+  const unknownSourceIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "unknown_probe",
+    component: "unknown_component",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+  }, { nowMs });
+  assert.equal(unknownSourceIntake.rejected_source_type, "unknown_probe");
+  assert.equal(unknownSourceIntake.component, "external_boundary_component");
+  assert.equal(unknownSourceIntake.intake_blocked_reasons.includes("intake_blocked_unknown_source_type"), true);
+  assert.equal(unknownSourceIntake.intake_blocked_reasons.includes("intake_blocked_external_boundary_component"), true);
+
+  const mockOwnerIntake = createRealEvidenceIntakeSummary({
+    schema_version: "v1",
+    source_type: "operator_confirmed_summary",
+    component: "live2d_renderer",
+    component_status: "summary_only",
+    evidence_timestamp_ms: nowMs,
+    freshness_status: "fresh",
+    redaction_status: "pass",
+  }, { nowMs, mockOwnerConfirmation: true });
+  assert.equal(mockOwnerIntake.owner_confirmation_status, "mock_owner_confirmation_rejected");
+  assert.equal(mockOwnerIntake.intake_blocked_reasons.includes("intake_blocked_mock_owner_confirmation"), true);
 
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -1442,6 +1554,11 @@ try {
   assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.no_go_reasons.includes("degraded_mode_available_not_go"), true);
   assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.go_nogo_preflight_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_intake_summary.evidence_intake_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.real_evidence_intake_summary.intake_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_intake_summary.unsafe_material_rejected, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_intake_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_intake_summary.production_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1472,6 +1589,11 @@ try {
   assert.equal(provisionedStatus.go_nogo_preflight_summary.model_loaded, false);
   assert.equal(provisionedStatus.go_nogo_preflight_summary.scene_loaded, false);
   assert.equal(provisionedStatus.go_nogo_preflight_summary.browser_cue_delivery_ready, false);
+  assert.equal(provisionedStatus.real_evidence_intake_summary.evidence_intake_status, "blocked");
+  assert.equal(provisionedStatus.real_evidence_intake_summary.intake_ready_candidate, false);
+  assert.equal(provisionedStatus.real_evidence_intake_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.real_evidence_intake_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedStatus.real_evidence_intake_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1494,6 +1616,9 @@ try {
   assert.equal(provisionedHealth.go_nogo_preflight_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHealth.go_nogo_preflight_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
+  assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);
+  assert.equal(provisionedHealth.real_evidence_intake_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -1522,6 +1647,9 @@ try {
   assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.no_go_reasons.includes("no_go_priority1_unresolved"), true);
   assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.no_go_reasons.includes("no_go_motion_dataset_non_executable"), true);
   assert.equal(provisionedHeartbeat.go_nogo_preflight_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_intake_summary.evidence_intake_status, "blocked");
+  assert.equal(provisionedHeartbeat.real_evidence_intake_summary.intake_ready_candidate, false);
+  assert.equal(provisionedHeartbeat.real_evidence_intake_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
