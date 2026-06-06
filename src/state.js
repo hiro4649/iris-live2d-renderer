@@ -4,6 +4,7 @@ import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRende
 import {
   createFreshEvidenceBundleSummary,
   createGoNoGoPreflightSummary,
+  createRealEvidenceIntakeSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -90,6 +91,7 @@ export function createRendererState({
         ownerHandoffSummary: trustedLoaderOwnerHandoff,
         freshEvidenceBundleSummary: freshEvidenceBundle,
       });
+      const realEvidenceIntake = createRealEvidenceIntakeSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -149,6 +151,7 @@ export function createRendererState({
           trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
           fresh_evidence_bundle_summary: freshEvidenceBundle,
           go_nogo_preflight_summary: goNoGoPreflight,
+          real_evidence_intake_summary: realEvidenceIntake,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
@@ -156,6 +159,7 @@ export function createRendererState({
         trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
         fresh_evidence_bundle_summary: freshEvidenceBundle,
         go_nogo_preflight_summary: goNoGoPreflight,
+        real_evidence_intake_summary: realEvidenceIntake,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -204,6 +208,7 @@ export function createRendererState({
         trusted_loader_owner_handoff_summary: status.renderer_health.trusted_loader_owner_handoff_summary,
         fresh_evidence_bundle_summary: status.renderer_health.fresh_evidence_bundle_summary,
         go_nogo_preflight_summary: status.renderer_health.go_nogo_preflight_summary,
+        real_evidence_intake_summary: status.renderer_health.real_evidence_intake_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -303,6 +308,7 @@ export function createRendererState({
         ownerHandoffSummary: trustedLoaderOwnerHandoff,
         freshEvidenceBundleSummary: freshEvidenceBundle,
       });
+      const realEvidenceIntake = createRealEvidenceIntakeSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -321,6 +327,7 @@ export function createRendererState({
       response.trusted_loader_owner_handoff_summary = trustedLoaderOwnerHandoff;
       response.fresh_evidence_bundle_summary = freshEvidenceBundle;
       response.go_nogo_preflight_summary = goNoGoPreflight;
+      response.real_evidence_intake_summary = realEvidenceIntake;
       assertSafePublicObject(response, "browser runtime config");
       return response;
     },
@@ -385,6 +392,7 @@ export function createRendererState({
         ownerHandoffSummary: trustedLoaderOwnerHandoff,
         freshEvidenceBundleSummary: freshEvidenceBundle,
       });
+      const realEvidenceIntake = createRealEvidenceIntakeSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -428,6 +436,7 @@ export function createRendererState({
           trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
           fresh_evidence_bundle_summary: freshEvidenceBundle,
           go_nogo_preflight_summary: goNoGoPreflight,
+          real_evidence_intake_summary: realEvidenceIntake,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
@@ -435,6 +444,7 @@ export function createRendererState({
         trusted_loader_owner_handoff_summary: trustedLoaderOwnerHandoff,
         fresh_evidence_bundle_summary: freshEvidenceBundle,
         go_nogo_preflight_summary: goNoGoPreflight,
+        real_evidence_intake_summary: realEvidenceIntake,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");
