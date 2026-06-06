@@ -202,3 +202,13 @@ Runtime readiness and production readiness are not claimed. priority1 remains BL
 The real evidence request packet is a review-preparation artifact. It lists the real fresh evidence components and owner confirmation scopes that the owner/operator must provide later, without collecting evidence, probing live services, creating owner confirmation, enabling trusted loader behavior, or claiming readiness.
 
 The packet keeps real evidence intake schema-only, owner confirmation envelope schema-only, go/no-go as no_go, priority1 BLOCKED, and the motion dataset non-executable. Future actual trusted loader enablement remains a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
+
+## LIVE2D-REAL-RESIDENT-EVIDENCE-COLLECTION-PLAN1
+
+LIVE2D-REAL-RESIDENT-EVIDENCE-COLLECTION-PLAN1 adds a safe planning/status surface for future real resident Live2D evidence collection. It defines required components, accepted future source types, rejected source types, forbidden raw fields, freshness thresholds, owner confirmation dependencies, audit references, go/no-go relationship, priority1 relationship, motion dataset relationship, and safe next actions.
+
+This is a collection plan, not collection. No live probe is performed, no real renderer call is performed, no SDK/vendor call is performed, no external service is called, no trusted loader is enabled, and no loader is trusted.
+
+Owner-provided file values remain private; only env names and safe statuses are public. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture, dry-run, stale evidence, and mock data do not create owner confirmation or readiness.
+
+Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
