@@ -196,3 +196,9 @@ Confirmation remains scope-specific, expiry-aware, revocation-aware, and role-bo
 Real evidence intake remains schema-only, Fresh Evidence Bundle remains review-preparation only, go/no-go preflight remains no_go, trusted loader allowlist remains disabled, and no loader is trusted.
 
 Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED, and the motion dataset remains non-executable while checked_row_count is 0. Future trusted loader enablement remains a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
+
+## LIVE2D-REAL-EVIDENCE-REQUEST-PACKET1 schedule note
+
+The real evidence request packet is a review-preparation artifact. It lists the real fresh evidence components and owner confirmation scopes that the owner/operator must provide later, without collecting evidence, probing live services, creating owner confirmation, enabling trusted loader behavior, or claiming readiness.
+
+The packet keeps real evidence intake schema-only, owner confirmation envelope schema-only, go/no-go as no_go, priority1 BLOCKED, and the motion dataset non-executable. Future actual trusted loader enablement remains a separate owner-confirmed PR after real fresh evidence and go/no-go blockers are resolved.
