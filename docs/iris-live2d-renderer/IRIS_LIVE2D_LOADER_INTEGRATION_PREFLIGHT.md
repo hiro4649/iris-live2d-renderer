@@ -164,3 +164,15 @@ The bundle does not enable the trusted loader allowlist, does not trust any load
 Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation. Runtime readiness is not claimed, production readiness is not claimed, priority1 remains BLOCKED, and the motion dataset remains non-executable.
 
 Future actual trusted loader enablement requires a separate owner-confirmed PR with fresh real evidence, owner confirmation, and go/no-go review.
+
+## LIVE2D-GO-NOGO-PREFLIGHT1 safe boundary
+
+The Live2D go/no-go preflight is review preparation only. It is not an actual go decision, does not enable the trusted loader allowlist, does not trust any loader, and does not load, bundle, download, quote, copy, or commit SDK/vendor files.
+
+Owner-provided file values remain private. Public status surfaces may expose only env names and safe status labels; candidate_present remains diagnostic only and is not trusted capability or execution readiness.
+
+The preflight stays fail-closed until route guard, real evidence collector, allowlist preflight, enablement gate, owner handoff, Fresh Evidence Bundle, fresh real evidence, owner confirmation, and license boundary prerequisites are all satisfied by future owner-reviewed evidence.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. degraded_mode_available is a fallback/status separation and is not a go decision.
+
+Future actual trusted loader enablement requires a separate owner-confirmed PR after all no-go blockers are resolved with fresh real evidence, owner confirmation, and go/no-go review.

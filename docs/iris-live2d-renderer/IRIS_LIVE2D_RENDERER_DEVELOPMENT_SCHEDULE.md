@@ -166,3 +166,13 @@ production_readiness_claimed: no
 - Privacy boundary: owner-provided file values, raw loader candidates, raw loader errors, SDK paths, endpoints, tokens, raw cues, raw renderer payloads, raw evidence bodies, local paths, and owner private notes stay private; public summaries expose only env names and safe status labels.
 - Evidence boundary: fixture evidence, dry-run evidence, stale evidence, mock owner confirmation, missing owner confirmation, license attention, SDK/vendor boundary issues, priority1 unresolved, and motion dataset non-executable states all keep the bundle blocked.
 - Next actual enablement: separate owner-confirmed PR with fresh real evidence, owner confirmation, and go/no-go review.
+
+## LIVE2D-GO-NOGO-PREFLIGHT1 schedule note
+
+LIVE2D-GO-NOGO-PREFLIGHT1 adds a fail-closed review-preparation status surface for future trusted loader enablement review. It does not perform actual go/no-go approval, does not enable the trusted loader allowlist, does not trust any loader, and does not load or call Cubism SDK/vendor files.
+
+The schedule remains blocked on route guard, real evidence collector, allowlist preflight, enablement gate, owner handoff, Fresh Evidence Bundle, fresh real evidence, owner confirmation, and license boundary prerequisites. Owner-provided file values stay private; only env names and safe status labels may be public. candidate_present remains diagnostic only.
+
+Runtime readiness and production readiness are not claimed by this work. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0, and degraded_mode_available is not a go signal.
+
+Actual trusted loader enablement remains future work and requires a separate owner-confirmed PR after all no-go blockers are resolved.
