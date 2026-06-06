@@ -387,19 +387,7 @@ export function buildV101SelfTestRegistrationReport(input = {}) {
   const reasons = [];
   if (!fs.existsSync('scripts/codex-v101-self-test.mjs') || bool(input.selfTestMissing)) reasons.push('v101_self_test_missing');
   if (!readText('scripts/codex-local-quality-gate.mjs')?.includes('v101SelfTestStatus')) reasons.push('v101_self_test_missing');
-  const sourceManifest = readText('CODEX_SOURCE_HARNESS_MANIFEST.json');
-  const targetManifest = readText('docs/process/CODEX_HARNESS_MANIFEST.json');
-  let targetManifestJson = {};
-  try {
-    targetManifestJson = targetManifest ? JSON.parse(targetManifest) : {};
-  } catch {
-    targetManifestJson = {};
-  }
-  const targetAllowsLegacyV101 = ['1.0.7', '1.0.8'].includes(String(targetManifestJson.harnessVersion || ''))
-    && ['v107', 'v108'].includes(String(targetManifestJson.activeSelfTestSuite || ''));
-  const selfTestRegistered = sourceManifest?.includes('codex-v101-self-test.mjs')
-    || targetAllowsLegacyV101;
-  if (!selfTestRegistered) reasons.push('v101_self_test_missing');
+  if (!readText('CODEX_SOURCE_HARNESS_MANIFEST.json')?.includes('codex-v101-self-test.mjs')) reasons.push('v101_self_test_missing');
   return reasons.length ? fail('v101SelfTestStatus', reasons) : pass('v101SelfTestStatus');
 }
 

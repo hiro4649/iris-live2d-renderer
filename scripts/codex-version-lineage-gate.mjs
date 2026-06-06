@@ -76,14 +76,13 @@ export function buildVersionLineageReport(env = process.env) {
   const missing = paths.filter((file) => !fs.existsSync(file));
   for (const file of missing) failures.push(`missing:${file}`);
 
-  const targetMode = env.CODEX_HARNESS_MODE === 'target' && fs.existsSync('docs/process/CODEX_HARNESS_MANIFEST.json');
   const readme = readText('README.md');
-  if (!targetMode && fs.existsSync('README.md') && !readme.includes(`Version: v${HARNESS_VERSION}`)) failures.push('version_lineage_readme_mismatch');
+  if (fs.existsSync('README.md') && !readme.includes(`Version: v${HARNESS_VERSION}`)) failures.push('version_lineage_readme_mismatch');
 
   const localGate = readText('scripts/codex-local-quality-gate.mjs');
   const lib = readText('scripts/codex-v080-lib.mjs');
   if (!localGate.includes(`HARNESS_VERSION = '${HARNESS_VERSION}'`)) failures.push('version_lineage_local_gate_mismatch');
-  if (!lib.includes(`HARNESS_VERSION = '${HARNESS_VERSION}'`) && !lib.includes('HARNESS_VERSION = currentVersion')) failures.push('version_lineage_lib_mismatch');
+  if (!lib.includes(`HARNESS_VERSION = '${HARNESS_VERSION}'`)) failures.push('version_lineage_lib_mismatch');
 
   for (const file of paths.filter((item) => fs.existsSync(item))) {
     const version = firstMarkerVersion(file);
@@ -91,7 +90,6 @@ export function buildVersionLineageReport(env = process.env) {
   }
 
   for (const file of listRepoFiles()) {
-    if (targetMode && file === '.github/workflows/weekly-health-check.yml') continue;
     if (!fs.existsSync(file) || !fs.statSync(file).isFile()) continue;
     const version = firstMarkerVersion(file);
     if (!version) continue;
