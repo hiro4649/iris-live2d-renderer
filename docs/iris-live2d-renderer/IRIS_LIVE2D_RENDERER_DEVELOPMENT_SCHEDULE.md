@@ -157,3 +157,12 @@ production_readiness_claimed: no
 - Scope: fresh Live2D evidence collector、owner confirmation、go/no-go integration。
 - Boundary: no fixture-to-real promotion。
 - Production: owner confirmation と fresh evidence なしに production go しない。
+
+### LIVE2D-FRESH-EVIDENCE-BUNDLE1
+
+- Purpose: add a safe fresh evidence bundle for owner review preparation only.
+- Prerequisites: route guard, real evidence collector, trusted loader allowlist preflight, trusted loader enablement gate, owner handoff, fresh real evidence, owner confirmation, license boundary, and SDK/vendor boundary.
+- Non-goals: no trusted loader allowlist enablement, no trusted loader, no SDK/vendor load, no SDK/vendor download, no SDK/vendor commit, no vendor source quote, no runtime readiness, and no production readiness.
+- Privacy boundary: owner-provided file values, raw loader candidates, raw loader errors, SDK paths, endpoints, tokens, raw cues, raw renderer payloads, raw evidence bodies, local paths, and owner private notes stay private; public summaries expose only env names and safe status labels.
+- Evidence boundary: fixture evidence, dry-run evidence, stale evidence, mock owner confirmation, missing owner confirmation, license attention, SDK/vendor boundary issues, priority1 unresolved, and motion dataset non-executable states all keep the bundle blocked.
+- Next actual enablement: separate owner-confirmed PR with fresh real evidence, owner confirmation, and go/no-go review.
