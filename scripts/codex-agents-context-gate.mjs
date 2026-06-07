@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // CODEX_QUALITY_HARNESS_FILE v1.0.7
 import {
-  marker as legacyMarker,
+  HARNESS_VERSION,
+  marker,
   readText,
   mojibakeFindings,
   concreteUnsafeFindings,
@@ -9,9 +10,6 @@ import {
   writeJsonReport,
   exitFor,
 } from './codex-v080-lib.mjs';
-import { currentVersion } from './codex-harness-version.mjs';
-
-const marker = `CODEX_QUALITY_HARNESS_FILE v${currentVersion}`;
 
 const requiredPhrases = [
   /source harness boundary/i,

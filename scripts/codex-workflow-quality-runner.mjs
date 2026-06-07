@@ -70,6 +70,7 @@ import { buildDiagnosticConsolidatedSummary } from './codex-diagnostic-consolida
 
 import { buildInvalidReportRecoverySummary } from './codex-invalid-report-recovery.mjs';
 import { V101_STATUS_KEYS } from './codex-v101-gate-lib.mjs';
+import { classifyTargetModeCompatibilityStatus } from './codex-v111-token-hard-cap.mjs';
 
 
 
@@ -3237,20 +3238,6 @@ function statusAllowed(key, status, eventName) {
 
 
 
-function targetModeCompatibilityAllows(report, key) {
-  if (report?.targetModeLegacyCompatibilityStatus?.status !== 'pass') return false;
-  const allowed = new Set([
-    'absorbed_by_v111',
-    'advisory_legacy',
-    'not_applicable_for_lane',
-    'not_required_for_target_mode',
-    'missing_nonblocking',
-  ]);
-  const item = (report.targetModeLegacyCompatibilityStatus.classifications || [])
-    .find((entry) => entry?.key === key);
-  return item ? allowed.has(item.classification) : false;
-}
-
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -3930,12 +3917,18 @@ export function evaluateWorkflowReport(report, options = {}) {
 
     const status = report[key]?.status || 'missing';
 
+    if (mode === 'target') {
+      const compatibility = classifyTargetModeCompatibilityStatus(key, report[key], report);
+      if (String(compatibility.effectiveStatus || '').startsWith('pass_')) continue;
+    }
 
 
 
 
 
-    if (!statusAllowed(key, status, options.eventName || process.env.CODEX_EVENT_NAME) && !targetModeCompatibilityAllows(report, key)) failures.push(`${key}=${status}`);
+
+
+    if (!statusAllowed(key, status, options.eventName || process.env.CODEX_EVENT_NAME)) failures.push(`${key}=${status}`);
 
 
 
