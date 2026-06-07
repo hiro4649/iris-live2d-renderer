@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 // CODEX_QUALITY_HARNESS_FILE v1.0.7
 import {
-  HARNESS_VERSION,
-  marker,
+  marker as legacyMarker,
   readText,
   mojibakeFindings,
   concreteUnsafeFindings,
@@ -10,6 +9,9 @@ import {
   writeJsonReport,
   exitFor,
 } from './codex-v080-lib.mjs';
+import { currentVersion } from './codex-harness-version.mjs';
+
+const marker = `CODEX_QUALITY_HARNESS_FILE v${currentVersion}`;
 
 const requiredPhrases = [
   /source harness boundary/i,
@@ -47,7 +49,7 @@ function buildReport() {
   else {
     const blocks = harnessBlocks(text);
     harnessBlockCount = blocks.length;
-    currentHarnessBlockPresent = blocks.some((block) => block.includes(marker) || block.includes('CODEX_QUALITY_HARNESS_FILE v1.1.0'));
+    currentHarnessBlockPresent = blocks.some((block) => block.includes(marker));
     const mojibake = mojibakeFindings(text);
     mojibakeDetected = mojibake.length > 0;
     if (mojibakeDetected) reasonCodes.push('agents_context_entire_file_mojibake');

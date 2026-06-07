@@ -3153,33 +3153,6 @@ function readReport(file) {
 
 
 
-
-const V110_TARGET_WORKFLOW_ADVISORY_STATUS_KEYS = new Set([
-  'versionLineageStatus',
-  'pullRequestContextFidelityStatus',
-  'productVerificationContextStatus',
-  'activeSelfTestRegistryStatus',
-  'reviewIndependenceStatus',
-  'taskBriefCompilerStatus',
-  'prProfileStatus',
-  'v085StabilityStatus',
-  'codeReviewMonitorStatus',
-  'promptGovernanceStatus',
-  'knowledgeGovernanceStatus',
-  'contractGovernanceStatus',
-  'complexityGovernanceStatus',
-  'requiredHeadingHintStatus',
-  'oldHarnessMarkerStatus',
-]);
-
-function isV110TargetWorkflowAdvisoryStatus(key, report, mode) {
-  return mode === 'target' && report?.harnessVersion === '1.1.0' && (
-    V110_TARGET_WORKFLOW_ADVISORY_STATUS_KEYS.has(key) ||
-    /^v0(80|81|82|83|84|85|86|87|88|89|90|92)SelfTestStatus$/.test(key) ||
-    /^v10[0-3]SelfTestStatus$/.test(key)
-  );
-}
-
 function statusAllowed(key, status, eventName) {
 
 
@@ -3263,6 +3236,20 @@ function statusAllowed(key, status, eventName) {
 
 
 
+
+function targetModeCompatibilityAllows(report, key) {
+  if (report?.targetModeLegacyCompatibilityStatus?.status !== 'pass') return false;
+  const allowed = new Set([
+    'absorbed_by_v111',
+    'advisory_legacy',
+    'not_applicable_for_lane',
+    'not_required_for_target_mode',
+    'missing_nonblocking',
+  ]);
+  const item = (report.targetModeLegacyCompatibilityStatus.classifications || [])
+    .find((entry) => entry?.key === key);
+  return item ? allowed.has(item.classification) : false;
+}
 
 export function evaluateWorkflowReport(report, options = {}) {
 
@@ -3920,8 +3907,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
     .filter((key) => hasV098Shape || !v098Fields.has(key))
-    .filter((key) => hasV099Shape || !v099Fields.has(key))
-    .filter((key) => !isV110TargetWorkflowAdvisoryStatus(key, report, mode));
+    .filter((key) => hasV099Shape || !v099Fields.has(key));
 
 
 
@@ -3949,7 +3935,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    if (!statusAllowed(key, status, options.eventName || process.env.CODEX_EVENT_NAME)) failures.push(`${key}=${status}`);
+    if (!statusAllowed(key, status, options.eventName || process.env.CODEX_EVENT_NAME) && !targetModeCompatibilityAllows(report, key)) failures.push(`${key}=${status}`);
 
 
 
