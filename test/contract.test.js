@@ -9,6 +9,7 @@ import {
   CUBISM_LOADER_PROVISIONING_SCHEMA,
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
+  LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
   LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA,
@@ -22,6 +23,7 @@ import {
   createCubismLoaderProvisioningSummary,
   createFreshEvidenceBundleSummary,
   createGoNoGoPreflightSummary,
+  createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
   createRealEvidenceSummaryIntakeBindingSummary,
@@ -1192,6 +1194,185 @@ try {
   assert.equal(JSON.stringify(unsafeSummaryIntakeBinding).includes("unsafe_fixture_value"), false);
   assertSafe(JSON.stringify(unsafeSummaryIntakeBinding));
 
+  const defaultOwnerConfirmationBinding = createOwnerConfirmationBindingSummary();
+  assert.equal(LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA, "iris_live2d_owner_confirmation_binding_v1");
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_binding_status, "blocked");
+  assert.equal(defaultOwnerConfirmationBinding.planning_only_boundary, true);
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_binding_ready_candidate, false);
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_created, false);
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_confirmed, false);
+  assert.equal(defaultOwnerConfirmationBinding.real_evidence_collection_started, false);
+  assert.equal(defaultOwnerConfirmationBinding.real_probe_started, false);
+  assert.equal(defaultOwnerConfirmationBinding.runtime_readiness_claimed, false);
+  assert.equal(defaultOwnerConfirmationBinding.production_readiness_claimed, false);
+  assert.equal(defaultOwnerConfirmationBinding.priority1_status, "BLOCKED");
+  assert.equal(defaultOwnerConfirmationBinding.motion_dataset_status, "non_executable");
+  assert.equal(defaultOwnerConfirmationBinding.motion_dataset_executable, false);
+  assert.equal(defaultOwnerConfirmationBinding.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultOwnerConfirmationBinding.go_nogo_status, "no_go");
+  assert.equal(defaultOwnerConfirmationBinding.go_candidate, false);
+  for (const scope of [
+    "live2d_real_evidence_collection",
+    "live2d_renderer_heartbeat_review",
+    "live2d_model_configured_review",
+    "live2d_cue_capability_review",
+    "live2d_recovery_capability_review",
+    "live2d_safe_summary_intake_review",
+    "live2d_fresh_evidence_bundle_review",
+    "live2d_go_nogo_review",
+    "trusted_loader_enablement_review",
+    "priority1_resolution_review",
+    "motion_dataset_execution_review",
+    "production_readiness_review",
+  ]) {
+    assert.equal(defaultOwnerConfirmationBinding.required_owner_confirmation_scopes.includes(scope), true);
+  }
+  for (const ref of [
+    "safe_evidence_summary_ref",
+    "summary_intake_ref",
+    "freshness_threshold_ref",
+    "evidence_collection_plan_ref",
+    "audit_ref",
+    "head_sha_ref",
+    "run_id_ref",
+    "file_scope",
+    "owner_scope",
+    "confirmation_status",
+    "expires_at_bucket",
+    "revocation_status",
+    "status_reason_code",
+  ]) {
+    assert.equal(defaultOwnerConfirmationBinding.required_binding_references.includes(ref), true);
+  }
+  assert.equal(defaultOwnerConfirmationBinding.evidence_summary_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.required_summary_intake_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.freshness_threshold_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.collection_plan_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.audit_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.scope_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.head_run_file_scope_binding_status, "missing");
+  assert.equal(defaultOwnerConfirmationBinding.required_expiry_policy, "reject_expired_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.required_revocation_policy, "reject_revoked_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.wrong_role_rejection_policy, "reject_non_owner_role");
+  assert.equal(defaultOwnerConfirmationBinding.scope_mismatch_rejection_policy, "reject_scope_mismatch");
+  assert.equal(defaultOwnerConfirmationBinding.assistant_review_policy, "not_owner_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.pr_merge_policy, "not_owner_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.remote_pass_policy, "not_owner_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.operator_summary_policy, "not_owner_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.manual_summary_policy, "not_owner_confirmation");
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_is_runtime_readiness, false);
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_is_production_readiness, false);
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_resolves_priority1, false);
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_makes_motion_executable, false);
+  assert.equal(defaultOwnerConfirmationBinding.request_packet_status, "request_only_no_collection");
+  assert.equal(defaultOwnerConfirmationBinding.collection_plan_status, "planning_only");
+  assert.equal(defaultOwnerConfirmationBinding.freshness_threshold_status, "planning_only");
+  assert.equal(defaultOwnerConfirmationBinding.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(defaultOwnerConfirmationBinding.summary_intake_preservation_status, "planning_only");
+  assert.equal(defaultOwnerConfirmationBinding.real_evidence_intake_status, "schema_only");
+  assert.equal(defaultOwnerConfirmationBinding.owner_confirmation_envelope_status, "schema_only_blocked_or_pending");
+  assert.equal(defaultOwnerConfirmationBinding.fresh_evidence_bundle_status, "review_preparation_only");
+  assertSafe(JSON.stringify(defaultOwnerConfirmationBinding));
+
+  for (const [field, reason] of [
+    ["assistant_review", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["pr_merge", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["remote_pass", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["local_checks_pass", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["target_harness_pass", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["browser_api_smoke_pass", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["operator_summary", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["manual_summary", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["safe_summary_intake_eligible", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["fixture_evidence", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["dry_run_evidence", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+    ["mock_confirmation", "owner_confirmation_binding_rejected_auto_confirmation_source"],
+  ]) {
+    const rejected = createOwnerConfirmationBindingSummary({ [field]: true });
+    assert.equal(rejected.rejection_reasons.includes(reason), true);
+    assert.equal(rejected.owner_confirmation_confirmed, false);
+    assert.equal(rejected.runtime_readiness_claimed, false);
+    assertSafe(JSON.stringify(rejected));
+  }
+
+  const wrongRoleBinding = createOwnerConfirmationBindingSummary({ confirmed_by_role: "assistant" });
+  assert.equal(wrongRoleBinding.wrong_role_rejection_status, "rejected");
+  assert.equal(wrongRoleBinding.rejection_reasons.includes("owner_confirmation_binding_rejected_wrong_role"), true);
+  const expiredBinding = createOwnerConfirmationBindingSummary({ confirmed_by_role: "owner", confirmation_status: "expired" });
+  assert.equal(expiredBinding.expiry_policy_status, "rejected");
+  const revokedBinding = createOwnerConfirmationBindingSummary({ confirmed_by_role: "owner", revocation_status: "revoked" });
+  assert.equal(revokedBinding.revocation_policy_status, "rejected");
+  const scopeMismatchBinding = createOwnerConfirmationBindingSummary({
+    confirmed_by_role: "owner",
+    owner_scope: "live2d_go_nogo_review",
+    expected_owner_scope: "production_readiness_review",
+  });
+  assert.equal(scopeMismatchBinding.scope_mismatch_rejection_status, "rejected");
+  assert.equal(scopeMismatchBinding.rejection_reasons.includes("owner_confirmation_binding_rejected_scope_mismatch"), true);
+  const missingAuditOwnerBinding = createOwnerConfirmationBindingSummary({
+    safe_evidence_summary_ref: "safe_summary_ref",
+    summary_intake_ref: "safe_intake_ref",
+    freshness_threshold_ref: "safe_threshold_ref",
+    evidence_collection_plan_ref: "safe_collection_plan_ref",
+    owner_scope: "live2d_real_evidence_collection",
+    confirmation_status: "pending",
+    expires_at_bucket: "future_bucket",
+    revocation_status: "not_revoked",
+    status_reason_code: "future_owner_task_required",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+  });
+  assert.equal(missingAuditOwnerBinding.audit_binding_status, "missing");
+  assert.equal(missingAuditOwnerBinding.rejection_reasons.includes("owner_confirmation_binding_missing_audit_binding"), true);
+  const boundOwnerConfirmation = createOwnerConfirmationBindingSummary({
+    safe_evidence_summary_ref: "safe_summary_ref",
+    summary_intake_ref: "safe_intake_ref",
+    freshness_threshold_ref: "safe_threshold_ref",
+    evidence_collection_plan_ref: "safe_collection_plan_ref",
+    audit_ref: "safe_audit_ref",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+    owner_scope: "live2d_real_evidence_collection",
+    expected_owner_scope: "live2d_real_evidence_collection",
+    confirmed_by_role: "owner",
+    confirmation_status: "pending",
+    expires_at_bucket: "future_bucket",
+    revocation_status: "not_revoked",
+    status_reason_code: "future_owner_task_required",
+  });
+  assert.equal(boundOwnerConfirmation.evidence_summary_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.required_summary_intake_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.freshness_threshold_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.collection_plan_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.audit_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.scope_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.head_run_file_scope_binding_status, "present");
+  assert.equal(boundOwnerConfirmation.wrong_role_rejection_status, "not_present");
+  assert.equal(boundOwnerConfirmation.owner_confirmation_created, false);
+  assert.equal(boundOwnerConfirmation.owner_confirmation_confirmed, false);
+  assert.equal(boundOwnerConfirmation.owner_confirmation_resolves_priority1, false);
+  assert.equal(boundOwnerConfirmation.owner_confirmation_makes_motion_executable, false);
+  assertSafe(JSON.stringify(boundOwnerConfirmation));
+  const unsafeOwnerConfirmationBinding = createOwnerConfirmationBindingSummary({
+    raw_owner_note: "unsafe_fixture_value",
+    raw_request_note: "unsafe_fixture_value",
+    raw_evidence_body: "unsafe_fixture_value",
+    endpoint_value: "unsafe_fixture_value",
+    token_value: "unsafe_fixture_value",
+    secret_value: "unsafe_fixture_value",
+    private_local_path: "unsafe_fixture_value",
+    model_path: "unsafe_fixture_value",
+    motion_path: "unsafe_fixture_value",
+    sdk_vendor_path: "unsafe_fixture_value",
+    shell_command_body: "unsafe_fixture_value",
+  });
+  assert.equal(unsafeOwnerConfirmationBinding.forbidden_material_status, "forbidden_material_rejected");
+  assert.equal(unsafeOwnerConfirmationBinding.rejection_reasons.includes("owner_confirmation_binding_rejected_forbidden_material"), true);
+  assert.equal(JSON.stringify(unsafeOwnerConfirmationBinding).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(unsafeOwnerConfirmationBinding));
+
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     mockOwnerConfirmation: true,
@@ -2338,6 +2519,18 @@ try {
   assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.owner_confirmation_binding_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.owner_confirmation_binding_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.owner_confirmation_created, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.go_nogo_status, "no_go");
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -2402,6 +2595,12 @@ try {
   assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.real_probe_started, false);
   assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.owner_confirmation_binding_summary.owner_confirmation_binding_status, "blocked");
+  assert.equal(provisionedStatus.owner_confirmation_binding_summary.owner_confirmation_created, false);
+  assert.equal(provisionedStatus.owner_confirmation_binding_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.owner_confirmation_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedStatus.owner_confirmation_binding_summary.real_probe_started, false);
+  assert.equal(provisionedStatus.owner_confirmation_binding_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -2450,6 +2649,12 @@ try {
   assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.real_probe_started, false);
   assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.owner_confirmation_binding_summary.owner_confirmation_binding_status, "blocked");
+  assert.equal(provisionedHealth.owner_confirmation_binding_summary.owner_confirmation_created, false);
+  assert.equal(provisionedHealth.owner_confirmation_binding_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedHealth.owner_confirmation_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHealth.owner_confirmation_binding_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.owner_confirmation_binding_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -2503,6 +2708,12 @@ try {
   assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.owner_confirmation_binding_status, "blocked");
+  assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.owner_confirmation_created, false);
+  assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
