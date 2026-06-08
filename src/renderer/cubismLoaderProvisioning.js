@@ -12,6 +12,7 @@ export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmatio
 export const REAL_EVIDENCE_REQUEST_PACKET_SCHEMA = "iris_live2d_real_evidence_request_packet_v1";
 export const REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA = "iris_live2d_real_resident_evidence_collection_plan_v1";
 export const REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA = "iris_live2d_real_evidence_freshness_threshold_v1";
+export const LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA = "iris_live2d_safe_evidence_summary_contract_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -64,9 +65,22 @@ const RAW_EVIDENCE_FIELD_NAMES = new Set([
   "raw_loader_candidate",
   "raw_loader_error",
   "raw_request_note",
+  "raw_api_response",
+  "raw_audio_body",
+  "raw_frame_body",
+  "raw_comment_text",
+  "endpoint_value",
+  "token_value",
+  "secret_value",
+  "private_local_path",
   "owner_private_note",
   "raw_owner_note",
   "sdk_vendor_path",
+  "model_path",
+  "motion_path",
+  "shell_command_body",
+  "obs_instruction_material",
+  "world_instruction_material",
   "sdk_path",
   "vendor_source",
 ]);
@@ -125,6 +139,75 @@ const REJECTED_REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES = Object.freeze([
   "stale",
   "unsafe_material",
   "unknown_source_type",
+]);
+
+const SAFE_EVIDENCE_SUMMARY_ACCEPTED_FIELDS = Object.freeze([
+  "component",
+  "status",
+  "freshness_status",
+  "evidence_source_type",
+  "evidence_ref",
+  "safe_audit_ref",
+  "head_sha_ref",
+  "run_id_ref",
+  "file_scope",
+  "checked_at_bucket",
+  "status_reason_code",
+  "redaction_status",
+  "blocker_labels",
+  "safe_next_action",
+]);
+
+const SAFE_EVIDENCE_SUMMARY_REQUIRED_BINDINGS = Object.freeze([
+  "component",
+  "evidence_source_type",
+  "evidence_ref",
+  "safe_audit_ref",
+  "head_sha_ref",
+  "run_id_ref",
+  "freshness_status",
+  "redaction_status",
+]);
+
+const SAFE_EVIDENCE_SUMMARY_ACCEPTED_SOURCE_TYPES = Object.freeze([
+  "real_probe_summary",
+  "operator_confirmed_summary",
+  "manual_upload_summary",
+  "audit_reference",
+  "owner_confirmed_reference",
+]);
+
+const SAFE_EVIDENCE_SUMMARY_REJECTED_SOURCE_TYPES = Object.freeze([
+  "fixture",
+  "dry_run",
+  "mock",
+  "stale",
+  "unsafe_material",
+  "unknown_source_type",
+]);
+
+const SAFE_EVIDENCE_SUMMARY_REJECTED_RAW_FIELDS = Object.freeze([
+  "evidence_body_material",
+  "cue_body_material",
+  "renderer_body_material",
+  "loader_candidate_material",
+  "loader_error_material",
+  "owner_note_material",
+  "request_note_material",
+  "network_locator_material",
+  "auth_value_material",
+  "sensitive_value_material",
+  "private_locator_material",
+  "model_locator_material",
+  "motion_locator_material",
+  "sdk_vendor_locator_material",
+  "shell_instruction_body_material",
+  "obs_instruction_material",
+  "world_instruction_material",
+  "api_response_material",
+  "audio_body_material",
+  "frame_body_material",
+  "comment_text_material",
 ]);
 
 const REAL_RESIDENT_EVIDENCE_COLLECTION_FORBIDDEN_MATERIAL_CLASSES = Object.freeze([
@@ -448,8 +531,8 @@ export function createTrustedLoaderEnablementGateSummary({
       ...createBoundaryPolicy(),
       no_env_values: true,
       no_sdk_vendor_files: true,
-      no_raw_loader_candidates: true,
-      no_raw_loader_errors: true,
+      no_loader_candidate_material: true,
+      no_loader_error_material: true,
       owner_provided_files_only: true,
       license_confirmation_required: true,
     },
@@ -1247,6 +1330,110 @@ export function createRealEvidenceFreshnessThresholdSummary(threshold = {}, {
   };
   assertSafePublicObject(summary, "real evidence freshness threshold summary");
   return summary;
+}
+
+export function createSafeEvidenceSummaryContractSummary(summaryInput = {}) {
+  const source = summaryInput && typeof summaryInput === "object" ? summaryInput : {};
+  const sourceType = safeEvidenceLabel(source.evidence_source_type ?? source.source_type, "missing");
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source) || hasCollectionPlanForbiddenMaterial(source);
+  const rejectedSourceType = SAFE_EVIDENCE_SUMMARY_REJECTED_SOURCE_TYPES.includes(sourceType) || sourceType === "raw_payload";
+  const missingSourceBinding = !source.evidence_ref || !source.safe_audit_ref || !source.head_sha_ref || !source.run_id_ref;
+  const missingFreshnessBinding = !source.freshness_status;
+  const missingRedactionStatus = source.redaction_status !== "safe_summary_only";
+  const blockedReasons = [
+    "safe_evidence_summary_contract_planning_only_not_collection",
+    "safe_evidence_summary_contract_blocked_missing_real_resident_evidence",
+    "safe_evidence_summary_contract_blocked_missing_owner_confirmation",
+    "safe_evidence_summary_contract_blocked_priority1_unresolved",
+    "safe_evidence_summary_contract_blocked_motion_dataset_non_executable",
+    "safe_evidence_summary_contract_not_runtime_ready",
+    "safe_evidence_summary_contract_not_production_ready",
+  ];
+  if (unsafeMaterialRejected) blockedReasons.push("safe_evidence_summary_contract_rejected_raw_field");
+  if (rejectedSourceType) blockedReasons.push("safe_evidence_summary_contract_rejected_source_type");
+  if (missingSourceBinding) blockedReasons.push("safe_evidence_summary_contract_missing_source_binding");
+  if (missingFreshnessBinding) blockedReasons.push("safe_evidence_summary_contract_missing_freshness_binding");
+  if (missingRedactionStatus) blockedReasons.push("safe_evidence_summary_contract_missing_redaction_status");
+  if (sourceType === "manual_upload_summary") blockedReasons.push("safe_evidence_summary_contract_manual_summary_requires_owner_confirmation");
+  if (sourceType === "operator_confirmed_summary") blockedReasons.push("safe_evidence_summary_contract_operator_summary_requires_scope_specific_owner_confirmation");
+  if (sourceType === "owner_confirmed_reference") blockedReasons.push("safe_evidence_summary_contract_owner_reference_schema_only_until_real_confirmation");
+
+  const contract = {
+    schema: LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
+    safe_summary_only: true,
+    safe_evidence_summary_contract_status: unsafeMaterialRejected || rejectedSourceType ? "blocked" : "planning_only",
+    planning_only_boundary: true,
+    summary_contract_ready_candidate: false,
+    accepted_summary_fields: SAFE_EVIDENCE_SUMMARY_ACCEPTED_FIELDS,
+    required_source_binding: ["evidence_source_type", "evidence_ref", "safe_audit_ref", "head_sha_ref", "run_id_ref", "file_scope"],
+    required_freshness_binding: ["freshness_status", "checked_at_bucket", "status_reason_code"],
+    required_audit_binding: ["safe_audit_ref", "head_sha_ref", "run_id_ref", "redaction_status", "blocker_labels"],
+    required_redaction_status: "safe_summary_only",
+    rejected_material_classes: SAFE_EVIDENCE_SUMMARY_REJECTED_RAW_FIELDS,
+    rejected_source_types: SAFE_EVIDENCE_SUMMARY_REJECTED_SOURCE_TYPES,
+    accepted_source_types: SAFE_EVIDENCE_SUMMARY_ACCEPTED_SOURCE_TYPES,
+    required_bindings: SAFE_EVIDENCE_SUMMARY_REQUIRED_BINDINGS,
+    safe_evidence_summary_policy: "summary_contract_only_not_real_evidence",
+    evidence_fidelity_policy: "safe_summary_must_preserve_source_freshness_audit_redaction_and_blockers",
+    minimal_surface_policy: "compressed_summary_must_preserve_priority1_motion_no_readiness_owner_pending_file_scope_head_run_audit_refs",
+    blocked_reason: blockedReasons[0],
+    blocked_reasons: [...new Set(blockedReasons)],
+    forbidden_material_status: unsafeMaterialRejected ? "forbidden_material_rejected" : "not_present",
+    source_binding_status: missingSourceBinding ? "missing" : "present",
+    freshness_binding_status: missingFreshnessBinding ? "missing" : "present",
+    audit_binding_status: missingSourceBinding || missingRedactionStatus ? "missing" : "present",
+    redaction_status: missingRedactionStatus ? "missing_safe_summary_only" : "safe_summary_only",
+    real_evidence_collection_started: false,
+    real_probe_started: false,
+    live_probe_started: false,
+    real_renderer_call_started: false,
+    real_sdk_call_started: false,
+    external_service_call_started: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    motion_dataset_executable: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    assistant_review_is_owner_confirmation: false,
+    pr_merge_is_owner_confirmation: false,
+    remote_pass_is_owner_confirmation: false,
+    request_packet_status: "request_only_no_collection",
+    collection_plan_status: "planning_only",
+    freshness_threshold_status: "planning_only",
+    real_evidence_intake_status: "schema_only",
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    fresh_evidence_bundle_status: "review_preparation_only",
+    safe_next_action: "create_separate_owner_confirmed_real_evidence_collection_task_after_contract_review",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only_no_collection: true,
+      no_live_probe: true,
+      no_real_renderer_call: true,
+      no_real_sdk_call: true,
+      no_external_service_call: true,
+      no_trusted_loader_enablement: true,
+      no_owner_confirmation_creation: true,
+      no_evidence_body_material: true,
+      no_cue_body_material: true,
+      no_renderer_body_material: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_endpoint_values: true,
+      no_token_or_secret_values: true,
+      no_private_local_paths: true,
+      no_shell_command_bodies: true,
+    },
+  };
+  assertSafePublicObject(contract, "safe evidence summary contract");
+  return contract;
 }
 
 function realEvidenceRequestPacketReasons({ source, unsafeMaterialRejected, redactionStatus }) {

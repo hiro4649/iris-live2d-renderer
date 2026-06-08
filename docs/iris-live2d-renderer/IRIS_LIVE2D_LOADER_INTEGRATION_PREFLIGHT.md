@@ -223,6 +223,18 @@ Assistant review, PR merge, local checks, target harness, browser/API smoke, and
 
 Future actual evidence collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
 
+## LIVE2D-SAFE-EVIDENCE-SUMMARY-CONTRACT1 safe boundary
+
+LIVE2D-SAFE-EVIDENCE-SUMMARY-CONTRACT1 defines a safe evidence summary contract only. It describes allowed public summary fields, required source binding, required freshness binding, required audit binding, redaction status, rejected raw fields, and future owner-confirmed collection boundaries.
+
+This contract does not collect real evidence, does not perform live probes, does not call the real renderer, does not call the Cubism SDK, and does not call external services. It does not create owner confirmation, does not enable the trusted loader allowlist, and does not trust any loader.
+
+Owner-provided file values remain private. Public output is limited to environment variable names and safe status labels. Raw evidence bodies, raw cue payloads, raw renderer payloads, raw loader candidates, raw loader errors, endpoint values, tokens, secrets, private local paths, model paths, motion paths, SDK/vendor paths, shell command bodies, OBS commands, world commands, raw API responses, raw audio bodies, raw frame bodies, and raw comment text are rejected from the public summary contract.
+
+Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, browser/API smoke, fixture data, dry-run data, and mock data are not owner confirmation.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
+
 ## LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 safe boundary
 
 LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 is a freshness threshold plan, not evidence collection. It defines safe component labels and age-bucket-style freshness expectations for future real resident Live2D evidence review.

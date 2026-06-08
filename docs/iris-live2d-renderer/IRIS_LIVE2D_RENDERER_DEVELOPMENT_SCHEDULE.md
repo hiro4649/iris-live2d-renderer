@@ -213,6 +213,16 @@ Owner-provided file values remain private; only env names and safe statuses are 
 
 Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
 
+## LIVE2D-SAFE-EVIDENCE-SUMMARY-CONTRACT1 schedule note
+
+LIVE2D-SAFE-EVIDENCE-SUMMARY-CONTRACT1 adds a safe summary contract for future real resident Live2D evidence review. It is contract/planning only, not evidence collection.
+
+The contract defines allowed summary fields, required source binding, required freshness binding, required audit binding, redaction status, accepted source types, rejected source types, and rejected raw fields. Raw evidence bodies, raw cue payloads, raw renderer payloads, endpoint values, tokens, secrets, private paths, model paths, motion paths, SDK/vendor paths, shell command bodies, OBS commands, world commands, raw API responses, raw audio bodies, raw frame bodies, and raw comment text remain non-public.
+
+No live probe is performed, no real renderer call is performed, no SDK/vendor call is performed, no external service is called, no trusted loader is enabled, and no loader is trusted. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture evidence, dry-run evidence, stale evidence, and mock owner confirmation do not create owner confirmation or readiness.
+
+Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
+
 ## LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 schedule note
 
 LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 adds planning-only freshness thresholds for future Live2D real resident evidence. It defines component-specific safe labels and age buckets for renderer heartbeat, model configured status, cue capability, recovery capability, route guard, evidence collector, Fresh Evidence Bundle, real evidence intake, go/no-go, owner confirmation envelope, trusted loader gates, license/SDK boundaries, priority1, and motion dataset row evidence.
