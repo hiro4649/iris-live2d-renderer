@@ -213,6 +213,18 @@ Owner-provided file values remain private; only env names and safe statuses are 
 
 Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
 
+## LIVE2D-REAL-EVIDENCE-SUMMARY-INTAKE-BINDING1 schedule note
+
+LIVE2D-REAL-EVIDENCE-SUMMARY-INTAKE-BINDING1 adds a planning-only binding between the safe evidence summary contract and future real evidence intake candidates.
+
+The binding defines required source binding, freshness binding, audit binding, redaction status, component threshold binding, file scope, head SHA reference, run id reference, and rejection reasons for missing, stale, fixture, dry-run, mock, unsafe, or unknown summary inputs.
+
+This is not evidence collection and not live validation. No live probe is performed, no real renderer call is performed, no SDK/vendor call is performed, no external service is called, no trusted loader is enabled, and no loader is trusted.
+
+An intake-eligible summary is not real evidence by itself, is not owner confirmation, and is not readiness. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture evidence, dry-run evidence, stale evidence, and mock owner confirmation do not create owner confirmation or readiness.
+
+Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
+
 ## LIVE2D-SAFE-EVIDENCE-SUMMARY-CONTRACT1 schedule note
 
 LIVE2D-SAFE-EVIDENCE-SUMMARY-CONTRACT1 adds a safe summary contract for future real resident Live2D evidence review. It is contract/planning only, not evidence collection.

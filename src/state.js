@@ -6,6 +6,7 @@ import {
   createGoNoGoPreflightSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
+  createRealEvidenceSummaryIntakeBindingSummary,
   createRealResidentEvidenceCollectionPlanSummary,
   createSafeEvidenceSummaryContractSummary,
   createRealEvidenceRequestPacketSummary,
@@ -102,6 +103,7 @@ export function createRendererState({
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
+      const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -167,6 +169,7 @@ export function createRendererState({
           real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
           real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
+          real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
@@ -180,6 +183,7 @@ export function createRendererState({
         real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
         real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
+        real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -234,6 +238,7 @@ export function createRendererState({
         real_resident_evidence_collection_plan_summary: status.renderer_health.real_resident_evidence_collection_plan_summary,
         real_evidence_freshness_threshold_summary: status.renderer_health.real_evidence_freshness_threshold_summary,
         safe_evidence_summary_contract_summary: status.renderer_health.safe_evidence_summary_contract_summary,
+        real_evidence_summary_intake_binding_summary: status.renderer_health.real_evidence_summary_intake_binding_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -339,6 +344,7 @@ export function createRendererState({
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
+      const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -363,6 +369,7 @@ export function createRendererState({
       response.real_resident_evidence_collection_plan_summary = realResidentEvidenceCollectionPlan;
       response.real_evidence_freshness_threshold_summary = realEvidenceFreshnessThreshold;
       response.safe_evidence_summary_contract_summary = safeEvidenceSummaryContract;
+      response.real_evidence_summary_intake_binding_summary = realEvidenceSummaryIntakeBinding;
       assertSafePublicObject(response, "browser runtime config");
       return response;
     },
@@ -433,6 +440,7 @@ export function createRendererState({
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
+      const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -482,6 +490,7 @@ export function createRendererState({
           real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
           real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
+          real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
@@ -495,6 +504,7 @@ export function createRendererState({
         real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
         real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
+        real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");

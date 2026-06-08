@@ -11,6 +11,7 @@ import {
   GO_NOGO_PREFLIGHT_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
+  LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA,
   REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
@@ -23,6 +24,7 @@ import {
   createGoNoGoPreflightSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
+  createRealEvidenceSummaryIntakeBindingSummary,
   createRealEvidenceIntakeSummary,
   createRealEvidenceRequestPacketSummary,
   createRealResidentEvidenceCollectionPlanSummary,
@@ -998,6 +1000,197 @@ try {
   assert.equal(unsafeSummaryContract.blocked_reasons.includes("safe_evidence_summary_contract_rejected_raw_field"), true);
   assert.equal(JSON.stringify(unsafeSummaryContract).includes("unsafe_fixture_value"), false);
   assertSafe(JSON.stringify(unsafeSummaryContract));
+
+  const defaultSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
+  assert.equal(LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA, "iris_live2d_real_evidence_summary_intake_binding_v1");
+  assert.equal(defaultSummaryIntakeBinding.real_evidence_summary_intake_binding_status, "blocked");
+  assert.equal(defaultSummaryIntakeBinding.planning_only_boundary, true);
+  assert.equal(defaultSummaryIntakeBinding.summary_intake_ready_candidate, false);
+  assert.equal(defaultSummaryIntakeBinding.real_evidence_collection_started, false);
+  assert.equal(defaultSummaryIntakeBinding.real_probe_started, false);
+  assert.equal(defaultSummaryIntakeBinding.runtime_readiness_claimed, false);
+  assert.equal(defaultSummaryIntakeBinding.production_readiness_claimed, false);
+  assert.equal(defaultSummaryIntakeBinding.priority1_status, "BLOCKED");
+  assert.equal(defaultSummaryIntakeBinding.motion_dataset_status, "non_executable");
+  assert.equal(defaultSummaryIntakeBinding.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultSummaryIntakeBinding.go_nogo_status, "no_go");
+  assert.equal(defaultSummaryIntakeBinding.go_candidate, false);
+  assert.equal(defaultSummaryIntakeBinding.required_safe_summary_contract, LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA);
+  for (const requirement of [
+    "component",
+    "status",
+    "freshness_status",
+    "evidence_source_type",
+    "evidence_ref",
+    "safe_audit_ref",
+    "head_sha_ref",
+    "run_id_ref",
+    "file_scope",
+    "checked_at_bucket",
+    "status_reason_code",
+    "redaction_status",
+    "blocker_labels",
+    "safe_next_action",
+  ]) {
+    assert.equal(defaultSummaryIntakeBinding.intake_eligible_summary_requirements.includes(requirement), true);
+  }
+  for (const binding of ["evidence_source_type", "evidence_ref", "safe_audit_ref", "head_sha_ref", "run_id_ref", "file_scope"]) {
+    assert.equal(defaultSummaryIntakeBinding.required_source_binding.includes(binding), true);
+  }
+  for (const binding of ["freshness_status", "checked_at_bucket", "status_reason_code"]) {
+    assert.equal(defaultSummaryIntakeBinding.required_freshness_binding.includes(binding), true);
+  }
+  for (const binding of ["safe_audit_ref", "head_sha_ref", "run_id_ref", "redaction_status", "blocker_labels"]) {
+    assert.equal(defaultSummaryIntakeBinding.required_audit_binding.includes(binding), true);
+  }
+  assert.equal(defaultSummaryIntakeBinding.required_redaction_status, "safe_summary_only_or_pass");
+  assert.equal(defaultSummaryIntakeBinding.required_component_threshold_binding.includes("component"), true);
+  assert.equal(defaultSummaryIntakeBinding.required_component_threshold_binding.includes("component_threshold_ref"), true);
+  assert.equal(defaultSummaryIntakeBinding.required_owner_confirmation_boundary, "owner_confirmation_pending_until_separate_owner_confirmed_task");
+  assert.equal(defaultSummaryIntakeBinding.required_go_nogo_boundary, "go_nogo_remains_no_go_until_real_evidence_and_owner_confirmation");
+  for (const sourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
+    const rejected = createRealEvidenceSummaryIntakeBindingSummary({ evidence_source_type: sourceType });
+    assert.equal(rejected.rejected_source_types.includes(sourceType), true);
+    assert.equal(rejected.intake_rejection_reasons.includes("summary_intake_rejected_source_type"), true);
+    assert.equal(rejected.runtime_readiness_claimed, false);
+    assertSafe(JSON.stringify(rejected));
+  }
+  const missingSourceBinding = createRealEvidenceSummaryIntakeBindingSummary({
+    evidence_source_type: "audit_reference",
+    freshness_status: "missing",
+    checked_at_bucket: "not_collected",
+    status_reason_code: "future_evidence_required",
+    redaction_status: "safe_summary_only",
+    component: "live2d_renderer_heartbeat",
+    component_threshold_ref: "safe_threshold_ref",
+    blocker_labels: ["priority1_BLOCKED"],
+  });
+  assert.equal(missingSourceBinding.source_binding_status, "missing");
+  assert.equal(missingSourceBinding.intake_rejection_reasons.includes("summary_intake_rejected_missing_source_binding"), true);
+  const missingFreshnessBinding = createRealEvidenceSummaryIntakeBindingSummary({
+    evidence_source_type: "audit_reference",
+    evidence_ref: "safe_ref_only",
+    safe_audit_ref: "safe_audit_ref_only",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+    redaction_status: "safe_summary_only",
+    component: "live2d_renderer_heartbeat",
+    component_threshold_ref: "safe_threshold_ref",
+    blocker_labels: ["priority1_BLOCKED"],
+  });
+  assert.equal(missingFreshnessBinding.freshness_binding_status, "missing");
+  const missingAuditBinding = createRealEvidenceSummaryIntakeBindingSummary({
+    evidence_source_type: "audit_reference",
+    evidence_ref: "safe_ref_only",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+    freshness_status: "missing",
+    checked_at_bucket: "not_collected",
+    status_reason_code: "future_evidence_required",
+    redaction_status: "safe_summary_only",
+    component: "live2d_renderer_heartbeat",
+    component_threshold_ref: "safe_threshold_ref",
+  });
+  assert.equal(missingAuditBinding.audit_binding_status, "missing");
+  const missingRedaction = createRealEvidenceSummaryIntakeBindingSummary({
+    evidence_source_type: "audit_reference",
+    evidence_ref: "safe_ref_only",
+    safe_audit_ref: "safe_audit_ref_only",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+    freshness_status: "missing",
+    checked_at_bucket: "not_collected",
+    status_reason_code: "future_evidence_required",
+    component: "live2d_renderer_heartbeat",
+    component_threshold_ref: "safe_threshold_ref",
+    blocker_labels: ["priority1_BLOCKED"],
+  });
+  assert.equal(missingRedaction.redaction_status, "missing_safe_summary_only");
+  const missingComponentThreshold = createRealEvidenceSummaryIntakeBindingSummary({
+    evidence_source_type: "audit_reference",
+    evidence_ref: "safe_ref_only",
+    safe_audit_ref: "safe_audit_ref_only",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+    freshness_status: "missing",
+    checked_at_bucket: "not_collected",
+    status_reason_code: "future_evidence_required",
+    redaction_status: "safe_summary_only",
+    blocker_labels: ["priority1_BLOCKED"],
+  });
+  assert.equal(missingComponentThreshold.component_threshold_binding_status, "missing");
+  const eligibleSummaryBinding = createRealEvidenceSummaryIntakeBindingSummary({
+    component: "live2d_renderer_heartbeat",
+    status: "blocked",
+    freshness_status: "missing",
+    evidence_source_type: "audit_reference",
+    evidence_ref: "safe_ref_only",
+    safe_audit_ref: "safe_audit_ref_only",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    file_scope: ["safe_file_scope_label"],
+    checked_at_bucket: "not_collected",
+    status_reason_code: "future_evidence_required",
+    redaction_status: "safe_summary_only",
+    blocker_labels: ["priority1_BLOCKED", "motion_dataset_non_executable", "owner_confirmation_pending", "readiness_false"],
+    safe_next_action: "future_owner_confirmed_collection_task",
+    component_threshold_ref: "safe_threshold_ref",
+  });
+  assert.equal(eligibleSummaryBinding.real_evidence_summary_intake_binding_status, "planning_only");
+  assert.equal(eligibleSummaryBinding.source_binding_status, "present");
+  assert.equal(eligibleSummaryBinding.freshness_binding_status, "present");
+  assert.equal(eligibleSummaryBinding.audit_binding_status, "present");
+  assert.equal(eligibleSummaryBinding.component_threshold_binding_status, "present");
+  assert.equal(eligibleSummaryBinding.eligible_summary_is_real_evidence, false);
+  assert.equal(eligibleSummaryBinding.eligible_summary_is_owner_confirmation, false);
+  assert.equal(eligibleSummaryBinding.eligible_summary_is_runtime_readiness, false);
+  assert.equal(eligibleSummaryBinding.eligible_summary_is_production_readiness, false);
+  assert.equal(eligibleSummaryBinding.eligible_summary_resolves_priority1, false);
+  assert.equal(eligibleSummaryBinding.eligible_summary_makes_motion_executable, false);
+  assert.equal(eligibleSummaryBinding.priority1_status, "BLOCKED");
+  assert.equal(eligibleSummaryBinding.motion_dataset_status, "non_executable");
+  assert.equal(eligibleSummaryBinding.assistant_review_is_owner_confirmation, false);
+  assert.equal(eligibleSummaryBinding.pr_merge_is_owner_confirmation, false);
+  assert.equal(eligibleSummaryBinding.remote_pass_is_owner_confirmation, false);
+  assert.equal(eligibleSummaryBinding.request_packet_status, "request_only_no_collection");
+  assert.equal(eligibleSummaryBinding.collection_plan_status, "planning_only");
+  assert.equal(eligibleSummaryBinding.freshness_threshold_status, "planning_only");
+  assert.equal(eligibleSummaryBinding.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(eligibleSummaryBinding.real_evidence_intake_status, "schema_only");
+  assert.equal(eligibleSummaryBinding.owner_confirmation_envelope_status, "schema_only_blocked_or_pending");
+  assert.equal(eligibleSummaryBinding.fresh_evidence_bundle_status, "review_preparation_only");
+  assertSafe(JSON.stringify(eligibleSummaryBinding));
+  const unsafeSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary({
+    raw_evidence_body: "unsafe_fixture_value",
+    raw_cue_payload: "unsafe_fixture_value",
+    raw_renderer_payload: "unsafe_fixture_value",
+    raw_loader_candidate: "unsafe_fixture_value",
+    raw_loader_error: "unsafe_fixture_value",
+    raw_owner_note: "unsafe_fixture_value",
+    raw_request_note: "unsafe_fixture_value",
+    endpoint_value: "unsafe_fixture_value",
+    token_value: "unsafe_fixture_value",
+    secret_value: "unsafe_fixture_value",
+    private_local_path: "unsafe_fixture_value",
+    model_path: "unsafe_fixture_value",
+    motion_path: "unsafe_fixture_value",
+    sdk_vendor_path: "unsafe_fixture_value",
+    shell_command_body: "unsafe_fixture_value",
+    obs_command: "unsafe_fixture_value",
+    world_command: "unsafe_fixture_value",
+    raw_api_response: "unsafe_fixture_value",
+    raw_audio_body: "unsafe_fixture_value",
+    raw_frame_body: "unsafe_fixture_value",
+    raw_comment_text: "unsafe_fixture_value",
+  });
+  assert.equal(unsafeSummaryIntakeBinding.real_evidence_summary_intake_binding_status, "blocked");
+  assert.equal(unsafeSummaryIntakeBinding.intake_rejection_reasons.includes("summary_intake_rejected_forbidden_material"), true);
+  assert.equal(JSON.stringify(unsafeSummaryIntakeBinding).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(unsafeSummaryIntakeBinding));
 
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -2135,6 +2328,16 @@ try {
   assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.real_evidence_summary_intake_binding_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.summary_intake_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_summary_intake_binding_summary.go_nogo_status, "no_go");
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -2195,6 +2398,10 @@ try {
   assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.real_probe_started, false);
   assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.real_evidence_summary_intake_binding_status, "blocked");
+  assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.real_probe_started, false);
+  assert.equal(provisionedStatus.real_evidence_summary_intake_binding_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -2239,6 +2446,10 @@ try {
   assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.real_probe_started, false);
   assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.real_evidence_summary_intake_binding_status, "blocked");
+  assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.real_evidence_summary_intake_binding_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -2288,6 +2499,10 @@ try {
   assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.real_evidence_summary_intake_binding_status, "blocked");
+  assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_summary_intake_binding_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
