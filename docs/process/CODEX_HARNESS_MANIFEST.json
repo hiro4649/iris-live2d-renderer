@@ -22,8 +22,8 @@
     "v111": "blocking_compatibility",
     "v112": "blocking_compatibility"
   },
-  "sourceOnlyRelease": true,
-  "targetRollout": "not_started",
+  "sourceOnlyRelease": false,
+  "targetRollout": "completed",
   "representativeRealPrValidation": "not_started",
   "representativeRealPrReplay": "required",
   "representativeLivePrValidation": "required",
