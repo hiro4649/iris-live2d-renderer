@@ -10,6 +10,7 @@ import {
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
+  REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
   REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA,
@@ -20,6 +21,7 @@ import {
   createFreshEvidenceBundleSummary,
   createGoNoGoPreflightSummary,
   createOwnerConfirmationEnvelopeSummary,
+  createRealEvidenceFreshnessThresholdSummary,
   createRealEvidenceIntakeSummary,
   createRealEvidenceRequestPacketSummary,
   createRealResidentEvidenceCollectionPlanSummary,
@@ -152,6 +154,7 @@ try {
   assert.equal(OWNER_CONFIRMATION_ENVELOPE_SCHEMA, "iris_live2d_owner_confirmation_envelope_v1");
   assert.equal(REAL_EVIDENCE_REQUEST_PACKET_SCHEMA, "iris_live2d_real_evidence_request_packet_v1");
   assert.equal(REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA, "iris_live2d_real_resident_evidence_collection_plan_v1");
+  assert.equal(REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA, "iris_live2d_real_evidence_freshness_threshold_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_MODULE",
@@ -770,6 +773,91 @@ try {
   assert.equal(unsafeCollectionPlan.blocked_reasons.includes("collection_plan_rejected_forbidden_raw_field"), true);
   assert.equal(JSON.stringify(unsafeCollectionPlan).includes("unsafe_fixture_value"), false);
   assertSafe(JSON.stringify(unsafeCollectionPlan));
+
+  const defaultFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
+  assert.equal(defaultFreshnessThreshold.real_evidence_freshness_threshold_status, "planning_only");
+  assert.equal(defaultFreshnessThreshold.planning_only_boundary, true);
+  assert.equal(defaultFreshnessThreshold.freshness_policy_ready_candidate, false);
+  assert.equal(defaultFreshnessThreshold.real_evidence_collection_started, false);
+  assert.equal(defaultFreshnessThreshold.real_probe_started, false);
+  assert.equal(defaultFreshnessThreshold.runtime_readiness_claimed, false);
+  assert.equal(defaultFreshnessThreshold.production_readiness_claimed, false);
+  assert.equal(defaultFreshnessThreshold.priority1_status, "BLOCKED");
+  assert.equal(defaultFreshnessThreshold.motion_dataset_status, "non_executable");
+  assert.equal(defaultFreshnessThreshold.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultFreshnessThreshold.go_nogo_status, "no_go");
+  assert.equal(defaultFreshnessThreshold.go_candidate, false);
+  assert.equal(defaultFreshnessThreshold.fixture_evidence_policy, "fixture_evidence_never_fresh_real_evidence");
+  assert.equal(defaultFreshnessThreshold.dry_run_evidence_policy, "dry_run_evidence_never_fresh_real_evidence");
+  assert.equal(defaultFreshnessThreshold.mock_evidence_policy, "mock_evidence_never_fresh_real_evidence");
+  assert.equal(defaultFreshnessThreshold.stale_evidence_policy, "stale_evidence_cannot_resolve_readiness_or_priority1");
+  assert.equal(defaultFreshnessThreshold.manual_summary_policy, "manual_summary_without_owner_confirmation_not_fresh_real_evidence");
+  assert.equal(
+    defaultFreshnessThreshold.operator_confirmed_summary_policy,
+    "operator_summary_without_scope_specific_owner_confirmation_not_fresh_real_evidence"
+  );
+  assert.equal(defaultFreshnessThreshold.owner_confirmed_reference_policy, "schema_only_pending_real_owner_confirmation");
+  assert.equal(defaultFreshnessThreshold.request_packet_status, "request_only_no_collection");
+  assert.equal(defaultFreshnessThreshold.collection_plan_status, "planning_only");
+  assert.equal(defaultFreshnessThreshold.real_evidence_intake_status, "schema_only");
+  assert.equal(defaultFreshnessThreshold.owner_confirmation_envelope_status, "schema_only_blocked_or_pending");
+  assert.equal(defaultFreshnessThreshold.fresh_evidence_bundle_status, "review_preparation_only");
+  for (const component of [
+    "live2d_renderer_heartbeat",
+    "live2d_model_configured_status",
+    "live2d_cue_capability",
+    "live2d_recovery_capability",
+    "live2d_route_guard",
+    "live2d_evidence_collector",
+    "live2d_fresh_evidence_bundle",
+    "live2d_real_evidence_intake",
+    "live2d_go_nogo_preflight",
+    "live2d_owner_confirmation_envelope",
+    "trusted_loader_preflight",
+    "trusted_loader_enablement_gate",
+    "trusted_loader_owner_handoff",
+    "license_boundary",
+    "sdk_vendor_boundary",
+    "priority1_real_resident_evidence",
+    "motion_dataset_row_evidence",
+  ]) {
+    assert.equal(defaultFreshnessThreshold.component_thresholds_defined.includes(component), true);
+    assert.equal(defaultFreshnessThreshold.component_thresholds_pending.includes(component), true);
+    assert.equal(defaultFreshnessThreshold.component_thresholds[component].threshold_units, "safe_age_bucket");
+    assert.equal(defaultFreshnessThreshold.component_thresholds[component].freshness_status, "missing");
+  }
+  assert.equal(defaultFreshnessThreshold.assistant_review_is_owner_confirmation, false);
+  assert.equal(defaultFreshnessThreshold.pr_merge_is_owner_confirmation, false);
+  assert.equal(defaultFreshnessThreshold.remote_pass_is_owner_confirmation, false);
+  assertSafe(JSON.stringify(defaultFreshnessThreshold));
+
+  for (const [sourceKind, reason] of [
+    ["fixture", "freshness_threshold_fixture_evidence_not_real"],
+    ["dry_run", "freshness_threshold_dry_run_evidence_not_real"],
+    ["mock", "freshness_threshold_mock_evidence_not_real"],
+    ["manual_summary", "freshness_threshold_manual_summary_requires_owner_confirmation"],
+    ["operator_confirmed_summary", "freshness_threshold_operator_summary_requires_scope_specific_owner_confirmation"],
+    ["owner_confirmed_reference", "freshness_threshold_owner_reference_schema_only_until_real_confirmation"],
+  ]) {
+    const threshold = createRealEvidenceFreshnessThresholdSummary({ source_kind: sourceKind });
+    assert.equal(threshold.blocked_reasons.includes(reason), true);
+    assert.equal(threshold.runtime_readiness_claimed, false);
+    assertSafe(JSON.stringify(threshold));
+  }
+  const staleFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary({ freshness_status: "stale" });
+  assert.equal(staleFreshnessThreshold.blocked_reasons.includes("freshness_threshold_stale_evidence_not_fresh"), true);
+  assert.equal(staleFreshnessThreshold.priority1_status, "BLOCKED");
+  const unsafeFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary({
+    raw_evidence_body: "unsafe_fixture_value",
+    raw_owner_note: "unsafe_fixture_value",
+    raw_loader_candidate: "unsafe_fixture_value",
+    shell_command_body: "unsafe_fixture_value",
+  });
+  assert.equal(unsafeFreshnessThreshold.real_evidence_freshness_threshold_status, "blocked");
+  assert.equal(unsafeFreshnessThreshold.forbidden_material_status, "forbidden_material_rejected");
+  assert.equal(unsafeFreshnessThreshold.blocked_reasons.includes("freshness_threshold_rejected_forbidden_raw_field"), true);
+  assert.equal(JSON.stringify(unsafeFreshnessThreshold).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(unsafeFreshnessThreshold));
 
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -1887,6 +1975,16 @@ try {
   assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.freshness_policy_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.go_nogo_status, "no_go");
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -1939,6 +2037,10 @@ try {
   assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_plan_collects_real_evidence, false);
   assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_plan_creates_owner_confirmation, false);
   assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
+  assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_probe_started, false);
+  assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -1975,6 +2077,10 @@ try {
   assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.collection_started, false);
   assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.real_probe_started, false);
   assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
+  assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -2016,6 +2122,10 @@ try {
   assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.collection_started, false);
   assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
+  assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();

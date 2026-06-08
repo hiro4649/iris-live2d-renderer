@@ -212,3 +212,13 @@ This is a collection plan, not collection. No live probe is performed, no real r
 Owner-provided file values remain private; only env names and safe statuses are public. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture, dry-run, stale evidence, and mock data do not create owner confirmation or readiness.
 
 Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
+
+## LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 schedule note
+
+LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 adds planning-only freshness thresholds for future Live2D real resident evidence. It defines component-specific safe labels and age buckets for renderer heartbeat, model configured status, cue capability, recovery capability, route guard, evidence collector, Fresh Evidence Bundle, real evidence intake, go/no-go, owner confirmation envelope, trusted loader gates, license/SDK boundaries, priority1, and motion dataset row evidence.
+
+This is not collection. No live probe is performed, no real renderer call is performed, no SDK/vendor call is performed, and no external service is called. Trusted loader allowlist remains disabled and no loader is trusted.
+
+Owner-provided file values remain private; only env names and safe statuses are public. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture evidence, dry-run evidence, stale evidence, and mock owner confirmation do not create owner confirmation or readiness.
+
+Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.

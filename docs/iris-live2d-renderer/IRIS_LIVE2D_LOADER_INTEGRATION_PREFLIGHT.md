@@ -222,3 +222,17 @@ The plan keeps trusted loader allowlist disabled and does not trust any loader. 
 Assistant review, PR merge, local checks, target harness, browser/API smoke, and remote quality-gate PASS are not owner confirmation. Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED, and the motion dataset remains non-executable while checked_row_count is 0.
 
 Future actual evidence collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
+
+## LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 safe boundary
+
+LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 is a freshness threshold plan, not evidence collection. It defines safe component labels and age-bucket-style freshness expectations for future real resident Live2D evidence review.
+
+No live probe is performed, no real renderer call is performed, no Cubism SDK call is performed, and no external service is called. The trusted loader allowlist remains disabled, no loader is trusted, and no SDK/vendor files are bundled, downloaded, quoted, copied, or committed.
+
+Owner-provided file values remain private. Public summaries expose only env names and safe status labels. Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation.
+
+Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, browser/API smoke, fixture data, dry-run data, and mock data are not owner confirmation and do not create runtime readiness or production readiness.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0.
+
+Future actual evidence collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.

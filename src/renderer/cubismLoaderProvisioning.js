@@ -11,6 +11,7 @@ export const REAL_EVIDENCE_INTAKE_SCHEMA = "iris_live2d_real_evidence_intake_v1"
 export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmation_envelope_v1";
 export const REAL_EVIDENCE_REQUEST_PACKET_SCHEMA = "iris_live2d_real_evidence_request_packet_v1";
 export const REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA = "iris_live2d_real_resident_evidence_collection_plan_v1";
+export const REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA = "iris_live2d_real_evidence_freshness_threshold_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -1143,6 +1144,108 @@ export function createRealResidentEvidenceCollectionPlanSummary(plan = {}, {
     },
   };
   assertSafePublicObject(summary, "real resident evidence collection plan summary");
+  return summary;
+}
+
+export function createRealEvidenceFreshnessThresholdSummary(threshold = {}, {
+  requiredComponents = REAL_EVIDENCE_REQUEST_COMPONENTS,
+} = {}) {
+  const source = threshold && typeof threshold === "object" ? threshold : {};
+  const sourceKind = safeEvidenceLabel(source.source_kind ?? source.source_type, "missing");
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source) || hasCollectionPlanForbiddenMaterial(source);
+  const componentThresholds = Object.fromEntries(requiredComponents.map((component) => [component, {
+    threshold_units: "safe_age_bucket",
+    freshness_status: "missing",
+    freshness_bucket: "future_real_resident_evidence_required",
+    required_evidence_policy: "future_owner_confirmed_real_resident_evidence_required",
+  }]));
+  const pendingComponents = [...requiredComponents];
+  const blockedReasons = [
+    "freshness_threshold_plan_only_not_collection",
+    "freshness_threshold_blocked_missing_real_resident_evidence",
+    "freshness_threshold_blocked_missing_owner_confirmation",
+    "freshness_threshold_blocked_priority1_unresolved",
+    "freshness_threshold_blocked_motion_dataset_non_executable",
+    "freshness_threshold_not_runtime_ready",
+    "freshness_threshold_not_production_ready",
+  ];
+  if (sourceKind === "fixture") blockedReasons.push("freshness_threshold_fixture_evidence_not_real");
+  if (sourceKind === "dry_run") blockedReasons.push("freshness_threshold_dry_run_evidence_not_real");
+  if (sourceKind === "mock") blockedReasons.push("freshness_threshold_mock_evidence_not_real");
+  if (source.freshness_status === "stale") blockedReasons.push("freshness_threshold_stale_evidence_not_fresh");
+  if (sourceKind === "manual_summary") blockedReasons.push("freshness_threshold_manual_summary_requires_owner_confirmation");
+  if (sourceKind === "operator_confirmed_summary") blockedReasons.push("freshness_threshold_operator_summary_requires_scope_specific_owner_confirmation");
+  if (sourceKind === "owner_confirmed_reference") blockedReasons.push("freshness_threshold_owner_reference_schema_only_until_real_confirmation");
+  if (unsafeMaterialRejected) blockedReasons.push("freshness_threshold_rejected_forbidden_raw_field");
+  const summary = {
+    schema: REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
+    safe_summary_only: true,
+    real_evidence_freshness_threshold_status: unsafeMaterialRejected ? "blocked" : "planning_only",
+    planning_only_boundary: true,
+    freshness_policy_ready_candidate: false,
+    component_thresholds_defined: requiredComponents,
+    component_thresholds_pending: pendingComponents,
+    component_thresholds: componentThresholds,
+    threshold_units: ["safe_age_bucket", "component_label"],
+    allowed_freshness_statuses: ["fresh_candidate", "stale", "missing", "blocked", "attention_required", "not_applicable"],
+    stale_evidence_policy: "stale_evidence_cannot_resolve_readiness_or_priority1",
+    missing_evidence_policy: "missing_evidence_remains_blocked",
+    fixture_evidence_policy: "fixture_evidence_never_fresh_real_evidence",
+    dry_run_evidence_policy: "dry_run_evidence_never_fresh_real_evidence",
+    mock_evidence_policy: "mock_evidence_never_fresh_real_evidence",
+    manual_summary_policy: "manual_summary_without_owner_confirmation_not_fresh_real_evidence",
+    operator_confirmed_summary_policy: "operator_summary_without_scope_specific_owner_confirmation_not_fresh_real_evidence",
+    real_probe_summary_policy: "future_safe_summary_only_no_probe_started_by_this_schema",
+    owner_confirmed_reference_policy: "schema_only_pending_real_owner_confirmation",
+    blocked_reason: blockedReasons[0],
+    blocked_reasons: [...new Set(blockedReasons)],
+    forbidden_material_status: unsafeMaterialRejected ? "forbidden_material_rejected" : "not_present",
+    real_evidence_collection_started: false,
+    real_probe_started: false,
+    live_probe_started: false,
+    real_renderer_call_started: false,
+    real_sdk_call_started: false,
+    external_service_call_started: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    motion_dataset_executable: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    assistant_review_is_owner_confirmation: false,
+    pr_merge_is_owner_confirmation: false,
+    remote_pass_is_owner_confirmation: false,
+    request_packet_status: "request_only_no_collection",
+    collection_plan_status: "planning_only",
+    real_evidence_intake_status: "schema_only",
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    fresh_evidence_bundle_status: "review_preparation_only",
+    safe_next_action: "define_future_owner_confirmed_real_evidence_collection_task_after_threshold_review",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only_no_collection: true,
+      no_live_probe: true,
+      no_real_renderer_call: true,
+      no_real_sdk_call: true,
+      no_external_service_call: true,
+      no_trusted_loader_enablement: true,
+      no_owner_confirmation_creation: true,
+      no_env_values: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      no_shell_command_bodies: true,
+    },
+  };
+  assertSafePublicObject(summary, "real evidence freshness threshold summary");
   return summary;
 }
 
