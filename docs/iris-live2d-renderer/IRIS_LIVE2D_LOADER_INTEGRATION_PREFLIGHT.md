@@ -235,6 +235,20 @@ Fixture evidence is not real evidence, dry-run evidence is not real evidence, st
 
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
 
+## LIVE2D-REAL-EVIDENCE-SUMMARY-INTAKE-BINDING1 safe boundary
+
+LIVE2D-REAL-EVIDENCE-SUMMARY-INTAKE-BINDING1 binds the safe evidence summary contract to future intake candidates only. It defines when a safe summary has the source, freshness, audit, redaction, component threshold, file scope, head SHA, and run id bindings required for later review.
+
+This binding does not collect evidence, does not validate live services, does not perform live probes, does not call the real renderer, does not call the Cubism SDK, and does not call external services. It does not create owner confirmation, does not enable the trusted loader allowlist, and does not trust any loader.
+
+An intake-eligible summary is not real evidence by itself, is not owner confirmation, is not runtime readiness, is not production readiness, does not resolve priority1, and does not make the motion dataset executable.
+
+Raw evidence bodies, raw cue payloads, raw renderer payloads, raw loader candidates, raw loader errors, endpoint values, tokens, secrets, private local paths, model paths, motion paths, SDK/vendor paths, shell command bodies, OBS commands, world commands, raw API responses, raw audio bodies, raw frame bodies, and raw comment text remain rejected and non-public.
+
+Fixture evidence is not real evidence, dry-run evidence is not real evidence, stale evidence is not fresh evidence, and mock owner confirmation is not real owner confirmation. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, browser/API smoke, fixture data, dry-run data, and mock data are not owner confirmation.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
+
 ## LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 safe boundary
 
 LIVE2D-REAL-EVIDENCE-FRESHNESS-THRESHOLD1 is a freshness threshold plan, not evidence collection. It defines safe component labels and age-bucket-style freshness expectations for future real resident Live2D evidence review.
