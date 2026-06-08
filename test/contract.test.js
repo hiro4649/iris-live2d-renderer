@@ -10,6 +10,7 @@ import {
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
+  LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
   REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
@@ -25,6 +26,7 @@ import {
   createRealEvidenceIntakeSummary,
   createRealEvidenceRequestPacketSummary,
   createRealResidentEvidenceCollectionPlanSummary,
+  createSafeEvidenceSummaryContractSummary,
   createTrustedLoaderAllowlistPreflightSummary,
   createTrustedLoaderEnablementGateSummary,
   createTrustedLoaderOwnerHandoffSummary,
@@ -858,6 +860,144 @@ try {
   assert.equal(unsafeFreshnessThreshold.blocked_reasons.includes("freshness_threshold_rejected_forbidden_raw_field"), true);
   assert.equal(JSON.stringify(unsafeFreshnessThreshold).includes("unsafe_fixture_value"), false);
   assertSafe(JSON.stringify(unsafeFreshnessThreshold));
+
+  const defaultSafeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
+  assert.equal(LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA, "iris_live2d_safe_evidence_summary_contract_v1");
+  assert.equal(defaultSafeEvidenceSummaryContract.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(defaultSafeEvidenceSummaryContract.planning_only_boundary, true);
+  assert.equal(defaultSafeEvidenceSummaryContract.summary_contract_ready_candidate, false);
+  assert.equal(defaultSafeEvidenceSummaryContract.real_evidence_collection_started, false);
+  assert.equal(defaultSafeEvidenceSummaryContract.real_probe_started, false);
+  assert.equal(defaultSafeEvidenceSummaryContract.runtime_readiness_claimed, false);
+  assert.equal(defaultSafeEvidenceSummaryContract.production_readiness_claimed, false);
+  assert.equal(defaultSafeEvidenceSummaryContract.priority1_status, "BLOCKED");
+  assert.equal(defaultSafeEvidenceSummaryContract.motion_dataset_status, "non_executable");
+  assert.equal(defaultSafeEvidenceSummaryContract.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultSafeEvidenceSummaryContract.go_nogo_status, "no_go");
+  assert.equal(defaultSafeEvidenceSummaryContract.go_candidate, false);
+  for (const field of [
+    "component",
+    "status",
+    "freshness_status",
+    "evidence_source_type",
+    "evidence_ref",
+    "safe_audit_ref",
+    "head_sha_ref",
+    "run_id_ref",
+    "file_scope",
+    "checked_at_bucket",
+    "status_reason_code",
+    "redaction_status",
+    "blocker_labels",
+    "safe_next_action",
+  ]) {
+    assert.equal(defaultSafeEvidenceSummaryContract.accepted_summary_fields.includes(field), true);
+  }
+  for (const binding of ["evidence_source_type", "evidence_ref", "safe_audit_ref", "head_sha_ref", "run_id_ref", "file_scope"]) {
+    assert.equal(defaultSafeEvidenceSummaryContract.required_source_binding.includes(binding), true);
+  }
+  for (const binding of ["freshness_status", "checked_at_bucket", "status_reason_code"]) {
+    assert.equal(defaultSafeEvidenceSummaryContract.required_freshness_binding.includes(binding), true);
+  }
+  for (const binding of ["safe_audit_ref", "head_sha_ref", "run_id_ref", "redaction_status", "blocker_labels"]) {
+    assert.equal(defaultSafeEvidenceSummaryContract.required_audit_binding.includes(binding), true);
+  }
+  assert.equal(defaultSafeEvidenceSummaryContract.required_redaction_status, "safe_summary_only");
+  for (const field of [
+    "evidence_body_material",
+    "cue_body_material",
+    "renderer_body_material",
+    "loader_candidate_material",
+    "loader_error_material",
+    "owner_note_material",
+    "request_note_material",
+    "network_locator_material",
+    "auth_value_material",
+    "sensitive_value_material",
+    "private_locator_material",
+    "model_locator_material",
+    "motion_locator_material",
+    "sdk_vendor_locator_material",
+    "shell_instruction_body_material",
+    "obs_instruction_material",
+    "world_instruction_material",
+    "api_response_material",
+    "audio_body_material",
+    "frame_body_material",
+    "comment_text_material",
+  ]) {
+    assert.equal(defaultSafeEvidenceSummaryContract.rejected_material_classes.includes(field), true);
+  }
+  for (const sourceType of ["real_probe_summary", "operator_confirmed_summary", "manual_upload_summary", "audit_reference", "owner_confirmed_reference"]) {
+    assert.equal(defaultSafeEvidenceSummaryContract.accepted_source_types.includes(sourceType), true);
+  }
+  for (const sourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
+    const rejected = createSafeEvidenceSummaryContractSummary({ evidence_source_type: sourceType });
+    assert.equal(rejected.rejected_source_types.includes(sourceType), true);
+    assert.equal(rejected.blocked_reasons.includes("safe_evidence_summary_contract_rejected_source_type"), true);
+    assert.equal(rejected.runtime_readiness_claimed, false);
+    assertSafe(JSON.stringify(rejected));
+  }
+  const missingBindingContract = createSafeEvidenceSummaryContractSummary({ evidence_source_type: "audit_reference" });
+  assert.equal(missingBindingContract.source_binding_status, "missing");
+  assert.equal(missingBindingContract.freshness_binding_status, "missing");
+  assert.equal(missingBindingContract.redaction_status, "missing_safe_summary_only");
+  const boundContract = createSafeEvidenceSummaryContractSummary({
+    component: "live2d_renderer_heartbeat",
+    evidence_source_type: "audit_reference",
+    evidence_ref: "safe_ref_only",
+    safe_audit_ref: "safe_audit_ref_only",
+    head_sha_ref: "safe_head_ref_only",
+    run_id_ref: "safe_run_ref_only",
+    freshness_status: "missing",
+    redaction_status: "safe_summary_only",
+    file_scope: ["safe_file_scope_label"],
+    blocker_labels: ["priority1_BLOCKED", "motion_dataset_non_executable", "owner_confirmation_pending", "readiness_false"],
+  });
+  assert.equal(boundContract.source_binding_status, "present");
+  assert.equal(boundContract.freshness_binding_status, "present");
+  assert.equal(boundContract.audit_binding_status, "present");
+  assert.equal(boundContract.priority1_status, "BLOCKED");
+  assert.equal(boundContract.motion_dataset_status, "non_executable");
+  assert.equal(boundContract.runtime_readiness_claimed, false);
+  assert.equal(boundContract.assistant_review_is_owner_confirmation, false);
+  assert.equal(boundContract.pr_merge_is_owner_confirmation, false);
+  assert.equal(boundContract.remote_pass_is_owner_confirmation, false);
+  assert.equal(boundContract.request_packet_status, "request_only_no_collection");
+  assert.equal(boundContract.collection_plan_status, "planning_only");
+  assert.equal(boundContract.freshness_threshold_status, "planning_only");
+  assert.equal(boundContract.real_evidence_intake_status, "schema_only");
+  assert.equal(boundContract.owner_confirmation_envelope_status, "schema_only_blocked_or_pending");
+  assert.equal(boundContract.fresh_evidence_bundle_status, "review_preparation_only");
+  assertSafe(JSON.stringify(boundContract));
+  const unsafeSummaryContract = createSafeEvidenceSummaryContractSummary({
+    raw_evidence_body: "unsafe_fixture_value",
+    raw_cue_payload: "unsafe_fixture_value",
+    raw_renderer_payload: "unsafe_fixture_value",
+    raw_loader_candidate: "unsafe_fixture_value",
+    raw_loader_error: "unsafe_fixture_value",
+    raw_owner_note: "unsafe_fixture_value",
+    raw_request_note: "unsafe_fixture_value",
+    endpoint_value: "unsafe_fixture_value",
+    token_value: "unsafe_fixture_value",
+    secret_value: "unsafe_fixture_value",
+    private_local_path: "unsafe_fixture_value",
+    model_path: "unsafe_fixture_value",
+    motion_path: "unsafe_fixture_value",
+    sdk_vendor_path: "unsafe_fixture_value",
+    shell_command_body: "unsafe_fixture_value",
+    obs_command: "unsafe_fixture_value",
+    world_command: "unsafe_fixture_value",
+    raw_api_response: "unsafe_fixture_value",
+    raw_audio_body: "unsafe_fixture_value",
+    raw_frame_body: "unsafe_fixture_value",
+    raw_comment_text: "unsafe_fixture_value",
+  });
+  assert.equal(unsafeSummaryContract.safe_evidence_summary_contract_status, "blocked");
+  assert.equal(unsafeSummaryContract.forbidden_material_status, "forbidden_material_rejected");
+  assert.equal(unsafeSummaryContract.blocked_reasons.includes("safe_evidence_summary_contract_rejected_raw_field"), true);
+  assert.equal(JSON.stringify(unsafeSummaryContract).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(unsafeSummaryContract));
 
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -1985,6 +2125,16 @@ try {
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.summary_contract_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.safe_evidence_summary_contract_summary.go_nogo_status, "no_go");
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -2041,6 +2191,10 @@ try {
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_probe_started, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.real_probe_started, false);
+  assert.equal(provisionedStatus.safe_evidence_summary_contract_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -2081,6 +2235,10 @@ try {
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_probe_started, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.safe_evidence_summary_contract_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -2126,6 +2284,10 @@ try {
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();
