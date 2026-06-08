@@ -274,3 +274,17 @@ Assistant review is not owner confirmation. PR merge is not owner confirmation. 
 Wrong-role confirmation, expired confirmation, revoked confirmation, scope-mismatched confirmation, missing audit binding, missing safe evidence summary binding, missing summary intake binding, missing freshness threshold binding, missing head SHA/run id/file scope binding, fixture evidence, dry-run evidence, and mock confirmation remain rejected.
 
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection and readiness decisions require separate owner-confirmed tasks.
+
+## LIVE2D-GO-NOGO-BLOCKER-RESOLUTION-SCHEMA1 boundary
+
+- Go/no-go blocker resolution is planning and schema review only; it does not resolve any blocker.
+- The schema requires blocker id, component, safe evidence summary binding, summary intake binding, freshness threshold binding, owner confirmation binding, audit binding, scope binding, emergency stop binding, and redaction pass before a future owner review can even consider a resolution candidate.
+- A resolution candidate remains review-only and is not go/no-go approval.
+- Degraded mode is separate from go and cannot make go/no-go pass.
+- Remote PASS, local checks, target harness, browser/API smoke, assistant review, PR merge, manual summaries, operator summaries, safe summary intake, and owner-confirmation binding are not real evidence and do not resolve blockers.
+- Fixture evidence, dry-run evidence, stale evidence, mock evidence, wrong-role confirmation, expired confirmation, revoked confirmation, and scope mismatch are rejected for blocker resolution.
+- The schema does not collect real evidence, run live probes, call the renderer, call SDK/vendor code, call external services, or create owner confirmation.
+- Trusted loader allowlist remains disabled. No loader is trusted.
+- Runtime readiness is not claimed. Production readiness is not claimed.
+- priority1 remains BLOCKED until real resident fresh evidence and separate owner-confirmed go/no-go review exist.
+- Motion dataset remains non-executable; checked row count remains zero until real rows are implemented and tested in a separate task.
