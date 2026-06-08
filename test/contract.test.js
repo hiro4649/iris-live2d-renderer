@@ -9,6 +9,7 @@ import {
   CUBISM_LOADER_PROVISIONING_SCHEMA,
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
+  LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA,
   LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
@@ -22,6 +23,7 @@ import {
   TRUSTED_LOADER_ALLOWLIST_PREFLIGHT_SCHEMA,
   createCubismLoaderProvisioningSummary,
   createFreshEvidenceBundleSummary,
+  createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
@@ -1373,6 +1375,146 @@ try {
   assert.equal(JSON.stringify(unsafeOwnerConfirmationBinding).includes("unsafe_fixture_value"), false);
   assertSafe(JSON.stringify(unsafeOwnerConfirmationBinding));
 
+  const defaultBlockerResolution = createGoNoGoBlockerResolutionSummary();
+  assert.equal(LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA, "iris_live2d_go_nogo_blocker_resolution_v1");
+  assert.equal(defaultBlockerResolution.go_nogo_blocker_resolution_status, "blocked");
+  assert.equal(defaultBlockerResolution.resolution_candidate_status, "blocked");
+  assert.equal(defaultBlockerResolution.blocker_resolution_ready_candidate, false);
+  assert.equal(defaultBlockerResolution.blocker_resolved, false);
+  assert.equal(defaultBlockerResolution.go_nogo_status, "no_go");
+  assert.equal(defaultBlockerResolution.go_candidate, false);
+  assert.equal(defaultBlockerResolution.owner_confirmation_created, false);
+  assert.equal(defaultBlockerResolution.owner_confirmation_confirmed, false);
+  assert.equal(defaultBlockerResolution.runtime_readiness_claimed, false);
+  assert.equal(defaultBlockerResolution.production_readiness_claimed, false);
+  assert.equal(defaultBlockerResolution.priority1_status, "BLOCKED");
+  assert.equal(defaultBlockerResolution.motion_dataset_status, "non_executable");
+  assert.equal(defaultBlockerResolution.motion_dataset_executable, false);
+  assert.equal(defaultBlockerResolution.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultBlockerResolution.no_loader_trusted, true);
+  assert.equal(defaultBlockerResolution.request_packet_status, "request_only_no_collection");
+  assert.equal(defaultBlockerResolution.collection_plan_status, "planning_only");
+  assert.equal(defaultBlockerResolution.freshness_threshold_status, "planning_only");
+  assert.equal(defaultBlockerResolution.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(defaultBlockerResolution.summary_intake_binding_preservation_status, "planning_only");
+  assert.equal(defaultBlockerResolution.owner_confirmation_binding_preservation_status, "planning_only");
+  for (const ref of [
+    "blocker_id",
+    "component",
+    "safe_evidence_summary_ref",
+    "summary_intake_ref",
+    "freshness_threshold_ref",
+    "owner_confirmation_ref",
+    "audit_ref",
+    "scope_ref",
+    "emergency_stop_ref",
+    "head_sha_ref",
+    "run_id_ref",
+    "file_scope",
+    "redaction_status",
+    "status_reason_code",
+  ]) {
+    assert.equal(defaultBlockerResolution.required_binding_references.includes(ref), true);
+  }
+  for (const reason of [
+    "resolution_rejected_missing_blocker_id",
+    "resolution_rejected_missing_component",
+    "resolution_rejected_missing_safe_summary_binding",
+    "resolution_rejected_missing_summary_intake_binding",
+    "resolution_rejected_missing_freshness_threshold_binding",
+    "resolution_rejected_missing_owner_confirmation_binding",
+    "resolution_rejected_missing_audit_binding",
+    "resolution_rejected_missing_scope_binding",
+    "resolution_rejected_missing_emergency_stop_binding",
+    "resolution_rejected_missing_head_run_file_scope_binding",
+    "resolution_rejected_missing_redaction_pass",
+  ]) {
+    assert.equal(defaultBlockerResolution.resolution_rejection_reasons.includes(reason), true);
+  }
+  assertSafe(JSON.stringify(defaultBlockerResolution));
+
+  const candidateOnlyBlockerResolution = createGoNoGoBlockerResolutionSummary({
+    blocker_id: "priority1",
+    component: "live2d_renderer",
+    safe_evidence_summary_ref: "safe_summary_ref",
+    summary_intake_ref: "safe_intake_ref",
+    freshness_threshold_ref: "safe_threshold_ref",
+    owner_confirmation_ref: "safe_owner_ref",
+    audit_ref: "safe_audit_ref",
+    scope_ref: "safe_scope_ref",
+    emergency_stop_ref: "safe_stop_ref",
+    head_sha_ref: "safe_head_ref",
+    run_id_ref: "safe_run_ref",
+    file_scope: ["safe_file_scope_label"],
+    redaction_status: "pass",
+    freshness_status: "fresh",
+    confirmed_by_role: "owner",
+    confirmation_status: "pending",
+    revocation_status: "not_revoked",
+    status_reason_code: "future_owner_review_required",
+  });
+  assert.equal(candidateOnlyBlockerResolution.go_nogo_blocker_resolution_status, "planning_only");
+  assert.equal(candidateOnlyBlockerResolution.resolution_candidate_status, "resolution_candidate_review_only");
+  assert.equal(candidateOnlyBlockerResolution.blocker_resolution_ready_candidate, false);
+  assert.equal(candidateOnlyBlockerResolution.blocker_resolved, false);
+  assert.equal(candidateOnlyBlockerResolution.go_nogo_status, "no_go");
+  assert.equal(candidateOnlyBlockerResolution.owner_confirmation_confirmed, false);
+  assert.equal(candidateOnlyBlockerResolution.runtime_readiness_claimed, false);
+  assert.equal(candidateOnlyBlockerResolution.production_readiness_claimed, false);
+  assertSafe(JSON.stringify(candidateOnlyBlockerResolution));
+
+  for (const [field, reason] of [
+    ["fixture_evidence", "resolution_rejected_fixture_evidence"],
+    ["dry_run_evidence", "resolution_rejected_dry_run_evidence"],
+    ["mock_evidence", "resolution_rejected_mock_evidence"],
+    ["stale_evidence", "resolution_rejected_stale_evidence"],
+    ["remote_pass", "resolution_rejected_auto_resolution_source"],
+    ["local_checks_pass", "resolution_rejected_auto_resolution_source"],
+    ["target_harness_pass", "resolution_rejected_auto_resolution_source"],
+    ["browser_api_smoke_pass", "resolution_rejected_auto_resolution_source"],
+    ["assistant_review", "resolution_rejected_auto_resolution_source"],
+    ["pr_merge", "resolution_rejected_auto_resolution_source"],
+    ["operator_summary", "resolution_rejected_auto_resolution_source"],
+    ["manual_summary", "resolution_rejected_auto_resolution_source"],
+    ["owner_confirmation_binding", "resolution_rejected_auto_resolution_source"],
+    ["degraded_mode_available", "resolution_rejected_degraded_mode_only"],
+  ]) {
+    const rejected = createGoNoGoBlockerResolutionSummary({ [field]: true });
+    assert.equal(rejected.resolution_rejection_reasons.includes(reason), true);
+    assert.equal(rejected.blocker_resolved, false);
+    assert.equal(rejected.go_nogo_status, "no_go");
+    assert.equal(rejected.runtime_readiness_claimed, false);
+    assertSafe(JSON.stringify(rejected));
+  }
+  const wrongRoleBlockerResolution = createGoNoGoBlockerResolutionSummary({ confirmed_by_role: "assistant" });
+  assert.equal(wrongRoleBlockerResolution.resolution_rejection_reasons.includes("resolution_rejected_wrong_role_confirmation"), true);
+  const expiredBlockerResolution = createGoNoGoBlockerResolutionSummary({ confirmation_status: "expired" });
+  assert.equal(expiredBlockerResolution.resolution_rejection_reasons.includes("resolution_rejected_expired_confirmation"), true);
+  const revokedBlockerResolution = createGoNoGoBlockerResolutionSummary({ revocation_status: "revoked" });
+  assert.equal(revokedBlockerResolution.resolution_rejection_reasons.includes("resolution_rejected_revoked_confirmation"), true);
+  const scopeMismatchBlockerResolution = createGoNoGoBlockerResolutionSummary({
+    scope_ref: "live2d_safe_scope",
+    expected_scope_ref: "production_scope",
+  });
+  assert.equal(scopeMismatchBlockerResolution.resolution_rejection_reasons.includes("resolution_rejected_scope_mismatch"), true);
+  const unsafeBlockerResolution = createGoNoGoBlockerResolutionSummary({
+    raw_evidence_body: "unsafe_fixture_value",
+    raw_cue_payload: "unsafe_fixture_value",
+    raw_renderer_payload: "unsafe_fixture_value",
+    endpoint_value: "unsafe_fixture_value",
+    token_value: "unsafe_fixture_value",
+    secret_value: "unsafe_fixture_value",
+    private_local_path: "unsafe_fixture_value",
+    raw_loader_candidate: "unsafe_fixture_value",
+    raw_loader_error: "unsafe_fixture_value",
+    owner_private_note: "unsafe_fixture_value",
+    shell_command_body: "unsafe_fixture_value",
+  });
+  assert.equal(unsafeBlockerResolution.forbidden_material_status, "forbidden_material_rejected");
+  assert.equal(unsafeBlockerResolution.resolution_rejection_reasons.includes("resolution_rejected_forbidden_material"), true);
+  assert.equal(JSON.stringify(unsafeBlockerResolution).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(unsafeBlockerResolution));
+
   const mockOwnerHandoff = createTrustedLoaderOwnerHandoffSummary({
     loaderProvisioning: ownerProvidedProvisioning,
     mockOwnerConfirmation: true,
@@ -2531,6 +2673,15 @@ try {
   assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.owner_confirmation_binding_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.go_nogo_blocker_resolution_status, "blocked");
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.blocker_resolution_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.blocker_resolved, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -2601,6 +2752,11 @@ try {
   assert.equal(provisionedStatus.owner_confirmation_binding_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.owner_confirmation_binding_summary.real_probe_started, false);
   assert.equal(provisionedStatus.owner_confirmation_binding_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.go_nogo_blocker_resolution_status, "blocked");
+  assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.blocker_resolved, false);
+  assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -2655,6 +2811,11 @@ try {
   assert.equal(provisionedHealth.owner_confirmation_binding_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.owner_confirmation_binding_summary.real_probe_started, false);
   assert.equal(provisionedHealth.owner_confirmation_binding_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.go_nogo_blocker_resolution_status, "blocked");
+  assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.blocker_resolved, false);
+  assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -2714,6 +2875,11 @@ try {
   assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.owner_confirmation_binding_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.go_nogo_blocker_resolution_status, "blocked");
+  assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.blocker_resolved, false);
+  assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.renderer_ready, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();

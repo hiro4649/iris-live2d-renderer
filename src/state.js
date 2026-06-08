@@ -3,6 +3,7 @@ import { assertSafeInput, assertSafePublicObject, createBoundaryPolicy, safeText
 import { createBrowserCueEnvelope, createBrowserRuntimeConfig, createCubismRendererConfig } from "./renderer/cubismRenderer.js";
 import {
   createFreshEvidenceBundleSummary,
+  createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
@@ -106,6 +107,7 @@ export function createRendererState({
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
       const ownerConfirmationBinding = createOwnerConfirmationBindingSummary();
+      const goNoGoBlockerResolution = createGoNoGoBlockerResolutionSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -173,6 +175,7 @@ export function createRendererState({
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
           owner_confirmation_binding_summary: ownerConfirmationBinding,
+          go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
@@ -188,6 +191,7 @@ export function createRendererState({
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         owner_confirmation_binding_summary: ownerConfirmationBinding,
+          go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -244,6 +248,7 @@ export function createRendererState({
         safe_evidence_summary_contract_summary: status.renderer_health.safe_evidence_summary_contract_summary,
         real_evidence_summary_intake_binding_summary: status.renderer_health.real_evidence_summary_intake_binding_summary,
         owner_confirmation_binding_summary: status.renderer_health.owner_confirmation_binding_summary,
+        go_nogo_blocker_resolution_summary: status.renderer_health.go_nogo_blocker_resolution_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
         fresh_heartbeat: status.renderer_health.fresh_heartbeat,
         boundary_policy: createBoundaryPolicy(),
@@ -351,6 +356,7 @@ export function createRendererState({
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
       const ownerConfirmationBinding = createOwnerConfirmationBindingSummary();
+      const goNoGoBlockerResolution = createGoNoGoBlockerResolutionSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -377,6 +383,7 @@ export function createRendererState({
       response.safe_evidence_summary_contract_summary = safeEvidenceSummaryContract;
       response.real_evidence_summary_intake_binding_summary = realEvidenceSummaryIntakeBinding;
       response.owner_confirmation_binding_summary = ownerConfirmationBinding;
+      response.go_nogo_blocker_resolution_summary = goNoGoBlockerResolution;
       assertSafePublicObject(response, "browser runtime config");
       return response;
     },
@@ -449,6 +456,7 @@ export function createRendererState({
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
       const ownerConfirmationBinding = createOwnerConfirmationBindingSummary();
+      const goNoGoBlockerResolution = createGoNoGoBlockerResolutionSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -500,6 +508,7 @@ export function createRendererState({
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
           owner_confirmation_binding_summary: ownerConfirmationBinding,
+          go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         },
         live2d_evidence_summary: heartbeatStatus.live2d_evidence_summary,
         trusted_loader_preflight_summary: trustedLoaderPreflight,
@@ -515,6 +524,7 @@ export function createRendererState({
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         owner_confirmation_binding_summary: ownerConfirmationBinding,
+          go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");

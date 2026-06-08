@@ -15,6 +15,7 @@ export const REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA = "iris_live2d_real_eviden
 export const LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA = "iris_live2d_safe_evidence_summary_contract_v1";
 export const LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA = "iris_live2d_real_evidence_summary_intake_binding_v1";
 export const LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA = "iris_live2d_owner_confirmation_binding_v1";
+export const LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA = "iris_live2d_go_nogo_blocker_resolution_v1";
 
 export const ALLOWED_CUBISM_LOADER_ENV_NAMES = Object.freeze([
   "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -240,6 +241,23 @@ const LIVE2D_OWNER_CONFIRMATION_BINDING_REF_FIELDS = Object.freeze([
   "confirmation_status",
   "expires_at_bucket",
   "revocation_status",
+  "status_reason_code",
+]);
+
+const LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_REF_FIELDS = Object.freeze([
+  "blocker_id",
+  "component",
+  "safe_evidence_summary_ref",
+  "summary_intake_ref",
+  "freshness_threshold_ref",
+  "owner_confirmation_ref",
+  "audit_ref",
+  "scope_ref",
+  "emergency_stop_ref",
+  "head_sha_ref",
+  "run_id_ref",
+  "file_scope",
+  "redaction_status",
   "status_reason_code",
 ]);
 
@@ -1745,6 +1763,207 @@ export function createOwnerConfirmationBindingSummary(bindingInput = {}) {
   };
   assertSafePublicObject(binding, "owner confirmation binding summary");
   return binding;
+}
+
+export function createGoNoGoBlockerResolutionSummary(resolutionInput = {}) {
+  const source = resolutionInput && typeof resolutionInput === "object" ? resolutionInput : {};
+  const evidenceSourceType = safeEvidenceLabel(source.evidence_source_type ?? source.source_type, "missing");
+  const confirmationRole = safeEvidenceLabel(source.confirmed_by_role ?? source.owner_role, "missing");
+  const confirmationStatus = safeEvidenceLabel(source.confirmation_status, "missing");
+  const revocationStatus = safeEvidenceLabel(source.revocation_status, "missing");
+  const freshnessStatus = safeEvidenceLabel(source.freshness_status ?? source.live2d_heartbeat_freshness_status, "missing");
+  const redactionStatus = safeEvidenceLabel(source.redaction_status, "missing");
+  const degradedMode = source.degraded_mode_available === true || source.degraded_mode === true;
+  const missingBlockerId = !source.blocker_id;
+  const missingComponent = !source.component;
+  const missingEvidenceSummaryBinding = !source.safe_evidence_summary_ref;
+  const missingSummaryIntakeBinding = !source.summary_intake_ref;
+  const missingFreshnessThresholdBinding = !source.freshness_threshold_ref;
+  const missingOwnerConfirmationBinding = !source.owner_confirmation_ref;
+  const missingAuditBinding = !source.audit_ref;
+  const missingScopeBinding = !source.scope_ref;
+  const emergencyStopRequired = source.emergency_stop_required !== false;
+  const missingEmergencyStopBinding = emergencyStopRequired && !source.emergency_stop_ref;
+  const missingHeadRunFileScope = !source.head_sha_ref || !source.run_id_ref || !source.file_scope;
+  const missingRedactionPass = redactionStatus !== "pass";
+  const missingEvidence = source.evidence_status === "missing" || freshnessStatus === "missing";
+  const staleEvidence = freshnessStatus === "stale" || source.stale_evidence === true;
+  const fixtureEvidence = source.fixture_evidence === true || evidenceSourceType === "fixture";
+  const dryRunEvidence = source.dry_run_evidence === true || evidenceSourceType === "dry_run";
+  const mockEvidence = source.mock_evidence === true || source.mock_confirmation === true || evidenceSourceType === "mock";
+  const wrongRole = source.confirmed_by_role !== undefined && confirmationRole !== "owner";
+  const expired = confirmationStatus === "expired" || source.expires_at_bucket === "expired";
+  const revoked = confirmationStatus === "revoked" || revocationStatus === "revoked";
+  const scopeMismatch = source.scope_mismatch === true || Boolean(source.scope_ref && source.expected_scope_ref && source.scope_ref !== source.expected_scope_ref);
+  const autoResolutionSource = Boolean(
+    source.remote_pass === true ||
+    source.local_checks_pass === true ||
+    source.target_harness_pass === true ||
+    source.browser_api_smoke_pass === true ||
+    source.assistant_review === true ||
+    source.pr_merge === true ||
+    source.operator_summary === true ||
+    source.manual_summary === true ||
+    source.safe_summary_intake_eligible === true ||
+    source.owner_confirmation_binding === true
+  );
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source) || hasCollectionPlanForbiddenMaterial(source);
+  const rejectionReasons = [
+    "go_nogo_blocker_resolution_planning_only",
+    "go_nogo_blocker_resolution_not_resolved",
+    "go_nogo_blocker_resolution_no_go_preserved",
+    "go_nogo_blocker_resolution_blocked_priority1_unresolved",
+    "go_nogo_blocker_resolution_blocked_motion_dataset_non_executable",
+    "go_nogo_blocker_resolution_not_runtime_ready",
+    "go_nogo_blocker_resolution_not_production_ready",
+  ];
+  if (missingBlockerId) rejectionReasons.push("resolution_rejected_missing_blocker_id");
+  if (missingComponent) rejectionReasons.push("resolution_rejected_missing_component");
+  if (missingEvidenceSummaryBinding) rejectionReasons.push("resolution_rejected_missing_safe_summary_binding");
+  if (missingSummaryIntakeBinding) rejectionReasons.push("resolution_rejected_missing_summary_intake_binding");
+  if (missingFreshnessThresholdBinding) rejectionReasons.push("resolution_rejected_missing_freshness_threshold_binding");
+  if (missingOwnerConfirmationBinding) rejectionReasons.push("resolution_rejected_missing_owner_confirmation_binding");
+  if (missingAuditBinding) rejectionReasons.push("resolution_rejected_missing_audit_binding");
+  if (missingScopeBinding) rejectionReasons.push("resolution_rejected_missing_scope_binding");
+  if (missingEmergencyStopBinding) rejectionReasons.push("resolution_rejected_missing_emergency_stop_binding");
+  if (missingHeadRunFileScope) rejectionReasons.push("resolution_rejected_missing_head_run_file_scope_binding");
+  if (missingRedactionPass) rejectionReasons.push("resolution_rejected_missing_redaction_pass");
+  if (fixtureEvidence) rejectionReasons.push("resolution_rejected_fixture_evidence");
+  if (dryRunEvidence) rejectionReasons.push("resolution_rejected_dry_run_evidence");
+  if (mockEvidence) rejectionReasons.push("resolution_rejected_mock_evidence");
+  if (staleEvidence) rejectionReasons.push("resolution_rejected_stale_evidence");
+  if (missingEvidence) rejectionReasons.push("resolution_rejected_missing_evidence");
+  if (wrongRole) rejectionReasons.push("resolution_rejected_wrong_role_confirmation");
+  if (expired) rejectionReasons.push("resolution_rejected_expired_confirmation");
+  if (revoked) rejectionReasons.push("resolution_rejected_revoked_confirmation");
+  if (scopeMismatch) rejectionReasons.push("resolution_rejected_scope_mismatch");
+  if (autoResolutionSource) rejectionReasons.push("resolution_rejected_auto_resolution_source");
+  if (degradedMode) rejectionReasons.push("resolution_rejected_degraded_mode_only");
+  if (unsafeMaterialRejected) rejectionReasons.push("resolution_rejected_forbidden_material");
+
+  const candidateEligible = !missingBlockerId &&
+    !missingComponent &&
+    !missingEvidenceSummaryBinding &&
+    !missingSummaryIntakeBinding &&
+    !missingFreshnessThresholdBinding &&
+    !missingOwnerConfirmationBinding &&
+    !missingAuditBinding &&
+    !missingScopeBinding &&
+    !missingEmergencyStopBinding &&
+    !missingHeadRunFileScope &&
+    !missingRedactionPass &&
+    !fixtureEvidence &&
+    !dryRunEvidence &&
+    !mockEvidence &&
+    !staleEvidence &&
+    !missingEvidence &&
+    !wrongRole &&
+    !expired &&
+    !revoked &&
+    !scopeMismatch &&
+    !autoResolutionSource &&
+    !degradedMode &&
+    !unsafeMaterialRejected;
+
+  const summary = {
+    schema: LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA,
+    safe_summary_only: true,
+    go_nogo_blocker_resolution_status: candidateEligible ? "planning_only" : "blocked",
+    resolution_candidate_status: candidateEligible ? "resolution_candidate_review_only" : "blocked",
+    blocker_resolution_ready_candidate: false,
+    blocker_resolved: false,
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    degraded_mode_available: degradedMode ? "separate_from_go" : false,
+    degraded_mode_is_go: false,
+    required_blocker_id: "blocker_id",
+    required_component: "component",
+    required_safe_evidence_summary_binding: ["safe_evidence_summary_ref"],
+    required_summary_intake_binding: ["summary_intake_ref"],
+    required_freshness_threshold_binding: ["freshness_threshold_ref"],
+    required_owner_confirmation_binding: ["owner_confirmation_ref"],
+    required_audit_binding: ["audit_ref", "head_sha_ref", "run_id_ref"],
+    required_scope_binding: ["scope_ref", "status_reason_code"],
+    required_emergency_stop_binding: emergencyStopRequired ? ["emergency_stop_ref"] : [],
+    required_go_nogo_boundary: "go_nogo_status_remains_no_go_until_separate_owner_confirmed_go_review",
+    required_redaction_status: "pass",
+    required_binding_references: LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_REF_FIELDS,
+    blocker_id_binding_status: missingBlockerId ? "missing" : "present",
+    component_binding_status: missingComponent ? "missing" : "present",
+    safe_evidence_summary_binding_status: missingEvidenceSummaryBinding ? "missing" : "present",
+    summary_intake_binding_status: missingSummaryIntakeBinding ? "missing" : "present",
+    freshness_threshold_binding_status: missingFreshnessThresholdBinding ? "missing" : "present",
+    owner_confirmation_binding_status: missingOwnerConfirmationBinding ? "missing" : "present",
+    audit_binding_status: missingAuditBinding ? "missing" : "present",
+    scope_binding_status: missingScopeBinding ? "missing" : "present",
+    emergency_stop_binding_status: missingEmergencyStopBinding ? "missing" : "present",
+    head_run_file_scope_binding_status: missingHeadRunFileScope ? "missing" : "present",
+    redaction_status: missingRedactionPass ? "required" : "pass",
+    fixture_evidence_policy: "not_resolution_candidate",
+    dry_run_evidence_policy: "not_resolution_candidate",
+    stale_evidence_policy: "not_resolution_candidate",
+    manual_summary_policy: "not_owner_confirmation",
+    operator_summary_policy: "not_owner_confirmation",
+    owner_confirmed_reference_policy: "schema_only_until_real_owner_confirmed_artifact",
+    remote_pass_policy: "not_owner_confirmation_not_real_evidence",
+    local_checks_policy: "not_real_evidence",
+    target_harness_policy: "not_real_evidence",
+    browser_smoke_policy: "not_real_evidence",
+    assistant_review_policy: "not_owner_confirmation",
+    pr_merge_policy: "not_owner_confirmation",
+    resolution_candidate_is_resolved: false,
+    owner_confirmation_binding_is_real_confirmation: false,
+    safe_summary_intake_is_real_evidence: false,
+    remote_pass_resolves_blocker: false,
+    auto_resolution_rejection_status: autoResolutionSource ? "rejected" : "not_present",
+    forbidden_material_status: unsafeMaterialRejected ? "forbidden_material_rejected" : "not_present",
+    request_packet_status: "request_only_no_collection",
+    collection_plan_status: "planning_only",
+    freshness_threshold_status: "planning_only",
+    safe_evidence_summary_contract_status: "planning_only",
+    summary_intake_binding_preservation_status: "planning_only",
+    owner_confirmation_binding_preservation_status: "planning_only",
+    real_evidence_intake_status: "schema_only",
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    fresh_evidence_bundle_status: "review_preparation_only",
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    motion_dataset_executable: false,
+    resolution_rejection_reasons: [...new Set(rejectionReasons)],
+    safe_next_action: "create_separate_owner_confirmed_go_nogo_review_after_real_resident_fresh_evidence",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only_no_collection: true,
+      no_live_probe: true,
+      no_real_renderer_call: true,
+      no_real_sdk_call: true,
+      no_external_service_call: true,
+      no_trusted_loader_enablement: true,
+      no_owner_confirmation_creation: true,
+      no_owner_confirmation_confirmed: true,
+      no_evidence_body_material: true,
+      no_cue_body_material: true,
+      no_renderer_body_material: true,
+      no_loader_candidate_material: true,
+      no_loader_error_material: true,
+      no_endpoint_values: true,
+      no_token_or_secret_values: true,
+      no_private_local_paths: true,
+      no_shell_command_bodies: true,
+    },
+  };
+  assertSafePublicObject(summary, "go no-go blocker resolution summary");
+  return summary;
 }
 
 function realEvidenceRequestPacketReasons({ source, unsafeMaterialRejected, redactionStatus }) {
