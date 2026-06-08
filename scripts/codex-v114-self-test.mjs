@@ -36,6 +36,7 @@ import {
 import { classifyGuardrailOperation, validateHookGuardrailRegistry } from './codex-v114-guardrail-registry.mjs';
 import {
   applyTargetCompatibilityShadowStatuses,
+  applyTargetLegacySelfTestShadow,
   applyTargetModeLegacyCompatibilityShadow,
   buildRemoteProductEvidenceExecutionInput,
   buildSafeArtifactIndexInputForQualityGate,
@@ -103,6 +104,8 @@ const targetLegacyShadowReport = {
 };
 const targetLegacyShadowFailures = [{ id: 'targetModeLegacyCompatibilityStatus.failed' }];
 const targetLegacyShadow = applyTargetModeLegacyCompatibilityShadow(targetLegacyShadowReport, targetLegacyShadowFailures);
+const targetLegacySelfTestShadowReport = {};
+const targetLegacySelfTestShadow = applyTargetLegacySelfTestShadow(targetLegacySelfTestShadowReport);
 const targetAutoModeFixture = shouldAutoSelectTargetHarnessMode({}, {
   targetRepoMode: true,
 });
@@ -162,6 +165,8 @@ const cases = [
   test('voxweave_target_mode_workflow_gate_compatibility', () => targetCompatibilityShadow.demotedStatusCount === 4 && targetCompatibilityShadowFailures.length === 1 && targetCompatibilityShadowReport.warnings.length === 0),
   test('target_mode_compat_shadow_count_only', () => targetCompatibilityShadowReport.reviewIndependenceStatus.status === 'pass' && targetCompatibilityShadowReport.targetManifestStatus.status === 'fail'),
   test('target_mode_legacy_compat_shadow_count_only', () => targetLegacyShadow.status === 'pass' && targetLegacyShadowFailures.length === 0),
+  test('target_legacy_self_tests_shadow_count_only', () => targetLegacySelfTestShadow.status === 'pass' && targetLegacySelfTestShadow.shadowedStatusCount === 21),
+  test('target_legacy_self_tests_do_not_count_v100_pass', () => targetLegacySelfTestShadowReport.v100SelfTestStatus.status !== 'pass' && targetLegacySelfTestShadowReport.v111SelfTestStatus.status !== 'pass' && targetLegacySelfTestShadow.v100CountedAsPass === false),
   test('target_manifest_true_blocker_hard', () => targetCompatibilityShadowReport.targetManifestStatus.status === 'fail'),
   test('target_mode_manifest_auto_detection', () => targetAutoModeFixture === true),
   test('product_runtime_package_workflow_blockers_remain_hard', () => classifyGuardrailOperation('workflow_scope_violation').status === 'fail' && classifyGuardrailOperation('package_lockfile_scope_violation').status === 'fail'),
