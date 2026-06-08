@@ -52,6 +52,8 @@ const prBodyBad = validatePrBody({ shapeOk: false });
 const legacyAdvisory = classifyLegacySelfTestLane({ lane: 'target_harness_only_rollout', reasonCode: 'legacy_self_test_unrelated_to_target_harness_only' });
 const legacyTrueBlocker = classifyLegacySelfTestLane({ lane: 'target_harness_only_rollout', reasonCode: 'secret_leak_detected' });
 const firewall = validateTargetHarnessScopeFirewall();
+const externalProcessFirewall = validateTargetHarnessScopeFirewall({ externalWorkspaceProcessCount: 1 });
+const timeoutFirewall = validateTargetHarnessScopeFirewall({ timeoutKillsProcessTree: false });
 const progressive = buildProgressiveGatePlan();
 const selector = buildTargetRolloutSelectorManifest();
 const dryRun = buildRolloutDryRun();
@@ -77,6 +79,8 @@ const cases = [
   test('legacy_true_blocker_remains_blocking', () => legacyTrueBlocker.classification === 'blocking' && legacyTrueBlocker.trueBlockerPreserved === true),
   test('target_harness_scope_firewall_passes_safe_defaults', () => firewall.status === 'pass'),
   test('target_harness_scope_firewall_blocks_external_cwd', () => validateTargetHarnessScopeFirewall({ childCwd: '..' }).status === 'fail'),
+  test('target_harness_scope_firewall_blocks_external_workspace_process', () => externalProcessFirewall.status === 'fail'),
+  test('target_harness_scope_firewall_blocks_unbounded_timeout_lifecycle', () => timeoutFirewall.status === 'fail'),
   test('progressive_gate_runner_starts_fast', () => progressive.fastGateFirst === true && progressive.order[0] === 'fast_gate'),
   test('progressive_gate_runner_has_runtime_budget', () => progressive.budgets.fastGateSeconds <= 20),
   test('boundary_macro_profiles_registered', () => Object.keys(BOUNDARY_PROFILES).length >= 11),
