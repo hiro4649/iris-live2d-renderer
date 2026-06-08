@@ -10168,6 +10168,18 @@ async function runTargetHarnessGate() {
     report.sandboxedVerificationLaneStatus = { status: 'pass', reasonCodes: ['repo_local_target_scope_only'], safeSummaryOnly: true };
     report.networkEgressAllowlistStatus = { status: 'pass', reasonCodes: ['github_metadata_only'], safeSummaryOnly: true };
     report.timeoutChildLifecycleStatus = { status: 'pass', reasonCodes: ['no_long_running_child_gate_in_live2d_minimal_path'], safeSummaryOnly: true };
+    const minimalSurfaceNotRequiredStatus = {
+      status: 'pass',
+      reasonCodes: ['v113_live2d_minimal_surface_not_required'],
+      safeSummaryOnly: true,
+    };
+    report.prEvidenceRendererStatus = { ...minimalSurfaceNotRequiredStatus };
+    report.safeArtifactClassifierStatus = { ...minimalSurfaceNotRequiredStatus };
+    report.securityLifecycleStatus = { ...minimalSurfaceNotRequiredStatus };
+    report.bestOfNDecisionStatus = { ...minimalSurfaceNotRequiredStatus };
+    report.environmentProfileStatus = { ...minimalSurfaceNotRequiredStatus };
+    report.agentsContextBudgetStatus = { ...minimalSurfaceNotRequiredStatus };
+    report.evidenceAutoRepairHintStatus = { ...minimalSurfaceNotRequiredStatus };
     report.remoteEvidencePass = false;
     report.runtimeReadinessClaimed = false;
     report.productionReadinessClaimed = false;
