@@ -262,3 +262,15 @@ Assistant review, PR merge, remote quality-gate PASS, local checks, target harne
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0.
 
 Future actual evidence collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
+
+## LIVE2D-OWNER-CONFIRMATION-BINDING1 safe boundary
+
+LIVE2D-OWNER-CONFIRMATION-BINDING1 is owner confirmation binding planning only. It defines how future owner confirmation must be scoped, linked to safe evidence summaries, linked to summary intake, linked to freshness thresholds, linked to collection plans, linked to audit references, checked for expiry, checked for revocation, and rejected for wrong-role or scope-mismatched confirmation.
+
+This binding does not create owner confirmation and does not confirm any owner scope. It does not collect evidence, validate live services, perform live probes, call the real renderer, call the Cubism SDK, call external services, enable the trusted loader allowlist, or trust any loader.
+
+Assistant review is not owner confirmation. PR merge is not owner confirmation. Remote quality-gate PASS is not owner confirmation. Local checks PASS is not owner confirmation. Target harness PASS is not owner confirmation. Browser/API smoke PASS is not owner confirmation. Operator summary is not owner confirmation. Manual summary is not owner confirmation. Safe summary intake eligibility is not owner confirmation.
+
+Wrong-role confirmation, expired confirmation, revoked confirmation, scope-mismatched confirmation, missing audit binding, missing safe evidence summary binding, missing summary intake binding, missing freshness threshold binding, missing head SHA/run id/file scope binding, fixture evidence, dry-run evidence, and mock confirmation remain rejected.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection and readiness decisions require separate owner-confirmed tasks.

@@ -244,3 +244,12 @@ This is not collection. No live probe is performed, no real renderer call is per
 Owner-provided file values remain private; only env names and safe statuses are public. Assistant review, PR merge, remote quality-gate PASS, local checks, target harness, smoke, fixture evidence, dry-run evidence, stale evidence, and mock owner confirmation do not create owner confirmation or readiness.
 
 Runtime readiness and production readiness are not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual evidence collection requires a separate owner-confirmed task.
+
+### LIVE2D-OWNER-CONFIRMATION-BINDING1
+
+- Purpose: define a safe owner confirmation binding for future real resident evidence handling.
+- Scope: future owner confirmation scopes, safe evidence summary references, summary intake references, freshness threshold references, collection plan references, audit references, owner scope, expiry status, revocation status, and safe reason codes.
+- Boundary: planning only; no owner confirmation is created, no owner scope is confirmed, no real evidence is collected, no live probe runs, no real renderer or SDK call runs, no external service is called, no trusted loader allowlist is enabled, and no loader is trusted.
+- Rejection policy: assistant review, PR merge, remote PASS, local PASS, target harness PASS, browser/API smoke PASS, operator summary, manual summary, safe summary intake eligibility, fixture evidence, dry-run evidence, mock confirmation, wrong-role confirmation, expired confirmation, revoked confirmation, and scope mismatch are not owner confirmation.
+- Readiness: runtime readiness and production readiness are not claimed; priority1 remains BLOCKED; motion dataset remains non-executable while checked_row_count is 0.
+- Next actual collection: separate owner-confirmed task with fresh real resident evidence, audit binding, scoped owner confirmation, and go/no-go blocker review.
