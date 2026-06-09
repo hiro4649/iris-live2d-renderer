@@ -33,6 +33,7 @@ import {
   validatePermissionProfileMatrix,
   validateSkillProfileRegistry,
 } from './codex-v115-policy-hooks.mjs';
+import { normalizeEffectiveFailures } from './codex-workflow-quality-runner.mjs';
 
 function test(name, fn) {
   try {
@@ -222,6 +223,10 @@ const cases = [
   test('planning_only_merge_ready_true_without_owner_confirmation_rejected', () => {
     const safe = buildPlanningOnlyQualityGateSeparationFixture({ mergeReady: true, ownerConfirmationStatus: "pending" });
     return !(safe.mergeReady === true && safe.ownerConfirmationStatus === "confirmed");
+  }),
+  test('planning_only_blank_failure_entry_does_not_fail_quality_gate', () => {
+    const failures = normalizeEffectiveFailures(["", null, "   "]);
+    return failures.length === 0;
   }),
   test('all_v115_status_keys_default_pass', () => V115_STATUS_KEYS.every((key) => report[key]?.status === 'pass')),
   test('trace_kernel_safe_data_only', () => validateTraceKernel(trace).status === 'pass'),
