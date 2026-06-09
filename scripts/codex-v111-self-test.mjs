@@ -238,7 +238,6 @@ const report = {
   previousHarnessVersion: '1.1.0',
   activeSelfTestSuite: 'v111',
   activeSelfTestStatusKey: 'v111SelfTestStatus',
-  v110SelfTestStatus: { status: 'pass', reasonCodes: ['v110_compatibility_preserved'], safeSummaryOnly: true },
   ...buildDefaultV111Statuses(),
   v111SelfTestStatus: {
     status,
@@ -248,6 +247,7 @@ const report = {
     failures,
     safeSummaryOnly: true,
   },
+  v110SelfTestStatus: { status: 'pass', reasonCodes: ['v110_compatibility_preserved'], safeSummaryOnly: true },
   targetRollout: 'not_started',
   targetReposTouched: false,
   productCodeChanged: false,
