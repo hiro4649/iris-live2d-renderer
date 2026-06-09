@@ -12,6 +12,7 @@ export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmatio
 export const REAL_EVIDENCE_REQUEST_PACKET_SCHEMA = "iris_live2d_real_evidence_request_packet_v1";
 export const REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA = "iris_live2d_real_resident_evidence_collection_plan_v1";
 export const LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA = "iris_live2d_real_evidence_collector_manifest_v1";
+export const LIVE2D_REAL_EVIDENCE_COLLECTOR_FIXTURE_PACK_SCHEMA = "iris_live2d_real_evidence_collector_fixture_pack_v1";
 export const REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA = "iris_live2d_real_evidence_freshness_threshold_v1";
 export const LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA = "iris_live2d_safe_evidence_summary_contract_v1";
 export const LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA = "iris_live2d_real_evidence_summary_intake_binding_v1";
@@ -163,6 +164,40 @@ const REAL_EVIDENCE_COLLECTOR_SAFE_OUTPUT_FIELDS = Object.freeze([
   "redaction_status",
   "blocker_labels",
   "safe_next_action",
+]);
+
+const REAL_EVIDENCE_COLLECTOR_FIXTURE_POSITIVE_CASES = Object.freeze([
+  "collector_fixture_positive_required_collectors_present",
+  "collector_fixture_positive_safe_output_fields_present",
+  "collector_fixture_positive_source_binding_present",
+  "collector_fixture_positive_freshness_binding_present",
+  "collector_fixture_positive_audit_binding_present",
+  "collector_fixture_positive_redaction_status_pass",
+  "collector_fixture_positive_safe_summary_only",
+]);
+
+const REAL_EVIDENCE_COLLECTOR_FIXTURE_REJECTION_CASES = Object.freeze([
+  "collector_fixture_reject_missing_collector",
+  "collector_fixture_reject_missing_safe_output_field",
+  "collector_fixture_reject_fixture_source",
+  "collector_fixture_reject_dry_run_source",
+  "collector_fixture_reject_mock_source",
+  "collector_fixture_reject_stale_source",
+  "collector_fixture_reject_unknown_source",
+  "collector_fixture_reject_missing_source_binding",
+  "collector_fixture_reject_missing_freshness_binding",
+  "collector_fixture_reject_missing_audit_binding",
+  "collector_fixture_reject_missing_redaction_status",
+  "collector_fixture_reject_forbidden_material",
+  "collector_fixture_reject_execution_attempt",
+  "collector_fixture_reject_real_probe_attempt",
+  "collector_fixture_reject_external_service_attempt",
+  "collector_fixture_reject_real_sdk_attempt",
+  "collector_fixture_reject_real_renderer_attempt",
+  "collector_fixture_reject_owner_confirmation_attempt",
+  "collector_fixture_reject_readiness_claim",
+  "collector_fixture_reject_priority1_resolution",
+  "collector_fixture_reject_motion_dataset_execution",
 ]);
 
 const REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES = Object.freeze([
@@ -1442,6 +1477,197 @@ export function createRealEvidenceCollectorManifestSummary(manifest = {}, {
     },
   };
   assertSafePublicObject(summary, "real evidence collector manifest summary");
+  return summary;
+}
+
+export function createRealEvidenceCollectorFixturePackSummary(fixturePack = {}, {
+  manifestSummary = createRealEvidenceCollectorManifestSummary(),
+  positiveCases = REAL_EVIDENCE_COLLECTOR_FIXTURE_POSITIVE_CASES,
+  rejectionCases = REAL_EVIDENCE_COLLECTOR_FIXTURE_REJECTION_CASES,
+} = {}) {
+  const source = fixturePack && typeof fixturePack === "object" ? fixturePack : {};
+  const sourceType = safeEvidenceLabel(source.source_type ?? source.source_kind, "missing");
+  const rejectedSourceType = SAFE_EVIDENCE_SUMMARY_REJECTED_SOURCE_TYPES.includes(sourceType) || sourceType === "unknown";
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source) || hasCollectionPlanForbiddenMaterial(source);
+  const executionAttemptRejected = source.collector_execution_started === true
+    || source.real_evidence_collection_started === true
+    || source.executes_collectors === true;
+  const realProbeAttemptRejected = source.real_probe_started === true
+    || source.collector_real_probe_started === true
+    || source.performs_live_probe === true;
+  const externalServiceAttemptRejected = source.external_service_call_started === true
+    || source.calls_external_service === true;
+  const realSdkAttemptRejected = source.real_sdk_call_started === true
+    || source.calls_real_sdk === true;
+  const realRendererAttemptRejected = source.real_renderer_call_started === true
+    || source.calls_real_renderer === true;
+  const ownerConfirmationAttemptRejected = source.owner_confirmation_created === true
+    || source.owner_confirmation_confirmed === true
+    || source.creates_owner_confirmation === true;
+  const readinessAttemptRejected = source.renderer_ready === true
+    || source.model_loaded === true
+    || source.scene_loaded === true
+    || source.browser_cue_delivery_ready === true
+    || source.runtime_readiness_claimed === true
+    || source.production_readiness_claimed === true;
+  const priority1AttemptRejected = source.priority1_status === "RESOLVED" || source.blocker_resolved === true;
+  const motionDatasetAttemptRejected = source.motion_dataset_executable === true;
+  const rejectedCasesTriggered = [
+    rejectedSourceType ? `collector_fixture_reject_${sourceType}_source` : "",
+    unsafeMaterialRejected ? "collector_fixture_reject_forbidden_material" : "",
+    executionAttemptRejected ? "collector_fixture_reject_execution_attempt" : "",
+    realProbeAttemptRejected ? "collector_fixture_reject_real_probe_attempt" : "",
+    externalServiceAttemptRejected ? "collector_fixture_reject_external_service_attempt" : "",
+    realSdkAttemptRejected ? "collector_fixture_reject_real_sdk_attempt" : "",
+    realRendererAttemptRejected ? "collector_fixture_reject_real_renderer_attempt" : "",
+    ownerConfirmationAttemptRejected ? "collector_fixture_reject_owner_confirmation_attempt" : "",
+    readinessAttemptRejected ? "collector_fixture_reject_readiness_claim" : "",
+    priority1AttemptRejected ? "collector_fixture_reject_priority1_resolution" : "",
+    motionDatasetAttemptRejected ? "collector_fixture_reject_motion_dataset_execution" : "",
+  ].filter(Boolean);
+  const blockedReasons = [
+    "collector_fixture_pack_synthetic_only",
+    "collector_fixture_pack_blocked_no_real_collection",
+    "collector_fixture_pack_blocked_no_live_probe",
+    "collector_fixture_pack_blocked_no_owner_confirmation",
+    "collector_fixture_pack_blocked_no_go",
+    "collector_fixture_pack_blocked_priority1_unresolved",
+    "collector_fixture_pack_blocked_motion_dataset_non_executable",
+    "collector_fixture_pack_not_runtime_ready",
+    "collector_fixture_pack_not_production_ready",
+    ...rejectedCasesTriggered,
+  ];
+  const summary = {
+    schema: LIVE2D_REAL_EVIDENCE_COLLECTOR_FIXTURE_PACK_SCHEMA,
+    safe_summary_only: true,
+    real_evidence_collector_fixture_pack_status: "planning_only",
+    fixture_pack_ready_candidate: false,
+    collector_fixture_pack_ready_candidate: false,
+    collector_dry_run_verifier_status: "planning_only",
+    planning_only_boundary: true,
+    synthetic_only_boundary: true,
+    no_real_collection_boundary: true,
+    no_live_probe_boundary: true,
+    no_owner_confirmation_created_boundary: true,
+    no_owner_confirmation_confirmed_boundary: true,
+    no_readiness_boundary: true,
+    no_go_preserved: true,
+    positive_fixture_cases: positiveCases,
+    rejection_fixture_cases: rejectionCases,
+    required_collector_fixture_cases: positiveCases,
+    collector_fixture_expected_safe_passes: positiveCases,
+    collector_fixture_expected_rejections: rejectionCases,
+    collector_fixture_redaction_policy: "safe_summary_only_no_forbidden_material",
+    collector_fixture_network_policy: "blocked_by_default_no_external_services",
+    collector_fixture_sdk_policy: "forbid_real_sdk_call",
+    collector_fixture_renderer_policy: "forbid_real_renderer_call",
+    collector_fixture_registry: Object.fromEntries((manifestSummary.required_collectors || []).map((collector) => [collector, {
+      collector_name: collector,
+      fixture_case_status: "synthetic_fixture_only",
+      dry_run_verifier_status: "planning_only",
+      ready_candidate: false,
+      execution_started: false,
+      real_probe_started: false,
+      safe_summary_only: true,
+    }])),
+    rejection_cases_triggered: [...new Set(rejectedCasesTriggered)],
+    redaction_policy: "safe_summary_only_no_forbidden_material",
+    network_policy: "blocked_by_default_no_external_services",
+    sdk_policy: "forbid_real_sdk_call",
+    renderer_policy: "forbid_real_renderer_call",
+    fixture_source_rejection: "fixture_source_rejected_for_real_evidence",
+    dry_run_source_rejection: "dry_run_source_rejected_for_real_evidence",
+    mock_source_rejection: "mock_source_rejected_for_real_evidence",
+    stale_source_rejection: "stale_source_rejected_for_fresh_evidence",
+    unknown_source_rejection: "unknown_source_rejected",
+    missing_binding_rejection: "missing_source_freshness_audit_or_redaction_binding_rejected",
+    execution_attempt_rejection: "collector_execution_attempt_rejected",
+    real_probe_attempt_rejection: "real_probe_attempt_rejected",
+    external_service_attempt_rejection: "external_service_attempt_rejected",
+    trusted_loader_boundary: "trusted_loader_allowlist_disabled_no_loader_trusted",
+    owner_confirmation_boundary: "schema_only_no_owner_confirmation_created",
+    go_nogo_preservation: "go_nogo_status_no_go",
+    collection_plan_preservation: "collection_plan_planning_only",
+    freshness_threshold_preservation: "freshness_threshold_planning_only",
+    safe_evidence_summary_contract_preservation: "safe_evidence_summary_contract_planning_only",
+    summary_intake_binding_preservation: "summary_intake_binding_planning_only",
+    owner_confirmation_binding_preservation: "owner_confirmation_binding_planning_only",
+    blocker_resolution_schema_preservation: "blocker_resolution_schema_planning_only",
+    collector_manifest_preservation: manifestSummary.real_evidence_collector_manifest_status === "planning_only"
+      ? "collector_manifest_planning_only"
+      : "collector_manifest_not_ready",
+    source_type_status: rejectedSourceType ? `rejected_${sourceType}` : "synthetic_fixture_pack_only",
+    forbidden_material_status: unsafeMaterialRejected ? "forbidden_material_rejected" : "not_present",
+    blocked_reason: blockedReasons[0],
+    blocked_reasons: [...new Set(blockedReasons)],
+    collector_execution_started: false,
+    collector_real_probe_started: false,
+    real_evidence_collection_started: false,
+    real_probe_started: false,
+    live_probe_started: false,
+    real_renderer_call_started: false,
+    real_sdk_call_started: false,
+    external_service_call_started: false,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    fixture_pack_executes_collectors: false,
+    fixture_pack_collects_real_evidence: false,
+    fixture_pack_performs_live_probes: false,
+    fixture_pack_calls_real_renderer: false,
+    fixture_pack_calls_real_sdk: false,
+    fixture_pack_calls_external_services: false,
+    fixture_pack_creates_owner_confirmation: false,
+    request_packet_status: "request_only_no_collection",
+    collection_plan_status: "planning_only",
+    freshness_threshold_status: "planning_only",
+    safe_evidence_summary_contract_status: "planning_only",
+    summary_intake_binding_status: "planning_only",
+    owner_confirmation_binding_status: "planning_only",
+    go_nogo_blocker_resolution_status: "planning_only",
+    real_evidence_intake_status: "schema_only",
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    checked_row_count: 0,
+    trusted_loader_allowlist_enabled: false,
+    trusted_loader_allowlist_status: "disabled",
+    no_loader_trusted: true,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    motion_dataset_executable: false,
+    assistant_review_is_owner_confirmation: false,
+    pr_merge_is_owner_confirmation: false,
+    remote_pass_is_owner_confirmation: false,
+    safe_next_action: "future_owner_confirmed_real_evidence_collection_task_required",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      synthetic_only_no_collection: true,
+      no_live_probe: true,
+      no_real_renderer_call: true,
+      no_real_sdk_call: true,
+      no_external_service_call: true,
+      no_owner_confirmation_creation: true,
+      no_trusted_loader_enablement: true,
+      no_env_values: true,
+      no_endpoint_values: true,
+      no_token_values: true,
+      no_secret_values: true,
+      no_private_paths: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      no_shell_command_bodies: true,
+    },
+  };
+  assertSafePublicObject(summary, "real evidence collector fixture pack summary");
   return summary;
 }
 
