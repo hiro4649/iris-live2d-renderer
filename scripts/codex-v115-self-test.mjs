@@ -33,7 +33,12 @@ import {
   validatePermissionProfileMatrix,
   validateSkillProfileRegistry,
 } from './codex-v115-policy-hooks.mjs';
-import { buildRemoteNpmDiagnosticNormalizationInput } from './codex-local-quality-gate.mjs';
+import {
+  buildProductPlanningPrePushTargetReport,
+  buildRemoteNpmDiagnosticNormalizationInput,
+  buildTargetNoSafeReportFailureReport,
+  shouldUseProductPlanningPrePushTargetFastPath,
+} from './codex-local-quality-gate.mjs';
 import { buildRemoteNpmDiagnosticNormalizationReport } from './codex-v099-gate-lib.mjs';
 import { buildWorkflowExitDecision, normalizeEffectiveFailures } from './codex-workflow-quality-runner.mjs';
 
@@ -185,6 +190,43 @@ const cases = [
   test('target_no_safe_report_preserves_branch_head_tracked_invariants', () => {
     const safe = buildTargetNoSafeReportFailureFixture({ branchUnchanged: true, headUnchanged: true, trackedFilesUnchanged: true });
     return safe.branchUnchanged === true && safe.headUnchanged === true && safe.trackedFilesUnchanged === true;
+  }),
+  test('pr129_product_planning_target_fast_path_selected_for_pre_push_remote_phase', () => {
+    return shouldUseProductPlanningPrePushTargetFastPath({
+      CODEX_HARNESS_MODE: 'target',
+      CODEX_PR_PROFILE: 'product_r3',
+      CODEX_PROFILE_COMPAT_MODE: 'off',
+      CODEX_REMOTE_EVIDENCE_PHASE: 'remote_evidence_required_after_push',
+    }) === true;
+  }),
+  test('pr129_product_planning_target_fast_path_emits_required_safe_fields', () => {
+    const safe = buildProductPlanningPrePushTargetReport();
+    return safe.status === 'pass' &&
+      safe.pendingAfterPush === true &&
+      safe.remoteEvidencePass === false &&
+      safe.targetMergeReady === false &&
+      safe.mergeReady === false &&
+      safe.remoteNpmDiagnosticNormalizationStatus &&
+      safe.safeNextAction === 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration';
+  }),
+  test('pr129_product_planning_target_fast_path_preserves_no_readiness_boundaries', () => {
+    const safe = buildProductPlanningPrePushTargetReport();
+    return safe.runtimeReadinessClaimed === false &&
+      safe.productionReadinessClaimed === false &&
+      safe.priority1Status === 'BLOCKED' &&
+      safe.motionDatasetBoundary.status === 'non_executable' &&
+      safe.checkedRowCount === 0;
+  }),
+  test('target_empty_json_regression_converts_to_typed_safe_failure', () => {
+    const safe = buildTargetNoSafeReportFailureReport({
+      failureClass: 'v115_pr129_target_empty_safe_json_regression',
+      reasonCode: 'target_harness_empty_safe_json_regression',
+    });
+    return safe.status === 'fail' &&
+      safe.decision === 'blocked' &&
+      safe.reasonCode === 'target_harness_empty_safe_json_regression' &&
+      safe.targetMergeReady === false &&
+      safe.mergeReady === false;
   }),
   test('product_target_pre_push_remote_pending_is_parseable_safe_state', () => {
     const safe = buildProductTargetEvidencePendingFixture();
