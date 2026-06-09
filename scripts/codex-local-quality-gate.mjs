@@ -5514,12 +5514,19 @@ function computeTargetOutputShapeStatus(report) {
 }
 
 const V115_PRE_PUSH_REMOTE_PENDING_KEYS = new Set([
+  'productVerificationStatus',
+  'productVerificationEvidenceStatus',
   'remoteProductEvidenceExecutionStatus',
   'remoteProductEvidenceRunnerStatus',
+  'formalEvidencePrecedenceStatus',
   'remoteNpmDiagnosticNormalizationStatus',
 ]);
 
 const V115_PRE_PUSH_REMOTE_PENDING_REASON_CODES = new Set([
+  'product_verification_required',
+  'product_verification_evidence_missing',
+  'remote_product_baseline_missing',
+  'formal_evidence_precedence_failed',
   'remote_npm_not_executed_for_product_pr',
   'remote_product_evidence_execution_missing',
 ]);
@@ -6101,7 +6108,7 @@ function computeTargetQualityScoreStatus(report) {
 
 
 
-      if (['absorbed_by_v111', 'advisory_legacy', 'not_applicable_for_lane', 'not_required_for_target_mode', 'missing_nonblocking'].includes(compatibility.classification)) {
+      if (['absorbed_by_v111', 'advisory_legacy', 'not_applicable_for_lane', 'not_required_for_target_mode', 'missing_nonblocking', 'pre_push_remote_evidence_pending'].includes(compatibility.classification)) {
 
 
 
