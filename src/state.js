@@ -8,6 +8,7 @@ import {
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
+  createRealEvidenceCollectorDryRunEnvelopeSummary,
   createRealEvidenceCollectorManifestSummary,
   createRealEvidenceCollectorFixturePackSummary,
   createRealEvidenceSummaryIntakeBindingSummary,
@@ -107,6 +108,10 @@ export function createRendererState({
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
       const realEvidenceCollectorManifest = createRealEvidenceCollectorManifestSummary();
       const realEvidenceCollectorFixturePack = createRealEvidenceCollectorFixturePackSummary({ manifestSummary: realEvidenceCollectorManifest });
+      const realEvidenceCollectorDryRunEnvelope = createRealEvidenceCollectorDryRunEnvelopeSummary({
+        manifestSummary: realEvidenceCollectorManifest,
+        fixturePackSummary: realEvidenceCollectorFixturePack,
+      });
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
@@ -177,6 +182,7 @@ export function createRendererState({
           real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
           real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
           real_evidence_collector_fixture_pack_summary: realEvidenceCollectorFixturePack,
+          real_evidence_collector_dry_run_envelope_summary: realEvidenceCollectorDryRunEnvelope,
           real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
@@ -194,12 +200,13 @@ export function createRendererState({
         real_evidence_request_packet_summary: realEvidenceRequestPacket,
         real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
         real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
-          real_evidence_collector_fixture_pack_summary: realEvidenceCollectorFixturePack,
+        real_evidence_collector_fixture_pack_summary: realEvidenceCollectorFixturePack,
+        real_evidence_collector_dry_run_envelope_summary: realEvidenceCollectorDryRunEnvelope,
         real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         owner_confirmation_binding_summary: ownerConfirmationBinding,
-          go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
+        go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
@@ -254,6 +261,7 @@ export function createRendererState({
         real_resident_evidence_collection_plan_summary: status.renderer_health.real_resident_evidence_collection_plan_summary,
         real_evidence_collector_manifest_summary: status.renderer_health.real_evidence_collector_manifest_summary,
         real_evidence_collector_fixture_pack_summary: status.renderer_health.real_evidence_collector_fixture_pack_summary,
+        real_evidence_collector_dry_run_envelope_summary: status.renderer_health.real_evidence_collector_dry_run_envelope_summary,
         real_evidence_freshness_threshold_summary: status.renderer_health.real_evidence_freshness_threshold_summary,
         safe_evidence_summary_contract_summary: status.renderer_health.safe_evidence_summary_contract_summary,
         real_evidence_summary_intake_binding_summary: status.renderer_health.real_evidence_summary_intake_binding_summary,
@@ -364,6 +372,10 @@ export function createRendererState({
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
       const realEvidenceCollectorManifest = createRealEvidenceCollectorManifestSummary();
       const realEvidenceCollectorFixturePack = createRealEvidenceCollectorFixturePackSummary({ manifestSummary: realEvidenceCollectorManifest });
+      const realEvidenceCollectorDryRunEnvelope = createRealEvidenceCollectorDryRunEnvelopeSummary({
+        manifestSummary: realEvidenceCollectorManifest,
+        fixturePackSummary: realEvidenceCollectorFixturePack,
+      });
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
@@ -393,6 +405,7 @@ export function createRendererState({
       response.real_resident_evidence_collection_plan_summary = realResidentEvidenceCollectionPlan;
       response.real_evidence_collector_manifest_summary = realEvidenceCollectorManifest;
       response.real_evidence_collector_fixture_pack_summary = realEvidenceCollectorFixturePack;
+      response.real_evidence_collector_dry_run_envelope_summary = realEvidenceCollectorDryRunEnvelope;
       response.real_evidence_freshness_threshold_summary = realEvidenceFreshnessThreshold;
       response.safe_evidence_summary_contract_summary = safeEvidenceSummaryContract;
       response.real_evidence_summary_intake_binding_summary = realEvidenceSummaryIntakeBinding;
@@ -468,6 +481,10 @@ export function createRendererState({
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
       const realEvidenceCollectorManifest = createRealEvidenceCollectorManifestSummary();
       const realEvidenceCollectorFixturePack = createRealEvidenceCollectorFixturePackSummary({ manifestSummary: realEvidenceCollectorManifest });
+      const realEvidenceCollectorDryRunEnvelope = createRealEvidenceCollectorDryRunEnvelopeSummary({
+        manifestSummary: realEvidenceCollectorManifest,
+        fixturePackSummary: realEvidenceCollectorFixturePack,
+      });
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
@@ -522,6 +539,7 @@ export function createRendererState({
           real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
           real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
           real_evidence_collector_fixture_pack_summary: realEvidenceCollectorFixturePack,
+          real_evidence_collector_dry_run_envelope_summary: realEvidenceCollectorDryRunEnvelope,
           real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
@@ -539,12 +557,13 @@ export function createRendererState({
         real_evidence_request_packet_summary: realEvidenceRequestPacket,
         real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
         real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
-          real_evidence_collector_fixture_pack_summary: realEvidenceCollectorFixturePack,
+        real_evidence_collector_fixture_pack_summary: realEvidenceCollectorFixturePack,
+        real_evidence_collector_dry_run_envelope_summary: realEvidenceCollectorDryRunEnvelope,
         real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         owner_confirmation_binding_summary: ownerConfirmationBinding,
-          go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
+        go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         boundary_policy: createBoundaryPolicy(),
       };
       assertSafePublicObject(response, "browser heartbeat response");

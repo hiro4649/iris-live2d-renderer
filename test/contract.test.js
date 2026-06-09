@@ -16,6 +16,7 @@ import {
   LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA,
   LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA,
   LIVE2D_REAL_EVIDENCE_COLLECTOR_FIXTURE_PACK_SCHEMA,
+  LIVE2D_REAL_EVIDENCE_COLLECTOR_DRY_RUN_ENVELOPE_SCHEMA,
   REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
@@ -30,6 +31,7 @@ import {
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
+  createRealEvidenceCollectorDryRunEnvelopeSummary,
   createRealEvidenceCollectorManifestSummary,
   createRealEvidenceCollectorFixturePackSummary,
   createRealEvidenceSummaryIntakeBindingSummary,
@@ -168,6 +170,7 @@ try {
   assert.equal(REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA, "iris_live2d_real_resident_evidence_collection_plan_v1");
   assert.equal(LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA, "iris_live2d_real_evidence_collector_manifest_v1");
   assert.equal(LIVE2D_REAL_EVIDENCE_COLLECTOR_FIXTURE_PACK_SCHEMA, "iris_live2d_real_evidence_collector_fixture_pack_v1");
+  assert.equal(LIVE2D_REAL_EVIDENCE_COLLECTOR_DRY_RUN_ENVELOPE_SCHEMA, "iris_live2d_real_evidence_collector_dry_run_envelope_v1");
   assert.equal(REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA, "iris_live2d_real_evidence_freshness_threshold_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -985,6 +988,197 @@ try {
   assert.equal(defaultCollectorFixturePack.browser_cue_delivery_ready, false);
   assert.equal(defaultCollectorFixturePack.motion_dataset_executable, false);
   assertSafe(JSON.stringify(defaultCollectorFixturePack));
+
+  const defaultCollectorDryRunEnvelope = createRealEvidenceCollectorDryRunEnvelopeSummary();
+  assert.equal(defaultCollectorDryRunEnvelope.real_evidence_collector_dry_run_envelope_status, "planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.collector_dry_run_envelope_status, "planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.collector_dry_run_envelope_ready_candidate, false);
+  assert.equal(defaultCollectorDryRunEnvelope.dry_run_request_shape_candidate, false);
+  assert.equal(defaultCollectorDryRunEnvelope.planning_only_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.dry_run_only_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.no_real_collection_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.no_live_probe_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.no_owner_confirmation_created_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.no_owner_confirmation_confirmed_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.no_readiness_boundary, true);
+  assert.equal(defaultCollectorDryRunEnvelope.no_go_preserved, true);
+  for (const requiredField of ["collector_names", "source_binding", "freshness_binding", "audit_binding", "redaction_status", "safe_output_fields", "safe_next_action"]) {
+    assert.equal(defaultCollectorDryRunEnvelope.required_dry_run_request_fields.includes(requiredField), true);
+  }
+  for (const rejectionReason of [
+    "dry_run_reject_missing_collector_name",
+    "dry_run_reject_unknown_collector_name",
+    "dry_run_reject_missing_source_binding",
+    "dry_run_reject_missing_freshness_binding",
+    "dry_run_reject_missing_audit_binding",
+    "dry_run_reject_missing_redaction_status",
+    "dry_run_reject_missing_safe_output_fields",
+    "dry_run_reject_forbidden_raw_field",
+    "dry_run_reject_fixture_source_as_real_evidence",
+    "dry_run_reject_dry_run_source_as_real_evidence",
+    "dry_run_reject_mock_source",
+    "dry_run_reject_stale_source",
+    "dry_run_reject_unknown_source",
+    "dry_run_reject_collector_execution_request",
+    "dry_run_reject_real_probe_request",
+    "dry_run_reject_external_service_request",
+    "dry_run_reject_real_sdk_request",
+    "dry_run_reject_real_renderer_request",
+    "dry_run_reject_owner_confirmation_request",
+    "dry_run_reject_readiness_promotion",
+    "dry_run_reject_go_request",
+    "dry_run_reject_blocker_resolution",
+    "dry_run_reject_trusted_loader_enablement",
+    "dry_run_reject_motion_execution",
+  ]) {
+    assert.equal(defaultCollectorDryRunEnvelope.dry_run_request_rejection_reasons.includes(rejectionReason), true);
+  }
+  assert.equal(defaultCollectorDryRunEnvelope.triggered_rejection_reasons.includes("dry_run_reject_missing_collector_name"), true);
+  assert.equal(defaultCollectorDryRunEnvelope.triggered_rejection_reasons.includes("dry_run_reject_missing_source_binding"), true);
+  assert.equal(defaultCollectorDryRunEnvelope.network_policy, "blocked_by_default_no_external_services");
+  assert.equal(defaultCollectorDryRunEnvelope.sdk_policy, "forbid_real_sdk_call");
+  assert.equal(defaultCollectorDryRunEnvelope.renderer_policy, "forbid_real_renderer_call");
+  assert.equal(defaultCollectorDryRunEnvelope.fixture_pass_rejection, "fixture_pass_is_not_real_evidence");
+  assert.equal(defaultCollectorDryRunEnvelope.dry_run_pass_rejection, "dry_run_pass_is_not_real_evidence");
+  assert.equal(defaultCollectorDryRunEnvelope.mock_source_rejection, "mock_source_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.stale_source_rejection, "stale_source_rejected_for_fresh_evidence");
+  assert.equal(defaultCollectorDryRunEnvelope.unknown_source_rejection, "unknown_source_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.missing_binding_rejection, "missing_source_freshness_audit_redaction_or_safe_output_binding_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.execution_request_rejection, "collector_execution_request_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.real_probe_request_rejection, "real_probe_request_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.external_service_request_rejection, "external_service_request_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.owner_confirmation_request_rejection, "owner_confirmation_request_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.readiness_promotion_request_rejection, "readiness_promotion_request_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.go_request_rejection, "go_request_rejected");
+  assert.equal(defaultCollectorDryRunEnvelope.trusted_loader_boundary, "trusted_loader_allowlist_disabled_no_loader_trusted");
+  assert.equal(defaultCollectorDryRunEnvelope.owner_confirmation_boundary, "schema_only_no_owner_confirmation_created");
+  assert.equal(defaultCollectorDryRunEnvelope.go_nogo_preservation, "go_nogo_status_no_go");
+  assert.equal(defaultCollectorDryRunEnvelope.collection_plan_preservation, "collection_plan_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.freshness_threshold_preservation, "freshness_threshold_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.safe_evidence_summary_contract_preservation, "safe_evidence_summary_contract_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.summary_intake_binding_preservation, "summary_intake_binding_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.owner_confirmation_binding_preservation, "owner_confirmation_binding_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.blocker_resolution_schema_preservation, "blocker_resolution_schema_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.collector_manifest_preservation, "collector_manifest_planning_only");
+  assert.equal(defaultCollectorDryRunEnvelope.collector_fixture_pack_preservation, "collector_fixture_pack_synthetic_only");
+  assert.equal(defaultCollectorDryRunEnvelope.collector_execution_started, false);
+  assert.equal(defaultCollectorDryRunEnvelope.real_evidence_collection_started, false);
+  assert.equal(defaultCollectorDryRunEnvelope.real_probe_started, false);
+  assert.equal(defaultCollectorDryRunEnvelope.external_service_call_started, false);
+  assert.equal(defaultCollectorDryRunEnvelope.real_sdk_call_started, false);
+  assert.equal(defaultCollectorDryRunEnvelope.real_renderer_call_started, false);
+  assert.equal(defaultCollectorDryRunEnvelope.owner_confirmation_created, false);
+  assert.equal(defaultCollectorDryRunEnvelope.owner_confirmation_confirmed, false);
+  assert.equal(defaultCollectorDryRunEnvelope.go_nogo_status, "no_go");
+  assert.equal(defaultCollectorDryRunEnvelope.go_candidate, false);
+  assert.equal(defaultCollectorDryRunEnvelope.blocker_resolved, false);
+  assert.equal(defaultCollectorDryRunEnvelope.priority1_status, "BLOCKED");
+  assert.equal(defaultCollectorDryRunEnvelope.motion_dataset_status, "non_executable");
+  assert.equal(defaultCollectorDryRunEnvelope.checked_row_count, 0);
+  assert.equal(defaultCollectorDryRunEnvelope.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultCollectorDryRunEnvelope.no_loader_trusted, true);
+  assert.equal(defaultCollectorDryRunEnvelope.runtime_readiness_claimed, false);
+  assert.equal(defaultCollectorDryRunEnvelope.production_readiness_claimed, false);
+  assert.equal(defaultCollectorDryRunEnvelope.renderer_ready, false);
+  assert.equal(defaultCollectorDryRunEnvelope.model_loaded, false);
+  assert.equal(defaultCollectorDryRunEnvelope.scene_loaded, false);
+  assert.equal(defaultCollectorDryRunEnvelope.browser_cue_delivery_ready, false);
+  assert.equal(defaultCollectorDryRunEnvelope.motion_dataset_executable, false);
+  assert.equal(defaultCollectorDryRunEnvelope.accepted_dry_run_request_is_real_evidence, false);
+  assert.equal(defaultCollectorDryRunEnvelope.accepted_dry_run_request_is_owner_confirmation, false);
+  assert.equal(defaultCollectorDryRunEnvelope.accepted_dry_run_request_is_readiness, false);
+  assert.equal(defaultCollectorDryRunEnvelope.accepted_dry_run_request_resolves_priority1, false);
+  assert.equal(defaultCollectorDryRunEnvelope.accepted_dry_run_request_makes_motion_executable, false);
+  assertSafe(JSON.stringify(defaultCollectorDryRunEnvelope));
+
+  const acceptedCollectorDryRunEnvelope = createRealEvidenceCollectorDryRunEnvelopeSummary({
+    collector_names: ["live2d_renderer_heartbeat_collector"],
+    source_type: "manual_summary",
+    source_binding: "present",
+    freshness_binding: "present",
+    audit_binding: "present",
+    redaction_status: "safe_summary_only",
+    safe_output_fields: [
+      "component",
+      "collector_name",
+      "collector_status",
+      "evidence_source_type",
+      "freshness_status",
+      "safe_evidence_ref",
+      "safe_audit_ref",
+      "head_sha_ref",
+      "run_id_ref",
+      "file_scope",
+      "checked_at_bucket",
+      "status_reason_code",
+      "redaction_status",
+      "blocker_labels",
+      "safe_next_action",
+    ],
+    safe_next_action: "future_owner_confirmed_real_evidence_collection_task_required",
+  });
+  assert.equal(acceptedCollectorDryRunEnvelope.dry_run_request_shape_candidate, true);
+  assert.equal(acceptedCollectorDryRunEnvelope.collector_dry_run_envelope_ready_candidate, false);
+  assert.equal(acceptedCollectorDryRunEnvelope.triggered_rejection_reasons.length, 0);
+  assert.equal(acceptedCollectorDryRunEnvelope.accepted_dry_run_request_is_real_evidence, false);
+  assert.equal(acceptedCollectorDryRunEnvelope.accepted_dry_run_request_is_owner_confirmation, false);
+  assert.equal(acceptedCollectorDryRunEnvelope.accepted_dry_run_request_is_readiness, false);
+  assert.equal(acceptedCollectorDryRunEnvelope.accepted_dry_run_request_resolves_priority1, false);
+  assert.equal(acceptedCollectorDryRunEnvelope.accepted_dry_run_request_makes_motion_executable, false);
+  assert.equal(acceptedCollectorDryRunEnvelope.priority1_status, "BLOCKED");
+  assert.equal(acceptedCollectorDryRunEnvelope.motion_dataset_executable, false);
+  assertSafe(JSON.stringify(acceptedCollectorDryRunEnvelope));
+
+  const rejectedCollectorDryRunEnvelope = createRealEvidenceCollectorDryRunEnvelopeSummary({
+    collector_names: ["unknown_collector"],
+    source_type: "dry_run",
+    source_binding: "present",
+    freshness_binding: "present",
+    audit_binding: "present",
+    redaction_status: "pass",
+    safe_output_fields: ["component"],
+    raw_evidence_body: "unsafe_fixture_value",
+    collector_execution_requested: true,
+    real_probe_requested: true,
+    external_service_requested: true,
+    real_sdk_call_requested: true,
+    real_renderer_call_requested: true,
+    owner_confirmation_requested: true,
+    renderer_ready: true,
+    go_requested: true,
+    blocker_resolved: true,
+    trusted_loader_allowlist_enabled: true,
+    motion_dataset_executable: true,
+  });
+  for (const expectedRejection of [
+    "dry_run_reject_unknown_collector_name",
+    "dry_run_reject_dry_run_source_as_real_evidence",
+    "dry_run_reject_forbidden_raw_field",
+    "dry_run_reject_collector_execution_request",
+    "dry_run_reject_real_probe_request",
+    "dry_run_reject_external_service_request",
+    "dry_run_reject_real_sdk_request",
+    "dry_run_reject_real_renderer_request",
+    "dry_run_reject_owner_confirmation_request",
+    "dry_run_reject_readiness_promotion",
+    "dry_run_reject_go_request",
+    "dry_run_reject_blocker_resolution",
+    "dry_run_reject_trusted_loader_enablement",
+    "dry_run_reject_motion_execution",
+  ]) {
+    assert.equal(rejectedCollectorDryRunEnvelope.triggered_rejection_reasons.includes(expectedRejection), true);
+  }
+  assert.equal(rejectedCollectorDryRunEnvelope.collector_execution_started, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.real_probe_started, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.external_service_call_started, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.owner_confirmation_confirmed, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.renderer_ready, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.go_candidate, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.blocker_resolved, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.trusted_loader_allowlist_enabled, false);
+  assert.equal(rejectedCollectorDryRunEnvelope.motion_dataset_executable, false);
+  assert.equal(JSON.stringify(rejectedCollectorDryRunEnvelope).includes("unsafe_fixture_value"), false);
+  assertSafe(JSON.stringify(rejectedCollectorDryRunEnvelope));
 
   const unsafeCollectorFixturePack = createRealEvidenceCollectorFixturePackSummary({
     source_type: "fixture",
@@ -2951,6 +3145,20 @@ try {
   assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.real_evidence_collector_dry_run_envelope_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.collector_dry_run_envelope_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.collector_execution_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.external_service_call_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.owner_confirmation_created, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_dry_run_envelope_summary.go_nogo_status, "no_go");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.freshness_policy_ready_candidate, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
@@ -3066,6 +3274,13 @@ try {
   assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.fixture_pack_collects_real_evidence, false);
   assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.fixture_pack_creates_owner_confirmation, false);
   assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.real_evidence_collector_dry_run_envelope_status, "planning_only");
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.collector_dry_run_envelope_ready_candidate, false);
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.dry_run_envelope_collects_real_evidence, false);
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.dry_run_envelope_creates_owner_confirmation, false);
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.accepted_dry_run_request_is_real_evidence, false);
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.accepted_dry_run_request_is_owner_confirmation, false);
+  assert.equal(provisionedStatus.real_evidence_collector_dry_run_envelope_summary.renderer_ready, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_probe_started, false);
@@ -3133,6 +3348,10 @@ try {
   assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.collector_execution_started, false);
   assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.real_probe_started, false);
   assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_evidence_collector_dry_run_envelope_summary.real_evidence_collector_dry_run_envelope_status, "planning_only");
+  assert.equal(provisionedHealth.real_evidence_collector_dry_run_envelope_summary.collector_execution_started, false);
+  assert.equal(provisionedHealth.real_evidence_collector_dry_run_envelope_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.real_evidence_collector_dry_run_envelope_summary.motion_dataset_executable, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_probe_started, false);
@@ -3205,6 +3424,10 @@ try {
   assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.collector_execution_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_dry_run_envelope_summary.real_evidence_collector_dry_run_envelope_status, "planning_only");
+  assert.equal(provisionedHeartbeat.real_evidence_collector_dry_run_envelope_summary.collector_execution_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_dry_run_envelope_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_dry_run_envelope_summary.renderer_ready, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_probe_started, false);
