@@ -11597,7 +11597,11 @@ async function runTargetHarnessGate() {
 
 
 
-  report.mergeReady = failures.length === 0 && warnings.length === 0;
+  const localPendingAfterPush = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push' && !process.env.GITHUB_ACTIONS;
+  report.pendingAfterPush = localPendingAfterPush;
+  report.remoteEvidencePass = localPendingAfterPush ? false : Boolean(report.remoteEvidencePass);
+
+  report.mergeReady = failures.length === 0 && warnings.length === 0 && !localPendingAfterPush;
 
 
 
