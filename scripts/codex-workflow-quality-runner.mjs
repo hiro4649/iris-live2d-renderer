@@ -3263,6 +3263,12 @@ function isPlanningOnlyMergeReadySeparation(report = {}) {
 function isPlanningOnlyExpectedFailure(item) {
   return /(?:mergeReady|targetMergeReady|ownerConfirmation|humanConfirmation|runtime readiness|production readiness|priority1|motion dataset)/i.test(String(item));
 }
+
+export function normalizeEffectiveFailures(failures = []) {
+  return [...new Set((Array.isArray(failures) ? failures : [])
+    .map((item) => String(item ?? '').trim())
+    .filter(Boolean))];
+}
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -4895,7 +4901,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-  const effectiveFailures = planningOnlyQualityPass ? failures.filter((item) => !isPlanningOnlyExpectedFailure(item)) : failures;
+  const effectiveFailures = normalizeEffectiveFailures(planningOnlyQualityPass ? failures.filter((item) => !isPlanningOnlyExpectedFailure(item)) : failures);
   const failureReasons = [
 
 
@@ -5029,7 +5035,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    failures: [...new Set(effectiveFailures)],
+    failures: effectiveFailures,
 
 
 
