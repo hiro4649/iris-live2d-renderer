@@ -3269,6 +3269,23 @@ export function normalizeEffectiveFailures(failures = []) {
     .map((item) => String(item ?? '').trim())
     .filter(Boolean))];
 }
+
+export function buildWorkflowExitDecision(result = {}) {
+  const safeSummary = result.safeSummary || {};
+  const normalizedFailures = normalizeEffectiveFailures(result.failures);
+  const qualityPass = normalizedFailures.length === 0
+    && (result.status === 'pass'
+      || (safeSummary.status === 'pass'
+        && safeSummary.qualityGatePass === true
+        && Number(safeSummary.failureCount || 0) === 0));
+  return {
+    workflowExitDecision: qualityPass ? 'success' : 'failure',
+    exitCode: qualityPass ? 0 : 1,
+    normalizedFailureEntries: normalizedFailures,
+    blockingFailureClasses: normalizedFailures,
+    safeSummaryOnly: true,
+  };
+}
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -4873,7 +4890,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    failureCount: Array.isArray(report.failures) ? report.failures.length : 0,
+    failureCount: 0,
 
 
 
@@ -4902,6 +4919,28 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
   const effectiveFailures = normalizeEffectiveFailures(planningOnlyQualityPass ? failures.filter((item) => !isPlanningOnlyExpectedFailure(item)) : failures);
+  const workflowExitDecision = effectiveFailures.length ? 'failure' : 'success';
+  safeSummary.failureCount = effectiveFailures.length;
+  safeSummary.workflowExitDecision = workflowExitDecision;
+  safeSummary.qualityGateStatus = effectiveFailures.length ? 'fail' : 'pass';
+  safeSummary.blockingFailureClasses = effectiveFailures;
+  safeSummary.normalizedFailureEntries = effectiveFailures;
+  safeSummary.ignoredNonBlockingStates = planningOnlyQualityPass ? [
+    'mergeReady_false',
+    'targetMergeReady_false',
+    'owner_confirmation_pending',
+    'runtime_readiness_false',
+    'production_readiness_false',
+    'priority1_BLOCKED',
+    'motion_dataset_non_executable',
+  ] : [];
+  safeSummary.ownerConfirmationStatus = report.ownerConfirmationStatus || report.humanConfirmationStatus || 'pending_or_not_created';
+  safeSummary.runtimeReadinessStatus = report.runtimeReadinessClaimed === true ? 'claimed' : 'not_claimed';
+  safeSummary.productionReadinessStatus = report.productionReadinessClaimed === true ? 'claimed' : 'not_claimed';
+  safeSummary.priority1Status = report.priority1Status || report.priority1_status || 'BLOCKED';
+  safeSummary.motionDatasetStatus = report.motionDatasetStatus || report.motion_dataset_status || 'non_executable';
+  safeSummary.sameHeadRemoteStatus = report.sameHeadRemoteStatus || (report.remoteEvidencePass === true ? 'pass' : 'pending_or_not_applicable');
+  safeSummary.fileLevelAuditStatus = report.fileLevelAuditStatus || 'pending_or_not_applicable';
   const failureReasons = [
 
 
@@ -4909,14 +4948,14 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    ...(Array.isArray(report.failures) ? report.failures : []).slice(0, 50).map((item) => ({
+    ...effectiveFailures.slice(0, 50).map((item) => ({
 
 
 
 
 
 
-      reasonCode: item.id || item.reasonCode || 'quality_gate_failure',
+      reasonCode: 'quality_gate_failure',
 
 
 
@@ -4937,7 +4976,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-      safeMessage: item.message || 'Quality gate failure.',
+      safeMessage: item,
 
 
 
@@ -5950,7 +5989,7 @@ export function buildWorkflowQualityRunnerReport(report, options = {}) {
 
 
 
-    reasonCodes: result.failures.length ? ['workflow_runner_failed'] : [],
+    reasonCodes: buildWorkflowExitDecision(result).exitCode ? ['workflow_runner_failed'] : [],
 
 
 
@@ -6125,14 +6164,15 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 
 
 
-  if (result.failures.length) {
+  const exitDecision = buildWorkflowExitDecision(result);
+  if (exitDecision.exitCode) {
 
 
 
 
 
 
-    for (const item of result.failures.slice(0, 20)) {
+    for (const item of exitDecision.normalizedFailureEntries.slice(0, 20)) {
 
 
 

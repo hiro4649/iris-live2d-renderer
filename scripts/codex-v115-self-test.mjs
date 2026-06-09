@@ -33,7 +33,7 @@ import {
   validatePermissionProfileMatrix,
   validateSkillProfileRegistry,
 } from './codex-v115-policy-hooks.mjs';
-import { normalizeEffectiveFailures } from './codex-workflow-quality-runner.mjs';
+import { buildWorkflowExitDecision, normalizeEffectiveFailures } from './codex-workflow-quality-runner.mjs';
 
 function test(name, fn) {
   try {
@@ -227,6 +227,31 @@ const cases = [
   test('planning_only_blank_failure_entry_does_not_fail_quality_gate', () => {
     const failures = normalizeEffectiveFailures(["", null, "   "]);
     return failures.length === 0;
+  }),
+  test('planning_only_quality_pass_with_merge_not_ready_exits_success', () => {
+    const decision = buildWorkflowExitDecision({
+      status: "pass",
+      failures: ["", null],
+      safeSummary: {
+        status: "pass",
+        qualityGatePass: true,
+        failureCount: 0,
+        mergeReady: false,
+        targetMergeReady: false,
+        ownerConfirmationStatus: "pending",
+        priority1Status: "BLOCKED",
+        motionDatasetStatus: "non_executable",
+      },
+    });
+    return decision.exitCode === 0 && decision.workflowExitDecision === "success";
+  }),
+  test('planning_only_real_blocking_failure_still_exits_failure', () => {
+    const decision = buildWorkflowExitDecision({
+      status: "fail",
+      failures: ["wrong_head_remote_evidence"],
+      safeSummary: { status: "fail", qualityGatePass: false, failureCount: 1 },
+    });
+    return decision.exitCode === 1 && decision.blockingFailureClasses.includes("wrong_head_remote_evidence");
   }),
   test('all_v115_status_keys_default_pass', () => V115_STATUS_KEYS.every((key) => report[key]?.status === 'pass')),
   test('trace_kernel_safe_data_only', () => validateTraceKernel(trace).status === 'pass'),
