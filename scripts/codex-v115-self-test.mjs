@@ -126,6 +126,25 @@ function buildProductTargetEvidencePendingFixture(overrides = {}) {
   };
 }
 
+function buildPlanningOnlyQualityGateSeparationFixture(overrides = {}) {
+  return {
+    qualityGatePass: overrides.qualityGatePass ?? true,
+    qualityEvidencePass: overrides.qualityEvidencePass ?? true,
+    mergeReadinessStatus: overrides.mergeReadinessStatus || "not_ready_planning_only",
+    targetMergeReadinessStatus: overrides.targetMergeReadinessStatus || "not_ready_planning_only",
+    ownerConfirmationStatus: overrides.ownerConfirmationStatus || "pending",
+    runtimeReadinessClaimed: overrides.runtimeReadinessClaimed ?? false,
+    productionReadinessClaimed: overrides.productionReadinessClaimed ?? false,
+    priority1Status: overrides.priority1Status || "BLOCKED",
+    motionDatasetStatus: overrides.motionDatasetStatus || "non_executable",
+    targetMergeReady: overrides.targetMergeReady ?? false,
+    mergeReady: overrides.mergeReady ?? false,
+    remoteEvidencePass: overrides.remoteEvidencePass ?? true,
+    sameHeadRemoteStatus: overrides.sameHeadRemoteStatus || "pass",
+    safeSummaryOnly: true,
+  };
+}
+
 const trace = buildSafeTraceRecord({ repo: 'hiro4649/codex-development-harness', branch: 'main', headSha: 'abc', decision: 'blocked' });
 const top3 = extractTop3Blockers({ blockers: ['one', 'two', 'three', 'four'], safeNextAction: 'wait' });
 const report = buildV115Report({ decision: 'blocked', primaryClass: 'owner_decision_required', safeNextAction: 'owner_decision_or_state_delta' });
@@ -179,6 +198,30 @@ const cases = [
   test('product_target_pre_push_remote_pending_requires_same_head_after_push', () => {
     const safe = buildProductTargetEvidencePendingFixture();
     return safe.sameHeadRemoteRequired === true && safe.safeNextAction.includes('same_head_remote_checks');
+  }),
+  test('planning_only_quality_gate_pass_can_keep_merge_ready_false', () => {
+    const safe = buildPlanningOnlyQualityGateSeparationFixture();
+    return safe.qualityGatePass === true && safe.targetMergeReady === false && safe.mergeReady === false;
+  }),
+  test('planning_only_owner_confirmation_pending_is_nonblocking_quality_state', () => {
+    const safe = buildPlanningOnlyQualityGateSeparationFixture();
+    return safe.ownerConfirmationStatus === "pending" && safe.mergeReadinessStatus === "not_ready_planning_only";
+  }),
+  test('planning_only_quality_pass_preserves_no_readiness_claims', () => {
+    const safe = buildPlanningOnlyQualityGateSeparationFixture();
+    return safe.runtimeReadinessClaimed === false && safe.productionReadinessClaimed === false;
+  }),
+  test('planning_only_quality_pass_preserves_priority1_and_motion_boundaries', () => {
+    const safe = buildPlanningOnlyQualityGateSeparationFixture();
+    return safe.priority1Status === "BLOCKED" && safe.motionDatasetStatus === "non_executable";
+  }),
+  test('planning_only_same_head_remote_missing_still_not_quality_pass', () => {
+    const safe = buildPlanningOnlyQualityGateSeparationFixture({ qualityGatePass: false, remoteEvidencePass: false, sameHeadRemoteStatus: "missing" });
+    return safe.qualityGatePass === false && safe.remoteEvidencePass === false;
+  }),
+  test('planning_only_merge_ready_true_without_owner_confirmation_rejected', () => {
+    const safe = buildPlanningOnlyQualityGateSeparationFixture({ mergeReady: true, ownerConfirmationStatus: "pending" });
+    return !(safe.mergeReady === true && safe.ownerConfirmationStatus === "confirmed");
   }),
   test('all_v115_status_keys_default_pass', () => V115_STATUS_KEYS.every((key) => report[key]?.status === 'pass')),
   test('trace_kernel_safe_data_only', () => validateTraceKernel(trace).status === 'pass'),
