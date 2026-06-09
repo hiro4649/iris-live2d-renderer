@@ -102,12 +102,28 @@ export function buildRemoteNpmDiagnosticNormalizationReport(input = parseJson(pr
   const productRelevant = productRelevantFromInput(input);
   if (!parseBool(input.forceCheck) && !productRelevant) return notApplicable('remoteNpmDiagnosticNormalizationStatus', 'remote_npm_diagnostic_normalization_not_applicable');
   const reasonCodes = [];
-  const npmExecuted = parseBool(input.npmExecuted);
-  const npmExitCode = Number(input.npmExitCode ?? 0);
+  const diagnostic = input.remoteNpmDiagnostic?.remoteNpmDiagnosticStatus || input.remoteNpmDiagnosticStatus || input.remoteNpmDiagnostic || {};
+  const diagnosticPayload = diagnostic.diagnostic || input.diagnostic || {};
+  const inferredNpmExecuted = parseBool(input.npmExecuted) || diagnostic.status === 'pass' || diagnostic.status === 'manual_confirmation_required';
+  const remoteNpmEvidenceKind = String(input.remoteNpmEvidenceKind || diagnostic.remoteNpmEvidenceKind || (inferredNpmExecuted ? 'same_head_remote' : 'missing'));
+  const sameHeadRemoteStatus = String(input.sameHeadRemoteStatus || diagnostic.sameHeadRemoteStatus || (remoteNpmEvidenceKind === 'same_head_remote' ? 'pass' : 'missing'));
+  const npmExecuted = inferredNpmExecuted;
+  const npmExitCode = Number(input.npmExitCode ?? diagnosticPayload.npmExitCode ?? 0);
   if (productRelevant && !npmExecuted) reasonCodes.push('remote_npm_not_executed_for_product_pr');
+  if (productRelevant && remoteNpmEvidenceKind !== 'same_head_remote') reasonCodes.push(`remote_npm_diagnostic_${remoteNpmEvidenceKind}`);
+  if (productRelevant && sameHeadRemoteStatus !== 'pass') reasonCodes.push('remote_npm_diagnostic_same_head_remote_missing');
   if (npmExitCode !== 0 || parseBool(input.npmFailMarkedPass)) reasonCodes.push('remote_npm_diagnostic_normalization_failed');
   if (parseBool(input.diagnosticPendingFinalPass) || parseBool(input.diagnosticMissingNoFormalEvidence) || parseBool(input.remoteNpmNotExecutedEmittedDespiteExecuted)) reasonCodes.push('remote_npm_diagnostic_normalization_failed');
-  return safe('remoteNpmDiagnosticNormalizationStatus', reasonCodes.length ? 'fail' : 'pass', { reasonCodes, productRelevant, npmExecuted, npmExitCode });
+  return safe('remoteNpmDiagnosticNormalizationStatus', reasonCodes.length ? 'fail' : 'pass', {
+    reasonCodes,
+    productRelevant,
+    npmExecuted,
+    npmExitCode,
+    remoteNpmEvidenceKind,
+    sameHeadRemoteStatus,
+    remoteNpmArtifactStatus: input.remoteNpmArtifactStatus || diagnostic.status || 'unknown',
+    safeNextAction: reasonCodes.length ? 'rerun_same_head_remote_npm_diagnostic' : 'preserve_same_head_remote_npm_diagnostic',
+  });
 }
 
 export function buildLegacySelfTestAdvisoryReport(input = parseJson(process.env.CODEX_LEGACY_SELF_TEST_ADVISORY_JSON) || {}) {

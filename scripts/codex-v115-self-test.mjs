@@ -33,6 +33,8 @@ import {
   validatePermissionProfileMatrix,
   validateSkillProfileRegistry,
 } from './codex-v115-policy-hooks.mjs';
+import { buildRemoteNpmDiagnosticNormalizationInput } from './codex-local-quality-gate.mjs';
+import { buildRemoteNpmDiagnosticNormalizationReport } from './codex-v099-gate-lib.mjs';
 import { buildWorkflowExitDecision, normalizeEffectiveFailures } from './codex-workflow-quality-runner.mjs';
 
 function test(name, fn) {
@@ -252,6 +254,41 @@ const cases = [
       safeSummary: { status: "fail", qualityGatePass: false, failureCount: 1 },
     });
     return decision.exitCode === 1 && decision.blockingFailureClasses.includes("wrong_head_remote_evidence");
+  }),
+  test('remote_npm_normalization_accepts_same_head_remote_pass', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'pass', diagnostic: { npmExitCode: 0, headSha: 'abc' }, safeSummaryOnly: true },
+    }, { CODEX_PR_HEAD_SHA: 'abc', GITHUB_RUN_ID: '1' });
+    const report = buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'pass' && report.remoteNpmEvidenceKind === 'same_head_remote' && report.sameHeadRemoteStatus === 'pass';
+  }),
+  test('remote_npm_normalization_rejects_missing_for_product_pr', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'not_applicable', reasonCodes: ['remote_npm_diagnostic_missing'], safeSummaryOnly: true },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    const report = buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'fail' && report.reasonCodes.includes('remote_npm_diagnostic_missing');
+  }),
+  test('remote_npm_normalization_rejects_wrong_head_remote', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'pass', diagnostic: { npmExitCode: 0, headSha: 'old' }, safeSummaryOnly: true },
+    }, { CODEX_PR_HEAD_SHA: 'new' });
+    const report = buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'fail' && report.remoteNpmEvidenceKind === 'wrong_head_remote';
+  }),
+  test('remote_npm_normalization_rejects_local_only_evidence_kind', () => {
+    const report = buildRemoteNpmDiagnosticNormalizationReport({
+      forceCheck: true,
+      productRelevant: true,
+      npmExecuted: true,
+      npmExitCode: 0,
+      remoteNpmEvidenceKind: 'local_only',
+      sameHeadRemoteStatus: 'missing',
+    }).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'fail' && report.reasonCodes.includes('remote_npm_diagnostic_local_only');
   }),
   test('all_v115_status_keys_default_pass', () => V115_STATUS_KEYS.every((key) => report[key]?.status === 'pass')),
   test('trace_kernel_safe_data_only', () => validateTraceKernel(trace).status === 'pass'),
