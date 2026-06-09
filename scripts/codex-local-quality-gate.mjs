@@ -1196,6 +1196,38 @@ export function buildRemoteProductEvidenceExecutionInput(report = {}, env = proc
   };
 }
 
+export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = process.env) {
+  const changeStatus = report.changeClassificationStatus || {};
+  const remoteNpmDiagnosticStatus = report.remoteNpmDiagnosticStatus || {};
+  const diagnostic = remoteNpmDiagnosticStatus.diagnostic || {};
+  const expectedHead = String(env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || '').trim();
+  const diagnosticHead = String(diagnostic.headSha || remoteNpmDiagnosticStatus.headSha || env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || '').trim();
+  const productRelevant = Boolean(
+    changeStatus.productRelevantChanged ||
+    changeStatus.productRelevant ||
+    changeStatus.classification?.productSourceChanged ||
+    changeStatus.classification?.packageChanged ||
+    changeStatus.classification?.lockfileChanged ||
+    changeStatus.classification?.runtimeReadinessClaimed,
+  );
+  const diagnosticStatus = String(remoteNpmDiagnosticStatus.status || '');
+  const hasDiagnostic = diagnosticStatus && diagnosticStatus !== 'not_applicable';
+  const sameHead = Boolean(hasDiagnostic && (!expectedHead || !diagnosticHead || expectedHead === diagnosticHead));
+  return {
+    forceCheck: productRelevant,
+    productRelevant,
+    remoteNpmDiagnosticStatus,
+    remoteNpmDiagnostic: remoteNpmDiagnosticStatus,
+    npmExecuted: hasDiagnostic && (diagnosticStatus === 'pass' || diagnosticStatus === 'manual_confirmation_required'),
+    npmExitCode: Number(diagnostic.npmExitCode ?? env.CODEX_NPM_EXIT_CODE ?? 0),
+    remoteNpmEvidenceKind: hasDiagnostic ? (sameHead ? 'same_head_remote' : 'wrong_head_remote') : 'missing',
+    sameHeadRemoteStatus: sameHead ? 'pass' : 'missing',
+    remoteNpmArtifactStatus: diagnosticStatus || 'missing',
+    remoteNpmRunIdRef: env.GITHUB_RUN_ID ? 'github_run_id_present' : 'not_available',
+    remoteNpmHeadShaRef: diagnosticHead ? 'head_sha_present' : 'not_available',
+  };
+}
+
 export function buildSafeArtifactIndexInputForQualityGate(env = process.env) {
   const remoteNpmDiagnosticPath = env.CODEX_NPM_TEST_SAFE_SUMMARY_PATH || '';
   const productEvidencePath = env.CODEX_PRODUCT_VERIFICATION_EVIDENCE_PATH || '';
@@ -2637,12 +2669,14 @@ function initializeV098Statuses(report) {
   for (const key of V098_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
 }
 function runV099Gates(report, gateEnv) {
+  const remoteNpmDiagnosticNormalizationInput = buildRemoteNpmDiagnosticNormalizationInput(report, gateEnv);
   const v099Env = {
     ...gateEnv,
     CODEX_CHANGE_CLASSIFICATION_JSON: JSON.stringify(report.changeClassificationStatus),
     CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON: JSON.stringify(report.productVerificationEvidenceStatus),
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
+    CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON: JSON.stringify(remoteNpmDiagnosticNormalizationInput),
   };
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
