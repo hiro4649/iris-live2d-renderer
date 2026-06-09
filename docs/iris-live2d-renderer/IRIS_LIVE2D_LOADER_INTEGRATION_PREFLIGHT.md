@@ -320,3 +320,17 @@ The request packet remains request-only. The collection plan remains planning-on
 Fixture source output is not real evidence. Dry-run source output is not real evidence. Mock source output is not real evidence. Stale source output is not fresh evidence. Assistant review is not owner confirmation. PR merge is not owner confirmation. Remote quality-gate PASS is not owner confirmation.
 
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
+
+## LIVE2D-REAL-EVIDENCE-COLLECTOR-DRY-RUN-ENVELOPE1
+
+The real evidence collector dry-run envelope is planning only. It validates future collector execution request shape, requested collector names, source binding, freshness binding, audit binding, redaction status, safe output fields, rejected raw fields, rejected source types, network policy, SDK policy, renderer policy, owner confirmation separation, and safe next action labels. It is an envelope, not collector execution.
+
+No collector is executed, no evidence is collected, no live probe is performed, no real renderer call is performed, no Cubism SDK call is performed, no SDK/vendor file is loaded, and no external service is called. The trusted loader allowlist remains disabled and no loader is trusted.
+
+Accepted dry-run request shape is only a review candidate. Dry-run pass is not real evidence. Fixture pass is not real evidence. Mock pass is not real evidence. Stale output is not fresh evidence. Assistant review is not owner confirmation. PR merge is not owner confirmation. Remote quality-gate PASS is not owner confirmation.
+
+Raw evidence body, raw cue payload, raw renderer payload, raw loader candidate, raw loader error, endpoint values, token values, secret values, private paths, model paths, motion paths, SDK/vendor paths, owner private notes, request notes, shell command bodies, OBS commands, world commands, raw process output, and raw stack traces are rejected from the public envelope surface.
+
+The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only. The collector manifest remains planning-only. The collector fixture pack remains synthetic-only.
+
+Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
