@@ -42,11 +42,68 @@ function test(name, fn) {
   }
 }
 
+function buildTargetNoSafeReportFailureFixture(overrides = {}) {
+  return {
+    status: 'fail',
+    decision: 'blocked',
+    failureClass: overrides.failureClass || 'v115_target_no_safe_report_unknown',
+    reasonCode: overrides.reasonCode || 'target_harness_no_safe_report',
+    mergeReady: false,
+    targetMergeReady: false,
+    remoteEvidencePass: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetBoundary: { status: 'non_executable', checkedRowCount: 0, safeSummaryOnly: true },
+    localGateReportContractStatus: { originalExitCode: overrides.exitCode ?? 1, safeSummaryOnly: true },
+    policyHooksStatus: { status: 'fail', failClosed: true, safeSummaryOnly: true },
+    traceKernelStatus: { status: 'fail', safeSummaryOnly: true },
+    decisionCoreV2Status: { status: 'fail', typedDecision: true, safeSummaryOnly: true },
+    tokenRuntimeMeterStatus: { mandatoryFieldsPreserved: true, safeSummaryOnly: true },
+    ownerConfirmationStatus: 'not_confirmed',
+    branchUnchanged: overrides.branchUnchanged !== false,
+    headUnchanged: overrides.headUnchanged !== false,
+    trackedFilesUnchanged: overrides.trackedFilesUnchanged !== false,
+    safeSummaryOnly: true,
+  };
+}
+
 const trace = buildSafeTraceRecord({ repo: 'hiro4649/codex-development-harness', branch: 'main', headSha: 'abc', decision: 'blocked' });
 const top3 = extractTop3Blockers({ blockers: ['one', 'two', 'three', 'four'], safeNextAction: 'wait' });
 const report = buildV115Report({ decision: 'blocked', primaryClass: 'owner_decision_required', safeNextAction: 'owner_decision_or_state_delta' });
 
 const cases = [
+
+  test('target_empty_output_failure_converts_to_parseable_safe_json', () => {
+    const safe = buildTargetNoSafeReportFailureFixture({ failureClass: 'v115_target_finalizer_empty_output', reasonCode: 'target_harness_empty_no_safe_report' });
+    return safe.status === 'fail' && safe.mergeReady === false && safe.safeSummaryOnly === true && safe.failureClass === 'v115_target_finalizer_empty_output';
+  }),
+  test('target_exit_minus_one_converts_to_typed_safe_failure', () => {
+    const safe = buildTargetNoSafeReportFailureFixture({ exitCode: -1, reasonCode: 'target_exit_minus_one' });
+    return safe.localGateReportContractStatus.originalExitCode === -1 && safe.decision === 'blocked' && safe.targetMergeReady === false;
+  }),
+  test('policy_hook_throw_converts_to_safe_json_fail_closed', () => {
+    const safe = buildTargetNoSafeReportFailureFixture({ failureClass: 'v115_policy_hook_unhandled_throw' });
+    return safe.policyHooksStatus.status === 'fail' && safe.policyHooksStatus.failClosed === true;
+  }),
+  test('trace_kernel_failure_converts_to_safe_json', () => {
+    const safe = buildTargetNoSafeReportFailureFixture({ failureClass: 'v115_trace_kernel_exit_before_safe_report' });
+    return safe.traceKernelStatus.status === 'fail' && safe.traceKernelStatus.safeSummaryOnly === true;
+  }),
+  test('decision_core_v2_failure_converts_to_typed_decision', () => {
+    const safe = buildTargetNoSafeReportFailureFixture({ failureClass: 'v115_decision_core_v2_missing_failure_serialization' });
+    return safe.decisionCoreV2Status.typedDecision === true && safe.decision === 'blocked';
+  }),
+  test('token_thin_finalizer_preserves_mandatory_blockers', () => {
+    const safe = buildTargetNoSafeReportFailureFixture();
+    return safe.tokenRuntimeMeterStatus.mandatoryFieldsPreserved === true && safe.priority1Status === 'BLOCKED' && safe.motionDatasetBoundary.status === 'non_executable';
+  }),
+  test('target_no_safe_report_does_not_use_pr_body_as_machine_decision', () => {
+    const safe = buildTargetNoSafeReportFailureFixture();
+    return safe.ownerConfirmationStatus === 'not_confirmed' && safe.remoteEvidencePass === false;
+  }),
+  test('target_no_safe_report_preserves_branch_head_tracked_invariants', () => {
+    const safe = buildTargetNoSafeReportFailureFixture({ branchUnchanged: true, headUnchanged: true, trackedFilesUnchanged: true });
+    return safe.branchUnchanged === true && safe.headUnchanged === true && safe.trackedFilesUnchanged === true;
+  }),
   test('all_v115_status_keys_default_pass', () => V115_STATUS_KEYS.every((key) => report[key]?.status === 'pass')),
   test('trace_kernel_safe_data_only', () => validateTraceKernel(trace).status === 'pass'),
   test('trace_excludes_raw_logs_and_full_stdout', () => trace.rawLogsRead === false && !JSON.stringify(trace).includes('fullStdout')),

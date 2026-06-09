@@ -12022,6 +12022,95 @@ async function main() {
 
 
 
+
+export function buildTargetNoSafeReportFailureReport({
+  failureClass = 'v115_target_no_safe_report_unknown',
+  reasonCode = 'target_harness_no_safe_report',
+  branchUnchanged = true,
+  headUnchanged = true,
+  trackedFilesUnchanged = true,
+  exitCode = 1,
+} = {}) {
+  const safeExitCode = Number.isFinite(Number(exitCode)) ? Number(exitCode) : 1;
+  return {
+    marker: MARKER,
+    harnessVersion: HARNESS_VERSION,
+    taskClassification: 'harness_only_target_no_safe_report_repair',
+    lane: 'target',
+    scope: 'LIVE2D',
+    decision: 'blocked',
+    status: 'fail',
+    failureClass,
+    reasonCode,
+    safeNextAction: 'repair_target_harness_no_safe_report_before_product_work',
+    readinessFalse: true,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetBoundary: {
+      status: 'non_executable',
+      checkedRowCount: 0,
+      safeSummaryOnly: true,
+    },
+    branchUnchanged: branchUnchanged === true,
+    headUnchanged: headUnchanged === true,
+    trackedFilesUnchanged: trackedFilesUnchanged === true,
+    sameHeadRemoteRequired: true,
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    mergeReady: false,
+    ownerConfirmationStatus: 'not_confirmed',
+    forbiddenScopeIdsStatus: {
+      status: 'pass',
+      scope: 'LIVE2D',
+      reasonCodes: [],
+      safeSummaryOnly: true,
+    },
+    tokenRuntimeMeterStatus: {
+      status: 'pass',
+      mandatoryFieldsPreserved: true,
+      noRawLogs: true,
+      safeSummaryOnly: true,
+    },
+    validationDependencyGraphStatus: {
+      status: 'fail',
+      reasonCodes: ['target_no_safe_report_prevented_complete_validation'],
+      requiredChecksPreserved: [
+        'target_harness',
+        'self_tests',
+        'browser_api_smoke',
+        'representative_replay',
+        'file_level_audit',
+      ],
+      safeSummaryOnly: true,
+    },
+    policyHooksStatus: {
+      status: 'fail',
+      failClosed: true,
+      reasonCodes: ['target_failure_serialized_fail_closed'],
+      safeSummaryOnly: true,
+    },
+    traceKernelStatus: {
+      status: 'fail',
+      reasonCodes: ['target_trace_closed_with_safe_failure'],
+      safeSummaryOnly: true,
+    },
+    decisionCoreV2Status: {
+      status: 'fail',
+      typedDecision: true,
+      reasonCodes: ['target_decision_blocked_no_safe_report'],
+      safeSummaryOnly: true,
+    },
+    localGateReportContractStatus: {
+      status: 'fail',
+      reasonCodes: [reasonCode],
+      originalExitCode: safeExitCode,
+      safeSummaryOnly: true,
+    },
+    safeSummaryOnly: true,
+  };
+}
+
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 
 
@@ -12038,7 +12127,12 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 
 
 
-    const report = {
+    const report = process.env.CODEX_HARNESS_MODE === 'target'
+      ? buildTargetNoSafeReportFailureReport({
+        failureClass: 'v115_target_fatal_converted_to_safe_report',
+        reasonCode: 'target_harness_fatal_safe_report',
+      })
+      : {
       marker: MARKER,
       harnessVersion: HARNESS_VERSION,
       status: 'fail',
