@@ -285,3 +285,14 @@ Fixture collector output is not real evidence. Dry-run collector output is not r
 The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only.
 
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task.
+
+### LIVE2D-REAL-EVIDENCE-COLLECTOR-FIXTURE-PACK1
+
+- Purpose: add a synthetic-only fixture pack and dry-run verifier surface for the real evidence collector manifest.
+- Scope: positive fixture cases for required collectors, safe output fields, source binding, freshness binding, audit binding, redaction status, and safe-summary-only output.
+- Rejection policy: fixture, dry-run, mock, stale, unknown source, missing binding, forbidden material, collector execution attempt, real probe attempt, external service attempt, SDK attempt, renderer attempt, owner confirmation attempt, readiness claim, priority1 resolution, and motion dataset execution remain rejected.
+- Boundary: no collector execution, no real evidence collection, no live probe, no renderer call, no SDK/vendor call, no external service call, no owner confirmation creation, no owner confirmation confirmation, no trusted loader enablement, and no trusted loader.
+- Preservation: request packet request-only, collection plan planning-only, freshness threshold planning-only, safe evidence summary contract planning-only, summary intake binding planning-only, owner confirmation binding planning-only, go/no-go blocker resolution schema planning-only, and collector manifest planning-only.
+- Public surface: safe labels and safe statuses only; owner-provided values remain private and no env values, endpoint values, local paths, loader candidates, loader errors, renderer payloads, evidence bodies, owner private notes, SDK/vendor paths, or vendor source content are exposed.
+- Readiness: runtime readiness and production readiness are not claimed; go/no-go remains no_go; priority1 remains BLOCKED; motion dataset remains non-executable while checked_row_count is 0.
+- Next actual collection: separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.

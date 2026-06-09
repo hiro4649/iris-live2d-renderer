@@ -15,6 +15,7 @@ import {
   LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
   LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA,
   LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA,
+  LIVE2D_REAL_EVIDENCE_COLLECTOR_FIXTURE_PACK_SCHEMA,
   REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
@@ -30,6 +31,7 @@ import {
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
   createRealEvidenceCollectorManifestSummary,
+  createRealEvidenceCollectorFixturePackSummary,
   createRealEvidenceSummaryIntakeBindingSummary,
   createRealEvidenceIntakeSummary,
   createRealEvidenceRequestPacketSummary,
@@ -165,6 +167,7 @@ try {
   assert.equal(REAL_EVIDENCE_REQUEST_PACKET_SCHEMA, "iris_live2d_real_evidence_request_packet_v1");
   assert.equal(REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA, "iris_live2d_real_resident_evidence_collection_plan_v1");
   assert.equal(LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA, "iris_live2d_real_evidence_collector_manifest_v1");
+  assert.equal(LIVE2D_REAL_EVIDENCE_COLLECTOR_FIXTURE_PACK_SCHEMA, "iris_live2d_real_evidence_collector_fixture_pack_v1");
   assert.equal(REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA, "iris_live2d_real_evidence_freshness_threshold_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -867,6 +870,180 @@ try {
   assert.equal(unsafeCollectorManifest.forbidden_material_status, "forbidden_material_rejected");
   assert.equal(unsafeCollectorManifest.blocked_reasons.includes("collector_manifest_rejected_forbidden_raw_field"), true);
   assertSafe(JSON.stringify(unsafeCollectorManifest));
+
+  const defaultCollectorFixturePack = createRealEvidenceCollectorFixturePackSummary();
+  assert.equal(defaultCollectorFixturePack.real_evidence_collector_fixture_pack_status, "planning_only");
+  assert.equal(defaultCollectorFixturePack.fixture_pack_ready_candidate, false);
+  assert.equal(defaultCollectorFixturePack.collector_fixture_pack_ready_candidate, false);
+  assert.equal(defaultCollectorFixturePack.collector_dry_run_verifier_status, "planning_only");
+  assert.equal(defaultCollectorFixturePack.planning_only_boundary, true);
+  assert.equal(defaultCollectorFixturePack.synthetic_only_boundary, true);
+  assert.equal(defaultCollectorFixturePack.no_real_collection_boundary, true);
+  assert.equal(defaultCollectorFixturePack.no_live_probe_boundary, true);
+  assert.equal(defaultCollectorFixturePack.no_owner_confirmation_created_boundary, true);
+  assert.equal(defaultCollectorFixturePack.no_owner_confirmation_confirmed_boundary, true);
+  assert.equal(defaultCollectorFixturePack.no_readiness_boundary, true);
+  assert.equal(defaultCollectorFixturePack.no_go_preserved, true);
+  for (const positiveCase of [
+    "collector_fixture_positive_required_collectors_present",
+    "collector_fixture_positive_safe_output_fields_present",
+    "collector_fixture_positive_source_binding_present",
+    "collector_fixture_positive_freshness_binding_present",
+    "collector_fixture_positive_audit_binding_present",
+    "collector_fixture_positive_redaction_status_pass",
+    "collector_fixture_positive_safe_summary_only",
+  ]) {
+    assert.equal(defaultCollectorFixturePack.positive_fixture_cases.includes(positiveCase), true);
+    assert.equal(defaultCollectorFixturePack.required_collector_fixture_cases.includes(positiveCase), true);
+    assert.equal(defaultCollectorFixturePack.collector_fixture_expected_safe_passes.includes(positiveCase), true);
+  }
+  for (const rejectionCase of [
+    "collector_fixture_reject_missing_collector",
+    "collector_fixture_reject_missing_safe_output_field",
+    "collector_fixture_reject_fixture_source",
+    "collector_fixture_reject_dry_run_source",
+    "collector_fixture_reject_mock_source",
+    "collector_fixture_reject_stale_source",
+    "collector_fixture_reject_unknown_source",
+    "collector_fixture_reject_missing_source_binding",
+    "collector_fixture_reject_missing_freshness_binding",
+    "collector_fixture_reject_missing_audit_binding",
+    "collector_fixture_reject_missing_redaction_status",
+    "collector_fixture_reject_forbidden_material",
+    "collector_fixture_reject_execution_attempt",
+    "collector_fixture_reject_real_probe_attempt",
+    "collector_fixture_reject_external_service_attempt",
+    "collector_fixture_reject_real_sdk_attempt",
+    "collector_fixture_reject_real_renderer_attempt",
+    "collector_fixture_reject_owner_confirmation_attempt",
+    "collector_fixture_reject_readiness_claim",
+    "collector_fixture_reject_priority1_resolution",
+    "collector_fixture_reject_motion_dataset_execution",
+  ]) {
+    assert.equal(defaultCollectorFixturePack.rejection_fixture_cases.includes(rejectionCase), true);
+    assert.equal(defaultCollectorFixturePack.collector_fixture_expected_rejections.includes(rejectionCase), true);
+  }
+  assert.equal(defaultCollectorFixturePack.collector_fixture_registry.live2d_renderer_heartbeat_collector.fixture_case_status, "synthetic_fixture_only");
+  assert.equal(defaultCollectorFixturePack.collector_fixture_registry.live2d_renderer_heartbeat_collector.execution_started, false);
+  assert.equal(defaultCollectorFixturePack.collector_fixture_registry.live2d_renderer_heartbeat_collector.real_probe_started, false);
+  assert.equal(defaultCollectorFixturePack.redaction_policy, "safe_summary_only_no_forbidden_material");
+  assert.equal(defaultCollectorFixturePack.collector_fixture_redaction_policy, "safe_summary_only_no_forbidden_material");
+  assert.equal(defaultCollectorFixturePack.network_policy, "blocked_by_default_no_external_services");
+  assert.equal(defaultCollectorFixturePack.collector_fixture_network_policy, "blocked_by_default_no_external_services");
+  assert.equal(defaultCollectorFixturePack.sdk_policy, "forbid_real_sdk_call");
+  assert.equal(defaultCollectorFixturePack.collector_fixture_sdk_policy, "forbid_real_sdk_call");
+  assert.equal(defaultCollectorFixturePack.renderer_policy, "forbid_real_renderer_call");
+  assert.equal(defaultCollectorFixturePack.collector_fixture_renderer_policy, "forbid_real_renderer_call");
+  assert.equal(defaultCollectorFixturePack.fixture_source_rejection, "fixture_source_rejected_for_real_evidence");
+  assert.equal(defaultCollectorFixturePack.dry_run_source_rejection, "dry_run_source_rejected_for_real_evidence");
+  assert.equal(defaultCollectorFixturePack.mock_source_rejection, "mock_source_rejected_for_real_evidence");
+  assert.equal(defaultCollectorFixturePack.stale_source_rejection, "stale_source_rejected_for_fresh_evidence");
+  assert.equal(defaultCollectorFixturePack.unknown_source_rejection, "unknown_source_rejected");
+  assert.equal(defaultCollectorFixturePack.missing_binding_rejection, "missing_source_freshness_audit_or_redaction_binding_rejected");
+  assert.equal(defaultCollectorFixturePack.execution_attempt_rejection, "collector_execution_attempt_rejected");
+  assert.equal(defaultCollectorFixturePack.real_probe_attempt_rejection, "real_probe_attempt_rejected");
+  assert.equal(defaultCollectorFixturePack.external_service_attempt_rejection, "external_service_attempt_rejected");
+  assert.equal(defaultCollectorFixturePack.trusted_loader_boundary, "trusted_loader_allowlist_disabled_no_loader_trusted");
+  assert.equal(defaultCollectorFixturePack.owner_confirmation_boundary, "schema_only_no_owner_confirmation_created");
+  assert.equal(defaultCollectorFixturePack.go_nogo_preservation, "go_nogo_status_no_go");
+  assert.equal(defaultCollectorFixturePack.collection_plan_preservation, "collection_plan_planning_only");
+  assert.equal(defaultCollectorFixturePack.freshness_threshold_preservation, "freshness_threshold_planning_only");
+  assert.equal(defaultCollectorFixturePack.safe_evidence_summary_contract_preservation, "safe_evidence_summary_contract_planning_only");
+  assert.equal(defaultCollectorFixturePack.summary_intake_binding_preservation, "summary_intake_binding_planning_only");
+  assert.equal(defaultCollectorFixturePack.owner_confirmation_binding_preservation, "owner_confirmation_binding_planning_only");
+  assert.equal(defaultCollectorFixturePack.blocker_resolution_schema_preservation, "blocker_resolution_schema_planning_only");
+  assert.equal(defaultCollectorFixturePack.collector_manifest_preservation, "collector_manifest_planning_only");
+  assert.equal(defaultCollectorFixturePack.collector_execution_started, false);
+  assert.equal(defaultCollectorFixturePack.collector_real_probe_started, false);
+  assert.equal(defaultCollectorFixturePack.real_evidence_collection_started, false);
+  assert.equal(defaultCollectorFixturePack.real_probe_started, false);
+  assert.equal(defaultCollectorFixturePack.external_service_call_started, false);
+  assert.equal(defaultCollectorFixturePack.real_sdk_call_started, false);
+  assert.equal(defaultCollectorFixturePack.real_renderer_call_started, false);
+  assert.equal(defaultCollectorFixturePack.owner_confirmation_created, false);
+  assert.equal(defaultCollectorFixturePack.owner_confirmation_confirmed, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_executes_collectors, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_collects_real_evidence, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_performs_live_probes, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_calls_external_services, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_calls_real_sdk, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_calls_real_renderer, false);
+  assert.equal(defaultCollectorFixturePack.fixture_pack_creates_owner_confirmation, false);
+  assert.equal(defaultCollectorFixturePack.go_nogo_status, "no_go");
+  assert.equal(defaultCollectorFixturePack.go_candidate, false);
+  assert.equal(defaultCollectorFixturePack.blocker_resolved, false);
+  assert.equal(defaultCollectorFixturePack.priority1_status, "BLOCKED");
+  assert.equal(defaultCollectorFixturePack.motion_dataset_status, "non_executable");
+  assert.equal(defaultCollectorFixturePack.checked_row_count, 0);
+  assert.equal(defaultCollectorFixturePack.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultCollectorFixturePack.no_loader_trusted, true);
+  assert.equal(defaultCollectorFixturePack.runtime_readiness_claimed, false);
+  assert.equal(defaultCollectorFixturePack.production_readiness_claimed, false);
+  assert.equal(defaultCollectorFixturePack.renderer_ready, false);
+  assert.equal(defaultCollectorFixturePack.model_loaded, false);
+  assert.equal(defaultCollectorFixturePack.scene_loaded, false);
+  assert.equal(defaultCollectorFixturePack.browser_cue_delivery_ready, false);
+  assert.equal(defaultCollectorFixturePack.motion_dataset_executable, false);
+  assertSafe(JSON.stringify(defaultCollectorFixturePack));
+
+  const unsafeCollectorFixturePack = createRealEvidenceCollectorFixturePackSummary({
+    source_type: "fixture",
+    raw_evidence_body: "unsafe_fixture_value",
+    raw_renderer_payload: "unsafe_fixture_value",
+    raw_cue_payload: "unsafe_fixture_value",
+    raw_loader_candidate: "unsafe_fixture_value",
+    raw_loader_error: "unsafe_fixture_value",
+    owner_private_note: "unsafe_fixture_value",
+    collector_execution_started: true,
+    real_evidence_collection_started: true,
+    collector_real_probe_started: true,
+    external_service_call_started: true,
+    real_sdk_call_started: true,
+    real_renderer_call_started: true,
+    owner_confirmation_created: true,
+    owner_confirmation_confirmed: true,
+    renderer_ready: true,
+    model_loaded: true,
+    scene_loaded: true,
+    browser_cue_delivery_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_status: "RESOLVED",
+    motion_dataset_executable: true,
+  });
+  assert.equal(unsafeCollectorFixturePack.source_type_status, "rejected_fixture");
+  for (const triggeredCase of [
+    "collector_fixture_reject_fixture_source",
+    "collector_fixture_reject_forbidden_material",
+    "collector_fixture_reject_execution_attempt",
+    "collector_fixture_reject_real_probe_attempt",
+    "collector_fixture_reject_external_service_attempt",
+    "collector_fixture_reject_real_sdk_attempt",
+    "collector_fixture_reject_real_renderer_attempt",
+    "collector_fixture_reject_owner_confirmation_attempt",
+    "collector_fixture_reject_readiness_claim",
+    "collector_fixture_reject_priority1_resolution",
+    "collector_fixture_reject_motion_dataset_execution",
+  ]) {
+    assert.equal(unsafeCollectorFixturePack.rejection_cases_triggered.includes(triggeredCase), true);
+  }
+  assert.equal(unsafeCollectorFixturePack.collector_execution_started, false);
+  assert.equal(unsafeCollectorFixturePack.real_evidence_collection_started, false);
+  assert.equal(unsafeCollectorFixturePack.real_probe_started, false);
+  assert.equal(unsafeCollectorFixturePack.external_service_call_started, false);
+  assert.equal(unsafeCollectorFixturePack.real_sdk_call_started, false);
+  assert.equal(unsafeCollectorFixturePack.real_renderer_call_started, false);
+  assert.equal(unsafeCollectorFixturePack.owner_confirmation_created, false);
+  assert.equal(unsafeCollectorFixturePack.owner_confirmation_confirmed, false);
+  assert.equal(unsafeCollectorFixturePack.renderer_ready, false);
+  assert.equal(unsafeCollectorFixturePack.model_loaded, false);
+  assert.equal(unsafeCollectorFixturePack.scene_loaded, false);
+  assert.equal(unsafeCollectorFixturePack.browser_cue_delivery_ready, false);
+  assert.equal(unsafeCollectorFixturePack.runtime_readiness_claimed, false);
+  assert.equal(unsafeCollectorFixturePack.production_readiness_claimed, false);
+  assert.equal(unsafeCollectorFixturePack.priority1_status, "BLOCKED");
+  assert.equal(unsafeCollectorFixturePack.motion_dataset_executable, false);
+  assertSafe(JSON.stringify(unsafeCollectorFixturePack));
 
   for (const rejectedSourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
     const rejectedCollectionPlan = createRealResidentEvidenceCollectionPlanSummary({ source_type: rejectedSourceType });
@@ -2758,6 +2935,22 @@ try {
   assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.real_evidence_collector_fixture_pack_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.fixture_pack_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.collector_fixture_pack_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.collector_dry_run_verifier_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.collector_execution_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.external_service_call_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.owner_confirmation_created, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_fixture_pack_summary.go_nogo_status, "no_go");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.freshness_policy_ready_candidate, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
@@ -2867,6 +3060,12 @@ try {
   assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.collector_manifest_collects_real_evidence, false);
   assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.collector_manifest_creates_owner_confirmation, false);
   assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.real_evidence_collector_fixture_pack_status, "planning_only");
+  assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.fixture_pack_ready_candidate, false);
+  assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.collector_fixture_pack_ready_candidate, false);
+  assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.fixture_pack_collects_real_evidence, false);
+  assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.fixture_pack_creates_owner_confirmation, false);
+  assert.equal(provisionedStatus.real_evidence_collector_fixture_pack_summary.renderer_ready, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_probe_started, false);
@@ -2930,6 +3129,10 @@ try {
   assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.collector_execution_started, false);
   assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.real_probe_started, false);
   assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.real_evidence_collector_fixture_pack_status, "planning_only");
+  assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.collector_execution_started, false);
+  assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.real_evidence_collector_fixture_pack_summary.motion_dataset_executable, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_probe_started, false);
@@ -2998,6 +3201,10 @@ try {
   assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.collector_execution_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.real_evidence_collector_fixture_pack_status, "planning_only");
+  assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.collector_execution_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_fixture_pack_summary.renderer_ready, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_probe_started, false);

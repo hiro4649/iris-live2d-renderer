@@ -306,3 +306,17 @@ Fixture collector output is not real evidence. Dry-run collector output is not r
 The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only.
 
 Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task.
+
+## LIVE2D-REAL-EVIDENCE-COLLECTOR-FIXTURE-PACK1
+
+The real evidence collector fixture pack is synthetic-only planning and verification support for the collector manifest. It defines positive fixture cases for required collectors, safe output fields, source binding, freshness binding, audit binding, redaction status, and safe-summary-only output. It also defines rejection cases for fixture, dry-run, mock, stale, unknown source, missing bindings, forbidden material, collector execution attempts, real probe attempts, external service attempts, SDK attempts, renderer attempts, owner confirmation attempts, readiness claims, priority1 resolution, and motion dataset execution.
+
+This fixture pack does not execute collectors, does not collect real evidence, does not run live probes, does not call the renderer, does not call SDK/vendor code, does not call external services, and does not create or confirm owner confirmation. It keeps the trusted loader allowlist disabled and does not trust any loader.
+
+The public surface exposes only safe labels and safe statuses. Owner-provided values remain private; env values, endpoint values, local paths, loader candidates, loader errors, renderer payloads, evidence bodies, owner private notes, SDK/vendor paths, and vendor source content are not exposed.
+
+The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only. The collector manifest remains planning-only.
+
+Fixture source output is not real evidence. Dry-run source output is not real evidence. Mock source output is not real evidence. Stale source output is not fresh evidence. Assistant review is not owner confirmation. PR merge is not owner confirmation. Remote quality-gate PASS is not owner confirmation.
+
+Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
