@@ -10,6 +10,14 @@ import {
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
   LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA,
+  LIVE2D_EXPERIMENTAL_MOTION_LABELS,
+  LIVE2D_MOTION_DATASET_ROW_REJECTED_RAW_FIELDS,
+  LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA,
+  LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA,
+  LIVE2D_MOTION_DATASET_UX_AUDIT_AXES,
+  LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES,
   LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA,
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
@@ -28,6 +36,7 @@ import {
   createFreshEvidenceBundleSummary,
   createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
+  createMotionDatasetRowSchemaPreflightSummary,
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
@@ -377,6 +386,103 @@ try {
   assert.equal(JSON.stringify(defaultFreshEvidenceBundle).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(defaultFreshEvidenceBundle));
   assertNoModelPathLeak(JSON.stringify(defaultFreshEvidenceBundle));
+
+
+  const defaultMotionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.schema, LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.row_schema_preflight_status, "planning_only_blocked");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.row_schema_ready_candidate, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.planning_only, true);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.row_data_present, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.checked_row_count, 0);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.motion_dataset_status, "non_executable");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.motion_dataset_executable, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.motion_execution_enabled, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.real_row_ingestion_started, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.real_evidence_collection_started, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.live_probe_started, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.owner_confirmation_created, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.owner_confirmation_confirmed, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.runtime_readiness_claimed, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.production_readiness_claimed, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.go_nogo_status, "no_go");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.go_candidate, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.blocker_resolved, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.priority1_status, "BLOCKED");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(defaultMotionDatasetRowSchemaPreflight.required_row_fields, [...LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS]);
+  assert.deepEqual(defaultMotionDatasetRowSchemaPreflight.required_audit_metadata, [...LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA]);
+  assert.deepEqual(defaultMotionDatasetRowSchemaPreflight.runtime_supported_motion_styles, [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES]);
+  assert.deepEqual(defaultMotionDatasetRowSchemaPreflight.experimental_motion_labels, [...LIVE2D_EXPERIMENTAL_MOTION_LABELS]);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.experimental_motion_labels_executable, false);
+  assert.deepEqual(defaultMotionDatasetRowSchemaPreflight.renderer_ready_required_fields, [...LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS]);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.renderer_ready, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.model_loaded, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.scene_loaded, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.browser_cue_delivery_ready, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.rejected_private_material_fields.includes("credential_material"), true);
+  assert.deepEqual(defaultMotionDatasetRowSchemaPreflight.ux_audit_axes, [...LIVE2D_MOTION_DATASET_UX_AUDIT_AXES]);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.fixture_success_is_real_evidence, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.manifest_existence_is_real_evidence, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.asset_route_success_is_real_evidence, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.sse_connection_is_real_evidence, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.cue_acceptance_is_real_evidence, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.browser_cue_delivery_is_runtime_readiness, false);
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.collection_plan_status, "planning_only");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.freshness_threshold_status, "preserved");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.safe_evidence_summary_contract_status, "preserved");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.summary_intake_binding_status, "preserved");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.owner_confirmation_binding_status, "schema_only_blocked");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.blocker_resolution_schema_status, "planning_only_blocked");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.collector_manifest_status, "planning_only");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.collector_fixture_pack_status, "synthetic_only");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.collector_dry_run_envelope_status, "request_only");
+  assert.equal(defaultMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_no_real_rows_present"), true);
+  assertSafe(JSON.stringify(defaultMotionDatasetRowSchemaPreflight));
+  assertNoModelPathLeak(JSON.stringify(defaultMotionDatasetRowSchemaPreflight));
+
+  const unsafeMotionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary({
+    motion_style: "blink_attention",
+    checked_row_count: 1,
+    row: { raw_motion_command: "private-command", token_value: "secret-token" },
+    motion_dataset_executable: true,
+    real_row_ingestion_started: true,
+    real_evidence_collection_started: true,
+    live_probe_started: true,
+    owner_confirmation_created: true,
+    owner_confirmation_confirmed: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    trusted_loader_allowlist_enabled: true,
+    go_nogo_status: "go",
+    blocker_resolved: true,
+  });
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.checked_row_count, 0);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.row_data_present, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.motion_dataset_executable, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.real_row_ingestion_started, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.real_evidence_collection_started, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.live_probe_started, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.owner_confirmation_created, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.owner_confirmation_confirmed, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.runtime_readiness_claimed, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.production_readiness_claimed, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.go_nogo_status, "no_go");
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.blocker_resolved, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_checked_row_count_nonzero"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_experimental_label_non_executable"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_raw_or_private_field"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_readiness_claim"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_motion_execution_or_row_ingestion"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_owner_confirmation_creation_or_confirmation"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_trusted_loader_request"), true);
+  assert.equal(unsafeMotionDatasetRowSchemaPreflight.rejection_reasons.includes("row_schema_rejected_real_collection_or_probe"), true);
+  assert.equal(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight).includes("private-command"), false);
+  assert.equal(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight).includes("secret-token"), false);
+  assertSafe(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight));
+  assertNoModelPathLeak(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight));
 
   const defaultGoNoGo = createGoNoGoPreflightSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -3210,6 +3316,9 @@ try {
   assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.production_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedRuntimeConfig.go_nogo_blocker_resolution_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_schema_preflight_summary.row_schema_preflight_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_schema_preflight_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_schema_preflight_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -3304,6 +3413,8 @@ try {
   assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
   assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.motion_dataset_row_schema_preflight_summary.row_schema_ready_candidate, false);
+  assert.equal(provisionedStatus.motion_dataset_row_schema_preflight_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -3375,6 +3486,8 @@ try {
   assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.motion_dataset_row_schema_preflight_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedHealth.motion_dataset_row_schema_preflight_summary.runtime_readiness_claimed, false);
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -3451,6 +3564,8 @@ try {
   assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedHeartbeat.go_nogo_blocker_resolution_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_row_schema_preflight_summary.row_schema_preflight_status, "planning_only_blocked");
+  assert.equal(provisionedHeartbeat.motion_dataset_row_schema_preflight_summary.production_readiness_claimed, false);
   assertSafe(JSON.stringify(provisionedHeartbeat));
   assertNoModelPathLeak(JSON.stringify(provisionedHeartbeat));
   await provisioned.close();

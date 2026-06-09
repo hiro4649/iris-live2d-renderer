@@ -310,3 +310,12 @@ Raw evidence body, raw cue payload, raw renderer payload, raw loader candidate, 
 The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only. The collector manifest remains planning-only. The collector fixture pack remains synthetic-only.
 
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
+## LIVE2D-MOTION-DATASET-ROW-SCHEMA-PREFLIGHT1
+
+- Scope: add planning-only motion dataset row schema and audit preflight labels for future owner review.
+- Required row fields: row identity, dataset split, motion and expression labels, gaze, breath, body, camera, timing, intensity, cooldown, recovery, visibility, comfort, accessibility, eval contamination policy, renderer-ready dependencies, and audit run metadata.
+- Runtime supported motion styles: talk, focused_talk, laugh_big, idle_breath, surprise_scream, happy_humming, happy_dance, happy_loud_sing.
+- Experimental labels remain non-executable: blink_attention, small_nod, soft_smile, surprise_micro, breathing_shift, gaze_return, neutral_breath.
+- Boundary: no real row ingestion, no motion execution, no real collection, no live probe, no owner confirmation creation, no owner confirmation confirmation, no trusted loader enablement, no runtime readiness claim, no production readiness claim, no priority1 resolution, and no go decision.
+- Evidence policy: fixture success, manifest existence, asset route success, SSE connection, cue acceptance, and browser cue delivery are rejected as real row success evidence.
+- Current status: checked_row_count remains 0, motion dataset remains non-executable, go/no-go remains no_go, and priority1 remains BLOCKED until real resident fresh evidence and a separate owner-confirmed task exist.
