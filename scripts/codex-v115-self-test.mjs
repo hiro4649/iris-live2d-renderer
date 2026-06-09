@@ -66,6 +66,45 @@ function buildTargetNoSafeReportFailureFixture(overrides = {}) {
   };
 }
 
+function buildProductTargetEvidencePendingFixture(overrides = {}) {
+  return {
+    status: 'pass',
+    decision: 'pending_after_push',
+    pendingAfterPush: true,
+    sameHeadRemoteRequired: true,
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    mergeReady: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetBoundary: { status: 'non_executable', checkedRowCount: 0, safeSummaryOnly: true },
+    remoteProductEvidenceExecutionStatus: {
+      status: 'fail',
+      reasonCodes: overrides.executionReasonCodes || ['remote_npm_not_executed_for_product_pr', 'remote_product_evidence_execution_missing'],
+      compatibilityClass: 'pre_push_remote_evidence_pending',
+      effectiveStatus: 'pass_pending_after_push',
+      safeSummaryOnly: true,
+    },
+    remoteProductEvidenceRunnerStatus: {
+      status: 'fail',
+      reasonCodes: overrides.runnerReasonCodes || ['remote_npm_not_executed_for_product_pr'],
+      compatibilityClass: 'pre_push_remote_evidence_pending',
+      effectiveStatus: 'pass_pending_after_push',
+      safeSummaryOnly: true,
+    },
+    remoteNpmDiagnosticNormalizationStatus: {
+      status: 'fail',
+      reasonCodes: overrides.npmReasonCodes || ['remote_npm_not_executed_for_product_pr'],
+      compatibilityClass: 'pre_push_remote_evidence_pending',
+      effectiveStatus: 'pass_pending_after_push',
+      safeSummaryOnly: true,
+    },
+    safeNextAction: 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration',
+    safeSummaryOnly: true,
+  };
+}
+
 const trace = buildSafeTraceRecord({ repo: 'hiro4649/codex-development-harness', branch: 'main', headSha: 'abc', decision: 'blocked' });
 const top3 = extractTop3Blockers({ blockers: ['one', 'two', 'three', 'four'], safeNextAction: 'wait' });
 const report = buildV115Report({ decision: 'blocked', primaryClass: 'owner_decision_required', safeNextAction: 'owner_decision_or_state_delta' });
@@ -103,6 +142,22 @@ const cases = [
   test('target_no_safe_report_preserves_branch_head_tracked_invariants', () => {
     const safe = buildTargetNoSafeReportFailureFixture({ branchUnchanged: true, headUnchanged: true, trackedFilesUnchanged: true });
     return safe.branchUnchanged === true && safe.headUnchanged === true && safe.trackedFilesUnchanged === true;
+  }),
+  test('product_target_pre_push_remote_pending_is_parseable_safe_state', () => {
+    const safe = buildProductTargetEvidencePendingFixture();
+    return safe.status === 'pass' && safe.pendingAfterPush === true && safe.safeSummaryOnly === true;
+  }),
+  test('product_target_pre_push_remote_pending_does_not_fabricate_remote_pass', () => {
+    const safe = buildProductTargetEvidencePendingFixture();
+    return safe.remoteEvidencePass === false && safe.targetMergeReady === false && safe.mergeReady === false;
+  }),
+  test('product_target_pre_push_remote_pending_preserves_readiness_boundaries', () => {
+    const safe = buildProductTargetEvidencePendingFixture();
+    return safe.runtimeReadinessClaimed === false && safe.productionReadinessClaimed === false && safe.priority1Status === 'BLOCKED' && safe.motionDatasetBoundary.status === 'non_executable';
+  }),
+  test('product_target_pre_push_remote_pending_requires_same_head_after_push', () => {
+    const safe = buildProductTargetEvidencePendingFixture();
+    return safe.sameHeadRemoteRequired === true && safe.safeNextAction.includes('same_head_remote_checks');
   }),
   test('all_v115_status_keys_default_pass', () => V115_STATUS_KEYS.every((key) => report[key]?.status === 'pass')),
   test('trace_kernel_safe_data_only', () => validateTraceKernel(trace).status === 'pass'),
