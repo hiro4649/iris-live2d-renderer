@@ -5513,6 +5513,46 @@ function computeTargetOutputShapeStatus(report) {
 
 }
 
+const V115_PRE_PUSH_REMOTE_PENDING_KEYS = new Set([
+  'remoteProductEvidenceExecutionStatus',
+  'remoteProductEvidenceRunnerStatus',
+  'remoteNpmDiagnosticNormalizationStatus',
+]);
+
+const V115_PRE_PUSH_REMOTE_PENDING_REASON_CODES = new Set([
+  'remote_npm_not_executed_for_product_pr',
+  'remote_product_evidence_execution_missing',
+]);
+
+function isV115PrePushRemotePending(key, entry = {}) {
+  if (HARNESS_VERSION !== '1.1.5') return false;
+  if (process.env.CODEX_HARNESS_MODE !== 'target') return false;
+  if (!V115_PRE_PUSH_REMOTE_PENDING_KEYS.has(key)) return false;
+  if (entry?.status !== 'fail' && entry?.status !== 'warning') return false;
+  const reasonCodes = Array.isArray(entry.reasonCodes) ? entry.reasonCodes : [];
+  return reasonCodes.length > 0 && reasonCodes.every((code) => V115_PRE_PUSH_REMOTE_PENDING_REASON_CODES.has(code));
+}
+
+function classifyV115TargetModeCompatibilityStatus(key, entry = {}, report = {}) {
+  if (isV115PrePushRemotePending(key, entry)) {
+    return {
+      classification: 'pre_push_remote_evidence_pending',
+      effectiveStatus: 'pass_pending_after_push',
+      reasonCodes: ['remote_evidence_required_after_push'],
+      safeNextAction: 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration',
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+      safeSummaryOnly: true,
+    };
+  }
+  return classifyTargetModeCompatibilityStatus(key, entry, report);
+}
+
+function hasV115PrePushRemotePending(report = {}) {
+  return [...V115_PRE_PUSH_REMOTE_PENDING_KEYS].some((key) => isV115PrePushRemotePending(key, report[key]));
+}
+
 
 
 function computeTargetQualityScoreStatus(report) {
@@ -6053,11 +6093,11 @@ function computeTargetQualityScoreStatus(report) {
 
 
 
-    if (HARNESS_VERSION === '1.1.1' || HARNESS_VERSION === '1.1.2' || HARNESS_VERSION === '1.1.3') {
+    if (HARNESS_VERSION === '1.1.1' || HARNESS_VERSION === '1.1.2' || HARNESS_VERSION === '1.1.3' || HARNESS_VERSION === '1.1.5') {
 
 
 
-      compatibility = classifyTargetModeCompatibilityStatus(key, report[key], report);
+      compatibility = classifyV115TargetModeCompatibilityStatus(key, report[key], report);
 
 
 
@@ -7559,7 +7599,7 @@ function applyStatusOutcome(key, value, failures, warnings) {
 
   if (value?.status === 'fail') {
     if (process.env.CODEX_HARNESS_MODE === 'target') {
-      const compatibility = classifyTargetModeCompatibilityStatus(key, value);
+      const compatibility = classifyV115TargetModeCompatibilityStatus(key, value);
       if (String(compatibility.effectiveStatus || '').startsWith('pass_')) return;
     }
     failures.push({ id: `${key}.failed`, message: `${key} failed` });
@@ -7569,7 +7609,7 @@ function applyStatusOutcome(key, value, failures, warnings) {
 
   else if (value?.status === 'manual_confirmation_required' || value?.status === 'warning') {
     if (process.env.CODEX_HARNESS_MODE === 'target') {
-      const compatibility = classifyTargetModeCompatibilityStatus(key, value);
+      const compatibility = classifyV115TargetModeCompatibilityStatus(key, value);
       if (String(compatibility.effectiveStatus || '').startsWith('pass_')) return;
     }
 
@@ -11636,6 +11676,15 @@ async function runTargetHarnessGate() {
 
 
   report.targetMergeReady = report.mergeReady;
+
+  if (hasV115PrePushRemotePending(report)) {
+    report.pendingAfterPush = true;
+    report.sameHeadRemoteRequired = true;
+    report.remoteEvidencePass = false;
+    report.targetMergeReady = false;
+    report.mergeReady = false;
+    report.safeNextAction = 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration';
+  }
 
 
 
