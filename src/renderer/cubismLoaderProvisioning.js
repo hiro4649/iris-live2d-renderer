@@ -20,6 +20,7 @@ export const LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA = "iris_live2d_r
 export const LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA = "iris_live2d_owner_confirmation_binding_v1";
 export const LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA = "iris_live2d_go_nogo_blocker_resolution_v1";
 export const LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA = "iris_live2d_motion_dataset_row_schema_preflight_v1";
+export const LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_synthetic_row_fixture_pack_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -115,6 +116,75 @@ export const LIVE2D_MOTION_DATASET_ROW_REJECTED_RAW_FIELDS = Object.freeze([
   "private_local_path",
   "command",
   "shell_command_body",
+  "world_command",
+  "obs_command",
+  "game_input",
+  "os_command",
+  "memory_commit",
+  "relationship_commit",
+  "raw_process_output",
+  "raw_stack_trace",
+]);
+
+export const LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES = Object.freeze([
+  "safe_talk_row",
+  "safe_idle_breath_row",
+  "safe_laugh_big_row_with_recovery",
+  "safe_subtitle_visibility_guard_row",
+  "safe_low_intensity_motion_row",
+  "safe_accessibility_guarded_row",
+  "safe_eval_split_row",
+  "safe_renderer_ready_false_row",
+]);
+
+export const LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES = Object.freeze([
+  "missing_row_id_rejected",
+  "duplicate_row_id_rejected",
+  "missing_audit_run_id_rejected",
+  "missing_auditor_version_rejected",
+  "missing_source_hash_rejected",
+  "missing_source_line_rejected",
+  "missing_dataset_split_rejected",
+  "unsupported_motion_label_rejected",
+  "experimental_motion_label_executable_rejected",
+  "expression_label_as_motion_style_rejected",
+  "gaze_label_as_motion_style_rejected",
+  "breath_label_as_motion_style_rejected",
+  "camera_label_as_motion_style_rejected",
+  "raw_cue_payload_rejected",
+  "raw_renderer_payload_rejected",
+  "raw_model_path_rejected",
+  "raw_motion_path_rejected",
+  "endpoint_value_rejected",
+  "token_value_rejected",
+  "secret_value_rejected",
+  "private_local_path_rejected",
+  "world_command_rejected",
+  "obs_command_rejected",
+  "game_input_rejected",
+  "os_command_rejected",
+  "memory_commit_rejected",
+  "relationship_commit_rejected",
+  "raw_process_output_rejected",
+  "raw_stack_trace_rejected",
+  "fixture_success_as_renderer_ready_rejected",
+  "manifest_existence_as_renderer_ready_rejected",
+  "asset_route_existence_as_renderer_ready_rejected",
+  "sse_connection_as_renderer_ready_rejected",
+  "cue_acceptance_as_renderer_ready_rejected",
+  "browser_cue_delivery_as_renderer_ready_rejected",
+  "renderer_ready_missing_fresh_heartbeat_rejected",
+  "renderer_ready_missing_model_loaded_rejected",
+  "renderer_ready_missing_scene_loaded_rejected",
+  "renderer_ready_missing_model_matches_rejected",
+  "renderer_ready_missing_scene_matches_rejected",
+  "renderer_ready_missing_cue_capability_rejected",
+  "renderer_ready_missing_last_cue_applied_rejected",
+  "photosensitivity_guard_missing_rejected",
+  "subtitle_overlay_safety_missing_rejected",
+  "gaze_pressure_boundary_missing_rejected",
+  "motion_cooldown_fatigue_missing_rejected",
+  "eval_contamination_guard_missing_rejected",
 ]);
 
 export const LIVE2D_MOTION_DATASET_UX_AUDIT_AXES = Object.freeze([
@@ -2990,6 +3060,150 @@ export function createMotionDatasetRowSchemaPreflightSummary(rowInput = {}) {
   };
   assertSafePublicObject(summary, "motion dataset row schema preflight summary");
   return summary;
+}
+
+export function createMotionDatasetSyntheticRowFixturePackSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const acceptedCases = filterSyntheticFixtureCases(
+    source.accepted_synthetic_fixture_cases ?? source.acceptedSyntheticFixtureCases,
+    LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES,
+  );
+  const rejectedCases = filterSyntheticFixtureCases(
+    source.rejected_synthetic_fixture_cases ?? source.rejectedSyntheticFixtureCases,
+    LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES,
+  );
+  const rawFields = detectedMotionDatasetRawFields(source);
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true || source.row !== undefined || source.dataset_row !== undefined;
+  const executionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true || source.execute_motion === true;
+  const realCollectionRequested = source.real_evidence_collection_started === true || source.real_probe_started === true || source.live_probe_started === true;
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const readinessRequested = source.renderer_ready === true || source.model_loaded === true || source.scene_loaded === true || source.browser_cue_delivery_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const goRequested = source.go_nogo_status === "go" || source.go_candidate === true || source.blocker_resolved === true;
+  const trustedLoaderRequested = source.trusted_loader_allowlist_enabled === true || source.trustedLoaderAllowlistEnabled === true || source.loader_trusted === true;
+  const checkedRowCountRequested = Number.isSafeInteger(source.checked_row_count) && source.checked_row_count > 0;
+
+  const validationBlockedReasons = [
+    "synthetic_row_fixture_pack_planning_only",
+    "synthetic_row_fixture_pack_synthetic_only",
+    "synthetic_row_fixture_pack_non_executable",
+    "synthetic_row_fixture_pack_no_real_row_ingestion",
+    "synthetic_row_fixture_pack_no_motion_execution",
+    "synthetic_row_fixture_pack_no_real_collection",
+    "synthetic_row_fixture_pack_no_live_probe",
+    "synthetic_row_fixture_pack_no_owner_confirmation_created",
+    "synthetic_row_fixture_pack_no_owner_confirmation_confirmed",
+    "synthetic_row_fixture_pack_not_runtime_ready",
+    "synthetic_row_fixture_pack_not_production_ready",
+    "synthetic_row_fixture_pack_go_no_go_preserved",
+    "synthetic_row_fixture_pack_priority1_blocked",
+  ];
+  if (rawFields.length) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_raw_or_private_field");
+  if (realRowRequested || checkedRowCountRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_real_row_or_checked_count");
+  if (executionRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_motion_execution");
+  if (realCollectionRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_real_collection_or_probe");
+  if (ownerConfirmationRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_owner_confirmation");
+  if (readinessRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_readiness_claim");
+  if (goRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_go_or_blocker_resolution");
+  if (trustedLoaderRequested) validationBlockedReasons.push("synthetic_row_fixture_pack_rejected_trusted_loader_request");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_synthetic_row_fixture_pack_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    synthetic_only_boundary: true,
+    non_executable_boundary: true,
+    real_row_data_present: false,
+    synthetic_fixture_row_count: acceptedCases.length,
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    motion_dataset_ready_candidate: false,
+    accepted_synthetic_fixture_cases: acceptedCases,
+    rejected_synthetic_fixture_cases: rejectedCases.map(safeSyntheticRejectedCaseLabel),
+    synthetic_fixture_validator_status: "pass_synthetic_only",
+    real_evidence_collection_started: false,
+    real_probe_started: false,
+    live_probe_started: false,
+    motion_execution_enabled: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    owner_confirmation_status: "schema_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    runtime_supported_motion_styles: [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES],
+    experimental_motion_labels: [...LIVE2D_EXPERIMENTAL_MOTION_LABELS],
+    experimental_motion_labels_executable: false,
+    renderer_ready_required_fields: [...LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS],
+    renderer_ready_dependencies: Object.fromEntries(LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS.map((field) => [field, false])),
+    rejected_private_material_fields: privateMaterialFieldCategories(),
+    detected_rejected_private_material_fields: rawFields,
+    unsafe_material_rejection_status: rawFields.length ? "unsafe_material_rejected" : "preserved",
+    ux_audit_axes: [...LIVE2D_MOTION_DATASET_UX_AUDIT_AXES],
+    ux_audit_guard_status: "required",
+    eval_contamination_policy: "synthetic_fixtures_not_success_evidence",
+    eval_contamination_guard_status: "required",
+    fixture_success_is_real_evidence: false,
+    manifest_existence_is_real_evidence: false,
+    asset_route_success_is_real_evidence: false,
+    sse_connection_is_real_evidence: false,
+    cue_acceptance_is_real_evidence: false,
+    browser_cue_delivery_is_runtime_readiness: false,
+    row_schema_preflight_status: "preserved",
+    collector_dry_run_envelope_status: "request_only_preserved",
+    validation_blocked_reasons: [...new Set(validationBlockedReasons)],
+    safe_next_action: "owner_confirmed_real_resident_evidence_collection_before_any_real_row_ingestion_or_motion_execution",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      synthetic_only_fixture_rows: true,
+      planning_only_no_real_rows: true,
+      no_motion_execution: true,
+      no_real_collection: true,
+      no_live_probe: true,
+      no_owner_confirmation_creation: true,
+      no_owner_confirmation_confirmed: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_trusted_loader_enablement: true,
+      no_raw_dataset_rows: true,
+      no_raw_paths: true,
+      no_endpoint_values: true,
+      no_token_or_secret_values: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset synthetic row fixture pack summary");
+  return summary;
+}
+
+function filterSyntheticFixtureCases(value, fallbackCases) {
+  const values = Array.isArray(value) ? value : fallbackCases;
+  const allowed = new Set(fallbackCases);
+  const filtered = values.map((item) => safeMotionDatasetLabel(item, "")).filter((item) => allowed.has(item));
+  return filtered.length === fallbackCases.length ? filtered : [...fallbackCases];
+}
+
+function safeSyntheticRejectedCaseLabel(label) {
+  const replacements = [
+    [/raw_/gu, "unsafe_"],
+    [/payload/gu, "material"],
+    [/endpoint/gu, "network"],
+    [/token/gu, "credential"],
+    [/secret/gu, "credential"],
+    [/private_local_path/gu, "local_private_reference"],
+    [/_path/gu, "_location"],
+    [/command/gu, "instruction"],
+    [/game_input/gu, "game_interaction"],
+  ];
+  return replacements.reduce((current, [pattern, replacement]) => current.replace(pattern, replacement), label);
 }
 
 function hasRawEvidenceMaterial(source) {

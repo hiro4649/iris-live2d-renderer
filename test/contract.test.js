@@ -10,12 +10,15 @@ import {
   FRESH_EVIDENCE_BUNDLE_SCHEMA,
   GO_NOGO_PREFLIGHT_SCHEMA,
   LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA,
+  LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES,
   LIVE2D_EXPERIMENTAL_MOTION_LABELS,
   LIVE2D_MOTION_DATASET_ROW_REJECTED_RAW_FIELDS,
   LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS,
   LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA,
   LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS,
   LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA,
+  LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES,
+  LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA,
   LIVE2D_MOTION_DATASET_UX_AUDIT_AXES,
   LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES,
   LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA,
@@ -37,6 +40,7 @@ import {
   createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
   createMotionDatasetRowSchemaPreflightSummary,
+  createMotionDatasetSyntheticRowFixturePackSummary,
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
@@ -483,6 +487,117 @@ try {
   assert.equal(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight).includes("secret-token"), false);
   assertSafe(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight));
   assertNoModelPathLeak(JSON.stringify(unsafeMotionDatasetRowSchemaPreflight));
+
+  const defaultSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
+  assert.equal(defaultSyntheticRowFixturePack.schema, LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA);
+  assert.equal(defaultSyntheticRowFixturePack.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
+  assert.equal(defaultSyntheticRowFixturePack.planning_only_boundary, true);
+  assert.equal(defaultSyntheticRowFixturePack.synthetic_only_boundary, true);
+  assert.equal(defaultSyntheticRowFixturePack.non_executable_boundary, true);
+  assert.equal(defaultSyntheticRowFixturePack.real_row_data_present, false);
+  assert.equal(defaultSyntheticRowFixturePack.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
+  assert.equal(defaultSyntheticRowFixturePack.checked_row_count, 0);
+  assert.equal(defaultSyntheticRowFixturePack.motion_dataset_executable, false);
+  assert.equal(defaultSyntheticRowFixturePack.motion_dataset_ready_candidate, false);
+  assert.equal(defaultSyntheticRowFixturePack.real_evidence_collection_started, false);
+  assert.equal(defaultSyntheticRowFixturePack.real_probe_started, false);
+  assert.equal(defaultSyntheticRowFixturePack.live_probe_started, false);
+  assert.equal(defaultSyntheticRowFixturePack.motion_execution_enabled, false);
+  assert.equal(defaultSyntheticRowFixturePack.runtime_readiness_claimed, false);
+  assert.equal(defaultSyntheticRowFixturePack.production_readiness_claimed, false);
+  assert.equal(defaultSyntheticRowFixturePack.renderer_ready, false);
+  assert.equal(defaultSyntheticRowFixturePack.model_loaded, false);
+  assert.equal(defaultSyntheticRowFixturePack.scene_loaded, false);
+  assert.equal(defaultSyntheticRowFixturePack.browser_cue_delivery_ready, false);
+  assert.equal(defaultSyntheticRowFixturePack.priority1_status, "BLOCKED");
+  assert.equal(defaultSyntheticRowFixturePack.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultSyntheticRowFixturePack.owner_confirmation_created, false);
+  assert.equal(defaultSyntheticRowFixturePack.owner_confirmation_confirmed, false);
+  assert.equal(defaultSyntheticRowFixturePack.owner_confirmation_status, "schema_only");
+  assert.equal(defaultSyntheticRowFixturePack.go_nogo_status, "no_go");
+  assert.equal(defaultSyntheticRowFixturePack.go_candidate, false);
+  assert.equal(defaultSyntheticRowFixturePack.blocker_resolved, false);
+  assert.deepEqual(defaultSyntheticRowFixturePack.accepted_synthetic_fixture_cases, [...LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES]);
+  assert.equal(defaultSyntheticRowFixturePack.rejected_synthetic_fixture_cases.length, LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES.length);
+  assert.equal(LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES.includes("token_value_rejected"), true);
+  assert.equal(LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES.includes("endpoint_value_rejected"), true);
+  assert.equal(defaultSyntheticRowFixturePack.rejected_synthetic_fixture_cases.includes("credential_value_rejected"), true);
+  assert.equal(defaultSyntheticRowFixturePack.rejected_synthetic_fixture_cases.includes("network_value_rejected"), true);
+  assert.deepEqual(defaultSyntheticRowFixturePack.runtime_supported_motion_styles, [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES]);
+  assert.deepEqual(defaultSyntheticRowFixturePack.experimental_motion_labels, [...LIVE2D_EXPERIMENTAL_MOTION_LABELS]);
+  assert.deepEqual(defaultSyntheticRowFixturePack.renderer_ready_required_fields, [...LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS]);
+  assert.equal(defaultSyntheticRowFixturePack.experimental_motion_labels_executable, false);
+  assert.equal(defaultSyntheticRowFixturePack.synthetic_fixture_validator_status, "pass_synthetic_only");
+  assert.equal(defaultSyntheticRowFixturePack.unsafe_material_rejection_status, "preserved");
+  assert.equal(defaultSyntheticRowFixturePack.ux_audit_guard_status, "required");
+  assert.equal(defaultSyntheticRowFixturePack.eval_contamination_guard_status, "required");
+  assert.equal(defaultSyntheticRowFixturePack.fixture_success_is_real_evidence, false);
+  assert.equal(defaultSyntheticRowFixturePack.manifest_existence_is_real_evidence, false);
+  assert.equal(defaultSyntheticRowFixturePack.asset_route_success_is_real_evidence, false);
+  assert.equal(defaultSyntheticRowFixturePack.sse_connection_is_real_evidence, false);
+  assert.equal(defaultSyntheticRowFixturePack.cue_acceptance_is_real_evidence, false);
+  assert.equal(defaultSyntheticRowFixturePack.browser_cue_delivery_is_runtime_readiness, false);
+  assert.equal(defaultSyntheticRowFixturePack.row_schema_preflight_status, "preserved");
+  assert.equal(defaultSyntheticRowFixturePack.collector_dry_run_envelope_status, "request_only_preserved");
+  for (const fixtureCase of LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES) {
+    assert.equal(defaultSyntheticRowFixturePack.accepted_synthetic_fixture_cases.includes(fixtureCase), true);
+  }
+  for (const fixtureCase of LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES) {
+    assert.equal(typeof fixtureCase, "string");
+  }
+  assertSafe(JSON.stringify(defaultSyntheticRowFixturePack));
+  assertNoModelPathLeak(JSON.stringify(defaultSyntheticRowFixturePack));
+
+  const unsafeSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary({
+    accepted_synthetic_fixture_cases: ["safe_talk_row"],
+    row: { raw_cue_payload: "private-cue", raw_stack_trace: "private-stack" },
+    checked_row_count: 7,
+    motion_dataset_executable: true,
+    motion_execution_enabled: true,
+    real_evidence_collection_started: true,
+    real_probe_started: true,
+    live_probe_started: true,
+    owner_confirmation_created: true,
+    owner_confirmation_confirmed: true,
+    owner_confirmation_status: "confirmed",
+    renderer_ready: true,
+    model_loaded: true,
+    scene_loaded: true,
+    browser_cue_delivery_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    trustedLoaderAllowlistEnabled: true,
+    go_nogo_status: "go",
+    blocker_resolved: true,
+    world_command: "private-world",
+    obs_command: "private-obs",
+    game_input: "private-game",
+    os_command: "private-os",
+    memory_commit: "private-memory",
+    relationship_commit: "private-relationship",
+  });
+  assert.equal(unsafeSyntheticRowFixturePack.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
+  assert.equal(unsafeSyntheticRowFixturePack.checked_row_count, 0);
+  assert.equal(unsafeSyntheticRowFixturePack.real_row_data_present, false);
+  assert.equal(unsafeSyntheticRowFixturePack.motion_dataset_executable, false);
+  assert.equal(unsafeSyntheticRowFixturePack.real_evidence_collection_started, false);
+  assert.equal(unsafeSyntheticRowFixturePack.owner_confirmation_confirmed, false);
+  assert.equal(unsafeSyntheticRowFixturePack.renderer_ready, false);
+  assert.equal(unsafeSyntheticRowFixturePack.go_nogo_status, "no_go");
+  assert.equal(unsafeSyntheticRowFixturePack.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_raw_or_private_field"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_motion_execution"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_real_collection_or_probe"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_owner_confirmation"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_readiness_claim"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeSyntheticRowFixturePack.validation_blocked_reasons.includes("synthetic_row_fixture_pack_rejected_trusted_loader_request"), true);
+  assert.equal(JSON.stringify(unsafeSyntheticRowFixturePack).includes("private-cue"), false);
+  assert.equal(JSON.stringify(unsafeSyntheticRowFixturePack).includes("private-stack"), false);
+  assert.equal(JSON.stringify(unsafeSyntheticRowFixturePack).includes("private-world"), false);
+  assertSafe(JSON.stringify(unsafeSyntheticRowFixturePack));
+  assertNoModelPathLeak(JSON.stringify(unsafeSyntheticRowFixturePack));
 
   const defaultGoNoGo = createGoNoGoPreflightSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -3319,6 +3434,10 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_schema_preflight_summary.row_schema_preflight_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_schema_preflight_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_schema_preflight_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_executable, false);
   assert.equal(JSON.stringify(provisionedRuntimeConfig).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedRuntimeConfig));
   assertNoModelPathLeak(JSON.stringify(provisionedRuntimeConfig));
@@ -3415,6 +3534,10 @@ try {
   assert.equal(provisionedStatus.go_nogo_blocker_resolution_summary.renderer_ready, false);
   assert.equal(provisionedStatus.motion_dataset_row_schema_preflight_summary.row_schema_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_row_schema_preflight_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
+  assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
+  assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
+  assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.renderer_health.model_loaded, false);
   assert.equal(provisionedStatus.renderer_health.scene_loaded, false);
   assert.equal(provisionedStatus.renderer_health.browser_cue_delivery_ready, false);
@@ -3488,6 +3611,10 @@ try {
   assert.equal(provisionedHealth.go_nogo_blocker_resolution_summary.motion_dataset_executable, false);
   assert.equal(provisionedHealth.motion_dataset_row_schema_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.motion_dataset_row_schema_preflight_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_validator_status, "pass_synthetic_only");
+  assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.go_nogo_status, "no_go");
   assert.equal(JSON.stringify(provisionedHealth).includes(ownerFrameworkLoaderPath), false);
   assertSafe(JSON.stringify(provisionedHealth));
   assertNoModelPathLeak(JSON.stringify(provisionedHealth));
@@ -3545,6 +3672,10 @@ try {
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
+  assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
+  assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.renderer_ready, false);
   assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.safe_evidence_summary_contract_status, "planning_only");
   assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.safe_evidence_summary_contract_summary.real_probe_started, false);

@@ -321,6 +321,14 @@ Fixture source output is not real evidence. Dry-run source output is not real ev
 
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
 
+## Motion Dataset Synthetic Row Fixture Pack
+
+`LIVE2D-MOTION-DATASET-SYNTHETIC-ROW-FIXTURE-PACK1` is synthetic-only fixture and validator coverage for the motion dataset row schema. It publishes safe labels for accepted synthetic fixture cases, rejected synthetic fixture cases, validator status, renderer-ready dependencies, rejected raw fields, UX audit guards, and eval-contamination guards.
+
+The fixture pack is planning-only and non-executable. It does not add real dataset rows, does not ingest real rows, does not execute motion, does not collect real evidence, does not start live probes, does not create or confirm owner confirmation, does not enable trusted loader allowlist, and does not trust any loader. Synthetic fixture success, manifest existence, asset route availability, SSE availability, cue acceptance, and browser cue delivery are not renderer readiness evidence.
+
+`real_row_data_present` remains false, `checked_row_count` remains 0, `motion_dataset_executable` remains false, `motion_dataset_ready_candidate` remains false, go/no-go remains no_go, runtime readiness is not claimed, production readiness is not claimed, and priority1 remains BLOCKED until real resident fresh evidence exists. Future real row ingestion or motion execution requires a separate owner-confirmed task after fresh real resident evidence, owner confirmation, and go/no-go blocker review.
+
 ## LIVE2D-REAL-EVIDENCE-COLLECTOR-DRY-RUN-ENVELOPE1
 
 The real evidence collector dry-run envelope is planning only. It validates future collector execution request shape, requested collector names, source binding, freshness binding, audit binding, redaction status, safe output fields, rejected raw fields, rejected source types, network policy, SDK policy, renderer policy, owner confirmation separation, and safe next action labels. It is an envelope, not collector execution.

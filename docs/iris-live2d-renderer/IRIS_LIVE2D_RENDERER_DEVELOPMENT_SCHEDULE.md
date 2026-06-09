@@ -319,3 +319,12 @@ Runtime readiness is not claimed. Production readiness is not claimed. go/no-go 
 - Boundary: no real row ingestion, no motion execution, no real collection, no live probe, no owner confirmation creation, no owner confirmation confirmation, no trusted loader enablement, no runtime readiness claim, no production readiness claim, no priority1 resolution, and no go decision.
 - Evidence policy: fixture success, manifest existence, asset route success, SSE connection, cue acceptance, and browser cue delivery are rejected as real row success evidence.
 - Current status: checked_row_count remains 0, motion dataset remains non-executable, go/no-go remains no_go, and priority1 remains BLOCKED until real resident fresh evidence and a separate owner-confirmed task exist.
+
+## LIVE2D-MOTION-DATASET-SYNTHETIC-ROW-FIXTURE-PACK1
+
+- Scope: add synthetic-only fixture labels and validator coverage for the motion dataset row schema without adding real rows.
+- Accepted synthetic fixture cases: safe talk, idle breath, recovery, subtitle visibility, low intensity, accessibility, eval split, and renderer-ready-false rows.
+- Rejected synthetic fixture cases: missing required row or audit fields, duplicate row IDs, unsupported or experimental executable motion labels, expression/gaze/breath/camera labels used as motion styles, raw/private/command material, readiness shortcuts, missing renderer-ready dependencies, missing UX guards, and missing eval contamination guard.
+- Boundary: no real row ingestion, no motion execution, no real collection, no live probe, no owner confirmation creation, no owner confirmation confirmation, no trusted loader enablement, no runtime readiness claim, no production readiness claim, no priority1 resolution, and no go decision.
+- Evidence policy: synthetic fixture success, manifest existence, asset route success, SSE connection, cue acceptance, and browser cue delivery remain rejected as renderer-ready or real evidence.
+- Current status: real_row_data_present remains false, checked_row_count remains 0, motion dataset remains non-executable, motion_dataset_ready_candidate remains false, go/no-go remains no_go, and priority1 remains BLOCKED until real resident fresh evidence and a separate owner-confirmed task exist.
