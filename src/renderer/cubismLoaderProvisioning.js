@@ -11,6 +11,7 @@ export const REAL_EVIDENCE_INTAKE_SCHEMA = "iris_live2d_real_evidence_intake_v1"
 export const OWNER_CONFIRMATION_ENVELOPE_SCHEMA = "iris_live2d_owner_confirmation_envelope_v1";
 export const REAL_EVIDENCE_REQUEST_PACKET_SCHEMA = "iris_live2d_real_evidence_request_packet_v1";
 export const REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA = "iris_live2d_real_resident_evidence_collection_plan_v1";
+export const LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA = "iris_live2d_real_evidence_collector_manifest_v1";
 export const REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA = "iris_live2d_real_evidence_freshness_threshold_v1";
 export const LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA = "iris_live2d_safe_evidence_summary_contract_v1";
 export const LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA = "iris_live2d_real_evidence_summary_intake_binding_v1";
@@ -125,6 +126,43 @@ const REAL_EVIDENCE_REQUEST_COMPONENTS = Object.freeze([
   "sdk_vendor_boundary",
   "priority1_real_resident_evidence",
   "motion_dataset_row_evidence",
+]);
+
+const LIVE2D_REAL_EVIDENCE_COLLECTORS = Object.freeze([
+  "live2d_renderer_heartbeat_collector",
+  "live2d_model_configured_collector",
+  "live2d_cue_capability_collector",
+  "live2d_recovery_capability_collector",
+  "live2d_route_guard_collector",
+  "live2d_evidence_collector_status_collector",
+  "live2d_fresh_evidence_bundle_collector",
+  "live2d_summary_intake_collector",
+  "live2d_owner_confirmation_binding_collector",
+  "live2d_go_nogo_blocker_collector",
+  "trusted_loader_preflight_collector",
+  "trusted_loader_enablement_gate_collector",
+  "license_boundary_collector",
+  "sdk_vendor_boundary_collector",
+  "priority1_blocker_collector",
+  "motion_dataset_row_evidence_collector",
+]);
+
+const REAL_EVIDENCE_COLLECTOR_SAFE_OUTPUT_FIELDS = Object.freeze([
+  "component",
+  "collector_name",
+  "collector_status",
+  "evidence_source_type",
+  "freshness_status",
+  "safe_evidence_ref",
+  "safe_audit_ref",
+  "head_sha_ref",
+  "run_id_ref",
+  "file_scope",
+  "checked_at_bucket",
+  "status_reason_code",
+  "redaction_status",
+  "blocker_labels",
+  "safe_next_action",
 ]);
 
 const REAL_RESIDENT_EVIDENCE_COLLECTION_SOURCE_TYPES = Object.freeze([
@@ -1278,6 +1316,132 @@ export function createRealResidentEvidenceCollectionPlanSummary(plan = {}, {
     },
   };
   assertSafePublicObject(summary, "real resident evidence collection plan summary");
+  return summary;
+}
+
+export function createRealEvidenceCollectorManifestSummary(manifest = {}, {
+  requiredCollectors = LIVE2D_REAL_EVIDENCE_COLLECTORS,
+  safeOutputFields = REAL_EVIDENCE_COLLECTOR_SAFE_OUTPUT_FIELDS,
+} = {}) {
+  const source = manifest && typeof manifest === "object" ? manifest : {};
+  const sourceType = safeEvidenceLabel(source.source_type ?? source.source_kind, "missing");
+  const rejectedSourceType = SAFE_EVIDENCE_SUMMARY_REJECTED_SOURCE_TYPES.includes(sourceType) || sourceType === "raw_payload";
+  const unsafeMaterialRejected = hasRawEvidenceMaterial(source) || hasCollectionPlanForbiddenMaterial(source);
+  const collectorRegistry = Object.fromEntries(requiredCollectors.map((collector) => [collector, {
+    collector_name: collector,
+    collector_status: "planning_only",
+    collector_ready_candidate: false,
+    execution_started: false,
+    real_probe_started: false,
+    source_binding_required: true,
+    freshness_binding_required: true,
+    audit_binding_required: true,
+    redaction_status_required: true,
+    safe_summary_only: true,
+  }]));
+  const blockedReasons = [
+    "collector_manifest_planning_only_not_execution",
+    "collector_manifest_blocked_missing_future_fresh_real_evidence",
+    "collector_manifest_blocked_missing_owner_confirmation",
+    "collector_manifest_blocked_priority1_unresolved",
+    "collector_manifest_blocked_motion_dataset_non_executable",
+    "collector_manifest_not_runtime_ready",
+    "collector_manifest_not_production_ready",
+  ];
+  if (rejectedSourceType) blockedReasons.push(`collector_manifest_rejected_${sourceType}`);
+  if (unsafeMaterialRejected) blockedReasons.push("collector_manifest_rejected_forbidden_raw_field");
+  const summary = {
+    schema: LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA,
+    safe_summary_only: true,
+    real_evidence_collector_manifest_status: "planning_only",
+    planning_only_boundary: true,
+    collector_manifest_ready_candidate: false,
+    collector_execution_started: false,
+    collector_real_probe_started: false,
+    real_evidence_collection_started: false,
+    real_probe_started: false,
+    live_probe_started: false,
+    real_renderer_call_started: false,
+    real_sdk_call_started: false,
+    external_service_call_started: false,
+    required_collectors: requiredCollectors,
+    collector_registry: collectorRegistry,
+    collector_safe_output_fields: safeOutputFields,
+    collector_required_source_binding: "required",
+    collector_required_freshness_binding: "required",
+    collector_required_audit_binding: "required",
+    collector_required_redaction_status: "pass_required",
+    collector_rejected_material_classes: SAFE_EVIDENCE_SUMMARY_REJECTED_RAW_FIELDS,
+    collector_rejected_source_types: SAFE_EVIDENCE_SUMMARY_REJECTED_SOURCE_TYPES,
+    collector_network_policy: "blocked_by_default_no_external_services",
+    collector_sdk_policy: "forbid_real_sdk_call",
+    collector_renderer_policy: "forbid_real_renderer_call",
+    fixture_evidence_policy: "fixture_collector_output_is_not_real_evidence",
+    dry_run_evidence_policy: "dry_run_collector_output_is_not_real_evidence",
+    stale_evidence_policy: "stale_collector_output_is_not_fresh_evidence",
+    mock_evidence_policy: "mock_collector_output_is_not_real_evidence",
+    source_type_status: rejectedSourceType ? `rejected_${sourceType}` : "future_safe_summary_source_required",
+    forbidden_material_status: unsafeMaterialRejected ? "forbidden_material_rejected" : "not_present",
+    blocked_reason: blockedReasons[0],
+    blocked_reasons: [...new Set(blockedReasons)],
+    request_packet_status: "request_only_no_collection",
+    collection_plan_status: "planning_only",
+    freshness_threshold_status: "planning_only",
+    safe_evidence_summary_contract_status: "planning_only",
+    summary_intake_binding_status: "planning_only",
+    owner_confirmation_binding_status: "planning_only",
+    go_nogo_blocker_resolution_status: "planning_only",
+    real_evidence_intake_status: "schema_only",
+    owner_confirmation_envelope_status: "schema_only_blocked_or_pending",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    priority1_status: "BLOCKED",
+    motion_dataset_status: "non_executable",
+    checked_row_count: 0,
+    trusted_loader_allowlist_enabled: false,
+    trusted_loader_allowlist_status: "disabled",
+    no_loader_trusted: true,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    motion_dataset_executable: false,
+    assistant_review_is_owner_confirmation: false,
+    pr_merge_is_owner_confirmation: false,
+    remote_pass_is_owner_confirmation: false,
+    collector_manifest_executes_collectors: false,
+    collector_manifest_collects_real_evidence: false,
+    collector_manifest_performs_live_probes: false,
+    collector_manifest_calls_real_renderer: false,
+    collector_manifest_calls_real_sdk: false,
+    collector_manifest_calls_external_services: false,
+    collector_manifest_creates_owner_confirmation: false,
+    safe_next_action: "future_owner_confirmed_real_evidence_collection_task_required",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only_no_collection: true,
+      no_live_probe: true,
+      no_real_renderer_call: true,
+      no_real_sdk_call: true,
+      no_external_service_call: true,
+      no_owner_confirmation_creation: true,
+      no_trusted_loader_enablement: true,
+      no_env_values: true,
+      no_endpoint_values: true,
+      no_token_values: true,
+      no_secret_values: true,
+      no_private_paths: true,
+      no_sdk_vendor_files: true,
+      no_raw_loader_candidates: true,
+      no_raw_loader_errors: true,
+      no_owner_private_notes: true,
+      no_shell_command_bodies: true,
+    },
+  };
+  assertSafePublicObject(summary, "real evidence collector manifest summary");
   return summary;
 }
 

@@ -8,6 +8,7 @@ import {
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
+  createRealEvidenceCollectorManifestSummary,
   createRealEvidenceSummaryIntakeBindingSummary,
   createRealResidentEvidenceCollectionPlanSummary,
   createSafeEvidenceSummaryContractSummary,
@@ -103,6 +104,7 @@ export function createRendererState({
       const ownerConfirmationEnvelope = createOwnerConfirmationEnvelopeSummary();
       const realEvidenceRequestPacket = createRealEvidenceRequestPacketSummary();
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
+      const realEvidenceCollectorManifest = createRealEvidenceCollectorManifestSummary();
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
@@ -171,6 +173,7 @@ export function createRendererState({
           owner_confirmation_envelope_summary: ownerConfirmationEnvelope,
           real_evidence_request_packet_summary: realEvidenceRequestPacket,
           real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
+          real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
           real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
@@ -187,6 +190,7 @@ export function createRendererState({
         owner_confirmation_envelope_summary: ownerConfirmationEnvelope,
         real_evidence_request_packet_summary: realEvidenceRequestPacket,
         real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
+        real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
         real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
@@ -244,6 +248,7 @@ export function createRendererState({
         owner_confirmation_envelope_summary: status.renderer_health.owner_confirmation_envelope_summary,
         real_evidence_request_packet_summary: status.renderer_health.real_evidence_request_packet_summary,
         real_resident_evidence_collection_plan_summary: status.renderer_health.real_resident_evidence_collection_plan_summary,
+        real_evidence_collector_manifest_summary: status.renderer_health.real_evidence_collector_manifest_summary,
         real_evidence_freshness_threshold_summary: status.renderer_health.real_evidence_freshness_threshold_summary,
         safe_evidence_summary_contract_summary: status.renderer_health.safe_evidence_summary_contract_summary,
         real_evidence_summary_intake_binding_summary: status.renderer_health.real_evidence_summary_intake_binding_summary,
@@ -352,6 +357,7 @@ export function createRendererState({
       const ownerConfirmationEnvelope = createOwnerConfirmationEnvelopeSummary();
       const realEvidenceRequestPacket = createRealEvidenceRequestPacketSummary();
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
+      const realEvidenceCollectorManifest = createRealEvidenceCollectorManifestSummary();
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
@@ -379,6 +385,7 @@ export function createRendererState({
       response.owner_confirmation_envelope_summary = ownerConfirmationEnvelope;
       response.real_evidence_request_packet_summary = realEvidenceRequestPacket;
       response.real_resident_evidence_collection_plan_summary = realResidentEvidenceCollectionPlan;
+      response.real_evidence_collector_manifest_summary = realEvidenceCollectorManifest;
       response.real_evidence_freshness_threshold_summary = realEvidenceFreshnessThreshold;
       response.safe_evidence_summary_contract_summary = safeEvidenceSummaryContract;
       response.real_evidence_summary_intake_binding_summary = realEvidenceSummaryIntakeBinding;
@@ -452,6 +459,7 @@ export function createRendererState({
       const ownerConfirmationEnvelope = createOwnerConfirmationEnvelopeSummary();
       const realEvidenceRequestPacket = createRealEvidenceRequestPacketSummary();
       const realResidentEvidenceCollectionPlan = createRealResidentEvidenceCollectionPlanSummary();
+      const realEvidenceCollectorManifest = createRealEvidenceCollectorManifestSummary();
       const realEvidenceFreshnessThreshold = createRealEvidenceFreshnessThresholdSummary();
       const safeEvidenceSummaryContract = createSafeEvidenceSummaryContractSummary();
       const realEvidenceSummaryIntakeBinding = createRealEvidenceSummaryIntakeBindingSummary();
@@ -504,6 +512,7 @@ export function createRendererState({
           owner_confirmation_envelope_summary: ownerConfirmationEnvelope,
           real_evidence_request_packet_summary: realEvidenceRequestPacket,
           real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
+          real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
           real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
           safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
@@ -520,6 +529,7 @@ export function createRendererState({
         owner_confirmation_envelope_summary: ownerConfirmationEnvelope,
         real_evidence_request_packet_summary: realEvidenceRequestPacket,
         real_resident_evidence_collection_plan_summary: realResidentEvidenceCollectionPlan,
+        real_evidence_collector_manifest_summary: realEvidenceCollectorManifest,
         real_evidence_freshness_threshold_summary: realEvidenceFreshnessThreshold,
         safe_evidence_summary_contract_summary: safeEvidenceSummaryContract,
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
