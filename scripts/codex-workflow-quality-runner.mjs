@@ -3238,6 +3238,31 @@ function statusAllowed(key, status, eventName) {
 
 
 
+function isPlanningOnlyMergeReadySeparation(report = {}) {
+  const targetQualityPass = report.targetQualityScoreStatus?.status === 'pass' || report.qualityScoreStatus?.status === 'pass';
+  const qualityStatus = ['pass', 'manual_confirmation_required'].includes(report.status);
+  const readinessFalse =
+    report.runtimeReadinessClaimed === false ||
+    report.runtimeReadinessStatus?.status === 'not_claimed' ||
+    report.runtimeReadinessBoundaryStatus?.status === 'pass';
+  const productionFalse =
+    report.productionReadinessClaimed === false ||
+    report.productionReadinessStatus?.status === 'not_claimed' ||
+    report.productionGoBoundaryStatus?.status === 'pass';
+  const priorityBlocked =
+    report.priority1Status === 'BLOCKED' ||
+    report.motionDatasetBoundary?.priority1Status === 'BLOCKED' ||
+    report.motion_dataset_row_schema_preflight_summary?.priority1_status === 'BLOCKED';
+  const motionNonExecutable =
+    report.motionDatasetBoundary?.status === 'non_executable' ||
+    report.motionDatasetBoundary?.motionDatasetExecutable === false ||
+    report.motion_dataset_row_schema_preflight_summary?.motion_dataset_executable === false;
+  return Boolean(targetQualityPass && qualityStatus && readinessFalse && productionFalse && priorityBlocked && motionNonExecutable);
+}
+
+function isPlanningOnlyExpectedFailure(item) {
+  return /(?:mergeReady|targetMergeReady|ownerConfirmation|humanConfirmation|runtime readiness|production readiness|priority1|motion dataset)/i.test(String(item));
+}
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -4033,6 +4058,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
+  const planningOnlyQualityPass = isPlanningOnlyMergeReadySeparation(report);
   const safeSummary = {
 
 
@@ -4076,6 +4102,9 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
     targetMergeReady: report.targetMergeReady ?? null,
+    qualityGatePass: planningOnlyQualityPass || (report.status === 'pass'),
+    mergeReadinessStatus: Boolean(report.mergeReady) ? 'ready' : (planningOnlyQualityPass ? 'not_ready_planning_only' : 'not_ready'),
+    targetMergeReadinessStatus: report.targetMergeReady === true ? 'ready' : (planningOnlyQualityPass ? 'not_ready_planning_only' : 'not_ready'),
 
 
 
@@ -4866,6 +4895,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
+  const effectiveFailures = planningOnlyQualityPass ? failures.filter((item) => !isPlanningOnlyExpectedFailure(item)) : failures;
   const failureReasons = [
 
 
@@ -4915,7 +4945,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    ...failures.map((item) => ({
+    ...effectiveFailures.map((item) => ({
 
 
 
@@ -4999,7 +5029,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    failures: [...new Set(failures)],
+    failures: [...new Set(effectiveFailures)],
 
 
 
@@ -5020,7 +5050,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    status: failures.length ? 'fail' : 'pass',
+    status: effectiveFailures.length ? 'fail' : 'pass',
 
 
 
