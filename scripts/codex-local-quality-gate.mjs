@@ -2578,6 +2578,29 @@ function runV098Gates(report, gateEnv) {
 function initializeV098Statuses(report) {
   for (const key of V098_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
 }
+function buildRemoteNpmDiagnosticNormalizationInput(report = {}, gateEnv = {}) {
+  const changeStatus = report.changeClassificationStatus || {};
+  const classification = changeStatus.classification || {};
+  const productRelevant = Boolean(
+    changeStatus.productRelevantChanged ||
+    changeStatus.productRelevant ||
+    classification.productSourceChanged ||
+    classification.packageChanged ||
+    classification.lockfileChanged ||
+    classification.runtimeReadinessClaimed,
+  );
+  const diagnostic = report.remoteNpmDiagnosticStatus || {};
+  const npmExecuted = gateEnv.CODEX_REMOTE_NPM_EXECUTED === '1' ||
+    report.productVerificationEvidenceStatus?.normalizedEvidence?.commands?.some((command) => command?.name === 'npm test' && command?.result === 'pass') ||
+    diagnostic.npmExecuted === true;
+  const npmExitCode = Number(gateEnv.CODEX_NPM_EXIT_CODE ?? diagnostic.npmExitCode ?? 0);
+  return {
+    forceCheck: productRelevant,
+    productRelevant,
+    npmExecuted,
+    npmExitCode,
+  };
+}
 function runV099Gates(report, gateEnv) {
   const v099Env = {
     ...gateEnv,
@@ -2585,6 +2608,7 @@ function runV099Gates(report, gateEnv) {
     CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON: JSON.stringify(report.productVerificationEvidenceStatus),
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
+    CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON: JSON.stringify(buildRemoteNpmDiagnosticNormalizationInput(report, gateEnv)),
   };
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
