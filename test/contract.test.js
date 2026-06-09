@@ -14,6 +14,7 @@ import {
   OWNER_CONFIRMATION_ENVELOPE_SCHEMA,
   LIVE2D_SAFE_EVIDENCE_SUMMARY_CONTRACT_SCHEMA,
   LIVE2D_REAL_EVIDENCE_SUMMARY_INTAKE_BINDING_SCHEMA,
+  LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA,
   REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA,
   REAL_EVIDENCE_INTAKE_SCHEMA,
   REAL_EVIDENCE_REQUEST_PACKET_SCHEMA,
@@ -28,6 +29,7 @@ import {
   createOwnerConfirmationBindingSummary,
   createOwnerConfirmationEnvelopeSummary,
   createRealEvidenceFreshnessThresholdSummary,
+  createRealEvidenceCollectorManifestSummary,
   createRealEvidenceSummaryIntakeBindingSummary,
   createRealEvidenceIntakeSummary,
   createRealEvidenceRequestPacketSummary,
@@ -162,6 +164,7 @@ try {
   assert.equal(OWNER_CONFIRMATION_ENVELOPE_SCHEMA, "iris_live2d_owner_confirmation_envelope_v1");
   assert.equal(REAL_EVIDENCE_REQUEST_PACKET_SCHEMA, "iris_live2d_real_evidence_request_packet_v1");
   assert.equal(REAL_RESIDENT_EVIDENCE_COLLECTION_PLAN_SCHEMA, "iris_live2d_real_resident_evidence_collection_plan_v1");
+  assert.equal(LIVE2D_REAL_EVIDENCE_COLLECTOR_MANIFEST_SCHEMA, "iris_live2d_real_evidence_collector_manifest_v1");
   assert.equal(REAL_EVIDENCE_FRESHNESS_THRESHOLD_SCHEMA, "iris_live2d_real_evidence_freshness_threshold_v1");
   assert.deepEqual(ALLOWED_CUBISM_LOADER_ENV_NAMES, [
     "IRIS_LIVE2D_CUBISM_FRAMEWORK_JS",
@@ -753,6 +756,117 @@ try {
   assert.equal(defaultCollectionPlan.pr_merge_is_owner_confirmation, false);
   assert.equal(defaultCollectionPlan.remote_pass_is_owner_confirmation, false);
   assertSafe(JSON.stringify(defaultCollectionPlan));
+
+  const defaultCollectorManifest = createRealEvidenceCollectorManifestSummary();
+  assert.equal(defaultCollectorManifest.real_evidence_collector_manifest_status, "planning_only");
+  assert.equal(defaultCollectorManifest.planning_only_boundary, true);
+  assert.equal(defaultCollectorManifest.collector_manifest_ready_candidate, false);
+  assert.equal(defaultCollectorManifest.collector_execution_started, false);
+  assert.equal(defaultCollectorManifest.collector_real_probe_started, false);
+  assert.equal(defaultCollectorManifest.real_evidence_collection_started, false);
+  assert.equal(defaultCollectorManifest.real_probe_started, false);
+  assert.equal(defaultCollectorManifest.real_renderer_call_started, false);
+  assert.equal(defaultCollectorManifest.real_sdk_call_started, false);
+  assert.equal(defaultCollectorManifest.external_service_call_started, false);
+  assert.equal(defaultCollectorManifest.runtime_readiness_claimed, false);
+  assert.equal(defaultCollectorManifest.production_readiness_claimed, false);
+  assert.equal(defaultCollectorManifest.priority1_status, "BLOCKED");
+  assert.equal(defaultCollectorManifest.motion_dataset_status, "non_executable");
+  assert.equal(defaultCollectorManifest.checked_row_count, 0);
+  assert.equal(defaultCollectorManifest.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultCollectorManifest.no_loader_trusted, true);
+  assert.equal(defaultCollectorManifest.go_nogo_status, "no_go");
+  assert.equal(defaultCollectorManifest.go_candidate, false);
+  assert.equal(defaultCollectorManifest.blocker_resolved, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_executes_collectors, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_collects_real_evidence, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_performs_live_probes, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_calls_real_renderer, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_calls_real_sdk, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_calls_external_services, false);
+  assert.equal(defaultCollectorManifest.collector_manifest_creates_owner_confirmation, false);
+  for (const requiredCollector of [
+    "live2d_renderer_heartbeat_collector",
+    "live2d_model_configured_collector",
+    "live2d_cue_capability_collector",
+    "live2d_recovery_capability_collector",
+    "live2d_route_guard_collector",
+    "live2d_evidence_collector_status_collector",
+    "live2d_fresh_evidence_bundle_collector",
+    "live2d_summary_intake_collector",
+    "live2d_owner_confirmation_binding_collector",
+    "live2d_go_nogo_blocker_collector",
+    "trusted_loader_preflight_collector",
+    "trusted_loader_enablement_gate_collector",
+    "license_boundary_collector",
+    "sdk_vendor_boundary_collector",
+    "priority1_blocker_collector",
+    "motion_dataset_row_evidence_collector",
+  ]) {
+    assert.equal(defaultCollectorManifest.required_collectors.includes(requiredCollector), true);
+    assert.equal(defaultCollectorManifest.collector_registry[requiredCollector].execution_started, false);
+    assert.equal(defaultCollectorManifest.collector_registry[requiredCollector].real_probe_started, false);
+  }
+  for (const safeField of [
+    "component",
+    "collector_name",
+    "collector_status",
+    "evidence_source_type",
+    "freshness_status",
+    "safe_evidence_ref",
+    "safe_audit_ref",
+    "head_sha_ref",
+    "run_id_ref",
+    "file_scope",
+    "checked_at_bucket",
+    "status_reason_code",
+    "redaction_status",
+    "blocker_labels",
+    "safe_next_action",
+  ]) {
+    assert.equal(defaultCollectorManifest.collector_safe_output_fields.includes(safeField), true);
+  }
+  for (const rejectedSourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
+    assert.equal(defaultCollectorManifest.collector_rejected_source_types.includes(rejectedSourceType), true);
+  }
+  assert.equal(defaultCollectorManifest.collector_required_source_binding, "required");
+  assert.equal(defaultCollectorManifest.collector_required_freshness_binding, "required");
+  assert.equal(defaultCollectorManifest.collector_required_audit_binding, "required");
+  assert.equal(defaultCollectorManifest.collector_required_redaction_status, "pass_required");
+  assert.equal(defaultCollectorManifest.collector_network_policy, "blocked_by_default_no_external_services");
+  assert.equal(defaultCollectorManifest.collector_sdk_policy, "forbid_real_sdk_call");
+  assert.equal(defaultCollectorManifest.collector_renderer_policy, "forbid_real_renderer_call");
+  assert.equal(defaultCollectorManifest.fixture_evidence_policy, "fixture_collector_output_is_not_real_evidence");
+  assert.equal(defaultCollectorManifest.dry_run_evidence_policy, "dry_run_collector_output_is_not_real_evidence");
+  assert.equal(defaultCollectorManifest.stale_evidence_policy, "stale_collector_output_is_not_fresh_evidence");
+  assert.equal(defaultCollectorManifest.request_packet_status, "request_only_no_collection");
+  assert.equal(defaultCollectorManifest.collection_plan_status, "planning_only");
+  assert.equal(defaultCollectorManifest.freshness_threshold_status, "planning_only");
+  assert.equal(defaultCollectorManifest.safe_evidence_summary_contract_status, "planning_only");
+  assert.equal(defaultCollectorManifest.summary_intake_binding_status, "planning_only");
+  assert.equal(defaultCollectorManifest.owner_confirmation_binding_status, "planning_only");
+  assert.equal(defaultCollectorManifest.go_nogo_blocker_resolution_status, "planning_only");
+  assertSafe(JSON.stringify(defaultCollectorManifest));
+
+  const rejectedFixtureCollectorManifest = createRealEvidenceCollectorManifestSummary({ source_type: "fixture" });
+  assert.equal(rejectedFixtureCollectorManifest.source_type_status, "rejected_fixture");
+  assert.equal(rejectedFixtureCollectorManifest.blocked_reasons.includes("collector_manifest_rejected_fixture"), true);
+
+  const unsafeCollectorManifest = createRealEvidenceCollectorManifestSummary({
+    source_type: "dry_run",
+    raw_evidence_body: "https://secret.example/evidence",
+    raw_cue_payload: "private cue",
+    raw_renderer_payload: "private renderer",
+    endpoint_value: "https://secret.example",
+    token_value: "secret-token",
+    model_path: "internal_model_path",
+    motion_path: "motion_path",
+    sdk_vendor_path: "sdk_vendor_path",
+  });
+  assert.equal(unsafeCollectorManifest.source_type_status, "rejected_dry_run");
+  assert.equal(unsafeCollectorManifest.forbidden_material_status, "forbidden_material_rejected");
+  assert.equal(unsafeCollectorManifest.blocked_reasons.includes("collector_manifest_rejected_forbidden_raw_field"), true);
+  assertSafe(JSON.stringify(unsafeCollectorManifest));
 
   for (const rejectedSourceType of ["fixture", "dry_run", "mock", "stale", "unsafe_material", "unknown_source_type"]) {
     const rejectedCollectionPlan = createRealResidentEvidenceCollectionPlanSummary({ source_type: rejectedSourceType });
@@ -2631,6 +2745,19 @@ try {
   assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.trusted_loader_allowlist_enabled, false);
   assert.equal(provisionedRuntimeConfig.real_resident_evidence_collection_plan_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.real_evidence_collector_manifest_status, "planning_only");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.collector_manifest_ready_candidate, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.collector_execution_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.real_evidence_collection_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.real_probe_started, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.collector_manifest_calls_external_services, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.collector_manifest_creates_owner_confirmation, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.production_readiness_claimed, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.motion_dataset_status, "non_executable");
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(provisionedRuntimeConfig.real_evidence_collector_manifest_summary.go_nogo_status, "no_go");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.freshness_policy_ready_candidate, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
@@ -2734,6 +2861,12 @@ try {
   assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_plan_collects_real_evidence, false);
   assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.collection_plan_creates_owner_confirmation, false);
   assert.equal(provisionedStatus.real_resident_evidence_collection_plan_summary.renderer_ready, false);
+  assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.real_evidence_collector_manifest_status, "planning_only");
+  assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.collector_execution_started, false);
+  assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.collector_real_probe_started, false);
+  assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.collector_manifest_collects_real_evidence, false);
+  assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.collector_manifest_creates_owner_confirmation, false);
+  assert.equal(provisionedStatus.real_evidence_collector_manifest_summary.renderer_ready, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedStatus.real_evidence_freshness_threshold_summary.real_probe_started, false);
@@ -2793,6 +2926,10 @@ try {
   assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.collection_started, false);
   assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.real_probe_started, false);
   assert.equal(provisionedHealth.real_resident_evidence_collection_plan_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.real_evidence_collector_manifest_status, "planning_only");
+  assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.collector_execution_started, false);
+  assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.real_probe_started, false);
+  assert.equal(provisionedHealth.real_evidence_collector_manifest_summary.motion_dataset_executable, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHealth.real_evidence_freshness_threshold_summary.real_probe_started, false);
@@ -2857,6 +2994,10 @@ try {
   assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.collection_started, false);
   assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.real_probe_started, false);
   assert.equal(provisionedHeartbeat.real_resident_evidence_collection_plan_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.real_evidence_collector_manifest_status, "planning_only");
+  assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.collector_execution_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.real_probe_started, false);
+  assert.equal(provisionedHeartbeat.real_evidence_collector_manifest_summary.renderer_ready, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_freshness_threshold_status, "planning_only");
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_evidence_collection_started, false);
   assert.equal(provisionedHeartbeat.real_evidence_freshness_threshold_summary.real_probe_started, false);

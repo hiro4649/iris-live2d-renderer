@@ -267,3 +267,21 @@ Runtime readiness and production readiness are not claimed. priority1 remains BL
 - Runtime readiness is not claimed. Production readiness is not claimed.
 - priority1 remains BLOCKED until real resident fresh evidence and separate owner-confirmed go/no-go review exist.
 - Motion dataset remains non-executable; checked row count remains zero until real rows are implemented and tested in a separate task.
+
+## LIVE2D-REAL-EVIDENCE-COLLECTOR-MANIFEST1
+
+The real evidence collector manifest is planning only. It defines future collector names, required bindings, allowed safe summary fields, rejected raw fields, source/freshness/audit/redaction requirements, and safe next actions. It is a manifest, not collector execution.
+
+No evidence is collected, no live probe is performed, no real renderer call is performed, no Cubism SDK call is performed, no SDK/vendor file is loaded, and no external service is called. The trusted loader allowlist remains disabled and no loader is trusted.
+
+Required collectors are live2d_renderer_heartbeat_collector, live2d_model_configured_collector, live2d_cue_capability_collector, live2d_recovery_capability_collector, live2d_route_guard_collector, live2d_evidence_collector_status_collector, live2d_fresh_evidence_bundle_collector, live2d_summary_intake_collector, live2d_owner_confirmation_binding_collector, live2d_go_nogo_blocker_collector, trusted_loader_preflight_collector, trusted_loader_enablement_gate_collector, license_boundary_collector, sdk_vendor_boundary_collector, priority1_blocker_collector, and motion_dataset_row_evidence_collector.
+
+Collector output must be safe summary only. Allowed public fields are component, collector_name, collector_status, evidence_source_type, freshness_status, safe_evidence_ref, safe_audit_ref, head_sha_ref, run_id_ref, file_scope, checked_at_bucket, status_reason_code, redaction_status, blocker_labels, and safe_next_action.
+
+Raw evidence body, raw cue payload, raw renderer payload, raw loader candidate, raw loader error, endpoint values, token values, secret values, private paths, model paths, motion paths, SDK/vendor paths, owner private notes, request notes, shell command bodies, OBS commands, world commands, raw process output, and raw stack traces are rejected from the public manifest surface.
+
+Fixture collector output is not real evidence. Dry-run collector output is not real evidence. Mock collector output is not real evidence. Stale collector output is not fresh evidence. Assistant review is not owner confirmation. PR merge is not owner confirmation. Remote quality-gate PASS is not owner confirmation.
+
+The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only.
+
+Runtime readiness is not claimed. Production readiness is not claimed. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task.
