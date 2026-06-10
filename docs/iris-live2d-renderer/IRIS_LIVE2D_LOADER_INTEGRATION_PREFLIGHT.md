@@ -399,3 +399,11 @@ This preflight does not ingest real rows, does not execute motion, does not star
 Runtime supported motion styles are `talk`, `focused_talk`, `laugh_big`, `idle_breath`, `surprise_scream`, `happy_humming`, `happy_dance`, and `happy_loud_sing`. Experimental labels `blink_attention`, `small_nod`, `soft_smile`, `surprise_micro`, `breathing_shift`, `gaze_return`, and `neutral_breath` are review-only and non-executable until implemented and tested in a separate owner-confirmed task.
 
 Fixture success, manifest existence, asset route success, SSE connection, cue acceptance, and browser cue delivery are not real row evidence and are not runtime readiness. Public summaries reject raw dataset rows, raw motion commands, raw cue payloads, raw renderer payloads, raw evidence bodies, raw paths, endpoints, token values, secrets, SDK/vendor paths, loader candidates, loader errors, and owner private notes.
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-REDACTION-SCANNER-FIXTURE-PACK1
+
+This fixture pack is synthetic-only review preparation for future real-row redaction scanning. It does not scan real rows, does not read row bodies, does not ingest real data, does not execute motion, does not collect evidence, and does not claim runtime or production readiness.
+
+The public summary keeps `checked_row_count` at `0`, `real_row_data_present` as `false`, `motion_dataset_executable` as `false`, `priority1_status` as `BLOCKED`, and `go_nogo_status` as `no_go`. Accepted fixture cases are metadata-only labels and are not real safety proof or real evidence. Rejected fixture cases cover raw row bodies, raw cue or renderer payloads, private paths, endpoint or credential values, command-like material, owner private notes, readiness claims, priority1 resolution claims, and motion executable claims.
+
+Future real redaction scanning requires a separate owner-confirmed actual data task with fresh real evidence boundaries, safe artifact handling, and no raw/private material exposure.

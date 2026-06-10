@@ -26,6 +26,7 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA = "i
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_real_row_intake_quarantine_envelope_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_intake_owner_handoff_packet_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA = "iris_live2d_motion_dataset_real_row_audit_manifest_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_scanner_fixture_pack_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -278,6 +279,47 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_REJECTED_REQUEST_FIXT
   "readiness_claim_rejected",
   "motion_execution_request_rejected",
   "real_ingestion_request_rejected",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES = Object.freeze([
+  "safe_metadata_only_request",
+  "safe_hash_only_reference",
+  "safe_row_id_label",
+  "safe_dataset_split_label",
+  "safe_audit_run_label",
+  "safe_redacted_field_marker",
+  "safe_rejected_category_alias",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES = Object.freeze([
+  "raw_dataset_row_body_rejected",
+  "raw_cue_payload_rejected",
+  "raw_renderer_payload_rejected",
+  "raw_model_path_rejected",
+  "raw_motion_path_rejected",
+  "endpoint_value_rejected",
+  "token_value_rejected",
+  "secret_value_rejected",
+  "private_local_path_rejected",
+  "actual_file_path_value_rejected",
+  "actual_file_content_rejected",
+  "candidate_payload_rejected",
+  "world_command_rejected",
+  "obs_command_rejected",
+  "game_input_rejected",
+  "os_command_rejected",
+  "memory_commit_rejected",
+  "relationship_commit_rejected",
+  "raw_process_output_rejected",
+  "raw_stack_trace_rejected",
+  "owner_private_note_rejected",
+  "raw_owner_confirmation_note_rejected",
+  "raw_k_memo_text_rejected",
+  "renderer_ready_claim_rejected",
+  "runtime_readiness_claim_rejected",
+  "production_readiness_claim_rejected",
+  "priority1_resolved_claim_rejected",
+  "motion_executable_claim_rejected",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REQUIRED_METADATA = Object.freeze([
@@ -4023,6 +4065,105 @@ export function createMotionDatasetRealRowAuditManifestSummary(input = {}) {
     },
   };
   assertSafePublicObject(summary, "motion dataset real row audit manifest summary");
+  return summary;
+}
+
+export function createMotionDatasetRealRowRedactionScannerFixturePackSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawFields = [
+    ...detectedMotionDatasetRawFields(source),
+    ...detectedRejectedRequestFields(source, LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES.map((label) => label.replace(/_rejected$/u, ""))),
+  ];
+  const readinessRequested = source.renderer_ready === true || source.model_loaded === true || source.scene_loaded === true || source.browser_cue_delivery_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const priorityResolvedRequested = source.priority1_status === "RESOLVED" || source.priority1_resolved === true || source.blocker_resolved === true;
+  const motionExecutionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true || source.execute_motion === true;
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true || source.row !== undefined || source.dataset_row !== undefined || source.raw_dataset_row_body !== undefined;
+  const rowBodyReadRequested = source.row_body_read === true || source.file_content_read === true || source.actual_file_content !== undefined || source.actual_file_path_value !== undefined;
+  const goRequested = source.go_nogo_status === "go" || source.go_candidate === true;
+  const trustedLoaderRequested = source.trusted_loader_allowlist_enabled === true || source.trustedLoaderAllowlistEnabled === true || source.loader_trusted === true;
+  const acceptedCases = filterSyntheticFixtureCases(source.accepted_redaction_fixture_cases, LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES);
+  const rejectedCases = filterSyntheticFixtureCases(source.rejected_redaction_fixture_cases, LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES);
+  const rejectionReasons = [
+    "redaction_scanner_fixture_pack_synthetic_only",
+    "redaction_scanner_fixture_pack_no_real_row_ingestion",
+    "redaction_scanner_fixture_pack_no_row_body_read",
+    "redaction_scanner_fixture_pack_non_executable",
+    "redaction_scanner_fixture_pack_priority1_blocked",
+    "redaction_scanner_fixture_pack_owner_confirmation_required",
+    "redaction_scanner_fixture_pack_go_no_go_preserved",
+  ];
+  if (rawFields.length) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_raw_or_private_field");
+  if (readinessRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_readiness_claim");
+  if (ownerConfirmationRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_owner_confirmation");
+  if (priorityResolvedRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_priority1_resolution");
+  if (motionExecutionRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_motion_execution");
+  if (realRowRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_real_row_data");
+  if (rowBodyReadRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_row_body_read");
+  if (goRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_go_or_blocker_resolution");
+  if (trustedLoaderRequested) rejectionReasons.push("redaction_scanner_fixture_pack_rejected_trusted_loader_request");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_real_row_redaction_scanner_fixture_pack_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    synthetic_only_boundary: true,
+    redaction_scanner_fixture_only_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    no_motion_execution_boundary: true,
+    no_real_collection_boundary: true,
+    no_live_probe_boundary: true,
+    synthetic_only: true,
+    redaction_scanner_fixture_only: true,
+    accepted_redaction_fixtures_are_real_evidence: false,
+    accepted_redaction_fixtures_are_real_safety_proof: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    row_body_read: false,
+    file_content_accepted: false,
+    motion_dataset_executable: false,
+    motion_execution_enabled: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_required: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    redaction_policy_ref_required: true,
+    audit_manifest_ref_required: true,
+    accepted_redaction_fixture_cases: acceptedCases,
+    rejected_redaction_fixture_cases: rejectedCases.map(safeSyntheticRejectedCaseLabel),
+    rejected_redaction_fixture_public_labels: rejectedCases.map(safeSyntheticRejectedCaseLabel),
+    detected_rejected_private_material_fields: [...new Set(rawFields)].sort(),
+    rejection_reasons: [...new Set(rejectionReasons)],
+    safe_next_action: "prepare_future_owner_confirmed_real_redaction_scan_without_ingestion",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      synthetic_fixture_only: true,
+      no_real_row_scan: true,
+      no_row_body_read: true,
+      no_file_content_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_owner_confirmation_created: true,
+      no_owner_confirmation_confirmed: true,
+      no_trusted_loader_enablement: true,
+      no_raw_dataset_rows: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset real row redaction scanner fixture pack summary");
   return summary;
 }
 

@@ -373,3 +373,9 @@ Runtime readiness is not claimed. Production readiness is not claimed. go/no-go 
 - Boundary: audit manifest only; not actual audit completion, no real row ingestion, no row body read, no file content read, no JSONL or CSV parsing, no motion execution, no real collection, no live probe, no renderer call, no SDK/vendor call, no external service call, no owner confirmation creation, no owner confirmation confirmation, no trusted loader enablement, no runtime readiness claim, no production readiness claim, no priority1 resolution, and no go decision.
 - Preservation: owner confirmation remains required and unconfirmed, `checked_row_count` stays `0`, `real_row_data_present` stays false, motion dataset remains non-executable, trusted loader allowlist remains disabled, `priority1` remains `BLOCKED`, and go/no-go remains `no_go`.
 - Next boundary: future actual real-row audit requires a separate owner-confirmed actual data task with row_id-backed data, source hash, audit metadata, redaction review, row-level audit, dataset-level summary, real resident evidence, owner confirmation, license and SDK/vendor boundary review, and go/no-go review.
+
+### LIVE2D-MOTION-DATASET-REAL-ROW-REDACTION-SCANNER-FIXTURE-PACK1
+
+Status: planning-only synthetic fixture pack. The fixture pack prepares future review of redaction scanner behavior without scanning real rows, reading row bodies, ingesting real data, collecting evidence, executing motion, confirming owner approval, or changing go/no-go state.
+
+Boundary: fixture PASS is not real safety proof, not real resident evidence, not runtime readiness, and not production readiness. `checked_row_count` remains `0`, priority1 remains `BLOCKED`, and the motion dataset remains non-executable.
