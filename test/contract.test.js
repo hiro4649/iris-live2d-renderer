@@ -16,6 +16,9 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS,
   LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES,
+  LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES,
+  LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
@@ -63,6 +66,7 @@ import {
   createMotionDatasetRealRowIntakeDryRunValidatorSummary,
   createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary,
   createMotionDatasetRealRowAuditManifestSummary,
+  createMotionDatasetRealRowEvidenceLinkManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -1236,6 +1240,90 @@ try {
   assert.equal(JSON.stringify(unsafeRedactionScannerFixturePack).includes("private-note"), false);
   assertSafe(JSON.stringify(unsafeRedactionScannerFixturePack));
   assertNoModelPathLeak(JSON.stringify(unsafeRedactionScannerFixturePack));
+
+  const defaultEvidenceLinkManifest = createMotionDatasetRealRowEvidenceLinkManifestSummary();
+  assert.equal(defaultEvidenceLinkManifest.schema, LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA);
+  assert.equal(defaultEvidenceLinkManifest.motion_dataset_real_row_evidence_link_manifest_status, "planning_only_blocked");
+  assert.equal(defaultEvidenceLinkManifest.planning_only_boundary, true);
+  assert.equal(defaultEvidenceLinkManifest.evidence_link_manifest_only_boundary, true);
+  assert.equal(defaultEvidenceLinkManifest.no_real_evidence_boundary, true);
+  assert.equal(defaultEvidenceLinkManifest.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultEvidenceLinkManifest.no_row_body_read_boundary, true);
+  assert.equal(defaultEvidenceLinkManifest.real_row_data_present, false);
+  assert.equal(defaultEvidenceLinkManifest.checked_row_count, 0);
+  assert.equal(defaultEvidenceLinkManifest.motion_dataset_executable, false);
+  assert.equal(defaultEvidenceLinkManifest.motion_dataset_ready_candidate, false);
+  assert.equal(defaultEvidenceLinkManifest.runtime_readiness_claimed, false);
+  assert.equal(defaultEvidenceLinkManifest.production_readiness_claimed, false);
+  assert.equal(defaultEvidenceLinkManifest.priority1_status, "BLOCKED");
+  assert.equal(defaultEvidenceLinkManifest.owner_confirmation_required, true);
+  assert.equal(defaultEvidenceLinkManifest.owner_confirmation_confirmed, false);
+  assert.equal(defaultEvidenceLinkManifest.go_nogo_status, "no_go");
+  assert.equal(defaultEvidenceLinkManifest.go_candidate, false);
+  assert.equal(defaultEvidenceLinkManifest.blocker_resolved, false);
+  assert.equal(defaultEvidenceLinkManifest.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultEvidenceLinkManifest.evidence_link_manifest_is_real_evidence, false);
+  assert.equal(defaultEvidenceLinkManifest.future_real_reference_is_location_value, false);
+  assert.equal(defaultEvidenceLinkManifest.future_real_row_file_ref_status, "pending_label_only");
+  assert.equal(defaultEvidenceLinkManifest.future_real_row_audit_ref_status, "pending_label_only");
+  assert.equal(defaultEvidenceLinkManifest.future_real_redaction_scan_ref_status, "pending_label_only");
+  assert.equal(defaultEvidenceLinkManifest.future_owner_confirmation_ref_status, "pending_label_only_unconfirmed");
+  assert.equal(defaultEvidenceLinkManifest.future_fresh_resident_evidence_ref_status, "pending_label_only_not_evidence");
+  assert.equal(defaultEvidenceLinkManifest.future_go_nogo_review_ref_status, "pending_label_only_no_go");
+  assert.equal(defaultEvidenceLinkManifest.same_head_remote_policy_required, true);
+  assert.equal(defaultEvidenceLinkManifest.local_evidence_promoted_to_remote, false);
+  assert.equal(defaultEvidenceLinkManifest.decision_capsule_machine_source_preserved, true);
+  assert.equal(defaultEvidenceLinkManifest.pr_body_human_summary_only, true);
+  assert.deepEqual(defaultEvidenceLinkManifest.required_link_refs, [...LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS]);
+  assert.deepEqual(defaultEvidenceLinkManifest.required_evidence_ref_types, [...LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES]);
+  assert.equal(defaultEvidenceLinkManifest.required_link_refs.includes("future_real_row_file_ref"), true);
+  assert.equal(defaultEvidenceLinkManifest.required_link_refs.includes("future_fresh_resident_evidence_ref"), true);
+  assertSafe(JSON.stringify(defaultEvidenceLinkManifest));
+  assertNoModelPathLeak(JSON.stringify(defaultEvidenceLinkManifest));
+
+  const unsafeEvidenceLinkManifest = createMotionDatasetRealRowEvidenceLinkManifestSummary({
+    future_real_row_file_ref: "private-file",
+    future_real_row_audit_status: "complete",
+    raw_dataset_row_body: "private-row",
+    actual_file_path_value: "private-path",
+    actual_file_content: "private-content",
+    owner_private_note: "private-note",
+    real_evidence_present: true,
+    checked_row_count: 2,
+    real_row_data_present: true,
+    row_body_read: true,
+    renderer_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    owner_confirmation_confirmed: true,
+    priority1_resolved: true,
+    go_nogo_status: "go",
+    trusted_loader_allowlist_enabled: true,
+    motion_dataset_executable: true,
+  });
+  assert.equal(unsafeEvidenceLinkManifest.real_row_data_present, false);
+  assert.equal(unsafeEvidenceLinkManifest.checked_row_count, 0);
+  assert.equal(unsafeEvidenceLinkManifest.motion_dataset_executable, false);
+  assert.equal(unsafeEvidenceLinkManifest.runtime_readiness_claimed, false);
+  assert.equal(unsafeEvidenceLinkManifest.production_readiness_claimed, false);
+  assert.equal(unsafeEvidenceLinkManifest.owner_confirmation_confirmed, false);
+  assert.equal(unsafeEvidenceLinkManifest.priority1_status, "BLOCKED");
+  assert.equal(unsafeEvidenceLinkManifest.go_nogo_status, "no_go");
+  assert.equal(unsafeEvidenceLinkManifest.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_raw_or_private_ref"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_real_evidence_claim"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_row_body_or_file_read"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_readiness_claim"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_owner_confirmation"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_priority1_resolution"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_trusted_loader_request"), true);
+  assert.equal(unsafeEvidenceLinkManifest.blocked_reasons.includes("evidence_link_manifest_rejected_motion_execution"), true);
+  assert.equal(JSON.stringify(unsafeEvidenceLinkManifest).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeEvidenceLinkManifest).includes("private-file"), false);
+  assertSafe(JSON.stringify(unsafeEvidenceLinkManifest));
+  assertNoModelPathLeak(JSON.stringify(unsafeEvidenceLinkManifest));
   assert.equal(unsafeRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_raw_or_private_field"), true);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_real_row_or_checked_count"), true);
@@ -4114,6 +4202,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_real_row_evidence_link_manifest_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.evidence_link_manifest_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.no_real_evidence_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_executable, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4240,6 +4333,12 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_executable, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_real_row_evidence_link_manifest_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.real_row_data_present, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.checked_row_count, 0);
+  assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4268,6 +4367,9 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_real_row_redaction_scanner_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.checked_row_count, 0);
   assert.equal(provisionedHealth.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_real_row_evidence_link_manifest_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_real_row_evidence_link_manifest_summary.checked_row_count, 0);
+  assert.equal(provisionedHealth.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_executable, false);
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
   assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);
