@@ -15,6 +15,9 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS,
   LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES,
+  LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_REJECTED_REQUEST_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA,
@@ -60,6 +63,7 @@ import {
   createMotionDatasetRealRowIntakeDryRunValidatorSummary,
   createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary,
   createMotionDatasetRealRowAuditManifestSummary,
+  createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
@@ -1158,6 +1162,80 @@ try {
   assert.equal(unsafeRealRowAuditManifest.renderer_ready, false);
   assert.equal(unsafeRealRowAuditManifest.owner_confirmation_confirmed, false);
   assert.equal(unsafeRealRowAuditManifest.go_nogo_status, "no_go");
+  const defaultRedactionScannerFixturePack = createMotionDatasetRealRowRedactionScannerFixturePackSummary();
+  assert.equal(defaultRedactionScannerFixturePack.schema, LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA);
+  assert.equal(defaultRedactionScannerFixturePack.motion_dataset_real_row_redaction_scanner_fixture_pack_status, "planning_only_blocked");
+  assert.equal(defaultRedactionScannerFixturePack.planning_only_boundary, true);
+  assert.equal(defaultRedactionScannerFixturePack.synthetic_only_boundary, true);
+  assert.equal(defaultRedactionScannerFixturePack.redaction_scanner_fixture_only_boundary, true);
+  assert.equal(defaultRedactionScannerFixturePack.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultRedactionScannerFixturePack.no_row_body_read_boundary, true);
+  assert.equal(defaultRedactionScannerFixturePack.synthetic_only, true);
+  assert.equal(defaultRedactionScannerFixturePack.redaction_scanner_fixture_only, true);
+  assert.equal(defaultRedactionScannerFixturePack.accepted_redaction_fixtures_are_real_evidence, false);
+  assert.equal(defaultRedactionScannerFixturePack.accepted_redaction_fixtures_are_real_safety_proof, false);
+  assert.equal(defaultRedactionScannerFixturePack.real_row_data_present, false);
+  assert.equal(defaultRedactionScannerFixturePack.checked_row_count, 0);
+  assert.equal(defaultRedactionScannerFixturePack.motion_dataset_executable, false);
+  assert.equal(defaultRedactionScannerFixturePack.runtime_readiness_claimed, false);
+  assert.equal(defaultRedactionScannerFixturePack.production_readiness_claimed, false);
+  assert.equal(defaultRedactionScannerFixturePack.renderer_ready, false);
+  assert.equal(defaultRedactionScannerFixturePack.model_loaded, false);
+  assert.equal(defaultRedactionScannerFixturePack.scene_loaded, false);
+  assert.equal(defaultRedactionScannerFixturePack.browser_cue_delivery_ready, false);
+  assert.equal(defaultRedactionScannerFixturePack.priority1_status, "BLOCKED");
+  assert.equal(defaultRedactionScannerFixturePack.owner_confirmation_created, false);
+  assert.equal(defaultRedactionScannerFixturePack.owner_confirmation_confirmed, false);
+  assert.equal(defaultRedactionScannerFixturePack.go_nogo_status, "no_go");
+  assert.equal(defaultRedactionScannerFixturePack.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(defaultRedactionScannerFixturePack.accepted_redaction_fixture_cases, [...LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES]);
+  assert.equal(defaultRedactionScannerFixturePack.rejected_redaction_fixture_cases.length, LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES.length);
+  assert.equal(defaultRedactionScannerFixturePack.rejected_redaction_fixture_cases.every((label) => !label.startsWith("raw_")), true);
+  assertSafe(JSON.stringify(defaultRedactionScannerFixturePack));
+  assertNoModelPathLeak(JSON.stringify(defaultRedactionScannerFixturePack));
+
+  const unsafeRedactionScannerFixturePack = createMotionDatasetRealRowRedactionScannerFixturePackSummary({
+    raw_dataset_row_body: "private-row",
+    raw_cue_payload: "private-cue",
+    actual_file_path_value: "private-file",
+    actual_file_content: "private-content",
+    owner_private_note: "private-note",
+    raw_owner_confirmation_note: "private-confirmation",
+    raw_k_memo_text: "private-k",
+    endpoint_value: "private-endpoint",
+    token_value: "private-token",
+    secret_value: "private-secret",
+    renderer_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_resolved: true,
+    motion_dataset_executable: true,
+    owner_confirmation_confirmed: true,
+    go_nogo_status: "go",
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(unsafeRedactionScannerFixturePack.real_row_data_present, false);
+  assert.equal(unsafeRedactionScannerFixturePack.checked_row_count, 0);
+  assert.equal(unsafeRedactionScannerFixturePack.motion_dataset_executable, false);
+  assert.equal(unsafeRedactionScannerFixturePack.renderer_ready, false);
+  assert.equal(unsafeRedactionScannerFixturePack.runtime_readiness_claimed, false);
+  assert.equal(unsafeRedactionScannerFixturePack.production_readiness_claimed, false);
+  assert.equal(unsafeRedactionScannerFixturePack.priority1_status, "BLOCKED");
+  assert.equal(unsafeRedactionScannerFixturePack.owner_confirmation_confirmed, false);
+  assert.equal(unsafeRedactionScannerFixturePack.go_nogo_status, "no_go");
+  assert.equal(unsafeRedactionScannerFixturePack.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_raw_or_private_field"), true);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_readiness_claim"), true);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_priority1_resolution"), true);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_motion_execution"), true);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_owner_confirmation"), true);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeRedactionScannerFixturePack.rejection_reasons.includes("redaction_scanner_fixture_pack_rejected_trusted_loader_request"), true);
+  assert.equal(JSON.stringify(unsafeRedactionScannerFixturePack).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeRedactionScannerFixturePack).includes("private-token"), false);
+  assert.equal(JSON.stringify(unsafeRedactionScannerFixturePack).includes("private-note"), false);
+  assertSafe(JSON.stringify(unsafeRedactionScannerFixturePack));
+  assertNoModelPathLeak(JSON.stringify(unsafeRedactionScannerFixturePack));
   assert.equal(unsafeRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_raw_or_private_field"), true);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_real_row_or_checked_count"), true);
@@ -4030,6 +4108,12 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.audit_manifest_is_actual_audit_completion, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_real_row_redaction_scanner_fixture_pack_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.redaction_scanner_fixture_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.synthetic_only, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.real_row_data_present, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_executable, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4150,6 +4234,12 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.audit_manifest_is_actual_audit_completion, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_real_row_redaction_scanner_fixture_pack_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.real_row_data_present, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.checked_row_count, 0);
+  assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_executable, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4175,6 +4265,9 @@ try {
   assert.equal(provisionedHealth.fresh_evidence_bundle_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.go_nogo_preflight_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHealth.go_nogo_preflight_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedHealth.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_real_row_redaction_scanner_fixture_pack_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.checked_row_count, 0);
+  assert.equal(provisionedHealth.motion_dataset_real_row_redaction_scanner_fixture_pack_summary.motion_dataset_executable, false);
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
   assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);
