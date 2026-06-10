@@ -418,3 +418,15 @@ Status: planning-only missing-data fail-closed gate.
 This task makes the current missing-data state explicit: no owner-provided JSONL or CSV row file exists, `actual_ingestion_allowed` remains false, `real_row_data_present` remains false, and `checked_row_count` remains 0. It does not approve ingestion, create owner confirmation, read row bodies, execute motion, collect real evidence, claim readiness, or resolve priority1.
 
 Next safe action remains a separate owner-confirmed future actual data task with real row file metadata, source hash, declared row count, redaction and audit results, fresh resident evidence, renderer readiness dependency review, and go/no-go review.
+
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-SUBMISSION-PACKET1
+
+Status: planning-only owner submission packet added.
+
+This task adds a safe owner row data submission packet summary for future review preparation. It does not provide real row data, does not accept row content, does not read JSONL or CSV bodies, does not approve ingestion, does not start ingestion, does not execute motion, and does not create or confirm owner confirmation.
+
+The packet keeps the current boundary intact: priority1 remains BLOCKED, motion dataset remains non-executable, checked row count remains 0, actual ingestion remains disallowed, trusted loader allowlist remains disabled, and go/no-go remains no_go.
+
+Future work must still provide owner-approved metadata, real resident fresh evidence, explicit owner confirmation, row schema review, redaction review, unsupported-motion policy review, renderer-ready policy review, and a separate go/no-go review before any actual row ingestion can be considered.
+
+No runtime readiness or production readiness is claimed by this packet.

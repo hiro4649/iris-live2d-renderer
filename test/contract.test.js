@@ -33,6 +33,11 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FAIL_CLOSED_GATE_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FUTURE_PREREQUISITES,
+  LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_CONFIRMATION_SCOPES,
+  LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_FILE_SHAPE,
+  LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_ITEMS,
+  LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTED_FIELDS,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
@@ -85,6 +90,7 @@ import {
   createMotionDatasetRealRowPreIngestionReviewPacketSummary,
   createMotionDatasetRealRowFinalDryRunChecklistSummary,
   createMotionDatasetRealRowMissingDataFailClosedGateSummary,
+  createMotionDatasetOwnerRowDataSubmissionPacketSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -1184,6 +1190,108 @@ try {
   assert.equal(unsafeRealRowAuditManifest.renderer_ready, false);
   assert.equal(unsafeRealRowAuditManifest.owner_confirmation_confirmed, false);
   assert.equal(unsafeRealRowAuditManifest.go_nogo_status, "no_go");
+
+  const defaultOwnerSubmissionPacket = createMotionDatasetOwnerRowDataSubmissionPacketSummary();
+  assert.equal(defaultOwnerSubmissionPacket.schema, LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_PACKET_SCHEMA);
+  assert.equal(defaultOwnerSubmissionPacket.motion_dataset_owner_row_data_submission_packet_status, "planning_only_blocked");
+  assert.equal(defaultOwnerSubmissionPacket.planning_only_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.owner_submission_packet_only_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.no_owner_confirmation_created_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.no_owner_confirmation_confirmed_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.no_actual_row_content_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.no_row_body_read_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.no_motion_execution_boundary, true);
+  assert.equal(defaultOwnerSubmissionPacket.owner_submission_packet_only, true);
+  assert.equal(defaultOwnerSubmissionPacket.actual_row_content_accepted, false);
+  assert.equal(defaultOwnerSubmissionPacket.actual_ingestion_allowed, false);
+  assert.equal(defaultOwnerSubmissionPacket.real_row_data_present, false);
+  assert.equal(defaultOwnerSubmissionPacket.checked_row_count, 0);
+  assert.equal(defaultOwnerSubmissionPacket.row_body_read, false);
+  assert.equal(defaultOwnerSubmissionPacket.motion_dataset_executable, false);
+  assert.equal(defaultOwnerSubmissionPacket.runtime_readiness_claimed, false);
+  assert.equal(defaultOwnerSubmissionPacket.production_readiness_claimed, false);
+  assert.equal(defaultOwnerSubmissionPacket.renderer_ready, false);
+  assert.equal(defaultOwnerSubmissionPacket.priority1_status, "BLOCKED");
+  assert.equal(defaultOwnerSubmissionPacket.go_nogo_status, "no_go");
+  assert.equal(defaultOwnerSubmissionPacket.go_candidate, false);
+  assert.equal(defaultOwnerSubmissionPacket.blocker_resolved, false);
+  assert.equal(defaultOwnerSubmissionPacket.owner_confirmation_required, true);
+  assert.equal(defaultOwnerSubmissionPacket.owner_confirmation_created, false);
+  assert.equal(defaultOwnerSubmissionPacket.owner_confirmation_confirmed, false);
+  assert.equal(defaultOwnerSubmissionPacket.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(defaultOwnerSubmissionPacket.required_owner_submission_items, [...LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_ITEMS]);
+  assert.deepEqual(defaultOwnerSubmissionPacket.required_owner_confirmation_scopes, [...LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_CONFIRMATION_SCOPES]);
+  assert.equal(defaultOwnerSubmissionPacket.required_file_shape.includes("one_row_id_per_record"), true);
+  assert.equal(defaultOwnerSubmissionPacket.required_file_shape.includes("cue_material_excluded"), true);
+  assert.equal(defaultOwnerSubmissionPacket.required_file_shape.includes("credential_material_excluded"), true);
+  assert.equal(defaultOwnerSubmissionPacket.rejected_submission_field_categories.includes("dataset_row_material"), true);
+  assert.equal(defaultOwnerSubmissionPacket.rejected_submission_field_categories.includes("credential_material"), true);
+  assert.equal(LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_FILE_SHAPE.includes("no_raw_cue_payload"), true);
+  assert.equal(LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTED_FIELDS.includes("raw_dataset_row_body"), true);
+  assert.equal(defaultOwnerSubmissionPacket.safe_next_action, "owner_may_prepare_metadata_only_future_submission_without_row_content");
+  assert.equal(defaultOwnerSubmissionPacket.boundary_policy.no_actual_ingestion_allowed, true);
+  assert.equal(defaultOwnerSubmissionPacket.boundary_policy.no_dataset_row_body_public, true);
+  assertSafe(JSON.stringify(defaultOwnerSubmissionPacket));
+  assertNoModelPathLeak(JSON.stringify(defaultOwnerSubmissionPacket));
+
+  const unsafeOwnerSubmissionPacket = createMotionDatasetOwnerRowDataSubmissionPacketSummary({
+    actual_row_content_accepted: true,
+    actual_ingestion_allowed: true,
+    raw_dataset_row_body: "private-row",
+    actual_file_path_value: "private-path",
+    actual_file_content: "private-content",
+    raw_cue_payload: "private-cue",
+    endpoint_value: "private-endpoint",
+    token_value: "private-token",
+    owner_private_note: "private-note",
+    owner_confirmation_created: true,
+    owner_confirmation_confirmed: true,
+    checked_row_count: 3,
+    real_row_data_present: true,
+    row_body_read: true,
+    file_content_read: true,
+    motion_dataset_executable: true,
+    renderer_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_resolved: true,
+    go_nogo_status: "go",
+    go_candidate: true,
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(unsafeOwnerSubmissionPacket.actual_row_content_accepted, false);
+  assert.equal(unsafeOwnerSubmissionPacket.actual_ingestion_allowed, false);
+  assert.equal(unsafeOwnerSubmissionPacket.owner_confirmation_created, false);
+  assert.equal(unsafeOwnerSubmissionPacket.owner_confirmation_confirmed, false);
+  assert.equal(unsafeOwnerSubmissionPacket.real_row_data_present, false);
+  assert.equal(unsafeOwnerSubmissionPacket.checked_row_count, 0);
+  assert.equal(unsafeOwnerSubmissionPacket.row_body_read, false);
+  assert.equal(unsafeOwnerSubmissionPacket.motion_dataset_executable, false);
+  assert.equal(unsafeOwnerSubmissionPacket.runtime_readiness_claimed, false);
+  assert.equal(unsafeOwnerSubmissionPacket.production_readiness_claimed, false);
+  assert.equal(unsafeOwnerSubmissionPacket.priority1_status, "BLOCKED");
+  assert.equal(unsafeOwnerSubmissionPacket.go_nogo_status, "no_go");
+  assert.equal(unsafeOwnerSubmissionPacket.go_candidate, false);
+  assert.equal(unsafeOwnerSubmissionPacket.blocker_resolved, false);
+  assert.equal(unsafeOwnerSubmissionPacket.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_unsafe_material"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_actual_row_content"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_actual_ingestion_request"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_owner_confirmation"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_row_body_or_file_read"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_motion_execution"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_readiness_claim"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_priority1_resolution"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.blocked_reasons.includes("owner_row_data_submission_packet_rejected_trusted_loader_request"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.detected_rejected_sensitive_material_labels.includes("dataset_row_material"), true);
+  assert.equal(unsafeOwnerSubmissionPacket.detected_rejected_sensitive_material_labels.includes("cue_material"), true);
+  assert.equal(JSON.stringify(unsafeOwnerSubmissionPacket).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeOwnerSubmissionPacket).includes("private-token"), false);
+  assertSafe(JSON.stringify(unsafeOwnerSubmissionPacket));
+  assertNoModelPathLeak(JSON.stringify(unsafeOwnerSubmissionPacket));
   const defaultRedactionScannerFixturePack = createMotionDatasetRealRowRedactionScannerFixturePackSummary();
   assert.equal(defaultRedactionScannerFixturePack.schema, LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA);
   assert.equal(defaultRedactionScannerFixturePack.motion_dataset_real_row_redaction_scanner_fixture_pack_status, "planning_only_blocked");
@@ -4557,6 +4665,16 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.real_row_data_present, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.motion_dataset_owner_row_data_submission_packet_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.owner_submission_packet_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.no_actual_row_content_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.actual_row_content_accepted, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.real_row_data_present, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_row_data_submission_packet_summary.go_nogo_status, "no_go");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4710,6 +4828,13 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.motion_dataset_owner_row_data_submission_packet_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.owner_submission_packet_only_boundary, true);
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.actual_row_content_accepted, false);
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_owner_row_data_submission_packet_summary.go_nogo_status, "no_go");
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4760,6 +4885,12 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_owner_row_data_submission_packet_summary.motion_dataset_owner_row_data_submission_packet_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_owner_row_data_submission_packet_summary.no_owner_confirmation_created_boundary, true);
+  assert.equal(provisionedHealth.motion_dataset_owner_row_data_submission_packet_summary.no_real_row_ingestion_boundary, true);
+  assert.equal(provisionedHealth.motion_dataset_owner_row_data_submission_packet_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedHealth.motion_dataset_owner_row_data_submission_packet_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_owner_row_data_submission_packet_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
   assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);
