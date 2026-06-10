@@ -7,6 +7,7 @@ import {
   createGoNoGoPreflightSummary,
   createMotionDatasetRealRowIntakeDryRunValidatorSummary,
   createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary,
+  createMotionDatasetRealRowAuditManifestSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
@@ -129,6 +130,7 @@ export function createRendererState({
       const motionDatasetRealRowIntakeDryRunValidator = createMotionDatasetRealRowIntakeDryRunValidatorSummary();
       const motionDatasetRealRowIntakeQuarantineEnvelope = createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary();
       const motionDatasetRealRowIntakeOwnerHandoffPacket = createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary();
+      const motionDatasetRealRowAuditManifest = createMotionDatasetRealRowAuditManifestSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -204,6 +206,7 @@ export function createRendererState({
           motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
           motion_dataset_real_row_intake_quarantine_envelope_summary: motionDatasetRealRowIntakeQuarantineEnvelope,
           motion_dataset_real_row_intake_owner_handoff_packet_summary: motionDatasetRealRowIntakeOwnerHandoffPacket,
+          motion_dataset_real_row_audit_manifest_summary: motionDatasetRealRowAuditManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -229,6 +232,7 @@ export function createRendererState({
         motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
         motion_dataset_real_row_intake_quarantine_envelope_summary: motionDatasetRealRowIntakeQuarantineEnvelope,
         motion_dataset_real_row_intake_owner_handoff_packet_summary: motionDatasetRealRowIntakeOwnerHandoffPacket,
+        motion_dataset_real_row_audit_manifest_summary: motionDatasetRealRowAuditManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
@@ -295,6 +299,7 @@ export function createRendererState({
         motion_dataset_real_row_intake_dry_run_validator_summary: status.renderer_health.motion_dataset_real_row_intake_dry_run_validator_summary,
         motion_dataset_real_row_intake_quarantine_envelope_summary: status.renderer_health.motion_dataset_real_row_intake_quarantine_envelope_summary,
         motion_dataset_real_row_intake_owner_handoff_packet_summary: status.renderer_health.motion_dataset_real_row_intake_owner_handoff_packet_summary,
+        motion_dataset_real_row_audit_manifest_summary: status.renderer_health.motion_dataset_real_row_audit_manifest_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
@@ -417,6 +422,7 @@ export function createRendererState({
       const motionDatasetRealRowIntakeDryRunValidator = createMotionDatasetRealRowIntakeDryRunValidatorSummary();
       const motionDatasetRealRowIntakeQuarantineEnvelope = createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary();
       const motionDatasetRealRowIntakeOwnerHandoffPacket = createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary();
+      const motionDatasetRealRowAuditManifest = createMotionDatasetRealRowAuditManifestSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -451,6 +457,7 @@ export function createRendererState({
       response.motion_dataset_real_row_intake_dry_run_validator_summary = motionDatasetRealRowIntakeDryRunValidator;
       response.motion_dataset_real_row_intake_quarantine_envelope_summary = motionDatasetRealRowIntakeQuarantineEnvelope;
       response.motion_dataset_real_row_intake_owner_handoff_packet_summary = motionDatasetRealRowIntakeOwnerHandoffPacket;
+      response.motion_dataset_real_row_audit_manifest_summary = motionDatasetRealRowAuditManifest;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
       assertSafePublicObject(response, "browser runtime config");
@@ -538,6 +545,7 @@ export function createRendererState({
       const motionDatasetRealRowIntakeDryRunValidator = createMotionDatasetRealRowIntakeDryRunValidatorSummary();
       const motionDatasetRealRowIntakeQuarantineEnvelope = createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary();
       const motionDatasetRealRowIntakeOwnerHandoffPacket = createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary();
+      const motionDatasetRealRowAuditManifest = createMotionDatasetRealRowAuditManifestSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -597,6 +605,7 @@ export function createRendererState({
           motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
           motion_dataset_real_row_intake_quarantine_envelope_summary: motionDatasetRealRowIntakeQuarantineEnvelope,
           motion_dataset_real_row_intake_owner_handoff_packet_summary: motionDatasetRealRowIntakeOwnerHandoffPacket,
+          motion_dataset_real_row_audit_manifest_summary: motionDatasetRealRowAuditManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -622,6 +631,7 @@ export function createRendererState({
         motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
         motion_dataset_real_row_intake_quarantine_envelope_summary: motionDatasetRealRowIntakeQuarantineEnvelope,
         motion_dataset_real_row_intake_owner_handoff_packet_summary: motionDatasetRealRowIntakeOwnerHandoffPacket,
+        motion_dataset_real_row_audit_manifest_summary: motionDatasetRealRowAuditManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         boundary_policy: createBoundaryPolicy(),

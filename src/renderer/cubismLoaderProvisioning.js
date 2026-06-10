@@ -25,6 +25,7 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_PACKET_SCHEMA = "iris
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA = "iris_live2d_motion_dataset_real_row_intake_dry_run_validator_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_real_row_intake_quarantine_envelope_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_intake_owner_handoff_packet_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA = "iris_live2d_motion_dataset_real_row_audit_manifest_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -349,6 +350,65 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_CONFIR
   "unsupported_motion_policy_review",
   "no_runtime_readiness_claim_review",
   "no_motion_execution_review",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS = Object.freeze([
+  "audit_run_id",
+  "auditor_version",
+  "audit_started_at_label",
+  "audit_completed_at_label",
+  "source_hash",
+  "source_file_label",
+  "dataset_name",
+  "dataset_version_label",
+  "schema_version",
+  "expected_row_count",
+  "checked_row_count",
+  "unchecked_range",
+  "issue_row_count",
+  "decision_summary",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS = Object.freeze([
+  "row_id",
+  "dataset_split",
+  "source_line",
+  "scenario_id",
+  "cue_kind",
+  "motion_label",
+  "expression_label",
+  "gaze_label",
+  "breath_label",
+  "body_label",
+  "camera_label",
+  "decision",
+  "severity",
+  "reason_code",
+  "safe_evidence_label",
+  "redaction_status",
+  "renderer_ready_dependency_status",
+  "ux_accessibility_status",
+  "eval_contamination_status",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS = Object.freeze([
+  "overall_status",
+  "critical_count",
+  "high_count",
+  "medium_count",
+  "low_count",
+  "pass_count",
+  "reject_count",
+  "needs_review_count",
+  "unchecked_count",
+  "missing_coverage",
+  "residual_risks",
+  "owner_confirmation_required",
+  "priority1_status",
+  "runtime_readiness_claimed",
+  "production_readiness_claimed",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -3862,6 +3922,107 @@ export function createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary(input 
     },
   };
   assertSafePublicObject(summary, "motion dataset real row intake owner handoff packet summary");
+  return summary;
+}
+
+export function createMotionDatasetRealRowAuditManifestSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawFields = detectedMotionDatasetRawFields(source);
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true || source.row !== undefined || source.dataset_row !== undefined || source.raw_dataset_row_body !== undefined;
+  const checkedRowCountRequested = Number.isSafeInteger(source.checked_row_count) && source.checked_row_count > 0;
+  const rowBodyReadRequested = source.row_body_read === true || source.file_content_read === true || source.actual_file_content !== undefined || source.actual_file_path_value !== undefined;
+  const executionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true || source.execute_motion === true;
+  const readinessRequested = source.renderer_ready === true || source.model_loaded === true || source.scene_loaded === true || source.browser_cue_delivery_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const goRequested = source.go_nogo_status === "go" || source.go_candidate === true || source.blocker_resolved === true;
+  const trustedLoaderRequested = source.trusted_loader_allowlist_enabled === true || source.trustedLoaderAllowlistEnabled === true || source.loader_trusted === true;
+
+  const blockedReasons = [
+    "real_row_audit_manifest_planning_only",
+    "real_row_audit_manifest_manifest_only",
+    "real_row_audit_manifest_no_real_audit_completed",
+    "real_row_audit_manifest_no_real_row_ingestion",
+    "real_row_audit_manifest_no_row_body_read",
+    "real_row_audit_manifest_non_executable",
+    "real_row_audit_manifest_priority1_blocked",
+    "real_row_audit_manifest_owner_confirmation_required",
+    "real_row_audit_manifest_go_no_go_preserved",
+  ];
+  if (rawFields.length) blockedReasons.push("real_row_audit_manifest_rejected_raw_or_private_field");
+  if (realRowRequested || checkedRowCountRequested) blockedReasons.push("real_row_audit_manifest_rejected_real_row_or_checked_count");
+  if (rowBodyReadRequested) blockedReasons.push("real_row_audit_manifest_rejected_row_body_or_file_read");
+  if (executionRequested) blockedReasons.push("real_row_audit_manifest_rejected_motion_execution");
+  if (readinessRequested) blockedReasons.push("real_row_audit_manifest_rejected_readiness_claim");
+  if (ownerConfirmationRequested) blockedReasons.push("real_row_audit_manifest_rejected_owner_confirmation");
+  if (goRequested) blockedReasons.push("real_row_audit_manifest_rejected_go_or_blocker_resolution");
+  if (trustedLoaderRequested) blockedReasons.push("real_row_audit_manifest_rejected_trusted_loader_request");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_real_row_audit_manifest_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    audit_manifest_only_boundary: true,
+    no_real_audit_completed_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    audit_manifest_only: true,
+    audit_manifest_is_actual_audit_completion: false,
+    row_body_read: false,
+    file_content_accepted: false,
+    motion_dataset_executable: false,
+    motion_dataset_ready_candidate: false,
+    motion_execution_enabled: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_required: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    audit_run_metadata_required: [...LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS],
+    row_level_audit_fields_required: [...LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS],
+    dataset_level_summary_fields_required: [...LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS],
+    row_uniqueness_policy_required: "row_id_unique_required_before_future_real_audit",
+    source_hash_policy_required: "source_hash_required_before_future_real_audit",
+    split_policy_required: "dataset_split_required_before_future_real_audit",
+    renderer_ready_dependency_policy_required: [...LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS],
+    motion_allowlist_policy_required: [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES],
+    experimental_motion_labels: [...LIVE2D_EXPERIMENTAL_MOTION_LABELS],
+    experimental_motion_labels_executable: false,
+    ux_accessibility_policy_required: [...LIVE2D_MOTION_DATASET_UX_AUDIT_AXES],
+    redaction_policy_required: "safe_summary_only_no_row_body_no_private_material",
+    priority1_boundary_policy_required: "priority1_remains_BLOCKED_until_real_resident_fresh_evidence",
+    eval_contamination_guard: "fixtures_routes_cues_and_sse_are_not_real_row_success_evidence",
+    detected_rejected_private_material_fields: rawFields,
+    rejection_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "prepare_future_owner_confirmed_actual_row_audit_task_without_ingestion",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      audit_manifest_only: true,
+      no_real_audit_completion: true,
+      no_row_body_read: true,
+      no_file_content_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_owner_confirmation_created: true,
+      no_owner_confirmation_confirmed: true,
+      no_trusted_loader_enablement: true,
+      no_raw_dataset_rows: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset real row audit manifest summary");
   return summary;
 }
 

@@ -380,6 +380,16 @@ Owner confirmation remains required and unconfirmed. `checked_row_count` remains
 Future actual ingestion requires a separate owner-confirmed task with row_id-backed JSONL or CSV data, quarantine metadata review, redaction and audit review, fresh real resident evidence, and go/no-go review.
 
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
+
+## Motion Dataset Real Row Audit Manifest
+
+`LIVE2D-MOTION-DATASET-REAL-ROW-AUDIT-MANIFEST1` adds a planning-only audit manifest shape for a future real-row audit. It defines safe public labels for audit run metadata, row-level audit fields, dataset-level summary fields, row uniqueness policy, source hash policy, split policy, renderer-ready dependency policy, runtime motion allowlist policy, UX/accessibility guards, redaction policy, eval-contamination guard, priority1 boundary, and safe next action.
+
+This manifest is audit-manifest-only. It is not actual audit completion, does not ingest real rows, does not read row bodies, does not accept actual file content, does not parse JSONL or CSV content, does not execute motion, does not collect real evidence, does not perform live probes, does not call the renderer, SDK/vendor code, or external services, does not create or confirm owner confirmation, does not enable trusted loader allowlist, does not trust any loader, and does not change go/no-go state.
+
+`checked_row_count` remains `0`, `real_row_data_present` remains false, `motion_dataset_executable` remains false, runtime readiness is not claimed, production readiness is not claimed, owner confirmation remains required and unconfirmed, go/no-go remains `no_go`, and priority1 remains `BLOCKED`.
+
+Future actual real-row audit requires a separate owner-confirmed actual data task with a row_id-backed source, source hash, audit run metadata, redaction review, row-level audit, dataset-level summary, fresh real resident evidence, owner confirmation, and go/no-go blocker review.
 ## Motion Dataset Row Schema Preflight
 
 `LIVE2D-MOTION-DATASET-ROW-SCHEMA-PREFLIGHT1` is planning-only schema and audit preparation for future motion dataset rows. It defines safe public labels for required row fields, required audit metadata, runtime supported motion styles, experimental motion labels, renderer-ready dependencies, rejected raw fields, UX audit axes, and eval contamination policy.
