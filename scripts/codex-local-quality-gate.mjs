@@ -1525,18 +1525,37 @@ export function shouldUseProductPlanningPrePushTargetFastPath(env = process.env)
 export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = process.env) {
   const remote = report.remoteNpmDiagnosticStatus || {};
   const diagnostic = remote.diagnostic || {};
+  const productEvidence = report.productVerificationEvidenceStatus?.normalizedEvidence || {};
   const expectedHeadSha = env.CODEX_PR_HEAD_SHA || '';
-  const headSha = diagnostic.headSha || '';
+  const productEvidenceHeadSha = productEvidence.headSha || '';
+  const productRemoteNpmPassed = report.productVerificationEvidenceStatus?.status === 'pass' &&
+    Array.isArray(productEvidence.commands) &&
+    productEvidence.commands.some((command) =>
+      command?.source === 'remote' &&
+      command?.result === 'pass' &&
+      /\bnpm(?:\s+test|\s+run\s+test)?\b/i.test(String(command?.name || ''))
+    );
+  const productEvidenceSameHead = Boolean(expectedHeadSha) &&
+    productRemoteNpmPassed &&
+    (!productEvidenceHeadSha || productEvidenceHeadSha === expectedHeadSha);
+  const effectiveRemoteStatus = remote.status === 'pass' || productEvidenceSameHead ? 'pass' : remote.status;
+  const headSha = diagnostic.headSha || (productEvidenceSameHead ? expectedHeadSha : productEvidenceHeadSha);
+  const npmExitCode = Number(diagnostic.npmExitCode ?? (productEvidenceSameHead ? 0 : NaN));
   const remoteNpmEvidenceKind = remote.status === 'pass' && expectedHeadSha && headSha && headSha !== expectedHeadSha
     ? 'wrong_head_remote'
+    : productRemoteNpmPassed && expectedHeadSha && productEvidenceHeadSha && productEvidenceHeadSha !== expectedHeadSha
+    ? 'wrong_head_remote'
+    : productEvidenceSameHead
+    ? 'same_head_remote'
     : env.GITHUB_RUN_ID
     ? 'same_head_remote'
     : 'missing';
   return {
     forceCheck: true,
     productRelevant: report.changeClassificationStatus?.productRelevantChanged === true,
-    npmExecuted: remote.status === 'pass',
-    npmPassed: remote.status === 'pass' && diagnostic.npmExitCode === 0,
+    npmExecuted: effectiveRemoteStatus === 'pass',
+    npmPassed: effectiveRemoteStatus === 'pass' && npmExitCode === 0,
+    npmExitCode,
     remoteNpmEvidenceKind,
     sameHeadRemoteStatus: remoteNpmEvidenceKind === 'same_head_remote' ? 'pass' : 'missing',
     headSha,
@@ -6297,7 +6316,7 @@ function computeTargetQualityScoreStatus(report) {
 
 
 
-    if (HARNESS_VERSION === '1.1.1' || HARNESS_VERSION === '1.1.2' || HARNESS_VERSION === '1.1.3') {
+    if (HARNESS_VERSION === '1.1.1' || HARNESS_VERSION === '1.1.2' || HARNESS_VERSION === '1.1.3' || HARNESS_VERSION === '1.1.6') {
 
 
 

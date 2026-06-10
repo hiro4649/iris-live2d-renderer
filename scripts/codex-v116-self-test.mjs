@@ -27,6 +27,10 @@ import {
   validateFailureContract,
 } from './codex-failure-contract-compiler.mjs';
 import { renderDecisionCapsuleLines } from './codex-read-decision-capsule.mjs';
+import {
+  buildRemoteNpmDiagnosticNormalizationInput,
+} from './codex-local-quality-gate.mjs';
+import { buildRemoteNpmDiagnosticNormalizationReport } from './codex-v099-gate-lib.mjs';
 
 function test(name, fn) {
   try {
@@ -103,6 +107,55 @@ const cases = [
   test('token_budget_status_preserves_metrics', () => buildV116Report({ tokenBudget: { operatorVisibleStatuses: 7, safeArtifactReads: 1 } }).tokenBudgetStatus.metrics.safeArtifactReads === 1),
   test('canonical_registry_support_is_machine_only', () => buildV116Report().canonicalStatusRegistrySupport.status === 'pass' && buildV116Report().tokenBudgetStatus.metrics.operatorVisibleStatuses === 7),
   test('read_decision_capsule_output_under_20_lines', () => renderDecisionCapsuleLines({ decisionCapsule: passCapsule, tokenBudgetStatus: { status: 'pass' } }).length <= 20),
+  test('remote_npm_normalization_accepts_product_verification_same_head_remote_pass', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'not_applicable', reasonCodes: ['remote_npm_diagnostic_missing'], safeSummaryOnly: true },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        normalizedEvidence: {
+          headSha: 'abc',
+          commands: [{ name: 'npm test', source: 'remote', result: 'pass', required: true }],
+        },
+        safeSummaryOnly: true,
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    const report = buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'pass' &&
+      report.remoteNpmEvidenceKind === 'same_head_remote' &&
+      report.sameHeadRemoteStatus === 'pass' &&
+      report.npmExecuted === true;
+  }),
+  test('remote_npm_normalization_rejects_product_verification_wrong_head_remote', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        normalizedEvidence: {
+          headSha: 'old',
+          commands: [{ name: 'npm test', source: 'remote', result: 'pass', required: true }],
+        },
+        safeSummaryOnly: true,
+      },
+    }, { CODEX_PR_HEAD_SHA: 'new' });
+    const report = buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'fail' && report.remoteNpmEvidenceKind === 'wrong_head_remote';
+  }),
+  test('remote_npm_normalization_rejects_local_only_product_verification_pass', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        normalizedEvidence: {
+          headSha: 'abc',
+          commands: [{ name: 'npm test', source: 'local', result: 'pass', required: true }],
+        },
+        safeSummaryOnly: true,
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    const report = buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus;
+    return report.status === 'fail' && report.reasonCodes.includes('remote_npm_diagnostic_missing');
+  }),
   test('v113_compat_pass', () => true),
   test('v114_compat_pass', () => true),
   test('v115_compat_pass', () => true),
