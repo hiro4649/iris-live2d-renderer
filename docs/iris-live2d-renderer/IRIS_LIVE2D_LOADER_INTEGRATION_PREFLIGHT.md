@@ -452,3 +452,17 @@ Safe public labels include `motion_dataset_real_row_missing_data_fail_closed_gat
 The gate keeps `actual_ingestion_allowed` false, `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `owner_confirmation_confirmed` false, `trusted_loader_allowlist_enabled` false, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
 
 Future actual row intake requires a separate owner-confirmed actual data task with an owner-provided JSONL or CSV file, row_id per record, source hash, declared row count, dataset split, schema version, audit metadata, redaction scan, audit manifest result, fresh resident evidence reference, and go/no-go review reference. This gate does not read row bodies, parse files, ingest rows, execute motion, collect real evidence, perform live probes, call the renderer, call SDK/vendor code, or call external services.
+
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-SUBMISSION-PACKET1
+
+This packet is a planning-only owner row data submission checklist. It tells the owner which metadata must be prepared in a future owner-approved task before any actual motion dataset row ingestion can be considered.
+
+It is not a row file, does not accept JSONL or CSV content, does not read row bodies, does not ingest rows, does not create owner confirmation, does not confirm owner approval, does not execute motion, and does not claim runtime or production readiness.
+
+Public safe labels include `motion_dataset_owner_row_data_submission_packet_status`, `owner_submission_packet_only_boundary`, `no_owner_confirmation_created_boundary`, `no_owner_confirmation_confirmed_boundary`, `no_actual_row_content_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_owner_submission_items`, `required_owner_confirmation_scopes`, `required_file_shape`, `required_metadata_shape`, `rejected_submission_field_categories`, and `detected_rejected_sensitive_material_labels`.
+
+Required owner submission items are metadata labels only: file label, declared format, declared row count, source hash, schema version, split plan, audit run id, auditor version, redaction policy reference, motion allowlist policy reference, renderer-ready policy reference, unsupported-motion policy reference, owner confirmation scope, and safe next action.
+
+The file shape is expressed as safe categories only. Row body material, local locations, cue material, renderer material, network locations, credentials, commands, owner notes, and diagnostic material remain rejected from public status surfaces.
+
+The packet preserves `actual_ingestion_allowed: false`, `real_row_data_present: false`, `checked_row_count: 0`, `motion_dataset_executable: false`, `trusted_loader_allowlist_enabled: false`, `go_nogo_status: no_go`, and `priority1_status: BLOCKED`.
