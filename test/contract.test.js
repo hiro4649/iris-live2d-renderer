@@ -11,6 +11,10 @@ import {
   GO_NOGO_PREFLIGHT_SCHEMA,
   LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_ALLOWED_FILE_FORMATS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_REJECTED_REQUEST_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA,
@@ -55,6 +59,7 @@ import {
   createGoNoGoPreflightSummary,
   createMotionDatasetRealRowIntakeDryRunValidatorSummary,
   createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary,
+  createMotionDatasetRealRowAuditManifestSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
@@ -1094,6 +1099,78 @@ try {
   assert.equal(JSON.stringify(unsafeRealRowIntakeOwnerHandoffPacket).includes("private-file"), false);
   assertSafe(JSON.stringify(unsafeRealRowIntakeOwnerHandoffPacket));
   assertNoModelPathLeak(JSON.stringify(unsafeRealRowIntakeOwnerHandoffPacket));
+
+  const defaultRealRowAuditManifest = createMotionDatasetRealRowAuditManifestSummary();
+  assert.equal(defaultRealRowAuditManifest.schema, LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA);
+  assert.equal(defaultRealRowAuditManifest.motion_dataset_real_row_audit_manifest_status, "planning_only_blocked");
+  assert.equal(defaultRealRowAuditManifest.planning_only_boundary, true);
+  assert.equal(defaultRealRowAuditManifest.audit_manifest_only_boundary, true);
+  assert.equal(defaultRealRowAuditManifest.no_real_audit_completed_boundary, true);
+  assert.equal(defaultRealRowAuditManifest.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultRealRowAuditManifest.no_row_body_read_boundary, true);
+  assert.equal(defaultRealRowAuditManifest.audit_manifest_is_actual_audit_completion, false);
+  assert.equal(defaultRealRowAuditManifest.real_row_data_present, false);
+  assert.equal(defaultRealRowAuditManifest.checked_row_count, 0);
+  assert.equal(defaultRealRowAuditManifest.motion_dataset_executable, false);
+  assert.equal(defaultRealRowAuditManifest.motion_dataset_ready_candidate, false);
+  assert.equal(defaultRealRowAuditManifest.runtime_readiness_claimed, false);
+  assert.equal(defaultRealRowAuditManifest.production_readiness_claimed, false);
+  assert.equal(defaultRealRowAuditManifest.renderer_ready, false);
+  assert.equal(defaultRealRowAuditManifest.model_loaded, false);
+  assert.equal(defaultRealRowAuditManifest.scene_loaded, false);
+  assert.equal(defaultRealRowAuditManifest.browser_cue_delivery_ready, false);
+  assert.equal(defaultRealRowAuditManifest.priority1_status, "BLOCKED");
+  assert.equal(defaultRealRowAuditManifest.owner_confirmation_required, true);
+  assert.equal(defaultRealRowAuditManifest.owner_confirmation_created, false);
+  assert.equal(defaultRealRowAuditManifest.owner_confirmation_confirmed, false);
+  assert.equal(defaultRealRowAuditManifest.go_nogo_status, "no_go");
+  assert.equal(defaultRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(defaultRealRowAuditManifest.audit_run_metadata_required, [...LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS]);
+  assert.deepEqual(defaultRealRowAuditManifest.row_level_audit_fields_required, [...LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS]);
+  assert.deepEqual(defaultRealRowAuditManifest.dataset_level_summary_fields_required, [...LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS]);
+  assert.equal(defaultRealRowAuditManifest.row_uniqueness_policy_required, "row_id_unique_required_before_future_real_audit");
+  assert.equal(defaultRealRowAuditManifest.source_hash_policy_required, "source_hash_required_before_future_real_audit");
+  assert.equal(defaultRealRowAuditManifest.split_policy_required, "dataset_split_required_before_future_real_audit");
+  assert.deepEqual(defaultRealRowAuditManifest.renderer_ready_dependency_policy_required, [...LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS]);
+  assert.deepEqual(defaultRealRowAuditManifest.motion_allowlist_policy_required, [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES]);
+  assert.deepEqual(defaultRealRowAuditManifest.ux_accessibility_policy_required, [...LIVE2D_MOTION_DATASET_UX_AUDIT_AXES]);
+  assert.equal(defaultRealRowAuditManifest.redaction_policy_required, "safe_summary_only_no_row_body_no_private_material");
+  assert.equal(defaultRealRowAuditManifest.priority1_boundary_policy_required, "priority1_remains_BLOCKED_until_real_resident_fresh_evidence");
+  assertSafe(JSON.stringify(defaultRealRowAuditManifest));
+  assertNoModelPathLeak(JSON.stringify(defaultRealRowAuditManifest));
+
+  const unsafeRealRowAuditManifest = createMotionDatasetRealRowAuditManifestSummary({
+    checked_row_count: 3,
+    raw_dataset_row_body: "private-row",
+    actual_file_content: "private-file",
+    row_body_read: true,
+    motion_dataset_executable: true,
+    renderer_ready: true,
+    owner_confirmation_confirmed: true,
+    go_nogo_status: "go",
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(unsafeRealRowAuditManifest.real_row_data_present, false);
+  assert.equal(unsafeRealRowAuditManifest.checked_row_count, 0);
+  assert.equal(unsafeRealRowAuditManifest.row_body_read, false);
+  assert.equal(unsafeRealRowAuditManifest.file_content_accepted, false);
+  assert.equal(unsafeRealRowAuditManifest.motion_dataset_executable, false);
+  assert.equal(unsafeRealRowAuditManifest.renderer_ready, false);
+  assert.equal(unsafeRealRowAuditManifest.owner_confirmation_confirmed, false);
+  assert.equal(unsafeRealRowAuditManifest.go_nogo_status, "no_go");
+  assert.equal(unsafeRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_raw_or_private_field"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_row_body_or_file_read"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_motion_execution"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_readiness_claim"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_owner_confirmation"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_trusted_loader_request"), true);
+  assert.equal(JSON.stringify(unsafeRealRowAuditManifest).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeRealRowAuditManifest).includes("private-file"), false);
+  assertSafe(JSON.stringify(unsafeRealRowAuditManifest));
+  assertNoModelPathLeak(JSON.stringify(unsafeRealRowAuditManifest));
 
   const defaultGoNoGo = createGoNoGoPreflightSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -3948,6 +4025,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_owner_handoff_packet_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_owner_handoff_packet_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_owner_handoff_packet_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.motion_dataset_real_row_audit_manifest_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.audit_manifest_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.audit_manifest_is_actual_audit_completion, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_audit_manifest_summary.motion_dataset_executable, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4064,6 +4146,10 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_intake_owner_handoff_packet_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_intake_owner_handoff_packet_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_intake_owner_handoff_packet_summary.owner_handoff_is_owner_confirmation, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.motion_dataset_ready_candidate, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.real_row_data_present, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_audit_manifest_summary.audit_manifest_is_actual_audit_completion, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4157,6 +4243,11 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_intake_owner_handoff_packet_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_intake_owner_handoff_packet_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_intake_owner_handoff_packet_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHealth.motion_dataset_real_row_audit_manifest_summary.motion_dataset_real_row_audit_manifest_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_real_row_audit_manifest_summary.checked_row_count, 0);
+  assert.equal(provisionedHealth.motion_dataset_real_row_audit_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_audit_manifest_summary.renderer_ready, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_audit_manifest_summary.audit_manifest_is_actual_audit_completion, false);
   assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_validator_status, "pass_synthetic_only");
   assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.production_readiness_claimed, false);
@@ -4234,6 +4325,11 @@ try {
   assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_owner_handoff_packet_summary.checked_row_count, 0);
   assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_owner_handoff_packet_summary.motion_dataset_executable, false);
   assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_owner_handoff_packet_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_audit_manifest_summary.motion_dataset_real_row_audit_manifest_status, "planning_only_blocked");
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_audit_manifest_summary.checked_row_count, 0);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_audit_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_audit_manifest_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_audit_manifest_summary.audit_manifest_is_actual_audit_completion, false);
   assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
   assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_executable, false);
