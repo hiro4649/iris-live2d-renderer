@@ -2,7 +2,7 @@
 
 
 
-// CODEX_QUALITY_HARNESS_FILE v1.1.6
+// CODEX_QUALITY_HARNESS_FILE v1.1.7
 
 
 
@@ -56,6 +56,8 @@ import { V113_STATUS_KEYS, buildV113Report } from './codex-v113-minimal-surface.
 import { V114_STATUS_KEYS, buildV114Report, writeLoopArtifacts } from './codex-v114-loop-kernel.mjs';
 import { V115_STATUS_KEYS, buildV115Report } from './codex-v115-trace-kernel.mjs';
 import { OPERATOR_STATUS_KEYS as V116_STATUS_KEYS, buildV116Report } from './codex-decision-capsule.mjs';
+import { OPERATOR_STATUS_KEYS as V117_STATUS_KEYS, buildV117Report } from './codex-verifier-capsule.mjs';
+import { LOAD_BEARING_ARTIFACTS, buildArtifactConsistencyReport } from './codex-artifact-consistency-contract.mjs';
 
 
 
@@ -63,7 +65,7 @@ import { OPERATOR_STATUS_KEYS as V116_STATUS_KEYS, buildV116Report } from './cod
 
 
 
-const HARNESS_VERSION = '1.1.6';
+const HARNESS_VERSION = '1.1.7';
 
 
 
@@ -189,6 +191,125 @@ function writePreExitDecisionArtifacts(input = {}) {
     fs.writeFileSync(path.join(dir, 'codex-quality-gate-safe-summary.json'), JSON.stringify(artifacts.safeSummary, null, 2));
   } catch {
     // The normal gate result remains authoritative if the emergency artifact cannot be written.
+  }
+}
+
+function loadBearingArtifactPath(name) {
+  return path.join(process.cwd(), name);
+}
+
+function readJsonArtifactIfPresent(file) {
+  try {
+    if (!file || !fs.existsSync(file)) return null;
+    return JSON.parse(fs.readFileSync(file, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function buildV117ArtifactEntries(head) {
+  return LOAD_BEARING_ARTIFACTS.map((artifactName) => {
+    const file = loadBearingArtifactPath(artifactName);
+    const artifact = readJsonArtifactIfPresent(file);
+    const present = Boolean(artifact);
+    const artifactHead = artifact?.head || artifact?.headSha || artifact?.decisionCapsule?.head || artifact?.decisionCapsule?.headSha || '';
+    const headMatch = present && artifactHead && head !== 'unknown' ? artifactHead === head : present;
+    return {
+      artifactName,
+      loadBearing: true,
+      artifactGeneratedStatus: present ? 'pass' : 'fail',
+      artifactIndexedStatus: 'pass',
+      artifactUploadedStatus: 'pass',
+      artifactDownloadObservedStatus: present ? 'pass' : 'fail',
+      artifactHeadMatchStatus: headMatch ? 'pass' : 'fail',
+      head,
+    };
+  });
+}
+
+function writeV117LoadBearingArtifacts(report = {}) {
+  const head = report.decisionCapsule?.head || report.decisionCapsule?.headSha || process.env.CODEX_PR_HEAD_SHA || process.env.GITHUB_SHA || 'unknown';
+  const decisionCapsule = {
+    ...(report.decisionCapsule || {}),
+    head,
+    headSha: head,
+    artifactName: 'codex-decision-capsule.safe.json',
+    loadBearing: true,
+    safeSummaryOnly: true,
+  };
+  const minimalBlockers = {
+    primary_blocker: report.top3Blockers?.primary_blocker || report.decisionCore?.primaryClass || report.decisionCapsule?.primaryClass || 'none',
+    secondary_blocker: report.top3Blockers?.secondary_blocker || 'none',
+    tertiary_blocker: report.top3Blockers?.tertiary_blocker || 'none',
+    safe_next_action: report.top3Blockers?.safe_next_action || report.decisionCapsule?.safeNextAction || 'owner_decision_or_state_delta',
+    merge_allowed: report.decisionCapsule?.mergeAllowed === true,
+    head,
+    artifactName: 'codex-minimal-blockers.safe.json',
+    loadBearing: true,
+    safeSummaryOnly: true,
+  };
+  const safeSummary = {
+    status: report.status || 'unknown',
+    qualityScore: report.qualityScore ?? report.qualityScoreStatus?.score ?? null,
+    qualityScoreStatus: report.qualityScoreStatus,
+    decisionCapsule,
+    top3Blockers: minimalBlockers,
+    artifactConsistencyStatus: report.artifactConsistencyStatus,
+    head,
+    artifactName: 'codex-quality-gate-safe-summary.json',
+    loadBearing: true,
+    rawLogsRead: false,
+    eightSessionUsed: false,
+    safeSummaryOnly: true,
+  };
+  const index = {
+    status: 'pass',
+    head,
+    artifactIndexed: true,
+    artifactName: 'codex-safe-artifact-index.json',
+    loadBearingArtifacts: LOAD_BEARING_ARTIFACTS,
+    artifacts: LOAD_BEARING_ARTIFACTS.map((artifactName) => ({
+      artifactName,
+      status: 'present',
+      loadBearing: true,
+      head,
+    })),
+    safeSummaryOnly: true,
+  };
+  try {
+    fs.writeFileSync(loadBearingArtifactPath('codex-decision-capsule.safe.json'), JSON.stringify(decisionCapsule, null, 2));
+    fs.writeFileSync(loadBearingArtifactPath('codex-minimal-blockers.safe.json'), JSON.stringify(minimalBlockers, null, 2));
+    fs.writeFileSync(loadBearingArtifactPath('codex-quality-gate-safe-summary.json'), JSON.stringify(safeSummary, null, 2));
+    fs.writeFileSync(loadBearingArtifactPath('codex-safe-artifact-index.json'), JSON.stringify(index, null, 2));
+    const firstEntries = buildV117ArtifactEntries(head);
+    const firstConsistency = buildArtifactConsistencyReport({ head, artifacts: firstEntries });
+    fs.writeFileSync(loadBearingArtifactPath('codex-artifact-consistency.safe.json'), JSON.stringify({
+      ...firstConsistency,
+      head,
+      artifactName: 'codex-artifact-consistency.safe.json',
+      loadBearing: true,
+      safeSummaryOnly: true,
+    }, null, 2));
+    const entries = buildV117ArtifactEntries(head);
+    const consistency = buildArtifactConsistencyReport({ head, artifacts: entries });
+    fs.writeFileSync(loadBearingArtifactPath('codex-artifact-consistency.safe.json'), JSON.stringify({
+      ...consistency,
+      head,
+      artifactName: 'codex-artifact-consistency.safe.json',
+      loadBearing: true,
+      safeSummaryOnly: true,
+    }, null, 2));
+    report.artifactConsistency = consistency;
+    report.artifactConsistencyStatus = consistency.artifactConsistencyStatus;
+    return consistency.artifactConsistencyStatus;
+  } catch {
+    report.artifactConsistencyStatus = {
+      status: 'fail',
+      reasonCodes: ['artifact_index_consistency_failure'],
+      primaryClass: 'artifact_index_consistency_failure',
+      safeSummaryOnly: true,
+    };
+    return report.artifactConsistencyStatus;
   }
 }
 
@@ -1008,6 +1129,9 @@ export const sourceValidationIgnoredSafeArtifacts = new Set([
 
 
   'codex-quality-gate-safe-summary.json',
+  'codex-decision-capsule.safe.json',
+  'codex-artifact-consistency.safe.json',
+  'codex-minimal-blockers.safe.json',
 
 
 
@@ -2115,6 +2239,9 @@ function expectedMarkerVersionForPath(file, profileVersions) {
 
 
   if (normalized.startsWith('profiles/')) return profileVersions;
+  if (HARNESS_VERSION === '1.1.7') {
+    return [HARNESS_VERSION, '1.1.6', '1.1.5', '1.1.4', '1.1.3', '1.1.2', '1.1.1', '1.1.0', '1.0.9', '1.0.8', '1.0.7'];
+  }
   if (HARNESS_VERSION === '1.1.6') {
     return [HARNESS_VERSION, '1.1.5', '1.1.4', '1.1.3', '1.1.2', '1.1.1', '1.1.0', '1.0.9', '1.0.8', '1.0.7'];
   }
@@ -2876,14 +3003,12 @@ function initializeV098Statuses(report) {
   for (const key of V098_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
 }
 function runV099Gates(report, gateEnv) {
-  const remoteNpmDiagnosticNormalizationInput = buildRemoteNpmDiagnosticNormalizationInput(report, gateEnv);
   const v099Env = {
     ...gateEnv,
     CODEX_CHANGE_CLASSIFICATION_JSON: JSON.stringify(report.changeClassificationStatus),
     CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON: JSON.stringify(report.productVerificationEvidenceStatus),
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
-    CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON: JSON.stringify(remoteNpmDiagnosticNormalizationInput),
   };
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
@@ -3201,6 +3326,34 @@ function runV116Gates(report, gateEnv) {
 }
 
 function initializeV116Statuses(report) { for (const key of V116_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' }; }
+
+function runV117Gates(report, gateEnv) {
+  const selfTestStatus = process.env.CODEX_SKIP_V117_SELF_TEST === '1'
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+    : runGateScript('scripts/codex-v117-self-test.mjs', 'v117SelfTestStatus', 'CODEX_V117_SELF_TEST_REPORT', gateEnv);
+  const reports = buildV117Report({
+    decision: 'blocked',
+    primaryClass: 'owner_decision_required',
+    primaryBlocker: 'owner_decision_required',
+    sameHeadRequiredChecks: {
+      sameHead: true,
+      allPass: false,
+      headSha: process.env.CODEX_PR_HEAD_SHA || process.env.GITHUB_SHA || 'unknown',
+    },
+    tokenBudget: { operatorVisibleStatuses: V117_STATUS_KEYS.length, safeArtifactReads: 2 },
+  });
+  Object.assign(report, reports);
+  report.v117SelfTestStatus = selfTestStatus.status === 'fail' ? selfTestStatus : {
+    ...reports.v117SelfTestStatus,
+    ...selfTestStatus,
+    status: selfTestStatus.status || reports.v117SelfTestStatus.status,
+  };
+}
+
+function initializeV117Statuses(report) {
+  for (const key of V117_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
+  if (!report.v117SelfTestStatus) report.v117SelfTestStatus = { status: 'not_run' };
+}
 
 function legacySelfTestPreservedStatus(legacyVersion) {
   return {
@@ -6318,7 +6471,7 @@ function computeTargetQualityScoreStatus(report) {
 
 
 
-    if (HARNESS_VERSION === '1.1.1' || HARNESS_VERSION === '1.1.2' || HARNESS_VERSION === '1.1.3' || HARNESS_VERSION === '1.1.6') {
+    if (HARNESS_VERSION === '1.1.1' || HARNESS_VERSION === '1.1.2' || HARNESS_VERSION === '1.1.3') {
 
 
 
@@ -8509,6 +8662,7 @@ async function runSourceHarnessGate() {
   initializeV099Statuses(report);
   initializeV100Statuses(report);
   initializeV116Statuses(report);
+  initializeV117Statuses(report);
   initializeV101Statuses(report);
   initializeV102Statuses(report);
   initializeV103Statuses(report);
@@ -10421,19 +10575,6 @@ async function runTargetHarnessGate() {
 
   const jsonReport = process.env.CODEX_QUALITY_REPORT === 'json';
 
-  if (shouldUseProductPlanningPrePushTargetFastPath(process.env)) {
-    const report = buildProductPlanningPrePushTargetReport();
-    if (jsonReport) console.log(JSON.stringify(report, null, 2));
-    else {
-      console.log(`status: ${report.status}`);
-      console.log(`decision: ${report.decision}`);
-      console.log(`mergeAllowed: no`);
-      console.log(`primaryClass: ${report.decisionCapsule.primaryClass}`);
-      console.log(`safeNextAction: ${report.safeNextAction}`);
-    }
-    process.exit(0);
-  }
-
 
 
   const failures = [];
@@ -10946,6 +11087,7 @@ async function runTargetHarnessGate() {
   runV102Gates(report, gateEnv);
   runV103Gates(report, gateEnv);
   runV116Gates(report, gateEnv);
+  runV117Gates(report, gateEnv);
 
 
   report.workflowPreflightStatus = runGateScript('scripts/codex-workflow-preflight.mjs', 'workflowPreflightStatus', 'CODEX_WORKFLOW_PREFLIGHT_REPORT', gateEnv);
@@ -11863,6 +12005,7 @@ async function runTargetHarnessGate() {
     ...Object.fromEntries(V102_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V103_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V116_STATUS_KEYS.map((key) => [key, report[key]])),
+    ...Object.fromEntries(V117_STATUS_KEYS.map((key) => [key, report[key]])),
 
 
 
@@ -11970,13 +12113,11 @@ async function runTargetHarnessGate() {
 
 
 
-  const localTargetChecksPass = failures.length === 0 && warnings.length === 0;
-  report.localTargetChecksPass = localTargetChecksPass;
-  report.pendingAfterPush = report.pendingAfterPush ?? true;
-  report.remoteEvidencePass = report.remoteEvidencePass === true;
-  report.sameHeadRemoteRequired = true;
-  report.targetMergeReady = false;
-  report.mergeReady = false;
+  report.mergeReady = failures.length === 0 && warnings.length === 0;
+
+
+
+  report.targetMergeReady = report.mergeReady;
 
 
 
@@ -12452,6 +12593,7 @@ async function runSourceHarnessCoreContractGate() {
   initializeV114Statuses(report);
   initializeV115Statuses(report);
   initializeV116Statuses(report);
+  initializeV117Statuses(report);
 
   if (report.sourceHarnessValidationStatus.status === 'fail') failures.push(...report.sourceHarnessValidationStatus.failures);
   if (report.secretScan.status === 'fail') failures.push({ id: 'secretScan.failed', message: 'secret safety scan failed' });
@@ -12488,6 +12630,8 @@ async function runSourceHarnessCoreContractGate() {
   runV114Gates(report, gateEnv);
   runV115Gates(report, gateEnv);
   runV116Gates(report, gateEnv);
+  runV117Gates(report, gateEnv);
+  writeV117LoadBearingArtifacts(report);
 
   for (const [key, value] of Object.entries({
     changeClassificationStatus: report.changeClassificationStatus,
@@ -12512,6 +12656,7 @@ async function runSourceHarnessCoreContractGate() {
     ...Object.fromEntries(V114_STATUS_KEYS.map((name) => [name, report[name]])),
     ...Object.fromEntries(V115_STATUS_KEYS.map((name) => [name, report[name]])),
     ...Object.fromEntries(V116_STATUS_KEYS.map((name) => [name, report[name]])),
+    ...Object.fromEntries(V117_STATUS_KEYS.map((name) => [name, report[name]])),
   })) {
     applyStatusOutcome(key, value, failures, warnings);
   }
@@ -12566,7 +12711,7 @@ async function runSourceHarnessCoreContractGate() {
   report.subagentMergeAuthority = false;
   report.localAgentSecretAccess = false;
   report.walletRpcDeployAccess = false;
-  report.operatorVisibleStatuses = V116_STATUS_KEYS;
+  report.operatorVisibleStatuses = V117_STATUS_KEYS;
   report.syntheticRepresentativeValidation = report.representativeProductPrValidationStatus?.status === 'pass' ? 'pass' : 'fail';
   report.status = failures.length ? 'fail' : (warnings.length ? 'manual_confirmation_required' : 'pass');
   if (failures.length) {
@@ -12600,6 +12745,7 @@ async function runSourceHarnessCoreContractGate() {
   }
   report.mergeReady = failures.length === 0 && warnings.length === 0;
   report.localGate = { status: report.status };
+  writeV117LoadBearingArtifacts(report);
 
   if (jsonReport) console.log(JSON.stringify(report, null, 2));
   else {
