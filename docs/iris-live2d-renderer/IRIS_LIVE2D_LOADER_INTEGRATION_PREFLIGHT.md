@@ -422,3 +422,13 @@ Status: planning-only go/no-go blocker map. The map records blockers that must r
 Boundary: this map is not go approval, does not resolve blockers, does not create or confirm owner confirmation, does not ingest rows, does not read row bodies, does not execute motion, does not collect evidence, does not enable trusted loader, and does not claim runtime or production readiness.
 
 Preservation: go_nogo_status remains no_go, go_candidate remains false, blocker_resolved remains false, checked_row_count remains 0, real_row_data_present remains false, motion_dataset_executable remains false, and priority1 remains BLOCKED.
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-PRE-INGESTION-REVIEW-PACKET1
+
+This packet is planning-only review preparation for a future owner-provided real row ingestion task. It is not approval, not owner confirmation, not a go/no-go pass, and not runtime readiness.
+
+Safe public status labels include `motion_dataset_real_row_pre_ingestion_review_packet_status`, `planning_only_boundary`, `pre_ingestion_review_only_boundary`, `no_approval_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_pre_ingestion_artifacts`, `required_owner_review_items`, `required_missing_blocker_checks`, `required_renderer_ready_checks`, `required_evidence_refs`, `required_go_nogo_refs`, `real_row_data_present`, `checked_row_count`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+Required pre-ingestion artifacts remain review labels only: row schema preflight, synthetic row fixture pack, request packet, dry-run validator, quarantine envelope, owner handoff packet, audit manifest, redaction scanner fixture pack, evidence link manifest, and go/no-go blocker map. Future owner review still must cover file format, source hash, declared row count, dataset split plan, audit run, auditor version, redaction policy, renderer readiness policy, motion allowlist policy, unsupported and experimental motion policy, go/no-go review, and priority1 blocker review.
+
+The packet keeps `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false. It does not read row bodies, parse JSONL/CSV rows, execute motion, collect real evidence, expose owner-provided values, expose raw row bodies, expose private local values, enable a trusted loader, or resolve priority1.

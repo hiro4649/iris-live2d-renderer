@@ -11,6 +11,7 @@ import {
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowEvidenceLinkManifestSummary,
   createMotionDatasetRealRowGoNoGoBlockerMapSummary,
+  createMotionDatasetRealRowPreIngestionReviewPacketSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
@@ -137,6 +138,7 @@ export function createRendererState({
       const motionDatasetRealRowRedactionScannerFixturePack = createMotionDatasetRealRowRedactionScannerFixturePackSummary();
       const motionDatasetRealRowEvidenceLinkManifest = createMotionDatasetRealRowEvidenceLinkManifestSummary();
       const motionDatasetRealRowGoNoGoBlockerMap = createMotionDatasetRealRowGoNoGoBlockerMapSummary();
+      const motionDatasetRealRowPreIngestionReviewPacket = createMotionDatasetRealRowPreIngestionReviewPacketSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -216,6 +218,7 @@ export function createRendererState({
           motion_dataset_real_row_redaction_scanner_fixture_pack_summary: motionDatasetRealRowRedactionScannerFixturePack,
           motion_dataset_real_row_evidence_link_manifest_summary: motionDatasetRealRowEvidenceLinkManifest,
           motion_dataset_real_row_go_nogo_blocker_map_summary: motionDatasetRealRowGoNoGoBlockerMap,
+          motion_dataset_real_row_pre_ingestion_review_packet_summary: motionDatasetRealRowPreIngestionReviewPacket,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -245,6 +248,7 @@ export function createRendererState({
         motion_dataset_real_row_redaction_scanner_fixture_pack_summary: motionDatasetRealRowRedactionScannerFixturePack,
           motion_dataset_real_row_evidence_link_manifest_summary: motionDatasetRealRowEvidenceLinkManifest,
           motion_dataset_real_row_go_nogo_blocker_map_summary: motionDatasetRealRowGoNoGoBlockerMap,
+          motion_dataset_real_row_pre_ingestion_review_packet_summary: motionDatasetRealRowPreIngestionReviewPacket,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
@@ -315,6 +319,7 @@ export function createRendererState({
         motion_dataset_real_row_redaction_scanner_fixture_pack_summary: status.renderer_health.motion_dataset_real_row_redaction_scanner_fixture_pack_summary,
         motion_dataset_real_row_evidence_link_manifest_summary: status.renderer_health.motion_dataset_real_row_evidence_link_manifest_summary,
         motion_dataset_real_row_go_nogo_blocker_map_summary: status.renderer_health.motion_dataset_real_row_go_nogo_blocker_map_summary,
+        motion_dataset_real_row_pre_ingestion_review_packet_summary: status.renderer_health.motion_dataset_real_row_pre_ingestion_review_packet_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
@@ -441,6 +446,7 @@ export function createRendererState({
       const motionDatasetRealRowRedactionScannerFixturePack = createMotionDatasetRealRowRedactionScannerFixturePackSummary();
       const motionDatasetRealRowEvidenceLinkManifest = createMotionDatasetRealRowEvidenceLinkManifestSummary();
       const motionDatasetRealRowGoNoGoBlockerMap = createMotionDatasetRealRowGoNoGoBlockerMapSummary();
+      const motionDatasetRealRowPreIngestionReviewPacket = createMotionDatasetRealRowPreIngestionReviewPacketSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -479,6 +485,7 @@ export function createRendererState({
       response.motion_dataset_real_row_redaction_scanner_fixture_pack_summary = motionDatasetRealRowRedactionScannerFixturePack;
       response.motion_dataset_real_row_evidence_link_manifest_summary = motionDatasetRealRowEvidenceLinkManifest;
       response.motion_dataset_real_row_go_nogo_blocker_map_summary = motionDatasetRealRowGoNoGoBlockerMap;
+      response.motion_dataset_real_row_pre_ingestion_review_packet_summary = motionDatasetRealRowPreIngestionReviewPacket;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
       assertSafePublicObject(response, "browser runtime config");
@@ -570,6 +577,7 @@ export function createRendererState({
       const motionDatasetRealRowRedactionScannerFixturePack = createMotionDatasetRealRowRedactionScannerFixturePackSummary();
       const motionDatasetRealRowEvidenceLinkManifest = createMotionDatasetRealRowEvidenceLinkManifestSummary();
       const motionDatasetRealRowGoNoGoBlockerMap = createMotionDatasetRealRowGoNoGoBlockerMapSummary();
+      const motionDatasetRealRowPreIngestionReviewPacket = createMotionDatasetRealRowPreIngestionReviewPacketSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -633,6 +641,7 @@ export function createRendererState({
           motion_dataset_real_row_redaction_scanner_fixture_pack_summary: motionDatasetRealRowRedactionScannerFixturePack,
           motion_dataset_real_row_evidence_link_manifest_summary: motionDatasetRealRowEvidenceLinkManifest,
           motion_dataset_real_row_go_nogo_blocker_map_summary: motionDatasetRealRowGoNoGoBlockerMap,
+          motion_dataset_real_row_pre_ingestion_review_packet_summary: motionDatasetRealRowPreIngestionReviewPacket,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -662,6 +671,7 @@ export function createRendererState({
         motion_dataset_real_row_redaction_scanner_fixture_pack_summary: motionDatasetRealRowRedactionScannerFixturePack,
           motion_dataset_real_row_evidence_link_manifest_summary: motionDatasetRealRowEvidenceLinkManifest,
           motion_dataset_real_row_go_nogo_blocker_map_summary: motionDatasetRealRowGoNoGoBlockerMap,
+          motion_dataset_real_row_pre_ingestion_review_packet_summary: motionDatasetRealRowPreIngestionReviewPacket,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         boundary_policy: createBoundaryPolicy(),
