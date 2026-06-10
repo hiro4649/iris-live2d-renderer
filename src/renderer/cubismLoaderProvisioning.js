@@ -30,6 +30,7 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEM
 export const LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA = "iris_live2d_motion_dataset_real_row_evidence_link_manifest_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_MAP_SCHEMA = "iris_live2d_motion_dataset_real_row_go_nogo_blocker_map_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_pre_ingestion_review_packet_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_real_row_final_dry_run_checklist_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -552,6 +553,35 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REQUIRED_OWNER_REVIEW_
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REQUIRED_MISSING_BLOCKER_CHECKS = Object.freeze([
   ...LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_IDS,
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_ITEMS = Object.freeze([
+  "row_schema_preflight_visible",
+  "synthetic_row_fixture_pack_visible",
+  "request_packet_visible",
+  "dry_run_validator_visible",
+  "quarantine_envelope_visible",
+  "owner_handoff_packet_visible",
+  "audit_manifest_visible",
+  "redaction_scanner_fixture_pack_visible",
+  "evidence_link_manifest_visible",
+  "go_nogo_blocker_map_visible",
+  "pre_ingestion_review_packet_visible",
+  "owner_confirmation_still_required",
+  "fresh_resident_evidence_still_required",
+  "checked_row_count_zero",
+  "real_row_data_absent",
+  "motion_dataset_non_executable",
+  "no_go_preserved",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_BLOCKER_VISIBILITY = Object.freeze([
+  ...LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_IDS,
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_ARTIFACT_REFS = Object.freeze([
+  ...LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REQUIRED_ARTIFACTS,
+  "pre_ingestion_review_packet",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -4665,6 +4695,131 @@ export function createMotionDatasetRealRowPreIngestionReviewPacketSummary(input 
     },
   };
   assertSafePublicObject(summary, "motion dataset real row pre ingestion review packet summary");
+  return summary;
+}
+
+export function createMotionDatasetRealRowFinalDryRunChecklistSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawFields = [
+    ...detectedMotionDatasetRawFields(source),
+    ...detectedRejectedRequestFields(source, [
+      "future_source_hash_value",
+      "future_declared_row_count_value",
+      "owner_private_note",
+      "raw_owner_confirmation_note",
+      "actual_file_path_value",
+      "actual_file_content",
+      "raw_dataset_row_body",
+    ]),
+  ];
+  const realEvidenceRequested = source.real_evidence_present === true || source.fresh_resident_evidence_present === true;
+  const ownerApprovalRequested = source.owner_approval_created === true || source.owner_approval_confirmed === true || source.owner_approval_status === "confirmed";
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true || source.row !== undefined || source.dataset_row !== undefined || source.raw_dataset_row_body !== undefined;
+  const checkedRowCountRequested = Number.isSafeInteger(source.checked_row_count) && source.checked_row_count > 0;
+  const rowBodyReadRequested = source.row_body_read === true || source.file_content_read === true || source.actual_file_content !== undefined || source.actual_file_path_value !== undefined;
+  const motionExecutionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true || source.execute_motion === true;
+  const readinessRequested = source.renderer_ready === true || source.model_loaded === true || source.scene_loaded === true || source.browser_cue_delivery_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const priorityResolvedRequested = source.priority1_status === "RESOLVED" || source.priority1_resolved === true || source.blocker_resolved === true;
+  const goRequested = source.go_nogo_status === "go" || source.go_candidate === true || source.approve_go === true;
+  const trustedLoaderRequested = source.trusted_loader_allowlist_enabled === true || source.trustedLoaderAllowlistEnabled === true || source.loader_trusted === true;
+  const blockedReasons = [
+    "final_dry_run_checklist_planning_only",
+    "final_dry_run_checklist_no_actual_ingestion",
+    "final_dry_run_checklist_no_real_row_ingestion",
+    "final_dry_run_checklist_no_row_body_read",
+    "final_dry_run_checklist_priority1_blocked",
+    "final_dry_run_checklist_go_nogo_no_go",
+    "final_dry_run_checklist_owner_confirmation_required",
+    "final_dry_run_checklist_fresh_resident_evidence_required",
+  ];
+  if (rawFields.length) blockedReasons.push("final_dry_run_checklist_rejected_raw_or_private_material");
+  if (realEvidenceRequested) blockedReasons.push("final_dry_run_checklist_rejected_real_evidence_claim");
+  if (ownerApprovalRequested) blockedReasons.push("final_dry_run_checklist_rejected_owner_approval");
+  if (ownerConfirmationRequested) blockedReasons.push("final_dry_run_checklist_rejected_owner_confirmation");
+  if (realRowRequested || checkedRowCountRequested) blockedReasons.push("final_dry_run_checklist_rejected_real_row_or_checked_count");
+  if (rowBodyReadRequested) blockedReasons.push("final_dry_run_checklist_rejected_row_body_or_file_read");
+  if (motionExecutionRequested) blockedReasons.push("final_dry_run_checklist_rejected_motion_execution");
+  if (readinessRequested) blockedReasons.push("final_dry_run_checklist_rejected_readiness_claim");
+  if (priorityResolvedRequested) blockedReasons.push("final_dry_run_checklist_rejected_priority1_resolution");
+  if (goRequested) blockedReasons.push("final_dry_run_checklist_rejected_go_or_blocker_resolution");
+  if (trustedLoaderRequested) blockedReasons.push("final_dry_run_checklist_rejected_trusted_loader_request");
+
+  const checklistStatuses = Object.fromEntries(LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_ITEMS.map((item) => [item, "visible_or_required_for_future_owner_review"]));
+  const artifactStatuses = Object.fromEntries(LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_ARTIFACT_REFS.map((ref) => [ref, "planning_ref_visible"]));
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_real_row_final_dry_run_checklist_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    final_dry_run_only_boundary: true,
+    no_actual_ingestion_boundary: true,
+    no_approval_boundary: true,
+    no_go_preserved_boundary: true,
+    metadata_only_preservation_boundary: true,
+    no_real_evidence_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    no_motion_execution_boundary: true,
+    no_real_collection_boundary: true,
+    no_live_probe_boundary: true,
+    no_owner_confirmation_created_boundary: true,
+    no_owner_confirmation_confirmed_boundary: true,
+    no_readiness_boundary: true,
+    final_dry_run_only: true,
+    final_dry_run_checklist_is_ingestion_approval: false,
+    owner_approval_created: false,
+    owner_approval_confirmed: false,
+    owner_confirmation_required: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    row_body_read: false,
+    file_content_accepted: false,
+    motion_dataset_executable: false,
+    motion_dataset_ready_candidate: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    fresh_resident_evidence_status: "required_not_present",
+    required_checklist_items: [...LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_ITEMS],
+    required_blocker_visibility: [...LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_BLOCKER_VISIBILITY],
+    required_artifact_refs: [...LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_ARTIFACT_REFS],
+    required_renderer_ready_checks: [...LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS],
+    checklist_statuses: checklistStatuses,
+    artifact_statuses: artifactStatuses,
+    detected_rejected_private_material_fields: [...new Set(rawFields)].sort(),
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "keep_final_dry_run_checklist_planning_only_until_owner_confirmed_future_ingestion_task",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      final_dry_run_only: true,
+      no_actual_ingestion: true,
+      no_owner_approval: true,
+      no_real_evidence: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_file_content_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_owner_confirmation_created: true,
+      no_owner_confirmation_confirmed: true,
+      no_trusted_loader_enablement: true,
+      no_raw_dataset_rows: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset real row final dry run checklist summary");
   return summary;
 }
 function filterSyntheticFixtureCases(value, fallbackCases) {
