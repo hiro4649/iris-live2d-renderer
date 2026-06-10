@@ -30,6 +30,9 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_BLOCKER_VISIBILITY,
   LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_ITEMS,
   LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_BLOCKERS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FAIL_CLOSED_GATE_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FUTURE_PREREQUISITES,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
@@ -81,6 +84,7 @@ import {
   createMotionDatasetRealRowGoNoGoBlockerMapSummary,
   createMotionDatasetRealRowPreIngestionReviewPacketSummary,
   createMotionDatasetRealRowFinalDryRunChecklistSummary,
+  createMotionDatasetRealRowMissingDataFailClosedGateSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -1570,6 +1574,86 @@ try {
   assert.equal(JSON.stringify(unsafeFinalDryRunChecklist).includes("private-hash"), false);
   assertSafe(JSON.stringify(unsafeFinalDryRunChecklist));
   assertNoModelPathLeak(JSON.stringify(unsafeFinalDryRunChecklist));
+
+  const defaultMissingDataGate = createMotionDatasetRealRowMissingDataFailClosedGateSummary();
+  assert.equal(defaultMissingDataGate.schema, LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FAIL_CLOSED_GATE_SCHEMA);
+  assert.equal(defaultMissingDataGate.motion_dataset_real_row_missing_data_fail_closed_gate_status, "planning_only_blocked");
+  assert.equal(defaultMissingDataGate.planning_only_boundary, true);
+  assert.equal(defaultMissingDataGate.missing_data_gate_only_boundary, true);
+  assert.equal(defaultMissingDataGate.fail_closed_boundary, true);
+  assert.equal(defaultMissingDataGate.no_actual_ingestion_allowed_boundary, true);
+  assert.equal(defaultMissingDataGate.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultMissingDataGate.no_row_body_read_boundary, true);
+  assert.equal(defaultMissingDataGate.missing_data_gate_only, true);
+  assert.equal(defaultMissingDataGate.fail_closed, true);
+  assert.equal(defaultMissingDataGate.actual_ingestion_allowed, false);
+  assert.equal(defaultMissingDataGate.real_row_data_present, false);
+  assert.equal(defaultMissingDataGate.checked_row_count, 0);
+  assert.equal(defaultMissingDataGate.motion_dataset_executable, false);
+  assert.equal(defaultMissingDataGate.runtime_readiness_claimed, false);
+  assert.equal(defaultMissingDataGate.production_readiness_claimed, false);
+  assert.equal(defaultMissingDataGate.priority1_status, "BLOCKED");
+  assert.equal(defaultMissingDataGate.go_nogo_status, "no_go");
+  assert.equal(defaultMissingDataGate.go_candidate, false);
+  assert.equal(defaultMissingDataGate.blocker_resolved, false);
+  assert.equal(defaultMissingDataGate.owner_confirmation_required, true);
+  assert.equal(defaultMissingDataGate.owner_confirmation_confirmed, false);
+  assert.equal(defaultMissingDataGate.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(defaultMissingDataGate.required_missing_data_blockers, [...LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_BLOCKERS]);
+  assert.deepEqual(defaultMissingDataGate.required_future_data_prerequisites, [...LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FUTURE_PREREQUISITES]);
+  assert.equal(defaultMissingDataGate.required_missing_data_blockers.includes("missing_owner_provided_row_file"), true);
+  assert.equal(defaultMissingDataGate.required_missing_data_blockers.includes("checked_row_count_zero"), true);
+  assert.equal(defaultMissingDataGate.required_future_data_prerequisites.includes("owner_provided_jsonl_or_csv_file"), true);
+  assert.equal(defaultMissingDataGate.decision_capsule_machine_source_preserved, true);
+  assert.equal(defaultMissingDataGate.pr_body_human_summary_only, true);
+  assertSafe(JSON.stringify(defaultMissingDataGate));
+  assertNoModelPathLeak(JSON.stringify(defaultMissingDataGate));
+
+  const unsafeMissingDataGate = createMotionDatasetRealRowMissingDataFailClosedGateSummary({
+    actual_ingestion_allowed: true,
+    ingest_rows: true,
+    raw_dataset_row_body: "private-row",
+    actual_file_path_value: "private-path",
+    actual_file_content: "private-content",
+    future_source_hash_value: "private-hash",
+    real_evidence_present: true,
+    owner_confirmation_confirmed: true,
+    checked_row_count: 8,
+    real_row_data_present: true,
+    row_body_read: true,
+    motion_dataset_executable: true,
+    renderer_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_resolved: true,
+    go_nogo_status: "go",
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(unsafeMissingDataGate.actual_ingestion_allowed, false);
+  assert.equal(unsafeMissingDataGate.owner_confirmation_confirmed, false);
+  assert.equal(unsafeMissingDataGate.real_row_data_present, false);
+  assert.equal(unsafeMissingDataGate.checked_row_count, 0);
+  assert.equal(unsafeMissingDataGate.motion_dataset_executable, false);
+  assert.equal(unsafeMissingDataGate.runtime_readiness_claimed, false);
+  assert.equal(unsafeMissingDataGate.production_readiness_claimed, false);
+  assert.equal(unsafeMissingDataGate.priority1_status, "BLOCKED");
+  assert.equal(unsafeMissingDataGate.go_nogo_status, "no_go");
+  assert.equal(unsafeMissingDataGate.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_actual_ingestion_request"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_raw_or_private_material"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_real_evidence_claim"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_owner_confirmation"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_row_body_or_file_read"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_motion_execution"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_readiness_claim"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_priority1_resolution"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeMissingDataGate.blocked_reasons.includes("missing_data_fail_closed_gate_rejected_trusted_loader_request"), true);
+  assert.equal(JSON.stringify(unsafeMissingDataGate).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeMissingDataGate).includes("private-hash"), false);
+  assertSafe(JSON.stringify(unsafeMissingDataGate));
+  assertNoModelPathLeak(JSON.stringify(unsafeMissingDataGate));
   assert.equal(unsafeRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_raw_or_private_field"), true);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_real_row_or_checked_count"), true);
@@ -4468,6 +4552,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.real_row_data_present, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.motion_dataset_real_row_missing_data_fail_closed_gate_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.fail_closed_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_missing_data_fail_closed_gate_summary.real_row_data_present, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4616,6 +4705,11 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.checked_row_count, 0);
+  assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.motion_dataset_real_row_missing_data_fail_closed_gate_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.missing_data_gate_only_boundary, true);
+  assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_missing_data_fail_closed_gate_summary.go_nogo_status, "no_go");
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4661,6 +4755,11 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.motion_dataset_real_row_missing_data_fail_closed_gate_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.no_actual_ingestion_allowed_boundary, true);
+  assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_missing_data_fail_closed_gate_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
   assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);

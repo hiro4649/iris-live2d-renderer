@@ -442,3 +442,13 @@ Safe public status labels include `motion_dataset_real_row_final_dry_run_checkli
 The checklist keeps all blocker visibility public as safe labels only. It requires the pre-ingestion review packet, go/no-go blocker map, evidence link manifest, redaction scanner fixture pack, audit manifest, owner handoff packet, quarantine envelope, dry-run validator, request packet, synthetic fixture pack, and row schema preflight to remain visible or required for future owner review.
 
 The checklist preserves `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false. It does not read row bodies, parse JSONL/CSV rows, execute motion, collect real evidence, expose owner-provided values, expose raw row bodies, enable a trusted loader, or resolve priority1.
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-MISSING-DATA-FAIL-CLOSED-GATE1
+
+This gate fails closed because no owner-provided real JSONL or CSV row file exists. It is planning-only and is not actual ingestion approval, not owner confirmation, not go approval, and not runtime readiness.
+
+Safe public labels include `motion_dataset_real_row_missing_data_fail_closed_gate_status`, `missing_data_gate_only_boundary`, `fail_closed_boundary`, `no_actual_ingestion_allowed_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `real_row_data_present`, `checked_row_count`, `actual_ingestion_allowed`, `required_missing_data_blockers`, `required_future_data_prerequisites`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+The gate keeps `actual_ingestion_allowed` false, `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `owner_confirmation_confirmed` false, `trusted_loader_allowlist_enabled` false, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future actual row intake requires a separate owner-confirmed actual data task with an owner-provided JSONL or CSV file, row_id per record, source hash, declared row count, dataset split, schema version, audit metadata, redaction scan, audit manifest result, fresh resident evidence reference, and go/no-go review reference. This gate does not read row bodies, parse files, ingest rows, execute motion, collect real evidence, perform live probes, call the renderer, call SDK/vendor code, or call external services.
