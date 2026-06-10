@@ -369,6 +369,16 @@ The quarantine envelope does not accept actual file content, does not read files
 
 Future real row ingestion requires a separate owner-confirmed actual data task after quarantine metadata review, license and SDK/vendor boundary review, real resident evidence, owner confirmation, and go/no-go review.
 
+## Motion Dataset Real Row Intake Owner Handoff Packet
+
+`LIVE2D-MOTION-DATASET-REAL-ROW-INTAKE-OWNER-HANDOFF-PACKET1` adds a planning-only owner handoff packet for future real row ingestion approval. The packet tells the owner what must be reviewed later: request packet, dry-run validator, quarantine envelope, row schema preflight, synthetic fixture pack, runtime-supported motion styles, experimental motion labels, renderer readiness requirements, redaction policy, audit metadata, file format policy, declared row count policy, unsupported motion policy, owner confirmation scope, and safe next action.
+
+The packet is review preparation only. It does not create owner confirmation, does not confirm owner scope, does not approve ingestion, does not read files, does not read row bodies, does not ingest real rows, does not execute motion, does not collect real evidence, does not perform live probes, does not call renderer, SDK/vendor code, or external services, and does not claim readiness.
+
+Owner confirmation remains required and unconfirmed. `checked_row_count` remains `0`, `real_row_data_present` remains false, `motion_dataset_executable` remains false, runtime readiness is not claimed, production readiness is not claimed, go/no-go remains `no_go`, trusted loader allowlist remains disabled, and priority1 remains `BLOCKED`.
+
+Future actual ingestion requires a separate owner-confirmed task with row_id-backed JSONL or CSV data, quarantine metadata review, redaction and audit review, fresh real resident evidence, and go/no-go review.
+
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
 ## Motion Dataset Row Schema Preflight
 
