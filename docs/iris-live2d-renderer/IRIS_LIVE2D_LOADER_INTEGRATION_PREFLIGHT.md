@@ -414,3 +414,11 @@ Status: planning-only evidence link manifest. The manifest links required future
 Boundary: the evidence link manifest is not evidence. It does not provide a real file path, does not read row bodies, does not parse JSONL or CSV rows, does not complete an audit, does not run a real redaction scan, does not collect evidence, does not create or confirm owner confirmation, does not approve go, does not execute motion, does not enable a trusted loader, and does not claim runtime or production readiness.
 
 Preservation: checked_row_count remains 0, real_row_data_present remains false, motion_dataset_executable remains false, go/no-go remains no_go, owner confirmation remains required and unconfirmed, and priority1 remains BLOCKED until a separate owner-confirmed actual data task provides real row_id-backed data and fresh resident evidence.
+
+### LIVE2D-MOTION-DATASET-REAL-ROW-GO-NOGO-BLOCKER-MAP1
+
+Status: planning-only go/no-go blocker map. The map records blockers that must remain no_go until future real row file metadata, source hash, quarantine metadata, redaction scan, audit manifest result, owner confirmation, fresh resident evidence, renderer-ready dependencies, and a separate go/no-go review are satisfied.
+
+Boundary: this map is not go approval, does not resolve blockers, does not create or confirm owner confirmation, does not ingest rows, does not read row bodies, does not execute motion, does not collect evidence, does not enable trusted loader, and does not claim runtime or production readiness.
+
+Preservation: go_nogo_status remains no_go, go_candidate remains false, blocker_resolved remains false, checked_row_count remains 0, real_row_data_present remains false, motion_dataset_executable remains false, and priority1 remains BLOCKED.
