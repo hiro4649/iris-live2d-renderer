@@ -359,6 +359,16 @@ The validator keeps `real_row_data_present` false, `checked_row_count` at `0`, `
 
 Future real row ingestion requires a separate owner-confirmed actual data task after request packet review, route and evidence boundaries, license and SDK/vendor boundaries, real resident evidence, owner confirmation, and go/no-go review. This dry-run validator is not that task and is not runtime readiness.
 
+## Motion Dataset Real Row Intake Quarantine Envelope
+
+`LIVE2D-MOTION-DATASET-REAL-ROW-INTAKE-QUARANTINE-ENVELOPE1` adds a planning-only quarantine envelope for future owner-provided row_id-backed JSONL or CSV files. The envelope is metadata-only: request id, dataset name, file label, file format label, declared row count, source hash, schema version, split plan, audit metadata, row schema reference, request packet reference, dry-run validator reference, synthetic fixture pack reference, redaction policy reference, owner confirmation requirement, and safe next action.
+
+The quarantine envelope does not accept actual file content, does not read files, does not read row bodies, does not commit JSONL or CSV files, does not parse row bodies, does not ingest real rows, does not execute motion, does not collect real evidence, does not perform live probes, does not call the renderer, SDK/vendor code, or external services, does not create or confirm owner confirmation, and does not change go/no-go state.
+
+`checked_row_count` remains `0`, `real_row_data_present` remains false, `motion_dataset_executable` remains false, runtime readiness is not claimed, production readiness is not claimed, owner confirmation remains required and unconfirmed, go/no-go remains `no_go`, and priority1 remains `BLOCKED`.
+
+Future real row ingestion requires a separate owner-confirmed actual data task after quarantine metadata review, license and SDK/vendor boundary review, real resident evidence, owner confirmation, and go/no-go review.
+
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
 ## Motion Dataset Row Schema Preflight
 
