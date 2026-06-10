@@ -410,3 +410,11 @@ Status: planning-only final dry-run checklist.
 This task adds a final dry-run checklist after the pre-ingestion review packet. It validates safe artifact visibility and blocker visibility labels before any future owner-confirmed real row task. No actual ingestion is approved, no row body is read, no motion is executed, no owner approval or owner confirmation is created, and no readiness is claimed.
 
 Next safe action remains a separate owner-confirmed future task with fresh resident evidence, source hash review, declared row count review, redaction and audit pass, renderer readiness dependency review, and go/no-go review. Priority1 remains BLOCKED and motion dataset remains non-executable.
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-MISSING-DATA-FAIL-CLOSED-GATE1
+
+Status: planning-only missing-data fail-closed gate.
+
+This task makes the current missing-data state explicit: no owner-provided JSONL or CSV row file exists, `actual_ingestion_allowed` remains false, `real_row_data_present` remains false, and `checked_row_count` remains 0. It does not approve ingestion, create owner confirmation, read row bodies, execute motion, collect real evidence, claim readiness, or resolve priority1.
+
+Next safe action remains a separate owner-confirmed future actual data task with real row file metadata, source hash, declared row count, redaction and audit results, fresh resident evidence, renderer readiness dependency review, and go/no-go review.

@@ -31,6 +31,7 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA = "iri
 export const LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_MAP_SCHEMA = "iris_live2d_motion_dataset_real_row_go_nogo_blocker_map_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_pre_ingestion_review_packet_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_real_row_final_dry_run_checklist_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FAIL_CLOSED_GATE_SCHEMA = "iris_live2d_motion_dataset_real_row_missing_data_fail_closed_gate_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -582,6 +583,37 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_BLOCKER_VISIBILITY = O
 export const LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_ARTIFACT_REFS = Object.freeze([
   ...LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REQUIRED_ARTIFACTS,
   "pre_ingestion_review_packet",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_BLOCKERS = Object.freeze([
+  "missing_owner_provided_row_file",
+  "missing_source_hash",
+  "missing_declared_row_count",
+  "missing_jsonl_or_csv_format",
+  "missing_owner_confirmation",
+  "missing_real_row_redaction_scan",
+  "missing_real_row_audit_result",
+  "missing_fresh_resident_evidence",
+  "missing_go_nogo_review",
+  "checked_row_count_zero",
+  "real_row_data_absent",
+  "priority1_blocked",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FUTURE_PREREQUISITES = Object.freeze([
+  "owner_provided_jsonl_or_csv_file",
+  "row_id_per_record",
+  "source_hash",
+  "declared_row_count",
+  "dataset_split",
+  "schema_version",
+  "audit_run_id",
+  "auditor_version",
+  "redaction_scan_result",
+  "audit_manifest_result",
+  "owner_confirmation_ref",
+  "fresh_resident_evidence_ref",
+  "go_nogo_review_ref",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -4820,6 +4852,117 @@ export function createMotionDatasetRealRowFinalDryRunChecklistSummary(input = {}
     },
   };
   assertSafePublicObject(summary, "motion dataset real row final dry run checklist summary");
+  return summary;
+}
+
+export function createMotionDatasetRealRowMissingDataFailClosedGateSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawFields = [
+    ...detectedMotionDatasetRawFields(source),
+    ...detectedRejectedRequestFields(source, [
+      "raw_dataset_row_body",
+      "actual_file_path_value",
+      "actual_file_content",
+      "future_source_hash_value",
+      "owner_private_note",
+      "raw_owner_confirmation_note",
+    ]),
+  ];
+  const actualIngestionRequested = source.actual_ingestion_allowed === true || source.ingestion_approved === true || source.ingest_rows === true;
+  const realEvidenceRequested = source.real_evidence_present === true || source.fresh_resident_evidence_present === true;
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true || source.row !== undefined || source.dataset_row !== undefined || source.raw_dataset_row_body !== undefined;
+  const checkedRowCountRequested = Number.isSafeInteger(source.checked_row_count) && source.checked_row_count > 0;
+  const rowBodyReadRequested = source.row_body_read === true || source.file_content_read === true || source.actual_file_content !== undefined || source.actual_file_path_value !== undefined;
+  const motionExecutionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true || source.execute_motion === true;
+  const readinessRequested = source.renderer_ready === true || source.model_loaded === true || source.scene_loaded === true || source.browser_cue_delivery_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const priorityResolvedRequested = source.priority1_status === "RESOLVED" || source.priority1_resolved === true || source.blocker_resolved === true;
+  const goRequested = source.go_nogo_status === "go" || source.go_candidate === true || source.approve_go === true;
+  const trustedLoaderRequested = source.trusted_loader_allowlist_enabled === true || source.trustedLoaderAllowlistEnabled === true || source.loader_trusted === true;
+  const blockedReasons = [
+    "missing_data_fail_closed_gate_planning_only",
+    "missing_data_fail_closed_gate_no_owner_provided_row_file",
+    "missing_data_fail_closed_gate_actual_ingestion_not_allowed",
+    "missing_data_fail_closed_gate_checked_row_count_zero",
+    "missing_data_fail_closed_gate_real_row_data_absent",
+    "missing_data_fail_closed_gate_priority1_blocked",
+    "missing_data_fail_closed_gate_go_nogo_no_go",
+  ];
+  if (rawFields.length) blockedReasons.push("missing_data_fail_closed_gate_rejected_raw_or_private_material");
+  if (actualIngestionRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_actual_ingestion_request");
+  if (realEvidenceRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_real_evidence_claim");
+  if (ownerConfirmationRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_owner_confirmation");
+  if (realRowRequested || checkedRowCountRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_real_row_or_checked_count");
+  if (rowBodyReadRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_row_body_or_file_read");
+  if (motionExecutionRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_motion_execution");
+  if (readinessRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_readiness_claim");
+  if (priorityResolvedRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_priority1_resolution");
+  if (goRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_go_or_blocker_resolution");
+  if (trustedLoaderRequested) blockedReasons.push("missing_data_fail_closed_gate_rejected_trusted_loader_request");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FAIL_CLOSED_GATE_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_real_row_missing_data_fail_closed_gate_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    missing_data_gate_only_boundary: true,
+    fail_closed_boundary: true,
+    no_actual_ingestion_allowed_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    no_motion_execution_boundary: true,
+    no_real_collection_boundary: true,
+    no_live_probe_boundary: true,
+    no_owner_confirmation_created_boundary: true,
+    no_owner_confirmation_confirmed_boundary: true,
+    no_readiness_boundary: true,
+    missing_data_gate_only: true,
+    fail_closed: true,
+    actual_ingestion_allowed: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    row_body_read: false,
+    motion_dataset_executable: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    owner_confirmation_required: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    trusted_loader_allowlist_enabled: false,
+    no_loader_trusted: true,
+    required_missing_data_blockers: [...LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_BLOCKERS],
+    required_future_data_prerequisites: [...LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FUTURE_PREREQUISITES],
+    detected_rejected_private_material_fields: [...new Set(rawFields)].sort(),
+    blocked_reasons: [...new Set(blockedReasons)],
+    decision_capsule_machine_source_preserved: true,
+    pr_body_human_summary_only: true,
+    safe_next_action: "keep_fail_closed_until_future_owner_confirmed_actual_row_data_task",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      missing_data_gate_only: true,
+      fail_closed: true,
+      no_actual_ingestion_allowed: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_file_content_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_owner_confirmation_created: true,
+      no_owner_confirmation_confirmed: true,
+      no_trusted_loader_enablement: true,
+      no_raw_dataset_rows: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset real row missing data fail closed gate summary");
   return summary;
 }
 function filterSyntheticFixtureCases(value, fallbackCases) {
