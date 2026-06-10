@@ -119,6 +119,62 @@ const cases = [
     }, { CODEX_PR_HEAD_SHA: 'abc' });
     return buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus.status === 'pass';
   }),
+  test('remote_npm_normalized_product_evidence_shape_preserved', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'pass', diagnostic: { npmExitCode: 0 }, reasonCodes: [] },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        normalizedEvidence: {
+          headSha: 'abc',
+          commands: [{ source: 'remote', result: 'pass', name: 'npm test' }],
+        },
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    return buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus.status === 'pass';
+  }),
+  test('remote_npm_safe_artifact_contract_shape_preserved', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'pass', diagnostic: { npmExitCode: 0 }, reasonCodes: [] },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        headSha: 'abc',
+        npmExecuted: true,
+        npmExitCode: 0,
+        evidenceType: 'remote_npm_test',
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    return buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus.status === 'pass';
+  }),
+  test('remote_npm_wrong_head_safe_artifact_shape_fails', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'pass', diagnostic: { npmExitCode: 0 }, reasonCodes: [] },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        headSha: 'old',
+        npmExecuted: true,
+        npmExitCode: 0,
+        evidenceType: 'remote_npm_test',
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    return buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus.status === 'fail';
+  }),
+  test('local_npm_pass_is_not_remote_npm_pass', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'not_applicable', reasonCodes: ['remote_npm_diagnostic_missing'] },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        normalizedEvidence: {
+          headSha: 'abc',
+          commands: [{ source: 'local', result: 'pass', name: 'npm test' }],
+        },
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    return buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus.status === 'fail';
+  }),
   test('p0_status_surface_exactly_six', () => OPERATOR_STATUS_KEYS.length === 6),
   test('token_budget_status_preserved_as_metrics', () => buildV117Report({ tokenBudget: { operatorVisibleStatuses: OPERATOR_STATUS_KEYS.length, safeArtifactReads: 2 } }).tokenBudgetStatus?.metrics?.safeArtifactReads === 2),
   test('validation_fast_path_source_fixture', () => buildV117Report({ fastPathEligible: true }).validationFastPathStatus?.status === 'pass'),
