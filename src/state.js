@@ -5,6 +5,7 @@ import {
   createFreshEvidenceBundleSummary,
   createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
+  createMotionDatasetRealRowIntakeDryRunValidatorSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
   createMotionDatasetSyntheticRowFixturePackSummary,
@@ -123,6 +124,7 @@ export function createRendererState({
       const motionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
       const motionDatasetSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
       const motionDatasetRealRowIntakeRequestPacket = createMotionDatasetRealRowIntakeRequestPacketSummary();
+      const motionDatasetRealRowIntakeDryRunValidator = createMotionDatasetRealRowIntakeDryRunValidatorSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -195,6 +197,7 @@ export function createRendererState({
           owner_confirmation_binding_summary: ownerConfirmationBinding,
           go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
           motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
+          motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -217,6 +220,7 @@ export function createRendererState({
         owner_confirmation_binding_summary: ownerConfirmationBinding,
         go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
+        motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
@@ -280,6 +284,7 @@ export function createRendererState({
         owner_confirmation_binding_summary: status.renderer_health.owner_confirmation_binding_summary,
         go_nogo_blocker_resolution_summary: status.renderer_health.go_nogo_blocker_resolution_summary,
         motion_dataset_real_row_intake_request_packet_summary: status.renderer_health.motion_dataset_real_row_intake_request_packet_summary,
+        motion_dataset_real_row_intake_dry_run_validator_summary: status.renderer_health.motion_dataset_real_row_intake_dry_run_validator_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
@@ -399,6 +404,7 @@ export function createRendererState({
       const motionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
       const motionDatasetSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
       const motionDatasetRealRowIntakeRequestPacket = createMotionDatasetRealRowIntakeRequestPacketSummary();
+      const motionDatasetRealRowIntakeDryRunValidator = createMotionDatasetRealRowIntakeDryRunValidatorSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -430,6 +436,7 @@ export function createRendererState({
       response.owner_confirmation_binding_summary = ownerConfirmationBinding;
       response.go_nogo_blocker_resolution_summary = goNoGoBlockerResolution;
       response.motion_dataset_real_row_intake_request_packet_summary = motionDatasetRealRowIntakeRequestPacket;
+      response.motion_dataset_real_row_intake_dry_run_validator_summary = motionDatasetRealRowIntakeDryRunValidator;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
       assertSafePublicObject(response, "browser runtime config");
@@ -514,6 +521,7 @@ export function createRendererState({
       const motionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
       const motionDatasetSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
       const motionDatasetRealRowIntakeRequestPacket = createMotionDatasetRealRowIntakeRequestPacketSummary();
+      const motionDatasetRealRowIntakeDryRunValidator = createMotionDatasetRealRowIntakeDryRunValidatorSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -570,6 +578,7 @@ export function createRendererState({
           owner_confirmation_binding_summary: ownerConfirmationBinding,
           go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
           motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
+          motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -592,6 +601,7 @@ export function createRendererState({
         owner_confirmation_binding_summary: ownerConfirmationBinding,
         go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
         motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
+        motion_dataset_real_row_intake_dry_run_validator_summary: motionDatasetRealRowIntakeDryRunValidator,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         boundary_policy: createBoundaryPolicy(),
