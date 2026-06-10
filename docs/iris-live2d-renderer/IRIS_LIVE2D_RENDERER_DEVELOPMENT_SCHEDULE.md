@@ -402,3 +402,11 @@ Status: planning-only pre-ingestion review packet.
 This task adds a safe review packet before any future real row intake can be requested. It preserves the existing no-go state and documents the remaining prerequisites from request packet through go/no-go blocker map. No real row file is accepted, no row body is read, no motion is executable, no owner approval or owner confirmation is created, and no readiness is claimed.
 
 Next safe action remains a separate owner-confirmed future task with fresh resident evidence, owner confirmation, source hash review, declared row count review, redaction and audit results, renderer readiness dependency review, and go/no-go review. Priority1 remains BLOCKED and motion dataset remains non-executable.
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-FINAL-DRY-RUN-CHECKLIST1
+
+Status: planning-only final dry-run checklist.
+
+This task adds a final dry-run checklist after the pre-ingestion review packet. It validates safe artifact visibility and blocker visibility labels before any future owner-confirmed real row task. No actual ingestion is approved, no row body is read, no motion is executed, no owner approval or owner confirmation is created, and no readiness is claimed.
+
+Next safe action remains a separate owner-confirmed future task with fresh resident evidence, source hash review, declared row count review, redaction and audit pass, renderer readiness dependency review, and go/no-go review. Priority1 remains BLOCKED and motion dataset remains non-executable.

@@ -26,6 +26,10 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REQUIRED_MISSING_BLOCKER_CHECKS,
   LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REQUIRED_OWNER_REVIEW_ITEMS,
   LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REVIEW_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_ARTIFACT_REFS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_BLOCKER_VISIBILITY,
+  LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_ITEMS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
@@ -76,6 +80,7 @@ import {
   createMotionDatasetRealRowEvidenceLinkManifestSummary,
   createMotionDatasetRealRowGoNoGoBlockerMapSummary,
   createMotionDatasetRealRowPreIngestionReviewPacketSummary,
+  createMotionDatasetRealRowFinalDryRunChecklistSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -1487,6 +1492,84 @@ try {
   assert.equal(JSON.stringify(unsafePreIngestionReviewPacket).includes("private-hash"), false);
   assertSafe(JSON.stringify(unsafePreIngestionReviewPacket));
   assertNoModelPathLeak(JSON.stringify(unsafePreIngestionReviewPacket));
+
+  const defaultFinalDryRunChecklist = createMotionDatasetRealRowFinalDryRunChecklistSummary();
+  assert.equal(defaultFinalDryRunChecklist.schema, LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA);
+  assert.equal(defaultFinalDryRunChecklist.motion_dataset_real_row_final_dry_run_checklist_status, "planning_only_blocked");
+  assert.equal(defaultFinalDryRunChecklist.planning_only_boundary, true);
+  assert.equal(defaultFinalDryRunChecklist.final_dry_run_only_boundary, true);
+  assert.equal(defaultFinalDryRunChecklist.no_actual_ingestion_boundary, true);
+  assert.equal(defaultFinalDryRunChecklist.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultFinalDryRunChecklist.no_row_body_read_boundary, true);
+  assert.equal(defaultFinalDryRunChecklist.final_dry_run_only, true);
+  assert.equal(defaultFinalDryRunChecklist.final_dry_run_checklist_is_ingestion_approval, false);
+  assert.equal(defaultFinalDryRunChecklist.owner_approval_confirmed, false);
+  assert.equal(defaultFinalDryRunChecklist.owner_confirmation_confirmed, false);
+  assert.equal(defaultFinalDryRunChecklist.real_row_data_present, false);
+  assert.equal(defaultFinalDryRunChecklist.checked_row_count, 0);
+  assert.equal(defaultFinalDryRunChecklist.motion_dataset_executable, false);
+  assert.equal(defaultFinalDryRunChecklist.runtime_readiness_claimed, false);
+  assert.equal(defaultFinalDryRunChecklist.production_readiness_claimed, false);
+  assert.equal(defaultFinalDryRunChecklist.priority1_status, "BLOCKED");
+  assert.equal(defaultFinalDryRunChecklist.go_nogo_status, "no_go");
+  assert.equal(defaultFinalDryRunChecklist.go_candidate, false);
+  assert.equal(defaultFinalDryRunChecklist.blocker_resolved, false);
+  assert.equal(defaultFinalDryRunChecklist.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(defaultFinalDryRunChecklist.required_checklist_items, [...LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_ITEMS]);
+  assert.deepEqual(defaultFinalDryRunChecklist.required_blocker_visibility, [...LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_BLOCKER_VISIBILITY]);
+  assert.deepEqual(defaultFinalDryRunChecklist.required_artifact_refs, [...LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_ARTIFACT_REFS]);
+  assert.equal(defaultFinalDryRunChecklist.required_checklist_items.includes("pre_ingestion_review_packet_visible"), true);
+  assert.equal(defaultFinalDryRunChecklist.required_blocker_visibility.includes("priority1_blocked"), true);
+  assert.equal(defaultFinalDryRunChecklist.required_artifact_refs.includes("pre_ingestion_review_packet"), true);
+  assertSafe(JSON.stringify(defaultFinalDryRunChecklist));
+  assertNoModelPathLeak(JSON.stringify(defaultFinalDryRunChecklist));
+
+  const unsafeFinalDryRunChecklist = createMotionDatasetRealRowFinalDryRunChecklistSummary({
+    future_source_hash_value: "private-hash",
+    raw_dataset_row_body: "private-row",
+    actual_file_path_value: "private-path",
+    actual_file_content: "private-content",
+    owner_private_note: "private-note",
+    real_evidence_present: true,
+    fresh_resident_evidence_present: true,
+    owner_approval_confirmed: true,
+    owner_confirmation_confirmed: true,
+    checked_row_count: 4,
+    real_row_data_present: true,
+    row_body_read: true,
+    motion_dataset_executable: true,
+    renderer_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_resolved: true,
+    go_nogo_status: "go",
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(unsafeFinalDryRunChecklist.owner_approval_confirmed, false);
+  assert.equal(unsafeFinalDryRunChecklist.owner_confirmation_confirmed, false);
+  assert.equal(unsafeFinalDryRunChecklist.real_row_data_present, false);
+  assert.equal(unsafeFinalDryRunChecklist.checked_row_count, 0);
+  assert.equal(unsafeFinalDryRunChecklist.motion_dataset_executable, false);
+  assert.equal(unsafeFinalDryRunChecklist.runtime_readiness_claimed, false);
+  assert.equal(unsafeFinalDryRunChecklist.production_readiness_claimed, false);
+  assert.equal(unsafeFinalDryRunChecklist.priority1_status, "BLOCKED");
+  assert.equal(unsafeFinalDryRunChecklist.go_nogo_status, "no_go");
+  assert.equal(unsafeFinalDryRunChecklist.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_raw_or_private_material"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_real_evidence_claim"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_owner_approval"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_owner_confirmation"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_row_body_or_file_read"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_motion_execution"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_readiness_claim"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_priority1_resolution"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeFinalDryRunChecklist.blocked_reasons.includes("final_dry_run_checklist_rejected_trusted_loader_request"), true);
+  assert.equal(JSON.stringify(unsafeFinalDryRunChecklist).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeFinalDryRunChecklist).includes("private-hash"), false);
+  assertSafe(JSON.stringify(unsafeFinalDryRunChecklist));
+  assertNoModelPathLeak(JSON.stringify(unsafeFinalDryRunChecklist));
   assert.equal(unsafeRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_raw_or_private_field"), true);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_real_row_or_checked_count"), true);
@@ -4380,6 +4463,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_pre_ingestion_review_packet_summary.real_row_data_present, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_pre_ingestion_review_packet_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_pre_ingestion_review_packet_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.motion_dataset_real_row_final_dry_run_checklist_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.final_dry_run_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.real_row_data_present, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_final_dry_run_checklist_summary.motion_dataset_executable, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4523,6 +4611,11 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_pre_ingestion_review_packet_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_pre_ingestion_review_packet_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_pre_ingestion_review_packet_summary.checked_row_count, 0);
+  assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.motion_dataset_real_row_final_dry_run_checklist_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.final_dry_run_only_boundary, true);
+  assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_final_dry_run_checklist_summary.checked_row_count, 0);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4563,6 +4656,11 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_pre_ingestion_review_packet_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHealth.motion_dataset_real_row_pre_ingestion_review_packet_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_pre_ingestion_review_packet_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.motion_dataset_real_row_final_dry_run_checklist_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.no_actual_ingestion_boundary, true);
+  assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_final_dry_run_checklist_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
   assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);
