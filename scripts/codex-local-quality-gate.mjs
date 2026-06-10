@@ -1650,16 +1650,19 @@ export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = pr
   const remote = report.remoteNpmDiagnosticStatus || {};
   const diagnostic = remote.diagnostic || {};
   const productEvidenceStatus = report.productVerificationEvidenceStatus || {};
-  const productEvidence = productEvidenceStatus.normalizedEvidence || productEvidenceStatus || {};
+  const productEvidence = productEvidenceStatus.normalizedEvidence || productEvidenceStatus.evidence || productEvidenceStatus || {};
   const expectedHeadSha = env.CODEX_PR_HEAD_SHA || '';
   const productEvidenceHeadSha = productEvidence.headSha || '';
+  const productEvidenceRemoteNpmExecuted = productEvidence.npmExecuted === true &&
+    Number(productEvidence.npmExitCode ?? NaN) === 0 &&
+    (productEvidence.evidenceType === 'remote_npm_test' || productEvidence.status === 'pass');
   const productRemoteNpmPassed = report.productVerificationEvidenceStatus?.status === 'pass' &&
-    Array.isArray(productEvidence.commands) &&
+    (productEvidenceRemoteNpmExecuted || (Array.isArray(productEvidence.commands) &&
     productEvidence.commands.some((command) =>
       command?.source === 'remote' &&
       command?.result === 'pass' &&
       /\bnpm(?:\s+test|\s+run\s+test)?\b/i.test(String(command?.name || ''))
-    );
+    )));
   const productEvidenceSameHead = Boolean(expectedHeadSha) &&
     productRemoteNpmPassed &&
     (!productEvidenceHeadSha || productEvidenceHeadSha === expectedHeadSha);
@@ -1677,7 +1680,7 @@ export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = pr
     : 'missing';
   return {
     forceCheck: true,
-    productRelevant: report.changeClassificationStatus?.productRelevantChanged === true,
+    productRelevant: report.changeClassificationStatus?.productRelevantChanged === true || productEvidence.productRelevant === true,
     npmExecuted: effectiveRemoteStatus === 'pass',
     npmPassed: effectiveRemoteStatus === 'pass' && npmExitCode === 0,
     npmExitCode,
@@ -3004,12 +3007,14 @@ function initializeV098Statuses(report) {
   for (const key of V098_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
 }
 function runV099Gates(report, gateEnv) {
+  const remoteNpmDiagnosticNormalizationInput = buildRemoteNpmDiagnosticNormalizationInput(report, gateEnv);
   const v099Env = {
     ...gateEnv,
     CODEX_CHANGE_CLASSIFICATION_JSON: JSON.stringify(report.changeClassificationStatus),
     CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON: JSON.stringify(report.productVerificationEvidenceStatus),
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
+    CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON: JSON.stringify(remoteNpmDiagnosticNormalizationInput),
   };
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
