@@ -407,3 +407,10 @@ This fixture pack is synthetic-only review preparation for future real-row redac
 The public summary keeps `checked_row_count` at `0`, `real_row_data_present` as `false`, `motion_dataset_executable` as `false`, `priority1_status` as `BLOCKED`, and `go_nogo_status` as `no_go`. Accepted fixture cases are metadata-only labels and are not real safety proof or real evidence. Rejected fixture cases cover raw row bodies, raw cue or renderer payloads, private paths, endpoint or credential values, command-like material, owner private notes, readiness claims, priority1 resolution claims, and motion executable claims.
 
 Future real redaction scanning requires a separate owner-confirmed actual data task with fresh real evidence boundaries, safe artifact handling, and no raw/private material exposure.
+### LIVE2D-MOTION-DATASET-REAL-ROW-EVIDENCE-LINK-MANIFEST1
+
+Status: planning-only evidence link manifest. The manifest links required future references for row schema preflight, synthetic fixture pack, request packet, dry-run validator, quarantine envelope, owner handoff packet, audit manifest, redaction scanner fixture, future real row file, future audit, future redaction scan, future owner confirmation, future fresh resident evidence, and future go/no-go review.
+
+Boundary: the evidence link manifest is not evidence. It does not provide a real file path, does not read row bodies, does not parse JSONL or CSV rows, does not complete an audit, does not run a real redaction scan, does not collect evidence, does not create or confirm owner confirmation, does not approve go, does not execute motion, does not enable a trusted loader, and does not claim runtime or production readiness.
+
+Preservation: checked_row_count remains 0, real_row_data_present remains false, motion_dataset_executable remains false, go/no-go remains no_go, owner confirmation remains required and unconfirmed, and priority1 remains BLOCKED until a separate owner-confirmed actual data task provides real row_id-backed data and fresh resident evidence.

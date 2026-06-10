@@ -379,3 +379,10 @@ Runtime readiness is not claimed. Production readiness is not claimed. go/no-go 
 Status: planning-only synthetic fixture pack. The fixture pack prepares future review of redaction scanner behavior without scanning real rows, reading row bodies, ingesting real data, collecting evidence, executing motion, confirming owner approval, or changing go/no-go state.
 
 Boundary: fixture PASS is not real safety proof, not real resident evidence, not runtime readiness, and not production readiness. `checked_row_count` remains `0`, priority1 remains `BLOCKED`, and the motion dataset remains non-executable.
+### LIVE2D-MOTION-DATASET-REAL-ROW-EVIDENCE-LINK-MANIFEST1
+
+Status: planning-only evidence link manifest. This step records required future link references for row schema, synthetic fixtures, request packet, dry-run validator, quarantine envelope, owner handoff, audit manifest, redaction scanner fixture, future real file label, future real audit label, future redaction scan label, future owner confirmation label, future fresh resident evidence label, and future go/no-go review label.
+
+Boundary: it links required future refs but does not provide evidence, does not accept real file paths, row bodies, audit bodies, redaction scan bodies, or owner notes, and does not start ingestion, scanning, collection, live probing, SDK calls, renderer calls, owner confirmation, readiness, blocker resolution, or go approval.
+
+Next boundary: future actual ingestion still requires a separate owner-confirmed actual data task with quarantine metadata, redaction review, row-level audit, dataset-level summary, fresh resident evidence, and later go/no-go review.
