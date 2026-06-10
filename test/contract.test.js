@@ -19,6 +19,9 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES,
   LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_IDS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_MAP_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_RESOLUTION_PREREQUISITES,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
@@ -67,6 +70,7 @@ import {
   createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary,
   createMotionDatasetRealRowAuditManifestSummary,
   createMotionDatasetRealRowEvidenceLinkManifestSummary,
+  createMotionDatasetRealRowGoNoGoBlockerMapSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -1324,6 +1328,77 @@ try {
   assert.equal(JSON.stringify(unsafeEvidenceLinkManifest).includes("private-file"), false);
   assertSafe(JSON.stringify(unsafeEvidenceLinkManifest));
   assertNoModelPathLeak(JSON.stringify(unsafeEvidenceLinkManifest));
+
+  const defaultGoNoGoBlockerMap = createMotionDatasetRealRowGoNoGoBlockerMapSummary();
+  assert.equal(defaultGoNoGoBlockerMap.schema, LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_MAP_SCHEMA);
+  assert.equal(defaultGoNoGoBlockerMap.motion_dataset_real_row_go_nogo_blocker_map_status, "planning_only_blocked");
+  assert.equal(defaultGoNoGoBlockerMap.planning_only_boundary, true);
+  assert.equal(defaultGoNoGoBlockerMap.go_nogo_map_only_boundary, true);
+  assert.equal(defaultGoNoGoBlockerMap.no_go_preserved_boundary, true);
+  assert.equal(defaultGoNoGoBlockerMap.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultGoNoGoBlockerMap.no_row_body_read_boundary, true);
+  assert.equal(defaultGoNoGoBlockerMap.go_nogo_status, "no_go");
+  assert.equal(defaultGoNoGoBlockerMap.go_candidate, false);
+  assert.equal(defaultGoNoGoBlockerMap.blocker_resolved, false);
+  assert.equal(defaultGoNoGoBlockerMap.owner_confirmation_required, true);
+  assert.equal(defaultGoNoGoBlockerMap.owner_confirmation_confirmed, false);
+  assert.equal(defaultGoNoGoBlockerMap.real_row_data_present, false);
+  assert.equal(defaultGoNoGoBlockerMap.checked_row_count, 0);
+  assert.equal(defaultGoNoGoBlockerMap.motion_dataset_executable, false);
+  assert.equal(defaultGoNoGoBlockerMap.runtime_readiness_claimed, false);
+  assert.equal(defaultGoNoGoBlockerMap.production_readiness_claimed, false);
+  assert.equal(defaultGoNoGoBlockerMap.priority1_status, "BLOCKED");
+  assert.equal(defaultGoNoGoBlockerMap.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultGoNoGoBlockerMap.go_nogo_blocker_map_is_go_approval, false);
+  assert.deepEqual(defaultGoNoGoBlockerMap.required_blocker_ids, [...LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_IDS]);
+  assert.deepEqual(defaultGoNoGoBlockerMap.required_resolution_prerequisites, [...LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_RESOLUTION_PREREQUISITES]);
+  assert.equal(defaultGoNoGoBlockerMap.required_blocker_ids.includes("checked_row_count_zero"), true);
+  assert.equal(defaultGoNoGoBlockerMap.required_blocker_ids.includes("priority1_blocked"), true);
+  assert.equal(defaultGoNoGoBlockerMap.required_blocker_ids.includes("trusted_loader_disabled"), true);
+  assert.equal(defaultGoNoGoBlockerMap.required_go_candidate_conditions.includes("go_nogo_review_passed_in_future_task"), true);
+  assertSafe(JSON.stringify(defaultGoNoGoBlockerMap));
+  assertNoModelPathLeak(JSON.stringify(defaultGoNoGoBlockerMap));
+
+  const unsafeGoNoGoBlockerMap = createMotionDatasetRealRowGoNoGoBlockerMapSummary({
+    go_nogo_status: "go",
+    go_candidate: true,
+    blocker_resolved: true,
+    priority1_resolved: true,
+    owner_confirmation_confirmed: true,
+    raw_dataset_row_body: "private-row",
+    actual_file_path_value: "private-path",
+    actual_file_content: "private-content",
+    checked_row_count: 5,
+    real_row_data_present: true,
+    row_body_read: true,
+    motion_dataset_executable: true,
+    renderer_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    trusted_loader_allowlist_enabled: true,
+  });
+  assert.equal(unsafeGoNoGoBlockerMap.go_nogo_status, "no_go");
+  assert.equal(unsafeGoNoGoBlockerMap.go_candidate, false);
+  assert.equal(unsafeGoNoGoBlockerMap.blocker_resolved, false);
+  assert.equal(unsafeGoNoGoBlockerMap.owner_confirmation_confirmed, false);
+  assert.equal(unsafeGoNoGoBlockerMap.real_row_data_present, false);
+  assert.equal(unsafeGoNoGoBlockerMap.checked_row_count, 0);
+  assert.equal(unsafeGoNoGoBlockerMap.motion_dataset_executable, false);
+  assert.equal(unsafeGoNoGoBlockerMap.runtime_readiness_claimed, false);
+  assert.equal(unsafeGoNoGoBlockerMap.production_readiness_claimed, false);
+  assert.equal(unsafeGoNoGoBlockerMap.priority1_status, "BLOCKED");
+  assert.equal(unsafeGoNoGoBlockerMap.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_go_approval"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_blocker_resolution"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_owner_confirmation"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_real_row_or_checked_count"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_row_body_or_file_read"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_motion_execution"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_readiness_claim"), true);
+  assert.equal(unsafeGoNoGoBlockerMap.required_no_go_reasons.includes("go_nogo_blocker_map_rejected_trusted_loader_request"), true);
+  assert.equal(JSON.stringify(unsafeGoNoGoBlockerMap).includes("private-row"), false);
+  assertSafe(JSON.stringify(unsafeGoNoGoBlockerMap));
+  assertNoModelPathLeak(JSON.stringify(unsafeGoNoGoBlockerMap));
   assert.equal(unsafeRealRowAuditManifest.trusted_loader_allowlist_enabled, false);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_raw_or_private_field"), true);
   assert.equal(unsafeRealRowAuditManifest.rejection_reasons.includes("real_row_audit_manifest_rejected_real_row_or_checked_count"), true);
@@ -4207,6 +4282,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.no_real_evidence_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_go_nogo_blocker_map_summary.motion_dataset_real_row_go_nogo_blocker_map_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_go_nogo_blocker_map_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_go_nogo_blocker_map_summary.go_candidate, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_go_nogo_blocker_map_summary.blocker_resolved, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_go_nogo_blocker_map_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -4339,6 +4419,12 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_executable, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_evidence_link_manifest_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_go_nogo_blocker_map_summary.motion_dataset_real_row_go_nogo_blocker_map_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_real_row_go_nogo_blocker_map_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedStatus.motion_dataset_real_row_go_nogo_blocker_map_summary.go_candidate, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_go_nogo_blocker_map_summary.blocker_resolved, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_go_nogo_blocker_map_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_go_nogo_blocker_map_summary.motion_dataset_executable, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -4370,6 +4456,10 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_real_row_evidence_link_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_real_row_evidence_link_manifest_summary.checked_row_count, 0);
   assert.equal(provisionedHealth.motion_dataset_real_row_evidence_link_manifest_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_go_nogo_blocker_map_summary.motion_dataset_real_row_go_nogo_blocker_map_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_real_row_go_nogo_blocker_map_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHealth.motion_dataset_real_row_go_nogo_blocker_map_summary.go_candidate, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_go_nogo_blocker_map_summary.blocker_resolved, false);
   assert.equal(provisionedHealth.go_nogo_preflight_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedHealth.real_evidence_intake_summary.evidence_intake_status, "blocked");
   assert.equal(provisionedHealth.real_evidence_intake_summary.intake_ready_candidate, false);

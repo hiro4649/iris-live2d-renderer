@@ -386,3 +386,11 @@ Status: planning-only evidence link manifest. This step records required future 
 Boundary: it links required future refs but does not provide evidence, does not accept real file paths, row bodies, audit bodies, redaction scan bodies, or owner notes, and does not start ingestion, scanning, collection, live probing, SDK calls, renderer calls, owner confirmation, readiness, blocker resolution, or go approval.
 
 Next boundary: future actual ingestion still requires a separate owner-confirmed actual data task with quarantine metadata, redaction review, row-level audit, dataset-level summary, fresh resident evidence, and later go/no-go review.
+
+### LIVE2D-MOTION-DATASET-REAL-ROW-GO-NOGO-BLOCKER-MAP1
+
+Status: planning-only go/no-go blocker map. This step maps required blockers and resolution prerequisites for a future real row intake decision.
+
+Boundary: it does not approve go, does not resolve blockers, does not create owner confirmation, does not ingest rows, does not read row bodies, does not execute motion, does not collect evidence, does not enable trusted loader, and does not claim readiness.
+
+Next boundary: future actual row intake requires a separate owner-confirmed actual data task and a later go/no-go review after real row metadata, redaction scan, audit manifest result, owner confirmation, fresh resident evidence, and renderer-ready dependencies are satisfied.
