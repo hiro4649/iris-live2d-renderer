@@ -1649,7 +1649,8 @@ export function shouldUseProductPlanningPrePushTargetFastPath(env = process.env)
 export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = process.env) {
   const remote = report.remoteNpmDiagnosticStatus || {};
   const diagnostic = remote.diagnostic || {};
-  const productEvidence = report.productVerificationEvidenceStatus?.normalizedEvidence || {};
+  const productEvidenceStatus = report.productVerificationEvidenceStatus || {};
+  const productEvidence = productEvidenceStatus.normalizedEvidence || productEvidenceStatus || {};
   const expectedHeadSha = env.CODEX_PR_HEAD_SHA || '';
   const productEvidenceHeadSha = productEvidence.headSha || '';
   const productRemoteNpmPassed = report.productVerificationEvidenceStatus?.status === 'pass' &&

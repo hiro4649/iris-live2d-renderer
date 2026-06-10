@@ -18,9 +18,13 @@ import {
   validateOutcomeContract,
 } from './codex-outcome-contract.mjs';
 import {
+  buildRemoteNpmDiagnosticNormalizationInput,
   buildProductPlanningPrePushTargetReport,
   shouldUseProductPlanningPrePushTargetFastPath,
 } from './codex-local-quality-gate.mjs';
+import {
+  buildRemoteNpmDiagnosticNormalizationReport,
+} from './codex-v099-gate-lib.mjs';
 import {
   buildArtifactConsistencyReport,
   classifySafeDetailUnavailable,
@@ -103,6 +107,18 @@ const cases = [
   test('boundary_registry_compression_fixture_only', () => validateBoundaryProfileFixture({ policyIds: ['raw_logs_no', 'eight_session_no'], repeatedForbiddenTextCount: 0 }).status === 'pass'),
   test('boundary_registry_blocks_repeated_forbidden_text', () => validateBoundaryProfileFixture({ repeatedForbiddenTextCount: 1 }).status === 'fail'),
   test('operator_visible_status_limit_under_12', () => OPERATOR_STATUS_KEYS.length <= 12),
+  test('remote_npm_direct_product_evidence_shape_preserved', () => {
+    const input = buildRemoteNpmDiagnosticNormalizationInput({
+      changeClassificationStatus: { productRelevantChanged: true },
+      remoteNpmDiagnosticStatus: { status: 'pass', diagnostic: { npmExitCode: 0 }, reasonCodes: [] },
+      productVerificationEvidenceStatus: {
+        status: 'pass',
+        headSha: 'abc',
+        commands: [{ source: 'remote', result: 'pass', name: 'npm test' }],
+      },
+    }, { CODEX_PR_HEAD_SHA: 'abc' });
+    return buildRemoteNpmDiagnosticNormalizationReport(input).remoteNpmDiagnosticNormalizationStatus.status === 'pass';
+  }),
   test('p0_status_surface_exactly_six', () => OPERATOR_STATUS_KEYS.length === 6),
   test('token_budget_status_preserved_as_metrics', () => buildV117Report({ tokenBudget: { operatorVisibleStatuses: OPERATOR_STATUS_KEYS.length, safeArtifactReads: 2 } }).tokenBudgetStatus?.metrics?.safeArtifactReads === 2),
   test('validation_fast_path_source_fixture', () => buildV117Report({ fastPathEligible: true }).validationFastPathStatus?.status === 'pass'),
