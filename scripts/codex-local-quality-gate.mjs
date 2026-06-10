@@ -2876,12 +2876,14 @@ function initializeV098Statuses(report) {
   for (const key of V098_STATUS_KEYS) if (!report[key]) report[key] = { status: 'not_run' };
 }
 function runV099Gates(report, gateEnv) {
+  const remoteNpmDiagnosticNormalizationInput = buildRemoteNpmDiagnosticNormalizationInput(report, gateEnv);
   const v099Env = {
     ...gateEnv,
     CODEX_CHANGE_CLASSIFICATION_JSON: JSON.stringify(report.changeClassificationStatus),
     CODEX_PRODUCT_VERIFICATION_EVIDENCE_JSON: JSON.stringify(report.productVerificationEvidenceStatus),
     CODEX_REMOTE_PRODUCT_BASELINE_JSON: JSON.stringify(report.remoteProductBaselineStatus),
     CODEX_REMOTE_NPM_DIAGNOSTIC_JSON: JSON.stringify(report.remoteNpmDiagnosticStatus),
+    CODEX_REMOTE_NPM_DIAGNOSTIC_NORMALIZATION_JSON: JSON.stringify(remoteNpmDiagnosticNormalizationInput),
   };
   report.formalEvidencePrecedenceStatus = runGateScript('scripts/codex-formal-evidence-precedence-gate.mjs', 'formalEvidencePrecedenceStatus', 'CODEX_FORMAL_EVIDENCE_PRECEDENCE_REPORT', v099Env);
   report.lifeboatSemanticsStatus = runGateScript('scripts/codex-lifeboat-semantics-gate.mjs', 'lifeboatSemanticsStatus', 'CODEX_LIFEBOAT_SEMANTICS_REPORT', v099Env);
