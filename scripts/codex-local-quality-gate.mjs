@@ -10575,6 +10575,24 @@ async function runTargetHarnessGate() {
 
   const jsonReport = process.env.CODEX_QUALITY_REPORT === 'json';
 
+  if (shouldUseProductPlanningPrePushTargetFastPath(process.env)) {
+    const headSha = process.env.CODEX_PR_HEAD_SHA || process.env.GITHUB_SHA || 'pre_push_local_head';
+    const report = buildProductPlanningPrePushTargetReport({
+      marker: MARKER,
+      harnessVersion: HARNESS_VERSION,
+      headSha,
+    });
+    if (jsonReport) console.log(JSON.stringify(report, null, 2));
+    else {
+      console.log('status: pass');
+      console.log('decision: pending_after_push');
+      console.log('mergeAllowed: no');
+      console.log('primaryClass: same_head_remote_required_after_push');
+      console.log('safeNextAction: push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration');
+    }
+    process.exit(0);
+  }
+
 
 
   const failures = [];
