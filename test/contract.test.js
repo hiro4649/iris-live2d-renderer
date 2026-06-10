@@ -14,6 +14,9 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_REJECTED_REQUEST_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REJECTED_FIELDS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REQUIRED_METADATA,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REJECTED_REQUEST_FIELDS,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_REQUIRED_FIELDS,
@@ -47,6 +50,7 @@ import {
   createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
   createMotionDatasetRealRowIntakeDryRunValidatorSummary,
+  createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
   createMotionDatasetSyntheticRowFixturePackSummary,
@@ -828,6 +832,138 @@ try {
   assert.equal(JSON.stringify(unsafeRealRowIntakeDryRunValidator).includes("private-network"), false);
   assertSafe(JSON.stringify(unsafeRealRowIntakeDryRunValidator));
   assertNoModelPathLeak(JSON.stringify(unsafeRealRowIntakeDryRunValidator));
+
+  const defaultRealRowIntakeQuarantineEnvelope = createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary();
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.schema, LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.motion_dataset_real_row_intake_quarantine_envelope_status, "planning_only_blocked");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.planning_only_boundary, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_only_boundary, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.metadata_only_boundary, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.no_row_body_read_boundary, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.real_row_data_present, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.checked_row_count, 0);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_candidate_status, "pending_metadata_only");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_file_ref_status, "missing_or_pending");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_source_hash_status, "missing_or_pending");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_declared_row_count_status, "missing_or_pending_not_counted");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_schema_version_status, "missing_or_pending");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_split_plan_status, "missing_or_pending");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_owner_confirmation_required, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_owner_confirmation_confirmed, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_audit_metadata_status, "missing_or_pending");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_redaction_policy_status, "missing_or_pending");
+  assert.deepEqual(defaultRealRowIntakeQuarantineEnvelope.required_quarantine_metadata, [...LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REQUIRED_METADATA]);
+  assert.deepEqual(defaultRealRowIntakeQuarantineEnvelope.allowed_file_format_labels, [...LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_ALLOWED_FILE_FORMATS]);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.allowed_file_format_labels.includes("jsonl"), true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.allowed_file_format_labels.includes("csv"), true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.allowed_file_format_labels.length, 2);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_rejected_fields.length, LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REJECTED_FIELDS.length);
+  assert.equal(LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REJECTED_FIELDS.includes("raw_dataset_row_body"), true);
+  assert.equal(LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REJECTED_FIELDS.includes("actual_file_content"), true);
+  assert.equal(LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REJECTED_FIELDS.includes("actual_file_path_value"), true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_rejected_fields.includes("unsafe_dataset_row_body"), true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_rejected_fields.includes("actual_file_content"), true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.quarantine_rejected_fields.includes("actual_file_location_value"), true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.declared_row_count_records_rows, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.file_content_accepted, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.row_body_read, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.request_packet_status, "planning_only_preserved");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.dry_run_validator_status, "planning_only_preserved");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.row_schema_preflight_status, "planning_only_preserved");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.synthetic_fixture_pack_status, "synthetic_only_preserved");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.request_packet_ref_required, LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_PACKET_SCHEMA);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.dry_run_validator_ref_required, LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.row_schema_ref_required, LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.synthetic_fixture_pack_ref_required, LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.motion_dataset_executable, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.motion_dataset_ready_candidate, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.runtime_readiness_claimed, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.production_readiness_claimed, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.renderer_ready, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.priority1_status, "BLOCKED");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.owner_confirmation_required, true);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.owner_confirmation_confirmed, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.go_nogo_status, "no_go");
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.go_candidate, false);
+  assert.equal(defaultRealRowIntakeQuarantineEnvelope.blocker_resolved, false);
+  assertSafe(JSON.stringify(defaultRealRowIntakeQuarantineEnvelope));
+  assertNoModelPathLeak(JSON.stringify(defaultRealRowIntakeQuarantineEnvelope));
+
+  const unsafeRealRowIntakeQuarantineEnvelope = createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary({
+    file_format: "xlsx",
+    declared_row_count: 12,
+    checked_row_count: 4,
+    raw_dataset_row_body: "private-row",
+    actual_file_content: "private-file",
+    actual_file_path_value: "private-location",
+    raw_cue_payload: "private-cue",
+    raw_renderer_payload: "private-renderer",
+    raw_model_path: "private-model",
+    raw_motion_path: "private-motion",
+    endpoint_value: "private-network",
+    token_value: "private-credential",
+    secret_value: "private-credential",
+    private_local_path: "private-local",
+    candidate_payload: "private-candidate",
+    world_command: "private-world",
+    obs_command: "private-obs",
+    game_input: "private-game",
+    os_command: "private-os",
+    memory_commit: "private-memory",
+    relationship_commit: "private-relationship",
+    raw_process_output: "private-process",
+    raw_stack_trace: "private-stack",
+    owner_private_note: "private-owner",
+    raw_k_memo_text: "private-k",
+    file_content_read: true,
+    row_body_read: true,
+    motion_dataset_executable: true,
+    motion_execution_enabled: true,
+    actual_data_validation_started: true,
+    row_pass_fail_over_real_data: true,
+    real_evidence_collection_started: true,
+    real_probe_started: true,
+    live_probe_started: true,
+    owner_confirmation_created: true,
+    owner_confirmation_confirmed: true,
+    renderer_ready: true,
+    model_loaded: true,
+    scene_loaded: true,
+    browser_cue_delivery_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    trusted_loader_allowlist_enabled: true,
+    go_nogo_status: "go",
+    go_candidate: true,
+    blocker_resolved: true,
+  });
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.checked_row_count, 0);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.real_row_data_present, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.declared_row_count_records_rows, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.file_content_accepted, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.row_body_read, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.motion_dataset_executable, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.requested_file_format_status, "unsupported_format_rejected");
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.owner_confirmation_confirmed, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.renderer_ready, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.go_nogo_status, "no_go");
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.trusted_loader_allowlist_enabled, false);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_unsafe_material"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_real_row_or_count_attempt"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_file_read_attempt"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_motion_execution"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_real_collection_or_probe"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_owner_confirmation"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_readiness_claim"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_go_or_blocker_resolution"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_trusted_loader_request"), true);
+  assert.equal(unsafeRealRowIntakeQuarantineEnvelope.rejection_reasons.includes("real_row_intake_quarantine_envelope_rejected_unsupported_file_format"), true);
+  assert.equal(JSON.stringify(unsafeRealRowIntakeQuarantineEnvelope).includes("private-row"), false);
+  assert.equal(JSON.stringify(unsafeRealRowIntakeQuarantineEnvelope).includes("private-file"), false);
+  assertSafe(JSON.stringify(unsafeRealRowIntakeQuarantineEnvelope));
+  assertNoModelPathLeak(JSON.stringify(unsafeRealRowIntakeQuarantineEnvelope));
 
   const defaultGoNoGo = createGoNoGoPreflightSummary({
     loaderProvisioning: ownerProvidedProvisioning,
@@ -3672,6 +3808,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_dry_run_validator_summary.dry_run_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_dry_run_validator_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_dry_run_validator_summary.motion_dataset_executable, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_quarantine_envelope_summary.motion_dataset_real_row_intake_quarantine_envelope_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_quarantine_envelope_summary.quarantine_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_quarantine_envelope_summary.metadata_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_quarantine_envelope_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_intake_quarantine_envelope_summary.motion_dataset_executable, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
@@ -3780,6 +3921,10 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_intake_dry_run_validator_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_real_row_intake_dry_run_validator_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedStatus.motion_dataset_real_row_intake_dry_run_validator_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_intake_quarantine_envelope_summary.quarantine_candidate_status, "pending_metadata_only");
+  assert.equal(provisionedStatus.motion_dataset_real_row_intake_quarantine_envelope_summary.real_row_data_present, false);
+  assert.equal(provisionedStatus.motion_dataset_real_row_intake_quarantine_envelope_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedStatus.motion_dataset_real_row_intake_quarantine_envelope_summary.quarantine_owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_ready_candidate, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.real_row_data_present, false);
   assert.equal(provisionedStatus.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_row_count, LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES.length);
@@ -3865,6 +4010,10 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_intake_dry_run_validator_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_intake_dry_run_validator_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_real_row_intake_dry_run_validator_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedHealth.motion_dataset_real_row_intake_quarantine_envelope_summary.row_body_read, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_intake_quarantine_envelope_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_intake_quarantine_envelope_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_real_row_intake_quarantine_envelope_summary.go_nogo_status, "no_go");
   assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.synthetic_fixture_validator_status, "pass_synthetic_only");
   assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_synthetic_row_fixture_pack_summary.production_readiness_claimed, false);
@@ -3934,6 +4083,10 @@ try {
   assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_dry_run_validator_summary.checked_row_count, 0);
   assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_dry_run_validator_summary.motion_dataset_executable, false);
   assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_dry_run_validator_summary.renderer_ready, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_quarantine_envelope_summary.motion_dataset_real_row_intake_quarantine_envelope_status, "planning_only_blocked");
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_quarantine_envelope_summary.checked_row_count, 0);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_quarantine_envelope_summary.motion_dataset_executable, false);
+  assert.equal(provisionedHeartbeat.motion_dataset_real_row_intake_quarantine_envelope_summary.renderer_ready, false);
   assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_synthetic_row_fixture_pack_status, "planning_only_blocked");
   assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.checked_row_count, 0);
   assert.equal(provisionedHeartbeat.motion_dataset_synthetic_row_fixture_pack_summary.motion_dataset_executable, false);
