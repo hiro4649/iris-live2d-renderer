@@ -206,8 +206,8 @@ jobs:
             catch { return null; }
           }
           const runnerTempLifeboat = process.env.RUNNER_TEMP ? `${process.env.RUNNER_TEMP}/codex-minimal-safe-failure.json` : '';
-          const summary = readJson('codex-quality-gate-safe-summary.json
-            ${{ runner.temp }}/codex-decision-capsule.safe.json') || readJson('codex-minimal-safe-failure.json') || readJson(runnerTempLifeboat);
+          const runnerTempDecisionCapsule = process.env.RUNNER_TEMP ? `${process.env.RUNNER_TEMP}/codex-decision-capsule.safe.json` : '';
+          const summary = readJson('codex-quality-gate-safe-summary.json') || readJson(runnerTempDecisionCapsule) || readJson('codex-minimal-safe-failure.json') || readJson(runnerTempLifeboat);
           const diagnostic = readJson('codex-diagnostic-consolidated-summary.json');
           const reasons = readJson('codex-failure-reasons.json') || [];
           console.log('## Codex quality gate safe summary');
@@ -366,6 +366,7 @@ jobs:
             codex-quality-gate-safe-summary.json
             codex-minimal-safe-failure.json
             ${{ runner.temp }}/codex-minimal-safe-failure.json
+            ${{ runner.temp }}/codex-decision-capsule.safe.json
             codex-diagnostic-consolidated-summary.json
             codex-evidence-pack.normalized.json
             codex-self-test-cases.safe.json
