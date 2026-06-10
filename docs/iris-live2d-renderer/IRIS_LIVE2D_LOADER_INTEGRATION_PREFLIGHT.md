@@ -329,6 +329,14 @@ The fixture pack is planning-only and non-executable. It does not add real datas
 
 `real_row_data_present` remains false, `checked_row_count` remains 0, `motion_dataset_executable` remains false, `motion_dataset_ready_candidate` remains false, go/no-go remains no_go, runtime readiness is not claimed, production readiness is not claimed, and priority1 remains BLOCKED until real resident fresh evidence exists. Future real row ingestion or motion execution requires a separate owner-confirmed task after fresh real resident evidence, owner confirmation, and go/no-go blocker review.
 
+## Motion Dataset Real Row Intake Request Packet
+
+`LIVE2D-MOTION-DATASET-REAL-ROW-INTAKE-REQUEST-PACKET1` is a planning-only request packet for future owner-provided row_id-backed motion dataset ingestion. It defines the safe metadata shape for a future JSONL or CSV request, including dataset name, request id, request schema version, requested file format, expected row count, split plan, source file label, source hash, audit run id, auditor version, owner confirmation requirement, redaction policy reference, row schema reference, synthetic fixture pack reference, and safe next action.
+
+This packet is request-only. It does not accept a real row file, does not commit JSONL or CSV content, does not parse row bodies, does not add real rows, does not ingest real rows, does not execute motion, does not collect real evidence, does not start live probes, does not call the renderer, does not call SDK/vendor code, does not call external services, does not create or confirm owner confirmation, does not resolve blockers, does not mark go true, and does not enable trusted loader allowlist.
+
+`real_row_data_present` remains false, `checked_row_count` remains 0, `motion_dataset_executable` remains false, `motion_dataset_ready_candidate` remains false, go/no-go remains no_go, runtime readiness is not claimed, production readiness is not claimed, and priority1 remains BLOCKED. Future ingestion requires a separate owner-confirmed task with an actual row_id-backed file, redaction review, source hash, audit metadata, owner confirmation, and go/no-go blocker review.
+
 ## LIVE2D-REAL-EVIDENCE-COLLECTOR-DRY-RUN-ENVELOPE1
 
 The real evidence collector dry-run envelope is planning only. It validates future collector execution request shape, requested collector names, source binding, freshness binding, audit binding, redaction status, safe output fields, rejected raw fields, rejected source types, network policy, SDK policy, renderer policy, owner confirmation separation, and safe next action labels. It is an envelope, not collector execution.
