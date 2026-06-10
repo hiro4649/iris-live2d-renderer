@@ -433,6 +433,18 @@ Required pre-ingestion artifacts remain review labels only: row schema preflight
 
 The packet keeps `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false. It does not read row bodies, parse JSONL/CSV rows, execute motion, collect real evidence, expose owner-provided values, expose raw row bodies, expose private local values, enable a trusted loader, or resolve priority1.
 
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-SUBMISSION-RECEIPT-STUB1
+
+This is a receipt stub only. It records the safe public metadata labels that a future owner row data submission must provide, but it does not accept or acknowledge actual owner data submission.
+
+Safe public status labels include `motion_dataset_owner_row_data_submission_receipt_stub_status`, `planning_only_boundary`, `receipt_stub_only_boundary`, `no_owner_submission_accepted_boundary`, `no_actual_row_content_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_receipt_metadata_labels`, `required_future_submission_refs`, `owner_submission_received`, `owner_submission_accepted`, `real_row_data_present`, `checked_row_count`, `actual_ingestion_allowed`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+The receipt stub does not include JSONL or CSV content, does not read files, does not read row bodies, does not parse rows, does not ingest rows, does not confirm owner approval, does not create owner confirmation, does not execute motion, does not collect real evidence, and does not claim readiness.
+
+The receipt stub keeps `owner_submission_received` false, `owner_submission_accepted` false, `actual_row_content_accepted` false, `actual_ingestion_allowed` false, `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future actual row submission requires a separate owner-confirmed task with row_id-backed JSONL or CSV data, source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
 ## LIVE2D-MOTION-DATASET-REAL-ROW-FINAL-DRY-RUN-CHECKLIST1
 
 This checklist is planning-only final dry-run preparation for a future owner-provided real row ingestion task. It is not actual ingestion, not approval, not owner confirmation, not a go/no-go pass, and not runtime readiness.

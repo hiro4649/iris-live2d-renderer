@@ -429,4 +429,14 @@ The packet keeps the current boundary intact: priority1 remains BLOCKED, motion 
 
 Future work must still provide owner-approved metadata, real resident fresh evidence, explicit owner confirmation, row schema review, redaction review, unsupported-motion policy review, renderer-ready policy review, and a separate go/no-go review before any actual row ingestion can be considered.
 
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-SUBMISSION-RECEIPT-STUB1
+
+Status: planning-only receipt stub added.
+
+This task adds a safe owner row data submission receipt stub for future metadata-only review preparation. It does not accept or acknowledge actual owner data submission, does not include JSONL or CSV content, does not read files, does not parse rows, does not ingest rows, does not create or confirm owner confirmation, does not execute motion, and does not collect evidence.
+
+The receipt stub keeps the current boundary intact: owner submission received remains false, owner submission accepted remains false, priority1 remains BLOCKED, motion dataset remains non-executable, checked row count remains 0, actual ingestion remains disallowed, trusted loader allowlist remains disabled, and go/no-go remains no_go.
+
+Required future receipt metadata labels are request id, expected file format, expected source hash, expected declared row count, expected schema version, expected dataset split plan, expected audit run id, expected owner confirmation scope, and safe next action. Future actual row submission still requires a separate owner-confirmed actual data task with source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
 No runtime readiness or production readiness is claimed by this packet.
