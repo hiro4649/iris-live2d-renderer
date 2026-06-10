@@ -5,6 +5,7 @@ import {
   createFreshEvidenceBundleSummary,
   createGoNoGoBlockerResolutionSummary,
   createGoNoGoPreflightSummary,
+  createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
   createMotionDatasetSyntheticRowFixturePackSummary,
   createOwnerConfirmationBindingSummary,
@@ -121,6 +122,7 @@ export function createRendererState({
       const goNoGoBlockerResolution = createGoNoGoBlockerResolutionSummary();
       const motionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
       const motionDatasetSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
+      const motionDatasetRealRowIntakeRequestPacket = createMotionDatasetRealRowIntakeRequestPacketSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -192,6 +194,7 @@ export function createRendererState({
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
           owner_confirmation_binding_summary: ownerConfirmationBinding,
           go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
+          motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -213,6 +216,7 @@ export function createRendererState({
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         owner_confirmation_binding_summary: ownerConfirmationBinding,
         go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
+        motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
@@ -275,6 +279,7 @@ export function createRendererState({
         real_evidence_summary_intake_binding_summary: status.renderer_health.real_evidence_summary_intake_binding_summary,
         owner_confirmation_binding_summary: status.renderer_health.owner_confirmation_binding_summary,
         go_nogo_blocker_resolution_summary: status.renderer_health.go_nogo_blocker_resolution_summary,
+        motion_dataset_real_row_intake_request_packet_summary: status.renderer_health.motion_dataset_real_row_intake_request_packet_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
@@ -393,6 +398,7 @@ export function createRendererState({
       const goNoGoBlockerResolution = createGoNoGoBlockerResolutionSummary();
       const motionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
       const motionDatasetSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
+      const motionDatasetRealRowIntakeRequestPacket = createMotionDatasetRealRowIntakeRequestPacketSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -423,6 +429,7 @@ export function createRendererState({
       response.real_evidence_summary_intake_binding_summary = realEvidenceSummaryIntakeBinding;
       response.owner_confirmation_binding_summary = ownerConfirmationBinding;
       response.go_nogo_blocker_resolution_summary = goNoGoBlockerResolution;
+      response.motion_dataset_real_row_intake_request_packet_summary = motionDatasetRealRowIntakeRequestPacket;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
       assertSafePublicObject(response, "browser runtime config");
@@ -506,6 +513,7 @@ export function createRendererState({
       const goNoGoBlockerResolution = createGoNoGoBlockerResolutionSummary();
       const motionDatasetRowSchemaPreflight = createMotionDatasetRowSchemaPreflightSummary();
       const motionDatasetSyntheticRowFixturePack = createMotionDatasetSyntheticRowFixturePackSummary();
+      const motionDatasetRealRowIntakeRequestPacket = createMotionDatasetRealRowIntakeRequestPacketSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -561,6 +569,7 @@ export function createRendererState({
           real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
           owner_confirmation_binding_summary: ownerConfirmationBinding,
           go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
+          motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -582,6 +591,7 @@ export function createRendererState({
         real_evidence_summary_intake_binding_summary: realEvidenceSummaryIntakeBinding,
         owner_confirmation_binding_summary: ownerConfirmationBinding,
         go_nogo_blocker_resolution_summary: goNoGoBlockerResolution,
+        motion_dataset_real_row_intake_request_packet_summary: motionDatasetRealRowIntakeRequestPacket,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         boundary_policy: createBoundaryPolicy(),
