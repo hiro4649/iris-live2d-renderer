@@ -18,6 +18,10 @@ import {
   validateOutcomeContract,
 } from './codex-outcome-contract.mjs';
 import {
+  buildProductPlanningPrePushTargetReport,
+  shouldUseProductPlanningPrePushTargetFastPath,
+} from './codex-local-quality-gate.mjs';
+import {
   buildArtifactConsistencyReport,
   classifySafeDetailUnavailable,
   validateArtifactConsistency,
@@ -104,6 +108,27 @@ const cases = [
   test('validation_fast_path_source_fixture', () => buildV117Report({ fastPathEligible: true }).validationFastPathStatus?.status === 'pass'),
   test('verified_memory_rules_spec_fixture', () => buildV117Report({ memoryConsulted: false }).verifiedMemoryRulesStatus?.status === 'pass'),
   test('repair_experiment_ledger_spec_fixture', () => buildV117Report({ repairExperimentCount: 0 }).repairExperimentLedgerStatus?.status === 'pass'),
+  test('product_prepush_target_fast_path_detected', () => shouldUseProductPlanningPrePushTargetFastPath({
+    CODEX_HARNESS_MODE: 'target',
+    CODEX_PR_PROFILE: 'product_r3',
+    CODEX_PROFILE_COMPAT_MODE: 'off',
+    CODEX_REMOTE_EVIDENCE_PHASE: 'remote_evidence_required_after_push',
+  })),
+  test('product_prepush_target_report_blocks_merge_without_same_head_remote', () => {
+    const report = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    return report.status === 'pass' &&
+      report.pendingAfterPush === true &&
+      report.remoteEvidencePass === false &&
+      report.targetMergeReady === false &&
+      report.mergeReady === false &&
+      report.decisionCapsule?.mergeAllowed === false &&
+      report.evidencePrecedenceKernelStatus?.sameHeadRemoteRequired === true &&
+      report.tokenHardBudgetStatus?.mandatoryFieldsPreserved === true &&
+      report.runtimeReadinessClaimed === false &&
+      report.productionReadinessClaimed === false &&
+      report.priority1Status === 'BLOCKED' &&
+      report.checkedRowCount === 0;
+  }),
 ];
 
 const failures = cases.filter((item) => item.status !== 'pass');
