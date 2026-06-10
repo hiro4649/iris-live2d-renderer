@@ -349,6 +349,16 @@ Raw evidence body, raw cue payload, raw renderer payload, raw loader candidate, 
 
 The request packet remains request-only. The collection plan remains planning-only. The freshness threshold remains planning-only. The safe evidence summary contract remains planning-only. The summary intake binding remains planning-only. The owner confirmation binding remains planning-only. The go/no-go blocker resolution schema remains planning-only. The collector manifest remains planning-only. The collector fixture pack remains synthetic-only.
 
+## Motion Dataset Real Row Intake Dry-Run Validator
+
+`LIVE2D-MOTION-DATASET-REAL-ROW-INTAKE-DRY-RUN-VALIDATOR1` adds a planning-only dry-run validator for the future real row intake request packet. It validates request metadata shape and refusal paths only. It does not read row bodies, ingest real rows, parse JSONL or CSV contents, execute motion, collect real evidence, perform live probes, call the renderer, call SDK/vendor code, create owner confirmation, confirm owner confirmation, or change go/no-go state.
+
+The dry-run validator exposes safe public status labels for accepted request fixture cases and rejected request fixture cases. Public rejected cases use safe aliases so raw row bodies, cue material, renderer material, model or motion locations, network values, credential values, private local references, loader candidates, loader errors, owner private notes, commands, raw process output, raw stack traces, and raw K memo text are never exposed.
+
+The validator keeps `real_row_data_present` false, `checked_row_count` at `0`, `motion_dataset_executable` false, `dry_run_validation_candidate` false, `runtime_readiness_claimed` false, `production_readiness_claimed` false, `priority1_status` `BLOCKED`, and `go_nogo_status` `no_go`. Owner confirmation remains required and unconfirmed.
+
+Future real row ingestion requires a separate owner-confirmed actual data task after request packet review, route and evidence boundaries, license and SDK/vendor boundaries, real resident evidence, owner confirmation, and go/no-go review. This dry-run validator is not that task and is not runtime readiness.
+
 Runtime readiness is not claimed. Production readiness is not claimed. go/no-go remains no_go. priority1 remains BLOCKED until real resident fresh evidence exists. The motion dataset remains non-executable while checked_row_count is 0. Future actual collection requires a separate owner-confirmed task with fresh real resident evidence handling, scoped owner confirmation, and go/no-go blocker review.
 ## Motion Dataset Row Schema Preflight
 
