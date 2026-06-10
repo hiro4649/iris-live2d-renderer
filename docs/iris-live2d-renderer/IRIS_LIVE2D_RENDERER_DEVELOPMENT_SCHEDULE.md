@@ -394,3 +394,11 @@ Status: planning-only go/no-go blocker map. This step maps required blockers and
 Boundary: it does not approve go, does not resolve blockers, does not create owner confirmation, does not ingest rows, does not read row bodies, does not execute motion, does not collect evidence, does not enable trusted loader, and does not claim readiness.
 
 Next boundary: future actual row intake requires a separate owner-confirmed actual data task and a later go/no-go review after real row metadata, redaction scan, audit manifest result, owner confirmation, fresh resident evidence, and renderer-ready dependencies are satisfied.
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-PRE-INGESTION-REVIEW-PACKET1
+
+Status: planning-only pre-ingestion review packet.
+
+This task adds a safe review packet before any future real row intake can be requested. It preserves the existing no-go state and documents the remaining prerequisites from request packet through go/no-go blocker map. No real row file is accepted, no row body is read, no motion is executable, no owner approval or owner confirmation is created, and no readiness is claimed.
+
+Next safe action remains a separate owner-confirmed future task with fresh resident evidence, owner confirmation, source hash review, declared row count review, redaction and audit results, renderer readiness dependency review, and go/no-go review. Priority1 remains BLOCKED and motion dataset remains non-executable.
