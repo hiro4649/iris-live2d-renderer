@@ -665,3 +665,7 @@ Adds a planning-only renderer-ready dependency matrix. It lists real dependencie
 ### Motion Dataset Real Row Split Policy Packet
 
 `LIVE2D-MOTION-DATASET-REAL-ROW-SPLIT-POLICY-PACKET1` is a planning-only packet for future owner review. It defines split labels and contamination blockers without approving ingestion. It does not read row bodies, does not parse raw JSONL/CSV, does not accept actual data, does not calculate hashes, does not create owner confirmation, and does not claim readiness. Public status is safe-summary-only: `checked_row_count` is `0`, `real_row_data_present` is false, `actual_ingestion_allowed` is false, priority1 remains `BLOCKED`, and motion dataset execution remains disabled.
+
+### LIVE2D-MOTION-DATASET-SOURCE-HASH-OWNER-CHECKLIST1
+
+Adds a planning-only source hash owner checklist for future real-row review. It lists required owner-facing labels and hash verification blockers without reading files, calculating real hashes, accepting owner files, ingesting rows, creating owner confirmation, enabling trusted loader allowlist, resolving priority1, or claiming runtime or production readiness.

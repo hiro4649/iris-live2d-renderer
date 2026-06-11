@@ -64,6 +64,7 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "ir
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
+export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -106,6 +107,27 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS 
   "row_body_unread",
   "priority1_blocked",
   "owner_confirmation_missing",
+  "checked_row_count_zero",
+]);
+
+export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS = Object.freeze([
+  "hash_algorithm_label",
+  "source_hash_label",
+  "file_format_label",
+  "declared_row_count_label",
+  "schema_version_label",
+  "dataset_version_label",
+  "owner_confirmation_scope",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_BLOCKERS = Object.freeze([
+  "actual_file_missing",
+  "source_hash_missing",
+  "hash_algorithm_unsupported",
+  "owner_confirmation_missing",
+  "actual_file_read_not_allowed",
+  "priority1_blocked",
   "checked_row_count_zero",
 ]);
 
@@ -8408,6 +8430,86 @@ export function createMotionDatasetRealRowSplitPolicyPacketSummary(input = {}) {
     },
   };
   assertSafePublicObject(summary, "motion dataset real row split policy packet summary");
+  return summary;
+}
+
+export function createMotionDatasetSourceHashOwnerChecklistSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const providedItems = Array.isArray(source.required_owner_items)
+    ? source.required_owner_items.map((item) => safeMotionDatasetLabel(item, "unsafe_label"))
+    : LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS;
+  const missingItems = LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS
+    .filter((item) => !providedItems.includes(item));
+  const unsafeAttempt = source.source_hash_checklist_verifies_real_hash === true
+    || source.actual_hash_calculated === true
+    || source.actual_file_read === true
+    || source.actual_file_reference_accepted === true
+    || source.actual_file_content_accepted === true
+    || source.real_row_data_present === true
+    || source.actual_ingestion_allowed === true
+    || source.actual_data_task_started === true
+    || source.owner_confirmation_confirmed === true
+    || source.row_body_read === true
+    || Number(source.checked_row_count ?? 0) > 0
+    || source.motion_dataset_executable === true
+    || source.runtime_readiness_claimed === true
+    || source.production_readiness_claimed === true
+    || source.priority1_status === "RESOLVED";
+  const blockers = [
+    ...LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_BLOCKERS,
+    ...missingItems.map((item) => `missing_required_source_hash_owner_item_${item}`),
+    unsafeAttempt ? "source_hash_owner_checklist_rejected_real_hash_or_ingestion_attempt" : "",
+  ].filter(Boolean);
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_source_hash_owner_checklist_status: missingItems.length || unsafeAttempt ? "blocked" : "planning_only",
+    planning_only_boundary: true,
+    source_hash_owner_checklist_only_boundary: true,
+    no_actual_file_read_boundary: true,
+    no_actual_hash_calculation_boundary: true,
+    no_real_hash_verification_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    source_hash_checklist_verifies_real_hash: false,
+    actual_hash_calculated: false,
+    actual_file_read: false,
+    actual_file_reference_accepted: false,
+    actual_file_content_accepted: false,
+    required_owner_items: [...LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS],
+    provided_owner_items: providedItems,
+    missing_owner_items: missingItems,
+    required_hash_verification_blockers: [...LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_BLOCKERS],
+    hash_verification_blockers: [...new Set(blockers)],
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    actual_data_task_started: false,
+    owner_confirmation_confirmed: false,
+    row_body_read: false,
+    priority1_status: "BLOCKED",
+    go_nogo_status: "no_go",
+    motion_dataset_status: "non_executable",
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    trusted_loader_allowlist_enabled: false,
+    safe_next_action: "future_owner_confirmed_source_hash_review_required_before_real_hash_verification",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      no_actual_file_read: true,
+      no_actual_hash_calculation: true,
+      no_real_hash_verification: true,
+      no_real_row_ingestion: true,
+      no_owner_confirmation_creation: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset source hash owner checklist summary");
   return summary;
 }
 

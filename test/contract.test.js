@@ -132,6 +132,9 @@ import {
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
+  LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_BLOCKERS,
+  LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA,
+  LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -220,6 +223,7 @@ import {
   createMotionDatasetMotionAllowlistSyncReviewSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
+  createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -2209,6 +2213,57 @@ try {
   assert.equal(unsafeSplitPolicyPacket.missing_split_labels.includes("eval"), true);
   assertSafe(JSON.stringify(unsafeSplitPolicyPacket));
   assertNoModelPathLeak(JSON.stringify(unsafeSplitPolicyPacket));
+
+  const defaultSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
+  assert.equal(defaultSourceHashOwnerChecklist.schema, LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA);
+  assert.equal(defaultSourceHashOwnerChecklist.motion_dataset_source_hash_owner_checklist_status, "planning_only");
+  assert.equal(defaultSourceHashOwnerChecklist.source_hash_owner_checklist_only_boundary, true);
+  assert.equal(defaultSourceHashOwnerChecklist.no_actual_file_read_boundary, true);
+  assert.equal(defaultSourceHashOwnerChecklist.no_actual_hash_calculation_boundary, true);
+  assert.equal(defaultSourceHashOwnerChecklist.no_real_hash_verification_boundary, true);
+  assert.equal(defaultSourceHashOwnerChecklist.source_hash_checklist_verifies_real_hash, false);
+  assert.equal(defaultSourceHashOwnerChecklist.actual_hash_calculated, false);
+  assert.equal(defaultSourceHashOwnerChecklist.actual_file_read, false);
+  assert.deepEqual(defaultSourceHashOwnerChecklist.required_owner_items, [...LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS]);
+  assert.deepEqual(defaultSourceHashOwnerChecklist.required_hash_verification_blockers, [...LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_BLOCKERS]);
+  assert.equal(defaultSourceHashOwnerChecklist.checked_row_count, 0);
+  assert.equal(defaultSourceHashOwnerChecklist.real_row_data_present, false);
+  assert.equal(defaultSourceHashOwnerChecklist.actual_ingestion_allowed, false);
+  assert.equal(defaultSourceHashOwnerChecklist.owner_confirmation_confirmed, false);
+  assert.equal(defaultSourceHashOwnerChecklist.priority1_status, "BLOCKED");
+  assert.equal(defaultSourceHashOwnerChecklist.motion_dataset_executable, false);
+  assert.equal(defaultSourceHashOwnerChecklist.runtime_readiness_claimed, false);
+  assert.equal(defaultSourceHashOwnerChecklist.production_readiness_claimed, false);
+  assert.equal(defaultSourceHashOwnerChecklist.boundary_policy.no_actual_file_read, true);
+  assert.equal(defaultSourceHashOwnerChecklist.boundary_policy.no_actual_hash_calculation, true);
+  assertSafe(JSON.stringify(defaultSourceHashOwnerChecklist));
+  assertNoModelPathLeak(JSON.stringify(defaultSourceHashOwnerChecklist));
+
+  const unsafeSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary({
+    required_owner_items: ["hash_algorithm_label"],
+    source_hash_checklist_verifies_real_hash: true,
+    actual_hash_calculated: true,
+    actual_file_read: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 2,
+    motion_dataset_executable: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    owner_confirmation_confirmed: true,
+    priority1_status: "RESOLVED",
+  });
+  assert.equal(unsafeSourceHashOwnerChecklist.motion_dataset_source_hash_owner_checklist_status, "blocked");
+  assert.equal(unsafeSourceHashOwnerChecklist.source_hash_checklist_verifies_real_hash, false);
+  assert.equal(unsafeSourceHashOwnerChecklist.actual_hash_calculated, false);
+  assert.equal(unsafeSourceHashOwnerChecklist.actual_file_read, false);
+  assert.equal(unsafeSourceHashOwnerChecklist.actual_ingestion_allowed, false);
+  assert.equal(unsafeSourceHashOwnerChecklist.checked_row_count, 0);
+  assert.equal(unsafeSourceHashOwnerChecklist.motion_dataset_executable, false);
+  assert.equal(unsafeSourceHashOwnerChecklist.owner_confirmation_confirmed, false);
+  assert.equal(unsafeSourceHashOwnerChecklist.priority1_status, "BLOCKED");
+  assert.equal(unsafeSourceHashOwnerChecklist.missing_owner_items.includes("source_hash_label"), true);
+  assert.equal(unsafeSourceHashOwnerChecklist.hash_verification_blockers.includes("source_hash_owner_checklist_rejected_real_hash_or_ingestion_attempt"), true);
+  assertSafe(JSON.stringify(unsafeSourceHashOwnerChecklist));
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
