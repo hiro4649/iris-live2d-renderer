@@ -48,6 +48,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REVIEW_PACKET_
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_NO_GO_SUMMARY_PROJECTION_SCHEMA = "iris_live2d_motion_dataset_actual_data_no_go_summary_projection_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_LEDGER_SCHEMA = "iris_live2d_motion_dataset_owner_submission_readiness_ledger_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_BLOCKER_GATE_SCHEMA = "iris_live2d_motion_dataset_final_actual_data_preauth_blocker_gate_v1";
+export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_owner_confirmation_preflight_envelope_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1241,6 +1242,29 @@ export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_CLEARANCE_CONDITION
   "go_nogo_review_pass_future",
   "priority1_resolution_candidate_future",
   "checked_row_count_positive_future",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES = Object.freeze([
+  "actual_row_data_submission",
+  "source_hash_review",
+  "parser_dry_run_review",
+  "redaction_scan_review",
+  "audit_execution_review",
+  "rollback_plan_review",
+  "go_nogo_review",
+  "no_runtime_readiness_claim_review",
+  "no_motion_execution_review",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS = Object.freeze([
+  "owner_scope_ref_future",
+  "source_hash_ref_future",
+  "parser_dry_run_ref_future",
+  "redaction_scan_ref_future",
+  "audit_execution_ref_future",
+  "rollback_plan_ref_future",
+  "go_nogo_ref_future",
+  "safe_next_action",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6750,6 +6774,132 @@ export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) 
   };
   assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
   return summary;
+}
+
+function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status, boundaries = {}, flags = {}, arrays = {}, blockedReasons = [], safeNextAction, context }, input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(
+    source.owner_confirmation_created ||
+      source.owner_confirmation_confirmed ||
+      source.actual_data_preauthorized ||
+      source.actual_data_task_started ||
+      source.actual_data_accepted ||
+      source.owner_submission_received ||
+      source.owner_submission_accepted ||
+      source.quarantine_completed ||
+      source.redaction_scan_executed ||
+      source.audit_execution_started ||
+      source.real_ingestion_audit_event_created ||
+      source.rollback_ready ||
+      source.external_action_performed ||
+      source.parser_dry_run_executed ||
+      source.row_body_parser_enabled ||
+      source.row_body_parser_executed ||
+      source.actual_file_read ||
+      source.actual_hash_calculated ||
+      source.actual_row_content_accepted ||
+      source.row_body_read ||
+      source.real_row_data_present ||
+      source.actual_ingestion_allowed ||
+      Number(source.checked_row_count ?? 0) > 0 ||
+      source.motion_dataset_executable ||
+      source.runtime_readiness_claimed ||
+      source.production_readiness_claimed ||
+      source.blocker_resolved ||
+      source.go_candidate ||
+      source.priority1_status === "RESOLVED" ||
+      source.go_nogo_status === "go"
+  );
+  const summary = {
+    schema,
+    [statusKey]: status,
+    planning_only_boundary: true,
+    ...boundaries,
+    owner_confirmation_required: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    actual_data_preauthorized: false,
+    actual_data_task_started: false,
+    actual_data_accepted: false,
+    owner_submission_received: false,
+    owner_submission_accepted: false,
+    quarantine_completed: false,
+    redaction_scan_executed: false,
+    audit_execution_started: false,
+    real_ingestion_audit_event_created: false,
+    rollback_ready: false,
+    external_action_performed: false,
+    parser_dry_run_executed: false,
+    row_body_parser_enabled: false,
+    row_body_parser_executed: false,
+    actual_file_read: false,
+    actual_hash_calculated: false,
+    actual_row_content_accepted: false,
+    row_body_read: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    ...flags,
+    ...arrays,
+    blocked_reasons: [...new Set([...blockedReasons, ...(rejectedAttempt ? [statusKey.replace(/_status$/, "_rejected_state_promotion")] : [])])],
+    safe_next_action: safeNextAction,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      no_owner_confirmation_created: true,
+      no_owner_confirmation_confirmed: true,
+      no_actual_data_preauthorized: true,
+      no_actual_data_task_started: true,
+      no_actual_data_accepted: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, context);
+  return summary;
+}
+
+export function createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA,
+    statusKey: "motion_dataset_owner_confirmation_preflight_envelope_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      owner_confirmation_preflight_envelope_only_boundary: true,
+      no_owner_confirmation_created_boundary: true,
+      no_owner_confirmation_confirmed_boundary: true,
+      no_actual_data_task_started_boundary: true,
+      owner_confirmation_preflight_envelope_only: true,
+    },
+    arrays: {
+      required_future_owner_confirmation_scopes: [...LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES],
+      required_future_owner_confirmation_evidence_refs: [...LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS],
+    },
+    blockedReasons: [
+      "owner_confirmation_preflight_envelope_planning_only",
+      "owner_confirmation_preflight_envelope_no_owner_confirmation_created",
+      "owner_confirmation_preflight_envelope_no_owner_confirmation_confirmed",
+      "owner_confirmation_preflight_envelope_no_actual_data_task_started",
+      "owner_confirmation_preflight_envelope_priority1_blocked",
+      "owner_confirmation_preflight_envelope_no_go_preserved",
+    ],
+    safeNextAction: "future_owner_confirmation_required_before_actual_data_task",
+    context: "motion dataset owner confirmation preflight envelope summary",
+  }, input);
 }
 
 export function createMotionDatasetFinalActualDataPreauthBlockerGateSummary(input = {}) {
