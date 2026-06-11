@@ -42,6 +42,7 @@ export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA = "iris_
 export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_row_body_parser_rejection_fixture_pack_v1";
 export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_audit_trail_stub_v1";
 export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_rollback_plan_stub_v1";
+export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_parser_dry_run_envelope_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1078,6 +1079,27 @@ export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS = Objec
   "missing_source_hash",
   "missing_batch_id",
   "priority1_blocked",
+]);
+
+export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_INPUTS = Object.freeze([
+  "metadata_validator_ref",
+  "checksum_preflight_ref",
+  "parser_contract_ref",
+  "parser_rejection_fixture_ref",
+  "owner_confirmation_ref",
+  "source_hash_label",
+  "declared_row_count_label",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_OUTPUTS = Object.freeze([
+  "dry_run_status",
+  "safe_reject_count",
+  "safe_accept_candidate_count",
+  "unchecked_count",
+  "redaction_status",
+  "audit_ref",
+  "safe_next_action",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6586,6 +6608,90 @@ export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) 
     },
   };
   assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
+  return summary;
+}
+
+export function createMotionDatasetParserDryRunEnvelopeSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(
+    source.row_body_parser_enabled ||
+      source.row_body_parser_executed ||
+      source.parser_dry_run_executed ||
+      source.actual_file_read ||
+      source.actual_row_content_accepted ||
+      source.row_body_read ||
+      source.real_row_data_present ||
+      source.actual_ingestion_allowed ||
+      source.motion_dataset_executable ||
+      source.runtime_readiness_claimed ||
+      source.production_readiness_claimed ||
+      source.owner_confirmation_confirmed ||
+      source.priority1_status === "RESOLVED" ||
+      source.go_nogo_status === "go"
+  );
+  const blockedReasons = [
+    "parser_dry_run_envelope_planning_only",
+    "parser_dry_run_envelope_no_parser_execution",
+    "parser_dry_run_envelope_no_actual_file_read",
+    "parser_dry_run_envelope_no_actual_row_content",
+    "parser_dry_run_envelope_no_real_row_ingestion",
+    "parser_dry_run_envelope_priority1_blocked",
+    "parser_dry_run_envelope_no_go_preserved",
+  ];
+  if (rejectedAttempt) {
+    blockedReasons.push("parser_dry_run_envelope_rejected_state_promotion");
+  }
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA,
+    motion_dataset_parser_dry_run_envelope_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    parser_dry_run_envelope_only_boundary: true,
+    no_parser_execution_boundary: true,
+    no_actual_file_read_boundary: true,
+    no_actual_row_content_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    parser_dry_run_envelope_only: true,
+    row_body_parser_enabled: false,
+    row_body_parser_executed: false,
+    parser_dry_run_executed: false,
+    actual_file_read: false,
+    actual_row_content_accepted: false,
+    row_body_read: false,
+    checked_row_count: 0,
+    real_row_data_present: false,
+    actual_ingestion_allowed: false,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    owner_confirmation_status: "schema_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_future_dry_run_inputs: [...LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_INPUTS],
+    required_future_dry_run_outputs: [...LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_OUTPUTS],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_parser_dry_run_required_before_parser_execution",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      parser_dry_run_envelope_only: true,
+      no_parser_execution: true,
+      no_actual_file_read: true,
+      no_actual_row_content: true,
+      no_real_row_ingestion: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset parser dry-run envelope summary");
   return summary;
 }
 
