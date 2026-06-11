@@ -37,6 +37,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_STUB_SCHEMA
 export const LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA = "iris_live2d_motion_dataset_row_file_checksum_preflight_manifest_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_STUB_SCHEMA = "iris_live2d_motion_dataset_owner_row_data_metadata_validator_stub_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_owner_row_data_submission_rejection_fixture_pack_v1";
+export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA = "iris_live2d_motion_dataset_actual_data_task_entry_gate_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -859,6 +860,35 @@ export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_P
   "priority1_resolved_claim_rejected",
   "motion_executable_claim_rejected",
   "unsupported_motion_runtime_claim_rejected",
+]);
+
+export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_REQUIRED_PREREQUISITES = Object.freeze([
+  "owner_confirmation_confirmed",
+  "real_row_file_available",
+  "source_hash_declared",
+  "metadata_validator_stub_present",
+  "submission_rejection_fixture_pack_present",
+  "checksum_preflight_manifest_present",
+  "missing_data_fail_closed_gate_present",
+  "final_dry_run_checklist_present",
+  "go_nogo_blocker_map_present",
+  "fresh_resident_evidence_required",
+  "owner_confirmation_required",
+  "actual_file_content_not_present",
+  "actual_file_reference_not_present",
+  "row_body_not_read",
+  "checked_row_count_zero",
+]);
+
+export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_BLOCKING_CONDITIONS = Object.freeze([
+  "missing_owner_confirmation",
+  "missing_real_row_file",
+  "missing_source_hash",
+  "missing_fresh_resident_evidence",
+  "missing_go_nogo_review",
+  "checked_row_count_zero",
+  "priority1_blocked",
+  "actual_ingestion_not_allowed",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -5875,6 +5905,144 @@ export function createMotionDatasetOwnerRowDataSubmissionRejectionFixturePackSum
     },
   };
   assertSafePublicObject(summary, "motion dataset owner row data submission rejection fixture pack summary");
+  return summary;
+}
+
+export function createMotionDatasetActualDataTaskEntryGateSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawFields = [
+    ...detectedMotionDatasetRawFields(source),
+    ...detectedRejectedRequestFields(source, [
+      ...LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTED_FIELDS,
+      "actual_file_path_value",
+      "actual_file_content",
+      "raw_jsonl_body",
+      "raw_csv_body",
+      "raw_dataset_row_body",
+      "raw_row_body",
+      "raw_cue_payload",
+      "raw_renderer_payload",
+      "owner_private_note",
+      "raw_owner_confirmation_note",
+    ]),
+  ];
+  const safeRejectedFieldLabels = [...new Set(rawFields)]
+    .map((field) => safeOwnerRowSubmissionRejectedFieldLabel(field))
+    .filter(Boolean)
+    .sort();
+  const actualDataTaskRequested = source.actual_data_task_started === true || source.actual_data_task_approved === true;
+  const submissionRequested = source.owner_submission_received === true || source.owner_submission_accepted === true || source.submission_accepted === true;
+  const fileReadRequested = source.actual_file_read === true || source.file_content_read === true || source.actual_file_content !== undefined || source.actual_file_path_value !== undefined;
+  const hashRequested = source.actual_hash_calculated === true || source.hash_calculated === true;
+  const rowContentRequested = source.actual_row_content_accepted === true || source.row !== undefined || source.dataset_row !== undefined || source.raw_dataset_row_body !== undefined;
+  const ingestionRequested = source.actual_ingestion_allowed === true || source.ingestion_approved === true || source.ingest_rows === true;
+  const parserRequested = source.row_body_parser_enabled === true || source.row_body_parser_executed === true || source.row_body_read === true;
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true;
+  const checkedRowCountRequested = Number.isSafeInteger(source.checked_row_count) && source.checked_row_count > 0;
+  const motionExecutionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true || source.execute_motion === true;
+  const readinessRequested = source.renderer_ready === true || source.model_loaded === true || source.scene_loaded === true || source.browser_cue_delivery_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const priorityResolvedRequested = source.priority1_status === "RESOLVED" || source.priority1_resolved === true || source.blocker_resolved === true;
+  const goRequested = source.go_nogo_status === "go" || source.go_candidate === true || source.approve_go === true;
+  const blockedReasons = [
+    "actual_data_task_entry_gate_planning_only",
+    "actual_data_task_entry_gate_no_actual_data_task_started",
+    "actual_data_task_entry_gate_no_submission_accepted",
+    "actual_data_task_entry_gate_no_actual_file_read",
+    "actual_data_task_entry_gate_no_actual_hash_calculation",
+    "actual_data_task_entry_gate_no_actual_row_content",
+    "actual_data_task_entry_gate_no_parser_execution",
+    "actual_data_task_entry_gate_no_real_row_ingestion",
+    "actual_data_task_entry_gate_owner_confirmation_required",
+    "actual_data_task_entry_gate_priority1_blocked",
+    "actual_data_task_entry_gate_go_nogo_no_go",
+  ];
+  if (rawFields.length) blockedReasons.push("actual_data_task_entry_gate_rejected_unsafe_material");
+  if (actualDataTaskRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_actual_task_start");
+  if (submissionRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_submission_state");
+  if (fileReadRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_file_access");
+  if (hashRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_hash_calculation");
+  if (rowContentRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_row_content");
+  if (ingestionRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_ingestion");
+  if (parserRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_parser_execution");
+  if (realRowRequested || checkedRowCountRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_real_row_or_checked_count");
+  if (motionExecutionRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_motion_execution");
+  if (readinessRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_readiness_claim");
+  if (ownerConfirmationRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_owner_confirmation");
+  if (priorityResolvedRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_priority1_resolution");
+  if (goRequested) blockedReasons.push("actual_data_task_entry_gate_rejected_go_or_blocker_resolution");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_actual_data_task_entry_gate_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    entry_gate_only_boundary: true,
+    no_actual_data_task_started_boundary: true,
+    no_submission_accepted_boundary: true,
+    no_actual_file_read_boundary: true,
+    no_actual_hash_calculation_boundary: true,
+    no_actual_row_content_boundary: true,
+    no_parser_execution_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    no_motion_execution_boundary: true,
+    no_readiness_boundary: true,
+    entry_gate_only: true,
+    actual_data_task_started: false,
+    owner_submission_received: false,
+    owner_submission_accepted: false,
+    actual_file_read: false,
+    actual_hash_calculated: false,
+    actual_row_content_accepted: false,
+    row_body_parser_enabled: false,
+    row_body_parser_executed: false,
+    row_body_read: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    motion_dataset_executable: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_required: true,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    owner_confirmation_status: "schema_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_entry_prerequisites: [...LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_REQUIRED_PREREQUISITES],
+    required_blocking_conditions: [...LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_BLOCKING_CONDITIONS],
+    detected_rejected_sensitive_material_labels: safeRejectedFieldLabels,
+    blocked_reasons: [...new Set(blockedReasons)],
+    decision_capsule_machine_source_preserved: true,
+    pr_body_human_summary_only: true,
+    safe_next_action: "future_owner_confirmed_actual_data_task_required_before_row_intake",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      entry_gate_only: true,
+      no_actual_data_task_started: true,
+      no_submission_accepted: true,
+      no_actual_file_read: true,
+      no_actual_hash_calculation: true,
+      no_actual_row_content: true,
+      no_parser_execution: true,
+      no_actual_ingestion_allowed: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_owner_confirmation_created: true,
+      no_owner_confirmation_confirmed: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset actual data task entry gate summary");
   return summary;
 }
 

@@ -469,6 +469,18 @@ Future actual rejection validation still requires a separate owner-confirmed act
 
 No runtime readiness or production readiness is claimed by this fixture pack.
 
+## LIVE2D-MOTION-DATASET-ACTUAL-DATA-TASK-ENTRY-GATE1
+
+Status: planning-only actual-data task entry gate added.
+
+This task adds a safe entry gate for future owner-confirmed row intake. It is an entry gate only: it does not start an actual data task, receive or accept a submission, read actual files, read row bodies, parse JSONL or CSV, calculate hashes, ingest rows, create owner confirmation, confirm owner approval, execute motion, or collect evidence.
+
+The entry gate keeps the current boundary intact: actual data task started remains false, owner submission received remains false, owner submission accepted remains false, actual file read remains false, actual hash calculation remains false, row body parser remains disabled and unexecuted, actual ingestion remains disallowed, checked row count remains 0, real row data remains absent, priority1 remains BLOCKED, motion dataset remains non-executable, trusted loader allowlist remains disabled, and go/no-go remains no_go.
+
+Future actual row intake still requires a separate owner-confirmed actual data task with private file handling, source hash review, declared row count review, redaction and audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
+No runtime readiness or production readiness is claimed by this gate.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 Status: planning-only checksum preflight manifest added.
