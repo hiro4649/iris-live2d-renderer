@@ -457,6 +457,20 @@ The metadata validator stub keeps `owner_submission_received` false, `owner_subm
 
 Future actual metadata validation requires a separate owner-confirmed actual data task with private file handling, redaction review, source hash review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-SUBMISSION-REJECTION-FIXTURE-PACK1
+
+This is a synthetic rejection fixture pack only. It lists safe fixture cases for future owner row data submission rejection review, but it does not accept a submission, does not read any actual file, does not read row bodies, does not parse JSONL or CSV, does not ingest rows, and does not execute motion.
+
+Safe public status labels include `motion_dataset_owner_row_data_submission_rejection_fixture_pack_status`, `planning_only_boundary`, `synthetic_only_boundary`, `rejection_fixture_pack_only_boundary`, `no_submission_accepted_boundary`, `no_actual_file_read_boundary`, `no_actual_row_content_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `accepted_safe_rejection_fixture_cases`, `rejected_submission_attempt_cases`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+Accepted safe rejection fixture cases include missing source hash rejection, unsupported format rejection, missing owner scope rejection, redacted raw field rejection, no-data-present blocked fixture, and checksum preflight missing-file blocked fixture. These are synthetic labels only and are not real row data.
+
+Rejected submission attempt cases include actual file reference values, actual file content, raw JSONL body, raw CSV body, raw dataset row body, raw cue payload, raw renderer payload, raw model or motion references, endpoint values, token values, secret values, private local references, world/OBS/game/OS commands, memory or relationship commitments, raw process output, raw stack trace, owner private notes, owner confirmation claims, readiness claims, priority1 resolved claims, motion executable claims, and unsupported motion runtime claims.
+
+The rejection fixture pack keeps `owner_submission_received` false, `owner_submission_accepted` false, `actual_file_read` false, `actual_file_content_accepted` false, `actual_row_content_accepted` false, `actual_ingestion_allowed` false, `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future actual owner row data rejection testing requires a separate owner-confirmed actual data task with private file handling, redaction review, source hash review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 This manifest is planning-only checksum preflight metadata. It defines safe public labels for a future owner-confirmed row file checksum review, but it does not read any actual file, does not calculate any real hash, does not accept a file reference, does not accept file content, and does not ingest rows.
