@@ -552,3 +552,8 @@ Status: planning-only no-go projection. Required safe next actions remain future
 ## LIVE2D-MOTION-DATASET-OWNER-SUBMISSION-READINESS-LEDGER1
 
 Status: planning-only ledger. Missing prerequisites remain real row file, owner confirmation, fresh resident evidence, parser dry-run, redaction scan, audit result, go/no-go review, and positive checked_row_count.
+
+
+## LIVE2D-MOTION-DATASET-FINAL-ACTUAL-DATA-PREAUTH-BLOCKER-GATE1
+
+Status: planning-only blocker gate. Preauth blockers remain owner confirmation missing, real row file missing, source hash missing, fresh evidence missing, parser dry-run missing, redaction scan missing, audit missing, go/no-go missing, priority1 blocked, and checked_row_count zero.

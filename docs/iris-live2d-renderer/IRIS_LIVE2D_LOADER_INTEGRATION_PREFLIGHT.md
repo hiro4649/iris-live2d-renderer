@@ -584,3 +584,8 @@ The actual data no-go summary projection is planning-only. It preserves no_go, d
 ## LIVE2D-MOTION-DATASET-OWNER-SUBMISSION-READINESS-LEDGER1
 
 The owner submission readiness ledger is planning-only. It lists available planning prerequisites and missing future prerequisites, but no submission is received or accepted. It does not read row bodies, ingest rows, resolve priority1, or claim readiness.
+
+
+## LIVE2D-MOTION-DATASET-FINAL-ACTUAL-DATA-PREAUTH-BLOCKER-GATE1
+
+The final actual data preauth blocker gate is planning-only and remains blocked. It does not preauthorize actual data, start an actual data task, ingest rows, read row bodies, resolve priority1, or claim readiness. Clearance conditions are future-only labels.

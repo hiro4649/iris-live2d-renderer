@@ -47,6 +47,7 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_CRITERIA_CHECKLIST_SCHEMA
 export const LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_actual_data_task_handoff_review_packet_v1";
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_NO_GO_SUMMARY_PROJECTION_SCHEMA = "iris_live2d_motion_dataset_actual_data_no_go_summary_projection_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_LEDGER_SCHEMA = "iris_live2d_motion_dataset_owner_submission_readiness_ledger_v1";
+export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_BLOCKER_GATE_SCHEMA = "iris_live2d_motion_dataset_final_actual_data_preauth_blocker_gate_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1214,6 +1215,32 @@ export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_MISSING_PREREQUISI
   "audit_result_missing",
   "go_nogo_review_missing",
   "positive_checked_row_count_missing",
+]);
+
+export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_REQUIRED_BLOCKERS = Object.freeze([
+  "owner_confirmation_missing",
+  "real_row_file_missing",
+  "source_hash_missing",
+  "fresh_resident_evidence_missing",
+  "parser_dry_run_missing",
+  "redaction_scan_missing",
+  "audit_result_missing",
+  "go_nogo_review_missing",
+  "priority1_blocked",
+  "checked_row_count_zero",
+]);
+
+export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_CLEARANCE_CONDITIONS = Object.freeze([
+  "owner_confirmation_confirmed_future",
+  "row_file_metadata_verified_future",
+  "source_hash_verified_future",
+  "fresh_resident_evidence_present_future",
+  "parser_dry_run_pass_future",
+  "redaction_scan_pass_future",
+  "audit_result_pass_future",
+  "go_nogo_review_pass_future",
+  "priority1_resolution_candidate_future",
+  "checked_row_count_positive_future",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6722,6 +6749,47 @@ export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) 
     },
   };
   assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
+  return summary;
+}
+
+export function createMotionDatasetFinalActualDataPreauthBlockerGateSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(source.actual_data_preauthorized || source.actual_data_task_started || source.actual_ingestion_allowed || source.real_row_data_present || source.row_body_read || Number(source.checked_row_count ?? 0) > 0 || source.motion_dataset_executable || source.runtime_readiness_claimed || source.production_readiness_claimed || source.owner_confirmation_confirmed || source.blocker_resolved || source.priority1_status === "RESOLVED" || source.go_nogo_status === "go");
+  const blockedReasons = ["final_actual_data_preauth_blocker_gate_planning_only", "final_actual_data_preauth_blocker_gate_no_actual_data_preauthorized", "final_actual_data_preauth_blocker_gate_no_real_row_ingestion", "final_actual_data_preauth_blocker_gate_no_row_body_read", "final_actual_data_preauth_blocker_gate_priority1_blocked", "final_actual_data_preauth_blocker_gate_checked_row_count_zero", "final_actual_data_preauth_blocker_gate_no_go_preserved"];
+  if (rejectedAttempt) blockedReasons.push("final_actual_data_preauth_blocker_gate_rejected_state_promotion");
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_BLOCKER_GATE_SCHEMA,
+    motion_dataset_final_actual_data_preauth_blocker_gate_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    preauth_blocker_gate_only_boundary: true,
+    no_actual_data_preauthorized_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    preauth_blocker_gate_only: true,
+    actual_data_preauthorized: false,
+    actual_data_task_started: false,
+    actual_ingestion_allowed: false,
+    real_row_data_present: false,
+    row_body_read: false,
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    go_nogo_status: "no_go",
+    blocker_resolved: false,
+    required_preauth_blockers: [...LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_REQUIRED_BLOCKERS],
+    required_preauth_clearance_conditions: [...LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_CLEARANCE_CONDITIONS],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_real_data_go_nogo_required_before_advance_approval",
+    boundary_policy: { ...createBoundaryPolicy(), planning_only: true, preauth_blocker_gate_only: true, no_actual_data_preauthorized: true, no_real_row_ingestion: true, no_row_body_read: true, no_motion_execution: true, no_runtime_readiness_claim: true, no_production_readiness_claim: true },
+  };
+  assertSafePublicObject(summary, "motion dataset final actual data preauth blocker gate summary");
   return summary;
 }
 
