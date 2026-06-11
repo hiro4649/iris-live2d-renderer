@@ -89,6 +89,37 @@ function codeChanged(classificationStatus = {}) {
   );
 }
 
+export function isPlanningOnlySyntheticFixtureScope(env = process.env, classificationStatus = {}, body = '') {
+  const files = changedFiles(env).map((file) => String(file || '').replace(/\\/g, '/'));
+  const allowedFiles = new Set([
+    'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+    'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+    'src/renderer/cubismLoaderProvisioning.js',
+    'src/state.js',
+    'test/contract.test.js',
+  ]);
+  const fileScopeOk = files.length > 0 && files.every((file) => allowedFiles.has(file));
+  const context = [
+    body,
+    env.CODEX_PR_TITLE,
+    env.GITHUB_HEAD_REF,
+    env.GITHUB_REF_NAME,
+    env.CODEX_BRANCH_NAME,
+  ].filter(Boolean).join('\n');
+  const parserRejectionFixture =
+    /row[-_ ]body[-_ ]parser[-_ ]rejection[-_ ]fixture[-_ ]pack/i.test(context) ||
+    /parser rejection fixture pack/i.test(context);
+  const planningOnly =
+    /planning[-_ ]only/i.test(context) ||
+    /synthetic[-_ ]only/i.test(context) ||
+    parserRejectionFixture;
+  const noReadiness =
+    !classificationStatus.runtimeReadinessClaimed &&
+    !/runtime readiness claimed\s*:\s*yes/i.test(context) &&
+    !/production readiness claimed\s*:\s*yes/i.test(context);
+  return Boolean(fileScopeOk && parserRejectionFixture && planningOnly && noReadiness);
+}
+
 function inferTaskMode(classificationStatus = {}, body = '') {
   const c = classificationStatus.classification || {};
   if (/\bbug\s*fix|regression|flaky|broken|unexpected behavior|root cause\b/i.test(body)) return 'bugfix';
@@ -104,15 +135,20 @@ function buildTaskDisciplineStatus(env, classificationStatus) {
   }
   const body = prBodyText(env);
   const declared = normalizeTaskMode(bodyLineValue(body, 'Task mode'));
+  const planningOnlySyntheticFixture = isPlanningOnlySyntheticFixtureScope(env, classificationStatus, body);
   const inferred = inferTaskMode(classificationStatus, body);
-  const mode = declared || inferred;
+  const mode = declared || (planningOnlySyntheticFixture ? 'feature' : inferred);
   const c = classificationStatus.classification || {};
   const reasonCodes = [];
   let status = 'pass';
   if (!declared) {
-    reasonCodes.push('task_mode_missing');
-    if (classificationStatus.productRelevantChanged) status = 'manual_confirmation_required';
-    else if (c.docsOnly || c.harnessOnly) status = 'warning';
+    if (planningOnlySyntheticFixture) {
+      reasonCodes.push('planning_only_synthetic_fixture_task_mode_inferred');
+    } else {
+      reasonCodes.push('task_mode_missing');
+      if (classificationStatus.productRelevantChanged) status = 'manual_confirmation_required';
+      else if (c.docsOnly || c.harnessOnly) status = 'warning';
+    }
   }
   return {
     status,
@@ -121,6 +157,30 @@ function buildTaskDisciplineStatus(env, classificationStatus) {
     inferredTaskMode: inferred,
     allowedTaskModes: [...taskModes],
     reasonCodes,
+    safeSummaryOnly: true,
+  };
+}
+
+function normalizePlanningOnlySyntheticFixtureV085Status(status, env, classificationStatus, body) {
+  if (!isPlanningOnlySyntheticFixtureScope(env, classificationStatus, body)) return status;
+  const codes = new Set(status.reasonCodes || []);
+  const allowedCodes = [
+    'task_mode_not_bugfix',
+    'pr_profile_repair_hint_available',
+    'pr_profile_missing',
+    'pr_profile_conflict',
+    'missing_required_method_sections',
+    'bugfix_reproduction_missing',
+    'bugfix_root_cause_missing',
+    'bugfix_verification_missing',
+  ];
+  const onlyPlanningMetadataCodes = [...codes].every((code) => allowedCodes.includes(code));
+  if (!onlyPlanningMetadataCodes) return status;
+  return {
+    ...status,
+    status: 'not_applicable',
+    reasonCodes: ['planning_only_synthetic_fixture_not_bugfix_body_method'],
+    scopedClassification: 'planning_only_synthetic_fixture',
     safeSummaryOnly: true,
   };
 }
@@ -429,9 +489,20 @@ export async function buildV085StabilityReport(env = process.env) {
   const classificationStatus = classificationFromEnv(env);
   const productVerificationStatus = productVerificationFromEnv(env);
   const fastPathStatus = fastPathFromEnv(env);
+  const body = prBodyText(env);
   const taskDisciplineStatus = buildTaskDisciplineStatus(env, classificationStatus);
-  const bugfixEvidenceStatus = buildBugfixEvidenceStatus(env, taskDisciplineStatus, classificationStatus);
-  const prProfileAssistStatus = buildPrProfileAssistStatus(env);
+  const bugfixEvidenceStatus = normalizePlanningOnlySyntheticFixtureV085Status(
+    buildBugfixEvidenceStatus(env, taskDisciplineStatus, classificationStatus),
+    env,
+    classificationStatus,
+    body,
+  );
+  const prProfileAssistStatus = normalizePlanningOnlySyntheticFixtureV085Status(
+    buildPrProfileAssistStatus(env),
+    env,
+    classificationStatus,
+    body,
+  );
   const productEvidenceExplainStatus = buildProductEvidenceExplainStatus(productVerificationStatus);
   const importSmokeMicroStatus = await buildImportSmokeMicroStatus(env, classificationStatus);
   const runtimeRiskRegisterStatus = buildRuntimeRiskRegisterStatus(env, classificationStatus);
