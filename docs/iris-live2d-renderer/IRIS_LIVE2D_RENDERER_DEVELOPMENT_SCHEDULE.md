@@ -455,6 +455,20 @@ Future actual validation still requires a separate owner-confirmed actual data t
 
 No runtime readiness or production readiness is claimed by this stub.
 
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-SUBMISSION-REJECTION-FIXTURE-PACK1
+
+Status: planning-only synthetic rejection fixture pack added.
+
+This task adds safe public rejection fixture labels for future owner row data submission review. It is synthetic-only and rejection-fixture-only: it does not receive an owner submission, accept a submission, read actual files, read row bodies, parse JSONL or CSV, ingest rows, create owner confirmation, confirm owner approval, execute motion, or collect evidence.
+
+The rejection fixture pack keeps the current boundary intact: owner submission received remains false, owner submission accepted remains false, actual file read remains false, actual row content accepted remains false, actual ingestion remains disallowed, checked row count remains 0, real row data remains absent, priority1 remains BLOCKED, motion dataset remains non-executable, trusted loader allowlist remains disabled, and go/no-go remains no_go.
+
+Accepted safe rejection fixture cases are synthetic labels for missing source hash, unsupported format, missing owner scope, redacted raw field, no data present, and checksum preflight missing-file blocking. Rejected submission attempt cases cover raw row bodies, actual file values, private references, credentials, endpoint values, commands, owner private notes, owner confirmation claims, readiness claims, priority1 resolved claims, and motion executable claims.
+
+Future actual rejection validation still requires a separate owner-confirmed actual data task with private file handling, source hash review, declared row count review, redaction and audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
+No runtime readiness or production readiness is claimed by this fixture pack.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 Status: planning-only checksum preflight manifest added.
