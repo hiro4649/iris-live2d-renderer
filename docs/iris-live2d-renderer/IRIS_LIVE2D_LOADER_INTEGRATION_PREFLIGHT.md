@@ -619,3 +619,8 @@ The audit execution request envelope is planning-only. It records future audit i
 ## LIVE2D-MOTION-DATASET-ACTUAL-DATA-TASK-RUNBOOK-NO-ACTION-PACKET1
 
 The actual data task runbook packet is planning-only and no-action. It lists safe future runbook steps and blockers without starting an actual data task, performing external actions, reading row bodies, ingesting rows, confirming owner approval, resolving priority1, or claiming runtime or production readiness.
+
+
+## LIVE2D-MOTION-DATASET-FINAL-OWNER-ACTUAL-DATA-PACKET1
+
+The final owner actual-data packet is planning-only. It lists future owner packet sections and blockers without creating or confirming owner confirmation, authorizing actual data work, reading files, reading row bodies, ingesting rows, resolving priority1, making the motion dataset executable, or claiming runtime or production readiness.
