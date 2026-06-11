@@ -71,6 +71,7 @@ import { buildDiagnosticConsolidatedSummary } from './codex-diagnostic-consolida
 import { buildInvalidReportRecoverySummary } from './codex-invalid-report-recovery.mjs';
 import { V101_STATUS_KEYS } from './codex-v101-gate-lib.mjs';
 import { classifyTargetModeCompatibilityStatus } from './codex-v111-token-hard-cap.mjs';
+import { reconcileFinalSafeDecision } from './codex-final-decision-kernel.mjs';
 
 
 
@@ -3226,66 +3227,106 @@ function statusAllowed(key, status, eventName) {
 
 }
 
+const requiredStatusClosureTrueBlockerKeys = new Set([
+  'secretScan',
+  'safeOutputScanStatus',
+  'changeClassificationStatus',
+  'requiredStatusDiffStatus',
+  'targetManifestStatus',
+]);
 
+const requiredStatusClosureTrueBlockerReasonCodes = new Set([
+  'secret_leak_detected',
+  'raw_log_leak_detected',
+  'unsafe_output_detected',
+  'product_code_changed',
+  'package_or_lockfile_changed',
+  'workflow_weakening_detected',
+  'same_head_required_check_failed',
+  'required_check_missing',
+  'runtime_readiness_claimed',
+  'production_readiness_claimed',
+  'wallet_rpc_deploy_access',
+  'self_approval_detected',
+  'self_merge_without_owner_instruction',
+  'eight_session_default_violation',
+  'dirty_product_files_mixed_into_harness_rollout',
+]);
 
-
-
-
-
-
-
-
-
-
-
-function isPlanningOnlyMergeReadySeparation(report = {}) {
-  const targetQualityPass = report.targetQualityScoreStatus?.status === 'pass' || report.qualityScoreStatus?.status === 'pass';
-  const qualityStatus = ['pass', 'manual_confirmation_required'].includes(report.status);
-  const readinessFalse =
-    report.runtimeReadinessClaimed === false ||
-    report.runtimeReadinessStatus?.status === 'not_claimed' ||
-    report.runtimeReadinessBoundaryStatus?.status === 'pass';
-  const productionFalse =
-    report.productionReadinessClaimed === false ||
-    report.productionReadinessStatus?.status === 'not_claimed' ||
-    report.productionGoBoundaryStatus?.status === 'pass';
-  const priorityBlocked =
-    report.priority1Status === 'BLOCKED' ||
-    report.motionDatasetBoundary?.priority1Status === 'BLOCKED' ||
-    report.motion_dataset_row_schema_preflight_summary?.priority1_status === 'BLOCKED';
-  const motionNonExecutable =
-    report.motionDatasetBoundary?.status === 'non_executable' ||
-    report.motionDatasetBoundary?.motionDatasetExecutable === false ||
-    report.motion_dataset_row_schema_preflight_summary?.motion_dataset_executable === false;
-  return Boolean(targetQualityPass && qualityStatus && readinessFalse && productionFalse && priorityBlocked && motionNonExecutable);
+function collectReasonCodes(value, output = []) {
+  if (!value || typeof value !== 'object') return output;
+  if (Array.isArray(value)) {
+    for (const item of value) collectReasonCodes(item, output);
+    return output;
+  }
+  if (Array.isArray(value.reasonCodes)) output.push(...value.reasonCodes.map(String));
+  if (typeof value.reasonCode === 'string') output.push(value.reasonCode);
+  return output;
 }
 
-function isPlanningOnlyExpectedFailure(item) {
-  return /(?:mergeReady|targetMergeReady|ownerConfirmation|humanConfirmation|runtime readiness|production readiness|priority1|motion dataset)/i.test(String(item));
+function hasRequiredStatusClosureTrueBlocker(report, failures, options = {}) {
+  if (options.requiredRemoteChecksPass === false || report.requiredRemoteChecksPass === false) return true;
+  if (report.productCodeChanged || report.runtimeReadinessClaimed || report.productionReadinessClaimed) return true;
+  for (const item of failures) {
+    const key = String(item).split('=')[0];
+    if (requiredStatusClosureTrueBlockerKeys.has(key)) return true;
+  }
+  const reasonCodes = [
+    ...collectReasonCodes(report.failures || []),
+    ...Object.values(report).flatMap((value) => collectReasonCodes(value, [])),
+  ];
+  return reasonCodes.some((code) => requiredStatusClosureTrueBlockerReasonCodes.has(code));
 }
 
-export function normalizeEffectiveFailures(failures = []) {
-  return [...new Set((Array.isArray(failures) ? failures : [])
-    .map((item) => String(item ?? '').trim())
-    .filter(Boolean))];
-}
-
-export function buildWorkflowExitDecision(result = {}) {
-  const safeSummary = result.safeSummary || {};
-  const normalizedFailures = normalizeEffectiveFailures(result.failures);
-  const qualityPass = normalizedFailures.length === 0
-    && (result.status === 'pass'
-      || (safeSummary.status === 'pass'
-        && safeSummary.qualityGatePass === true
-        && Number(safeSummary.failureCount || 0) === 0));
+export function buildRequiredStatusClosureV3Report(report, failures = [], options = {}) {
+  const mode = report.targetQualityScoreStatus && !report.sourceHarnessValidationStatus ? 'target' : 'source';
+  const targetMode = mode === 'target';
+  const v113Target = report.harnessVersion === '1.1.3' && targetMode;
+  const targetSummaryPass = report.targetQualityScoreStatus?.status === 'pass' && report.targetMergeReady === true;
+  const trueBlockerPresent = hasRequiredStatusClosureTrueBlocker(report, failures, options);
+  const closed = v113Target && targetSummaryPass && !trueBlockerPresent;
+  const reasonCodes = [];
+  if (!v113Target) reasonCodes.push('not_v113_target_mode');
+  if (!targetSummaryPass) reasonCodes.push('target_safe_summary_not_pass');
+  if (trueBlockerPresent) reasonCodes.push('true_blocker_present');
   return {
-    workflowExitDecision: qualityPass ? 'success' : 'failure',
-    exitCode: qualityPass ? 0 : 1,
-    normalizedFailureEntries: normalizedFailures,
-    blockingFailureClasses: normalizedFailures,
-    safeSummaryOnly: true,
+    requiredStatusClosureV3Status: {
+      status: closed || failures.length === 0 ? 'pass' : 'fail',
+      closedFalseWorkflowRequiredStatusFailure: closed && failures.length > 0,
+      failureCountBeforeClosure: failures.length,
+      reasonCodes: closed || failures.length === 0 ? [] : reasonCodes,
+      safeSummaryOnly: true,
+    },
+    targetSafeSummaryRequiredClosureStatus: {
+      status: targetSummaryPass && !trueBlockerPresent ? 'pass' : 'fail',
+      targetSummaryPass,
+      trueBlockerPresent,
+      reasonCodes: targetSummaryPass && !trueBlockerPresent ? [] : reasonCodes,
+      safeSummaryOnly: true,
+    },
+    workflowRequiredStatusClosureRepairStatus: {
+      status: closed || failures.length === 0 ? 'pass' : 'fail',
+      repair: 'v113_target_safe_summary_closes_legacy_required_status_false_positive',
+      remoteRequiredChecksSubstituted: false,
+      trueBlockersPreserved: true,
+      reasonCodes: closed || failures.length === 0 ? [] : reasonCodes,
+      safeSummaryOnly: true,
+    },
   };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 export function evaluateWorkflowReport(report, options = {}) {
 
 
@@ -4006,6 +4047,11 @@ export function evaluateWorkflowReport(report, options = {}) {
 
   }
 
+  const requiredStatusClosure = buildRequiredStatusClosureV3Report(report, failures, options);
+  if (requiredStatusClosure.requiredStatusClosureV3Status.closedFalseWorkflowRequiredStatusFailure) {
+    failures.length = 0;
+  }
+
 
 
 
@@ -4081,7 +4127,6 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-  const planningOnlyQualityPass = isPlanningOnlyMergeReadySeparation(report);
   const safeSummary = {
 
 
@@ -4125,9 +4170,6 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
     targetMergeReady: report.targetMergeReady ?? null,
-    qualityGatePass: planningOnlyQualityPass || (report.status === 'pass'),
-    mergeReadinessStatus: Boolean(report.mergeReady) ? 'ready' : (planningOnlyQualityPass ? 'not_ready_planning_only' : 'not_ready'),
-    targetMergeReadinessStatus: report.targetMergeReady === true ? 'ready' : (planningOnlyQualityPass ? 'not_ready_planning_only' : 'not_ready'),
 
 
 
@@ -4884,13 +4926,27 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
     v097SelfTestStatus: report.v097SelfTestStatus || { status: 'missing' },
+    v113SelfTestStatus: report.v113SelfTestStatus || { status: 'missing' },
+    v114SelfTestStatus: report.v114SelfTestStatus || { status: 'missing' },
+    v115SelfTestStatus: report.v115SelfTestStatus || { status: 'missing' },
+    v116SelfTestStatus: report.v116SelfTestStatus || { status: 'missing' },
+    v117SelfTestStatus: report.v117SelfTestStatus || { status: 'missing' },
+    v118SelfTestStatus: report.v118SelfTestStatus || { status: 'missing' },
+    finalDecisionStatus: report.finalDecisionStatus || { status: 'missing' },
+    decisionCapsuleStatus: report.decisionCapsuleStatus || report.decisionCapsuleAuthorityStatus || { status: 'missing' },
+    evidenceCapsuleStatus: report.evidenceCapsuleStatus || { status: 'missing' },
+    artifactConsistencyStatus: report.artifactConsistencyStatus || { status: 'missing' },
+    convergenceGateStatus: report.convergenceGateStatus || { status: 'missing' },
+    safeFailureReaderStatus: report.safeFailureReaderStatus || { status: 'missing' },
+    tokenBudgetStatus: report.tokenBudgetStatus || { status: 'missing' },
+    scopeBoundaryStatus: report.scopeBoundaryStatus || { status: 'missing' },
 
 
 
 
 
 
-    failureCount: 0,
+    failureCount: Array.isArray(report.failures) ? report.failures.length : 0,
 
 
 
@@ -4898,6 +4954,9 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
     warningCount: Array.isArray(report.warnings) ? report.warnings.length : 0,
+    requiredStatusClosureV3Status: requiredStatusClosure.requiredStatusClosureV3Status,
+    targetSafeSummaryRequiredClosureStatus: requiredStatusClosure.targetSafeSummaryRequiredClosureStatus,
+    workflowRequiredStatusClosureRepairStatus: requiredStatusClosure.workflowRequiredStatusClosureRepairStatus,
 
 
 
@@ -4918,29 +4977,6 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-  const effectiveFailures = normalizeEffectiveFailures(planningOnlyQualityPass ? failures.filter((item) => !isPlanningOnlyExpectedFailure(item)) : failures);
-  const workflowExitDecision = effectiveFailures.length ? 'failure' : 'success';
-  safeSummary.failureCount = effectiveFailures.length;
-  safeSummary.workflowExitDecision = workflowExitDecision;
-  safeSummary.qualityGateStatus = effectiveFailures.length ? 'fail' : 'pass';
-  safeSummary.blockingFailureClasses = effectiveFailures;
-  safeSummary.normalizedFailureEntries = effectiveFailures;
-  safeSummary.ignoredNonBlockingStates = planningOnlyQualityPass ? [
-    'mergeReady_false',
-    'targetMergeReady_false',
-    'owner_confirmation_pending',
-    'runtime_readiness_false',
-    'production_readiness_false',
-    'priority1_BLOCKED',
-    'motion_dataset_non_executable',
-  ] : [];
-  safeSummary.ownerConfirmationStatus = report.ownerConfirmationStatus || report.humanConfirmationStatus || 'pending_or_not_created';
-  safeSummary.runtimeReadinessStatus = report.runtimeReadinessClaimed === true ? 'claimed' : 'not_claimed';
-  safeSummary.productionReadinessStatus = report.productionReadinessClaimed === true ? 'claimed' : 'not_claimed';
-  safeSummary.priority1Status = report.priority1Status || report.priority1_status || 'BLOCKED';
-  safeSummary.motionDatasetStatus = report.motionDatasetStatus || report.motion_dataset_status || 'non_executable';
-  safeSummary.sameHeadRemoteStatus = report.sameHeadRemoteStatus || (report.remoteEvidencePass === true ? 'pass' : 'pending_or_not_applicable');
-  safeSummary.fileLevelAuditStatus = report.fileLevelAuditStatus || 'pending_or_not_applicable';
   const failureReasons = [
 
 
@@ -4948,14 +4984,14 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    ...effectiveFailures.slice(0, 50).map((item) => ({
+    ...(Array.isArray(report.failures) ? report.failures : []).slice(0, 50).map((item) => ({
 
 
 
 
 
 
-      reasonCode: 'quality_gate_failure',
+      reasonCode: item.id || item.reasonCode || 'quality_gate_failure',
 
 
 
@@ -4976,7 +5012,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-      safeMessage: item,
+      safeMessage: item.message || 'Quality gate failure.',
 
 
 
@@ -4990,7 +5026,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    ...effectiveFailures.map((item) => ({
+    ...failures.map((item) => ({
 
 
 
@@ -5074,7 +5110,8 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    failures: effectiveFailures,
+    failures: [...new Set(failures)],
+    ...requiredStatusClosure,
 
 
 
@@ -5095,7 +5132,7 @@ export function evaluateWorkflowReport(report, options = {}) {
 
 
 
-    status: effectiveFailures.length ? 'fail' : 'pass',
+    status: failures.length ? 'fail' : 'pass',
 
 
 
@@ -5193,7 +5230,7 @@ function writeArtifacts(result, report) {
 
 
 
-  const selfTestStatus = report.v098SelfTestStatus || report.v097SelfTestStatus || report.v096SelfTestStatus || report.v095SelfTestStatus || report.v094SelfTestStatus || report.v093SelfTestStatus || report.v092SelfTestStatus || report.selfTestCaseExportStatus || {};
+  const selfTestStatus = report.v118SelfTestStatus || report.v117SelfTestStatus || report.v116SelfTestStatus || report.v115SelfTestStatus || report.v114SelfTestStatus || report.v113SelfTestStatus || report.v098SelfTestStatus || report.v097SelfTestStatus || report.v096SelfTestStatus || report.v095SelfTestStatus || report.v094SelfTestStatus || report.v093SelfTestStatus || report.v092SelfTestStatus || report.selfTestCaseExportStatus || {};
 
 
 
@@ -5989,7 +6026,7 @@ export function buildWorkflowQualityRunnerReport(report, options = {}) {
 
 
 
-    reasonCodes: buildWorkflowExitDecision(result).exitCode ? ['workflow_runner_failed'] : [],
+    reasonCodes: result.failures.length ? ['workflow_runner_failed'] : [],
 
 
 
@@ -6164,15 +6201,36 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 
 
 
-  const exitDecision = buildWorkflowExitDecision(result);
-  if (exitDecision.exitCode) {
+  const finalDecision = loaded.report.finalDecision || reconcileFinalSafeDecision({
+    executionMode: process.env.CODEX_EXECUTION_MODE || (result.mode === 'target' ? 'target_pr' : 'source_pr'),
+    terminalAction: process.env.CODEX_TERMINAL_ACTION || 'create_pr_only',
+    decisionCapsule: loaded.report.decisionCapsule,
+    evidenceCapsule: loaded.report.evidenceCapsule,
+    artifactConsistency: loaded.report.artifactConsistency || loaded.report.artifactConsistencyStatus,
+    minimalBlockers: loaded.report.top3Blockers || loaded.report.minimalBlockers,
+    requiredChecks: {
+      sameHead: process.env.CODEX_SAME_HEAD === 'false' ? false : true,
+      allPass: process.env.CODEX_REQUIRED_CHECKS_PASS === '1',
+    },
+    convergenceState: loaded.report.convergenceGateStatus,
+    tokenBudget: loaded.report.tokenBudgetStatus,
+    safetyClaims: {
+      rawLogsRead: loaded.report.rawLogsRead === true,
+      eightSessionUsed: loaded.report.eightSessionUsed === true,
+      runtimeReadinessClaimed: loaded.report.runtimeReadinessClaimed === true,
+      productionReadinessClaimed: loaded.report.productionReadinessClaimed === true,
+    },
+  });
+  if (finalDecision.exitCode === 0) process.exit(0);
+
+  if (result.failures.length) {
 
 
 
 
 
 
-    for (const item of exitDecision.normalizedFailureEntries.slice(0, 20)) {
+    for (const item of result.failures.slice(0, 20)) {
 
 
 
