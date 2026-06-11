@@ -441,6 +441,20 @@ Required future receipt metadata labels are request id, expected file format, ex
 
 No runtime readiness or production readiness is claimed by this packet.
 
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-METADATA-VALIDATOR-STUB1
+
+Status: planning-only metadata validator stub added.
+
+This task adds a safe metadata validator stub for future owner row data submission review. It validates only safe metadata label requirements and does not validate real data, accept files, read row bodies, parse JSONL or CSV, calculate hashes, ingest rows, create owner confirmation, approve ingestion, execute motion, or collect evidence.
+
+The metadata validator stub keeps the current boundary intact: owner submission received remains false, owner submission accepted remains false, actual file read remains false, actual hash calculated remains false, actual row content accepted remains false, actual ingestion remains disallowed, checked row count remains 0, real row data remains absent, priority1 remains BLOCKED, motion dataset remains non-executable, trusted loader allowlist remains disabled, and go/no-go remains no_go.
+
+Required future metadata labels are submission request id, declared file format, declared row count, source hash, hash algorithm, schema version, dataset name, dataset version label, dataset split plan, audit run id, auditor version, owner confirmation scope, and safe next action. Allowed file format labels are jsonl and csv; allowed hash algorithm labels are sha256 and sha512.
+
+Future actual validation still requires a separate owner-confirmed actual data task with private file handling, source hash review, declared row count review, redaction and audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
+No runtime readiness or production readiness is claimed by this stub.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 Status: planning-only checksum preflight manifest added.

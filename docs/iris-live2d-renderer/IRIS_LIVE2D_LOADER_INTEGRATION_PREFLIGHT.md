@@ -445,6 +445,18 @@ The receipt stub keeps `owner_submission_received` false, `owner_submission_acce
 
 Future actual row submission requires a separate owner-confirmed task with row_id-backed JSONL or CSV data, source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
+## LIVE2D-MOTION-DATASET-OWNER-ROW-DATA-METADATA-VALIDATOR-STUB1
+
+This is a metadata validator stub only. It lists the safe metadata labels a future owner row data submission must provide, but it does not validate real data, does not accept files, does not read row bodies, does not parse JSONL or CSV, does not calculate hashes, and does not approve ingestion.
+
+Safe public status labels include `motion_dataset_owner_row_data_metadata_validator_stub_status`, `planning_only_boundary`, `metadata_validator_stub_only_boundary`, `metadata_only_boundary`, `no_submission_accepted_boundary`, `no_actual_file_read_boundary`, `no_actual_hash_calculation_boundary`, `no_actual_row_content_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_metadata_labels`, `allowed_file_format_labels`, `allowed_hash_algorithm_labels`, `required_validator_rejection_reasons`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+Required metadata labels are `submission_request_id`, `declared_file_format`, `declared_row_count`, `source_hash`, `hash_algorithm`, `schema_version`, `dataset_name`, `dataset_version_label`, `dataset_split_plan`, `audit_run_id`, `auditor_version`, `owner_confirmation_scope`, and `safe_next_action`. Allowed file format labels are `jsonl` and `csv`; allowed hash algorithm labels are `sha256` and `sha512`. These are metadata labels only and are not real file validation.
+
+The metadata validator stub keeps `owner_submission_received` false, `owner_submission_accepted` false, `actual_file_read` false, `actual_hash_calculated` false, `actual_file_content_accepted` false, `actual_row_content_accepted` false, `actual_ingestion_allowed` false, `real_row_data_present` false, `checked_row_count` 0, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future actual metadata validation requires a separate owner-confirmed actual data task with private file handling, redaction review, source hash review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 This manifest is planning-only checksum preflight metadata. It defines safe public labels for a future owner-confirmed row file checksum review, but it does not read any actual file, does not calculate any real hash, does not accept a file reference, does not accept file content, and does not ingest rows.
