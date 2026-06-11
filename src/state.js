@@ -16,6 +16,7 @@ import {
   createMotionDatasetRealRowMissingDataFailClosedGateSummary,
   createMotionDatasetOwnerRowDataSubmissionPacketSummary,
   createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary,
+  createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
   createMotionDatasetRowSchemaPreflightSummary,
@@ -147,6 +148,7 @@ export function createRendererState({
       const motionDatasetRealRowMissingDataFailClosedGate = createMotionDatasetRealRowMissingDataFailClosedGateSummary();
       const motionDatasetOwnerRowDataSubmissionPacket = createMotionDatasetOwnerRowDataSubmissionPacketSummary();
       const motionDatasetOwnerRowDataSubmissionReceiptStub = createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary();
+      const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -231,6 +233,7 @@ export function createRendererState({
           motion_dataset_real_row_missing_data_fail_closed_gate_summary: motionDatasetRealRowMissingDataFailClosedGate,
           motion_dataset_owner_row_data_submission_packet_summary: motionDatasetOwnerRowDataSubmissionPacket,
           motion_dataset_owner_row_data_submission_receipt_stub_summary: motionDatasetOwnerRowDataSubmissionReceiptStub,
+          motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -265,6 +268,7 @@ export function createRendererState({
           motion_dataset_real_row_missing_data_fail_closed_gate_summary: motionDatasetRealRowMissingDataFailClosedGate,
           motion_dataset_owner_row_data_submission_packet_summary: motionDatasetOwnerRowDataSubmissionPacket,
           motion_dataset_owner_row_data_submission_receipt_stub_summary: motionDatasetOwnerRowDataSubmissionReceiptStub,
+          motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
@@ -340,6 +344,7 @@ export function createRendererState({
         motion_dataset_real_row_missing_data_fail_closed_gate_summary: status.renderer_health.motion_dataset_real_row_missing_data_fail_closed_gate_summary,
         motion_dataset_owner_row_data_submission_packet_summary: status.renderer_health.motion_dataset_owner_row_data_submission_packet_summary,
         motion_dataset_owner_row_data_submission_receipt_stub_summary: status.renderer_health.motion_dataset_owner_row_data_submission_receipt_stub_summary,
+        motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
         cue_capability_confirmed: status.cue_capability.real_capability_confirmed,
@@ -471,6 +476,7 @@ export function createRendererState({
       const motionDatasetRealRowMissingDataFailClosedGate = createMotionDatasetRealRowMissingDataFailClosedGateSummary();
       const motionDatasetOwnerRowDataSubmissionPacket = createMotionDatasetOwnerRowDataSubmissionPacketSummary();
       const motionDatasetOwnerRowDataSubmissionReceiptStub = createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary();
+      const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
         sceneId: state.sceneId,
@@ -514,6 +520,7 @@ export function createRendererState({
       response.motion_dataset_real_row_missing_data_fail_closed_gate_summary = motionDatasetRealRowMissingDataFailClosedGate;
       response.motion_dataset_owner_row_data_submission_packet_summary = motionDatasetOwnerRowDataSubmissionPacket;
       response.motion_dataset_owner_row_data_submission_receipt_stub_summary = motionDatasetOwnerRowDataSubmissionReceiptStub;
+      response.motion_dataset_row_file_checksum_preflight_manifest_summary = motionDatasetRowFileChecksumPreflightManifest;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
       assertSafePublicObject(response, "browser runtime config");
@@ -610,6 +617,7 @@ export function createRendererState({
       const motionDatasetRealRowMissingDataFailClosedGate = createMotionDatasetRealRowMissingDataFailClosedGateSummary();
       const motionDatasetOwnerRowDataSubmissionPacket = createMotionDatasetOwnerRowDataSubmissionPacketSummary();
       const motionDatasetOwnerRowDataSubmissionReceiptStub = createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary();
+      const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const response = {
         ok: true,
         schema: "iris_live2d_browser_heartbeat_ack_v1",
@@ -678,6 +686,7 @@ export function createRendererState({
           motion_dataset_real_row_missing_data_fail_closed_gate_summary: motionDatasetRealRowMissingDataFailClosedGate,
           motion_dataset_owner_row_data_submission_packet_summary: motionDatasetOwnerRowDataSubmissionPacket,
           motion_dataset_owner_row_data_submission_receipt_stub_summary: motionDatasetOwnerRowDataSubmissionReceiptStub,
+          motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         },
@@ -712,6 +721,7 @@ export function createRendererState({
           motion_dataset_real_row_missing_data_fail_closed_gate_summary: motionDatasetRealRowMissingDataFailClosedGate,
           motion_dataset_owner_row_data_submission_packet_summary: motionDatasetOwnerRowDataSubmissionPacket,
           motion_dataset_owner_row_data_submission_receipt_stub_summary: motionDatasetOwnerRowDataSubmissionReceiptStub,
+          motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         boundary_policy: createBoundaryPolicy(),
