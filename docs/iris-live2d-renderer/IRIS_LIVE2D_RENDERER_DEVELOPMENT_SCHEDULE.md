@@ -612,3 +612,8 @@ The readiness non-sweetening sweep is planning-only. It lists planning surfaces 
 ## LIVE2D-MOTION-DATASET-PLANNING-COMPLETION-REVIEW-PACKET1
 
 The planning completion review packet is planning-only. It summarizes completed planning artifacts and unresolved blockers without claiming actual data readiness, approving ingestion, creating owner confirmation, resolving priority1, making the motion dataset executable, or claiming runtime or production readiness.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-SUBMISSION-FORM-SPEC1
+
+The owner submission form spec is planning-only. It defines safe future form labels and rejected raw/private fields without accepting real data, requesting row bodies, creating owner confirmation, ingesting rows, resolving priority1, or claiming runtime or production readiness.
