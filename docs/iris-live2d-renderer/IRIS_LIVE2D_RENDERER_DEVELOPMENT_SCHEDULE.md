@@ -629,3 +629,9 @@ Planning-only motion allowlist sync review added. It compares supported and expe
 ### LIVE2D-MOTION-DATASET-RENDERER-READY-DEPENDENCY-MATRIX1
 
 Planning-only renderer-ready dependency matrix added. Manifest presence, SSE, cue acceptance, browser smoke, fixtures, remote gates, and zero checked rows remain false-ready blockers rather than readiness evidence.
+
+### LIVE2D-MOTION-DATASET-REAL-ROW-SPLIT-POLICY-PACKET1
+
+Adds a planning-only split policy packet for future real row datasets. The packet records required split labels (`train`, `eval`, `test`, `review_only`, `fixture_only`, `quarantine_only`) and contamination blockers (`duplicate_row_id`, `expected_summary_leak`, `fixture_duplication`, `train_eval_overlap`, `source_hash_missing`, `split_missing`, `row_body_unread`, `priority1_blocked`, `owner_confirmation_missing`, `checked_row_count_zero`).
+
+Boundary: this packet is not ingestion approval, does not ingest rows, does not read row bodies, does not accept real data, does not create or confirm owner confirmation, does not execute motion, does not claim runtime readiness, does not claim production readiness, and does not resolve priority1. `checked_row_count` remains `0`, `real_row_data_present` remains false, `actual_ingestion_allowed` remains false, go/no-go remains `no_go`, and the motion dataset remains non-executable.

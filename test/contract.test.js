@@ -129,6 +129,9 @@ import {
   LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA,
   LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCIES,
   LIVE2D_MOTION_DATASET_RENDERER_READY_FALSE_READY_BLOCKERS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
+  LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -216,6 +219,7 @@ import {
   createMotionDatasetRealRowRedactionPolicyMatrixSummary,
   createMotionDatasetMotionAllowlistSyncReviewSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
+  createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -2135,6 +2139,76 @@ try {
   assert.equal(unsafeParserDryRunEnvelope.blocked_reasons.includes("parser_dry_run_envelope_rejected_state_promotion"), true);
   assertSafe(JSON.stringify(unsafeParserDryRunEnvelope));
   assertNoModelPathLeak(JSON.stringify(unsafeParserDryRunEnvelope));
+
+  const defaultSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
+  assert.equal(defaultSplitPolicyPacket.schema, LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA);
+  assert.equal(defaultSplitPolicyPacket.motion_dataset_real_row_split_policy_packet_status, "planning_only");
+  assert.equal(defaultSplitPolicyPacket.planning_only_boundary, true);
+  assert.equal(defaultSplitPolicyPacket.split_policy_packet_only_boundary, true);
+  assert.equal(defaultSplitPolicyPacket.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultSplitPolicyPacket.no_row_body_read_boundary, true);
+  assert.equal(defaultSplitPolicyPacket.no_split_ingestion_approval_boundary, true);
+  assert.equal(defaultSplitPolicyPacket.split_policy_packet_approves_ingestion, false);
+  assert.deepEqual(defaultSplitPolicyPacket.required_split_labels, [...LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS]);
+  assert.deepEqual(defaultSplitPolicyPacket.required_contamination_blockers, [...LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS]);
+  assert.equal(defaultSplitPolicyPacket.required_split_labels.includes("train"), true);
+  assert.equal(defaultSplitPolicyPacket.required_split_labels.includes("eval"), true);
+  assert.equal(defaultSplitPolicyPacket.required_split_labels.includes("test"), true);
+  assert.equal(defaultSplitPolicyPacket.required_split_labels.includes("review_only"), true);
+  assert.equal(defaultSplitPolicyPacket.required_split_labels.includes("fixture_only"), true);
+  assert.equal(defaultSplitPolicyPacket.required_split_labels.includes("quarantine_only"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("duplicate_row_id"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("expected_summary_leak"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("fixture_duplication"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("train_eval_overlap"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("source_hash_missing"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("split_missing"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("row_body_unread"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("priority1_blocked"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("owner_confirmation_missing"), true);
+  assert.equal(defaultSplitPolicyPacket.required_contamination_blockers.includes("checked_row_count_zero"), true);
+  assert.equal(defaultSplitPolicyPacket.real_row_data_present, false);
+  assert.equal(defaultSplitPolicyPacket.checked_row_count, 0);
+  assert.equal(defaultSplitPolicyPacket.actual_ingestion_allowed, false);
+  assert.equal(defaultSplitPolicyPacket.owner_confirmation_confirmed, false);
+  assert.equal(defaultSplitPolicyPacket.priority1_status, "BLOCKED");
+  assert.equal(defaultSplitPolicyPacket.go_nogo_status, "no_go");
+  assert.equal(defaultSplitPolicyPacket.motion_dataset_executable, false);
+  assert.equal(defaultSplitPolicyPacket.runtime_readiness_claimed, false);
+  assert.equal(defaultSplitPolicyPacket.production_readiness_claimed, false);
+  assertSafe(JSON.stringify(defaultSplitPolicyPacket));
+  assertNoModelPathLeak(JSON.stringify(defaultSplitPolicyPacket));
+
+  const unsafeSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary({
+    required_split_labels: ["train"],
+    split_policy_packet_approves_ingestion: true,
+    actual_ingestion_allowed: true,
+    real_row_data_present: true,
+    checked_row_count: 5,
+    row_body_read: true,
+    row_body_parser_enabled: true,
+    owner_confirmation_confirmed: true,
+    motion_dataset_executable: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_status: "RESOLVED",
+  });
+  assert.equal(unsafeSplitPolicyPacket.motion_dataset_real_row_split_policy_packet_status, "blocked");
+  assert.equal(unsafeSplitPolicyPacket.split_policy_packet_approves_ingestion, false);
+  assert.equal(unsafeSplitPolicyPacket.actual_ingestion_allowed, false);
+  assert.equal(unsafeSplitPolicyPacket.real_row_data_present, false);
+  assert.equal(unsafeSplitPolicyPacket.checked_row_count, 0);
+  assert.equal(unsafeSplitPolicyPacket.row_body_read, false);
+  assert.equal(unsafeSplitPolicyPacket.row_body_parser_enabled, false);
+  assert.equal(unsafeSplitPolicyPacket.owner_confirmation_confirmed, false);
+  assert.equal(unsafeSplitPolicyPacket.motion_dataset_executable, false);
+  assert.equal(unsafeSplitPolicyPacket.runtime_readiness_claimed, false);
+  assert.equal(unsafeSplitPolicyPacket.production_readiness_claimed, false);
+  assert.equal(unsafeSplitPolicyPacket.priority1_status, "BLOCKED");
+  assert.equal(unsafeSplitPolicyPacket.contamination_blockers.includes("split_policy_rejected_ingestion_or_readiness_attempt"), true);
+  assert.equal(unsafeSplitPolicyPacket.missing_split_labels.includes("eval"), true);
+  assertSafe(JSON.stringify(unsafeSplitPolicyPacket));
+  assertNoModelPathLeak(JSON.stringify(unsafeSplitPolicyPacket));
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);

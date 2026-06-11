@@ -661,3 +661,7 @@ Adds a planning-only motion allowlist sync review. Runtime supported motion styl
 ### LIVE2D-MOTION-DATASET-RENDERER-READY-DEPENDENCY-MATRIX1
 
 Adds a planning-only renderer-ready dependency matrix. It lists real dependencies and false-ready blockers, but it does not claim renderer_ready, execute the renderer, ingest rows, create owner confirmation, resolve priority1, or claim runtime or production readiness.
+
+### Motion Dataset Real Row Split Policy Packet
+
+`LIVE2D-MOTION-DATASET-REAL-ROW-SPLIT-POLICY-PACKET1` is a planning-only packet for future owner review. It defines split labels and contamination blockers without approving ingestion. It does not read row bodies, does not parse raw JSONL/CSV, does not accept actual data, does not calculate hashes, does not create owner confirmation, and does not claim readiness. Public status is safe-summary-only: `checked_row_count` is `0`, `real_row_data_present` is false, `actual_ingestion_allowed` is false, priority1 remains `BLOCKED`, and motion dataset execution remains disabled.

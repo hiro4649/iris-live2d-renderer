@@ -63,6 +63,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_liv
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -84,6 +85,28 @@ export const LIVE2D_EXPERIMENTAL_MOTION_LABELS = Object.freeze([
   "breathing_shift",
   "gaze_return",
   "neutral_breath",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS = Object.freeze([
+  "train",
+  "eval",
+  "test",
+  "review_only",
+  "fixture_only",
+  "quarantine_only",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS = Object.freeze([
+  "duplicate_row_id",
+  "expected_summary_leak",
+  "fixture_duplication",
+  "train_eval_overlap",
+  "source_hash_missing",
+  "split_missing",
+  "row_body_unread",
+  "priority1_blocked",
+  "owner_confirmation_missing",
+  "checked_row_count_zero",
 ]);
 
 export const LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS = Object.freeze([
@@ -8296,6 +8319,96 @@ function safeMotionDatasetLabel(value, fallback) {
   const text = String(value ?? "").trim();
   if (!text) return fallback;
   return /^[a-z0-9_]{1,80}$/u.test(text) ? text : "unsafe_label";
+}
+
+export function createMotionDatasetRealRowSplitPolicyPacketSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const requestedLabels = Array.isArray(source.required_split_labels)
+    ? source.required_split_labels.map((label) => safeMotionDatasetLabel(label, "unsafe_label"))
+    : LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS;
+  const missingLabels = LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS
+    .filter((label) => !requestedLabels.includes(label));
+  const unsafeAttempt = source.split_policy_packet_approves_ingestion === true
+    || source.actual_ingestion_allowed === true
+    || source.real_row_data_present === true
+    || source.actual_data_preauthorized === true
+    || source.actual_data_task_started === true
+    || source.owner_confirmation_confirmed === true
+    || source.row_body_read === true
+    || source.row_body_parser_enabled === true
+    || source.row_body_parser_executed === true
+    || source.motion_dataset_executable === true
+    || source.runtime_readiness_claimed === true
+    || source.production_readiness_claimed === true
+    || source.priority1_status === "RESOLVED";
+  const blockers = [
+    ...LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
+    ...missingLabels.map((label) => `missing_required_split_label_${label}`),
+    unsafeAttempt ? "split_policy_rejected_ingestion_or_readiness_attempt" : "",
+  ].filter(Boolean);
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_real_row_split_policy_packet_status: missingLabels.length || unsafeAttempt ? "blocked" : "planning_only",
+    planning_only_boundary: true,
+    split_policy_packet_only_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    no_split_ingestion_approval_boundary: true,
+    split_policy_packet_only: true,
+    split_policy_packet_approves_ingestion: false,
+    required_split_labels: [...LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS],
+    provided_split_labels: requestedLabels,
+    missing_split_labels: missingLabels,
+    required_contamination_blockers: [...LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS],
+    contamination_blockers: [...new Set(blockers)],
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    actual_data_preauthorized: false,
+    actual_data_task_started: false,
+    owner_confirmation_confirmed: false,
+    owner_submission_received: false,
+    owner_submission_accepted: false,
+    actual_row_content_accepted: false,
+    row_body_read: false,
+    row_body_parser_enabled: false,
+    row_body_parser_executed: false,
+    parser_dry_run_executed: false,
+    redaction_scan_executed: false,
+    audit_execution_started: false,
+    real_ingestion_audit_event_created: false,
+    rollback_ready: false,
+    actual_data_accepted: false,
+    priority1_status: "BLOCKED",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    motion_dataset_status: "non_executable",
+    motion_dataset_executable: false,
+    motion_execution_enabled: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    trusted_loader_allowlist_enabled: false,
+    safe_next_action: "future_owner_confirmed_actual_data_task_required_before_any_split_ingestion",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_actual_file_read: true,
+      no_actual_hash_calculation: true,
+      no_owner_confirmation_creation: true,
+      no_motion_execution: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset real row split policy packet summary");
+  return summary;
 }
 
 function goNoGoReasons({
