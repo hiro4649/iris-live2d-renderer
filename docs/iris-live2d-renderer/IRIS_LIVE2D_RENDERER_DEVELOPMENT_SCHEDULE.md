@@ -639,3 +639,7 @@ Boundary: this packet is not ingestion approval, does not ingest rows, does not 
 ### LIVE2D-MOTION-DATASET-SOURCE-HASH-OWNER-CHECKLIST1
 
 Planning-only source hash owner checklist added. Future real hash verification still requires a separate owner-confirmed actual data task; this task performs no file read, no hash calculation, no row ingestion, no owner confirmation, no readiness claim, and keeps checked_row_count at 0.
+
+### LIVE2D-MOTION-DATASET-FINAL-OWNER-WAIT-FOR-DATA-GATE1
+
+Planning-only final owner wait-for-data gate added. It keeps owner confirmation false, actual data task started false, checked_row_count 0, go/no-go no_go, priority1 BLOCKED, and the motion dataset non-executable until a separate owner-confirmed actual data task exists.

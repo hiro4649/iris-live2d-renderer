@@ -669,3 +669,7 @@ Adds a planning-only renderer-ready dependency matrix. It lists real dependencie
 ### LIVE2D-MOTION-DATASET-SOURCE-HASH-OWNER-CHECKLIST1
 
 Adds a planning-only source hash owner checklist for future real-row review. It lists required owner-facing labels and hash verification blockers without reading files, calculating real hashes, accepting owner files, ingesting rows, creating owner confirmation, enabling trusted loader allowlist, resolving priority1, or claiming runtime or production readiness.
+
+### LIVE2D-MOTION-DATASET-FINAL-OWNER-WAIT-FOR-DATA-GATE1
+
+Adds a planning-only final owner wait-for-data gate. It records wait reasons and future owner actions without creating owner confirmation, confirming owner scope, accepting submissions, starting actual data work, ingesting rows, enabling motion execution, resolving priority1, or claiming runtime or production readiness.
