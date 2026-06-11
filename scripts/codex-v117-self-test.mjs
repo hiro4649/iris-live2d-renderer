@@ -20,6 +20,8 @@ import {
 import {
   buildRemoteNpmDiagnosticNormalizationInput,
   buildProductPlanningPrePushTargetReport,
+  applyPlanningOnlySyntheticFixtureBestOfNExemption,
+  isPlanningOnlySyntheticFixtureBody,
   shouldUseProductPlanningPrePushTargetFastPath,
 } from './codex-local-quality-gate.mjs';
 import {
@@ -67,6 +69,40 @@ const allowedCapsule = buildDecisionCapsuleV117({
   safeNextAction: 'merge_after_same_head_required_checks',
 });
 
+const planningOnlySyntheticFixtureBody = `
+PR profile: product_r3
+Task mode: feature
+Risk level: R3
+Goal: Add synthetic-only fixture pack.
+Product verification: local checks pass.
+Affected entrypoints: safe status summaries.
+Failure paths considered: parser execution remains blocked.
+Residual risks: future owner confirmation required.
+Human confirmation needed: yes.
+Planning-only boundary: preserved.
+Synthetic-only boundary: preserved.
+Parser rejection fixture pack: synthetic-only fixture pack.
+No actual data task is started.
+No-parser-execution boundary: row_body_parser_executed remain false.
+Runtime readiness and production readiness are not claimed.
+Owner confirmation: not created and not confirmed.
+Priority1 status: BLOCKED.
+Motion dataset boundary: non-executable and checked_row_count remains 0.
+`;
+
+function bestOfNReportAfterExemption(body) {
+  const report = {
+    bestOfNEvidenceStatus: {
+      status: 'fail',
+      reasonCodes: ['best_of_n_required'],
+      required: true,
+      safeSummaryOnly: true,
+    },
+  };
+  applyPlanningOnlySyntheticFixtureBestOfNExemption(report, { CODEX_PR_BODY: body });
+  return report.bestOfNEvidenceStatus;
+}
+
 const cases = [
   test('decision_capsule_authority_preserved', () => validateDecisionCapsuleAuthority(goodCapsule).status === 'pass'),
   test('decision_capsule_must_not_delegate_to_pr_body', () => validateDecisionCapsuleAuthority({ ...goodCapsule, prBodyMachineEvidence: true }).status === 'fail'),
@@ -106,6 +142,9 @@ const cases = [
   test('legacy_compatibility_compression_fixture_only', () => validateLegacyCompressionFixture({ emittedLegacyStatuses: 0, maxLegacyStatuses: 0 }).status === 'pass'),
   test('boundary_registry_compression_fixture_only', () => validateBoundaryProfileFixture({ policyIds: ['raw_logs_no', 'eight_session_no'], repeatedForbiddenTextCount: 0 }).status === 'pass'),
   test('boundary_registry_blocks_repeated_forbidden_text', () => validateBoundaryProfileFixture({ repeatedForbiddenTextCount: 1 }).status === 'fail'),
+  test('planning_only_synthetic_fixture_body_is_scoped', () => isPlanningOnlySyntheticFixtureBody(planningOnlySyntheticFixtureBody)),
+  test('planning_only_synthetic_fixture_best_of_n_not_required', () => bestOfNReportAfterExemption(planningOnlySyntheticFixtureBody).status === 'not_applicable'),
+  test('real_r3_without_planning_fixture_still_requires_best_of_n', () => bestOfNReportAfterExemption('PR profile: product_r3\nTask mode: feature\nRisk level: R3\nGoal: real product change').status === 'fail'),
   test('operator_visible_status_limit_under_12', () => OPERATOR_STATUS_KEYS.length <= 12),
   test('remote_npm_direct_product_evidence_shape_preserved', () => {
     const input = buildRemoteNpmDiagnosticNormalizationInput({
