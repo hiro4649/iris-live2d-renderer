@@ -61,6 +61,7 @@ export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA = "iris
 export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_planning_completion_review_packet_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_live2d_motion_dataset_owner_submission_form_spec_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
+export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1619,6 +1620,16 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_ACTIONS = Object.fr
   "safe_category_only",
   "manual_owner_review_required",
   "block_actual_ingestion",
+]);
+
+export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REJECTION_REASONS = Object.freeze([
+  "unsupported_motion_label",
+  "experimental_motion_executable_attempt",
+  "runtime_allowlist_mismatch",
+  "renderer_capability_missing",
+  "recovery_capability_missing",
+  "priority1_blocked",
+  "checked_row_count_zero",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7300,6 +7311,39 @@ export function createMotionDatasetRealRowRedactionPolicyMatrixSummary(input = {
     ],
     safeNextAction: "future_owner_data_submission_requires_separate_redaction_scan_task",
     context: "motion dataset real row redaction policy matrix summary",
+  }, input);
+}
+
+export function createMotionDatasetMotionAllowlistSyncReviewSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA,
+    statusKey: "motion_dataset_motion_allowlist_sync_review_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      motion_allowlist_sync_review_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_runtime_allowlist_enablement_boundary: true,
+      motion_allowlist_sync_review_only: true,
+    },
+    flags: {
+      motion_allowlist_sync_review_only: true,
+      motion_allowlist_sync_claims_runtime_enabled: false,
+      motion_dataset_executable: false,
+      actual_ingestion_allowed: false,
+    },
+    arrays: {
+      runtime_supported_motion_styles: [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES],
+      experimental_review_only_motion_labels: [...LIVE2D_EXPERIMENTAL_MOTION_LABELS],
+      required_motion_label_rejection_reasons: [...LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REJECTION_REASONS],
+    },
+    blockedReasons: [
+      "motion_allowlist_sync_review_planning_only",
+      "motion_allowlist_sync_review_no_motion_execution",
+      "motion_allowlist_sync_review_no_runtime_enablement",
+      "motion_allowlist_sync_review_priority1_blocked",
+    ],
+    safeNextAction: "keep_experimental_motion_labels_review_only_until_renderer_support_exists",
+    context: "motion dataset motion allowlist sync review summary",
   }, input);
 }
 

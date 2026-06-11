@@ -653,3 +653,7 @@ The owner submission form spec is planning-only. It defines safe future form lab
 ### LIVE2D-MOTION-DATASET-REAL-ROW-REDACTION-POLICY-MATRIX1
 
 Adds a planning-only redaction policy matrix for future owner review. The matrix defines safe public categories and required actions, but it does not scan data, execute redaction, read files, accept row content, ingest rows, create owner confirmation, or claim runtime or production readiness. priority1 remains BLOCKED and the motion dataset remains non-executable with checked_row_count 0.
+
+### LIVE2D-MOTION-DATASET-MOTION-ALLOWLIST-SYNC-REVIEW1
+
+Adds a planning-only motion allowlist sync review. Runtime supported motion styles remain unchanged, experimental labels remain review-only, no motion is executed, no runtime allowlist is enabled, priority1 remains BLOCKED, and checked_row_count remains 0.
