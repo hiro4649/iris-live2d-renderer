@@ -6061,6 +6061,28 @@ export function buildWorkflowQualityRunnerReport(report, options = {}) {
 
 
 
+
+
+export function normalizeEffectiveFailures(failures = []) {
+  return (Array.isArray(failures) ? failures : [failures])
+    .map((failure) => String(failure || '').trim())
+    .filter(Boolean);
+}
+
+export function buildWorkflowExitDecision(input = {}) {
+  const status = input.status || input.safeSummary?.status || 'fail';
+  const failures = normalizeEffectiveFailures(input.failures || input.safeSummary?.failures || []);
+  const qualityGatePass = input.safeSummary?.qualityGatePass === true || status === 'pass';
+  const blockingFailureClasses = failures;
+  const exitCode = status === 'pass' && qualityGatePass && blockingFailureClasses.length === 0 ? 0 : 1;
+  return {
+    workflowExitDecision: exitCode === 0 ? 'success' : 'failure',
+    exitCode,
+    blockingFailureClasses,
+    safeSummaryOnly: true,
+  };
+}
+
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 
 
