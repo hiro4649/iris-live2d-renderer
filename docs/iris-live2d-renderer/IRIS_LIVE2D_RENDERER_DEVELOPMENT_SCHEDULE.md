@@ -514,3 +514,9 @@ Status: planning-only complete when the matching PR is merged. This task adds a 
 Boundaries preserved: no parser execution, no actual row content, no row body read, no real row ingestion, no owner confirmation creation, no go decision, no runtime readiness, no production readiness, priority1 remains `BLOCKED`, and motion dataset remains non-executable with `checked_row_count` fixed at `0`.
 
 Next safe step after this task is an ingestion audit trail stub or a separate owner-confirmed actual data task plan. Actual parser execution, actual file reads, actual hash calculation, real row ingestion, and trusted loader enablement remain out of scope.
+
+### LIVE2D-MOTION-DATASET-INGESTION-AUDIT-TRAIL-STUB1
+
+This task adds a planning-only ingestion audit trail stub. It lists the future safe audit event fields and audit redaction policy needed before actual row ingestion can be reviewed, but it does not create real audit events, ingest rows, read row bodies, calculate actual file values, execute motion, create owner confirmation, approve go/no-go, claim runtime readiness, claim production readiness, or resolve priority1.
+
+The boundary remains unchanged: real ingestion audit event creation remains false, actual data task started remains false, checked row count remains 0, actual ingestion remains disallowed, real row data remains absent, motion dataset remains non-executable, trusted loader allowlist remains disabled, priority1 remains BLOCKED, and go/no-go remains no_go. Future audit event creation requires a separate owner-confirmed actual data task with fresh real resident evidence and go/no-go blocker review.

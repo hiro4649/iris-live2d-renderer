@@ -40,6 +40,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_P
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA = "iris_live2d_motion_dataset_actual_data_task_entry_gate_v1";
 export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA = "iris_live2d_motion_dataset_row_body_parser_contract_stub_v1";
 export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_row_body_parser_rejection_fixture_pack_v1";
+export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_audit_trail_stub_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1021,6 +1022,38 @@ export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SAFE_P
   "production_readiness_claim_rejected",
   "priority1_resolved_claim_rejected",
   "motion_executable_claim_rejected",
+]);
+
+export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REQUIRED_EVENT_FIELDS = Object.freeze([
+  "audit_event_id",
+  "actor_role",
+  "action_type",
+  "safe_target_label",
+  "result_status",
+  "timestamp_label",
+  "request_id",
+  "dataset_name",
+  "source_hash_label",
+  "declared_row_count_label",
+  "schema_version_label",
+  "redaction_status",
+  "owner_confirmation_ref",
+  "go_nogo_ref",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REDACTION_POLICY = Object.freeze([
+  "no_dataset_row_material",
+  "no_file_location_value",
+  "no_file_content_material",
+  "no_cue_material",
+  "no_renderer_material",
+  "no_network_location_value",
+  "no_credential_value",
+  "no_private_location_value",
+  "no_owner_note_material",
+  "no_memo_material",
+  "no_command_material",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6368,6 +6401,84 @@ export function createMotionDatasetRowBodyParserRejectionFixturePackSummary(inpu
     },
   };
   assertSafePublicObject(summary, "motion dataset row body parser rejection fixture pack summary");
+  return summary;
+}
+
+export function createMotionDatasetIngestionAuditTrailStubSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(
+    source.real_ingestion_audit_event_created ||
+      source.actual_data_task_started ||
+      source.actual_row_content_accepted ||
+      source.row_body_read ||
+      source.real_row_data_present ||
+      source.actual_ingestion_allowed ||
+      source.motion_dataset_executable ||
+      source.runtime_readiness_claimed ||
+      source.production_readiness_claimed ||
+      source.owner_confirmation_confirmed ||
+      source.priority1_status === "RESOLVED" ||
+      source.go_nogo_status === "go"
+  );
+  const blockedReasons = [
+    "ingestion_audit_trail_stub_planning_only",
+    "ingestion_audit_trail_stub_no_real_ingestion_audit_event",
+    "ingestion_audit_trail_stub_no_real_row_ingestion",
+    "ingestion_audit_trail_stub_no_row_body_read",
+    "ingestion_audit_trail_stub_priority1_blocked",
+    "ingestion_audit_trail_stub_motion_dataset_non_executable",
+    "ingestion_audit_trail_stub_no_go_preserved",
+  ];
+  if (rejectedAttempt) {
+    blockedReasons.push("ingestion_audit_trail_stub_rejected_state_promotion");
+  }
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA,
+    motion_dataset_ingestion_audit_trail_stub_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    audit_trail_stub_only_boundary: true,
+    no_real_ingestion_audit_event_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    audit_trail_stub_only: true,
+    real_ingestion_audit_event_created: false,
+    actual_data_task_started: false,
+    actual_row_content_accepted: false,
+    row_body_read: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    owner_confirmation_status: "schema_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_future_audit_event_fields: [...LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REQUIRED_EVENT_FIELDS],
+    required_audit_redaction_policy: [...LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REDACTION_POLICY],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_actual_data_task_required_before_real_ingestion_audit_event",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      audit_trail_stub_only: true,
+      no_real_ingestion_audit_event: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset ingestion audit trail stub summary");
   return summary;
 }
 
