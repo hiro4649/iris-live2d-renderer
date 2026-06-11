@@ -109,6 +109,9 @@ import {
   LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LEDGER_SCHEMA,
   LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LABELS,
   LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_UNFREEZE_CONDITIONS,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -189,6 +192,7 @@ import {
   createMotionDatasetActualDataTaskRunbookNoActionPacketSummary,
   createMotionDatasetFinalOwnerActualDataPacketSummary,
   createMotionDatasetActualDataFreezeStateLedgerSummary,
+  createMotionDatasetOwnerWaitStatePacketSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -5698,6 +5702,8 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_final_owner_actual_data_packet_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_actual_data_freeze_state_ledger_summary.motion_dataset_actual_data_freeze_state_ledger_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_actual_data_freeze_state_ledger_summary.actual_data_frozen_pending_owner_task, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_wait_state_packet_summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_owner_wait_state_packet_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -5960,6 +5966,8 @@ try {
   assert.equal(provisionedStatus.motion_dataset_final_owner_actual_data_packet_summary.actual_data_preauthorized, false);
   assert.equal(provisionedStatus.motion_dataset_actual_data_freeze_state_ledger_summary.motion_dataset_actual_data_freeze_state_ledger_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_actual_data_freeze_state_ledger_summary.actual_data_task_started, false);
+  assert.equal(provisionedStatus.motion_dataset_owner_wait_state_packet_summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_owner_wait_state_packet_summary.actual_data_task_started, false);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6107,6 +6115,8 @@ try {
   assert.equal(provisionedHealth.motion_dataset_final_owner_actual_data_packet_summary.actual_data_task_started, false);
   assert.equal(provisionedHealth.motion_dataset_actual_data_freeze_state_ledger_summary.motion_dataset_actual_data_freeze_state_ledger_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_actual_data_freeze_state_ledger_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedHealth.motion_dataset_owner_wait_state_packet_summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_owner_wait_state_packet_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -7279,4 +7289,22 @@ function assertNoModelPathLeak(serialized) {
   assert.equal(summary.priority1_status, "BLOCKED");
   assert.deepEqual(summary.required_frozen_state_labels, [...LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LABELS]);
   assert.deepEqual(summary.required_unfreeze_conditions, [...LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_UNFREEZE_CONDITIONS]);
+}
+
+{
+  const summary = createMotionDatasetOwnerWaitStatePacketSummary({ owner_confirmation_confirmed: true, actual_data_task_started: true, actual_ingestion_allowed: true, real_row_data_present: true, checked_row_count: 7, priority1_status: "RESOLVED" });
+  assert.equal(summary.schema, LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA);
+  assert.equal(summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
+  assert.equal(summary.owner_wait_state_packet_only_boundary, true);
+  assert.equal(summary.no_owner_confirmation_created_boundary, true);
+  assert.equal(summary.no_actual_data_task_started_boundary, true);
+  assert.equal(summary.owner_confirmation_required, true);
+  assert.equal(summary.owner_confirmation_confirmed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.real_row_data_present, false);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.required_waiting_on_owner_items, [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS]);
+  assert.deepEqual(summary.required_waiting_on_system_items, [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS]);
 }
