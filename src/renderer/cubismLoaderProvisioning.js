@@ -50,6 +50,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_LEDGER_SCHEMA = "i
 export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_BLOCKER_GATE_SCHEMA = "iris_live2d_motion_dataset_final_actual_data_preauth_blocker_gate_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_owner_confirmation_preflight_envelope_v1";
 export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_row_file_quarantine_staging_envelope_v1";
+export const LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_ENVELOPE_STUB_SCHEMA = "iris_live2d_motion_dataset_redaction_scan_execution_envelope_stub_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1290,6 +1291,25 @@ export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_REQUIRED_BLOCKERS
   "audit_missing",
   "priority1_blocked",
   "checked_row_count_zero",
+]);
+
+export const LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_REQUIRED_INPUTS = Object.freeze([
+  "quarantine_ref",
+  "source_hash_label",
+  "declared_row_count_label",
+  "schema_version_label",
+  "redaction_policy_ref",
+  "owner_confirmation_ref",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_REQUIRED_OUTPUTS = Object.freeze([
+  "redaction_scan_status",
+  "unsafe_field_count",
+  "rejected_row_count",
+  "safe_candidate_count",
+  "redaction_summary_ref",
+  "safe_next_action",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6896,6 +6916,20 @@ function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status,
   };
   assertSafePublicObject(summary, context);
   return summary;
+}
+
+export function createMotionDatasetRedactionScanExecutionEnvelopeStubSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_ENVELOPE_STUB_SCHEMA,
+    statusKey: "motion_dataset_redaction_scan_execution_envelope_stub_status",
+    status: "planning_only_blocked",
+    boundaries: { redaction_scan_execution_envelope_stub_only_boundary: true, no_redaction_scan_executed_boundary: true, no_actual_file_read_boundary: true, no_real_row_ingestion_boundary: true, no_row_body_read_boundary: true, redaction_scan_execution_envelope_stub_only: true },
+    flags: { redaction_scan_executed: false },
+    arrays: { required_future_redaction_scan_inputs: [...LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_REQUIRED_INPUTS], required_future_redaction_scan_outputs: [...LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_REQUIRED_OUTPUTS] },
+    blockedReasons: ["redaction_scan_execution_envelope_stub_planning_only","redaction_scan_execution_envelope_stub_no_redaction_scan_executed","redaction_scan_execution_envelope_stub_no_actual_file_read","redaction_scan_execution_envelope_stub_no_real_row_ingestion","redaction_scan_execution_envelope_stub_priority1_blocked"],
+    safeNextAction: "future_owner_confirmed_redaction_scan_execution_required",
+    context: "motion dataset redaction scan execution envelope stub summary",
+  }, input);
 }
 
 export function createMotionDatasetRowFileQuarantineStagingEnvelopeSummary(input = {}) {
