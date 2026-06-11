@@ -56,6 +56,7 @@ export const LIVE2D_MOTION_DATASET_AUDIT_EXECUTION_REQUEST_ENVELOPE_SCHEMA = "ir
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_NO_ACTION_PACKET_SCHEMA = "iris_live2d_motion_dataset_actual_data_task_runbook_no_action_packet_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_ACTUAL_DATA_PACKET_SCHEMA = "iris_live2d_motion_dataset_final_owner_actual_data_packet_v1";
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LEDGER_SCHEMA = "iris_live2d_motion_dataset_actual_data_freeze_state_ledger_v1";
+export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_wait_state_packet_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1436,6 +1437,23 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_UNFREEZE_CONDITIONS = Obje
   "audit_execution_pass_future",
   "go_nogo_review_pass_future",
   "priority1_candidate_future",
+]);
+
+
+export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS = Object.freeze([
+  "owner_confirmation_scope",
+  "real_row_file_future",
+  "source_hash_future",
+  "declared_row_count_future",
+  "go_nogo_review_future",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS = Object.freeze([
+  "parser_dry_run_future",
+  "redaction_scan_future",
+  "audit_execution_future",
+  "fresh_resident_evidence_future",
+  "priority1_review_future",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7048,6 +7066,40 @@ function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status,
 
 
 
+
+
+export function createMotionDatasetOwnerWaitStatePacketSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA,
+    statusKey: "motion_dataset_owner_wait_state_packet_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      owner_wait_state_packet_only_boundary: true,
+      no_owner_confirmation_created_boundary: true,
+      no_actual_data_task_started_boundary: true,
+      owner_wait_state_packet_only: true,
+    },
+    flags: {
+      owner_confirmation_required: true,
+      owner_confirmation_confirmed: false,
+      actual_data_task_started: false,
+      actual_ingestion_allowed: false,
+      real_row_data_present: false,
+    },
+    arrays: {
+      required_waiting_on_owner_items: [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS],
+      required_waiting_on_system_items: [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS],
+    },
+    blockedReasons: [
+      "owner_wait_state_packet_planning_only",
+      "owner_wait_state_packet_no_owner_confirmation_created",
+      "owner_wait_state_packet_no_actual_data_task_started",
+      "owner_wait_state_packet_priority1_blocked",
+    ],
+    safeNextAction: "wait_for_future_owner_confirmation_and_system_prerequisites",
+    context: "motion dataset owner wait-state packet summary",
+  }, input);
+}
 
 export function createMotionDatasetActualDataFreezeStateLedgerSummary(input = {}) {
   return createMotionDatasetPlanningOnlyGateSummary({

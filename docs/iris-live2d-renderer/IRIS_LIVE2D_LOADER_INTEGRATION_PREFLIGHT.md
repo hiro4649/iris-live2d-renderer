@@ -629,3 +629,8 @@ The final owner actual-data packet is planning-only. It lists future owner packe
 ## LIVE2D-MOTION-DATASET-ACTUAL-DATA-FREEZE-STATE-LEDGER1
 
 The actual data freeze-state ledger is planning-only. It records that actual data remains frozen pending future owner-confirmed work and unfreeze conditions. It is not a production freeze, does not start actual data work, does not ingest rows, does not confirm owner approval, does not resolve priority1, and does not claim readiness.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-WAIT-STATE-PACKET1
+
+The owner wait-state packet is planning-only. It lists future items waiting on the owner and system without creating owner confirmation, starting actual data work, reading row bodies, ingesting rows, resolving priority1, or claiming runtime or production readiness.
