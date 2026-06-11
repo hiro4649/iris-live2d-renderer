@@ -28,6 +28,9 @@ import {
   buildRemoteNpmDiagnosticNormalizationReport,
 } from './codex-v099-gate-lib.mjs';
 import {
+  isPlanningOnlySyntheticFixtureScope,
+} from './codex-v085-stability-gate.mjs';
+import {
   buildArtifactConsistencyReport,
   classifySafeDetailUnavailable,
   validateArtifactConsistency,
@@ -90,6 +93,14 @@ Priority1 status: BLOCKED.
 Motion dataset boundary: non-executable and checked_row_count remains 0.
 `;
 
+const pr162ChangedFiles = [
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_LOADER_INTEGRATION_PREFLIGHT.md',
+  'docs/iris-live2d-renderer/IRIS_LIVE2D_RENDERER_DEVELOPMENT_SCHEDULE.md',
+  'src/renderer/cubismLoaderProvisioning.js',
+  'src/state.js',
+  'test/contract.test.js',
+].join('\n');
+
 function bestOfNReportAfterExemption(body) {
   const report = {
     bestOfNEvidenceStatus: {
@@ -145,6 +156,16 @@ const cases = [
   test('planning_only_synthetic_fixture_body_is_scoped', () => isPlanningOnlySyntheticFixtureBody(planningOnlySyntheticFixtureBody)),
   test('planning_only_synthetic_fixture_best_of_n_not_required', () => bestOfNReportAfterExemption(planningOnlySyntheticFixtureBody).status === 'not_applicable'),
   test('real_r3_without_planning_fixture_still_requires_best_of_n', () => bestOfNReportAfterExemption('PR profile: product_r3\nTask mode: feature\nRisk level: R3\nGoal: real product change').status === 'fail'),
+  test('v085_pr162_like_planning_fixture_scope_detected', () => isPlanningOnlySyntheticFixtureScope({
+    CODEX_CHANGED_FILES: pr162ChangedFiles,
+    GITHUB_HEAD_REF: 'codex/live2d-motion-dataset-row-body-parser-rejection-fixture-pack1',
+    CODEX_PR_BODY: planningOnlySyntheticFixtureBody,
+  }, { productRelevantChanged: true, runtimeReadinessClaimed: false, classification: {} }, planningOnlySyntheticFixtureBody)),
+  test('v085_actual_bugfix_not_planning_fixture_scope', () => !isPlanningOnlySyntheticFixtureScope({
+    CODEX_CHANGED_FILES: 'src/server.js',
+    GITHUB_HEAD_REF: 'codex/fix-runtime-bug',
+    CODEX_PR_BODY: 'Task mode: bugfix\nRoot cause: missing',
+  }, { productRelevantChanged: true, runtimeReadinessClaimed: false, classification: {} }, 'Task mode: bugfix\nRoot cause: missing')),
   test('operator_visible_status_limit_under_12', () => OPERATOR_STATUS_KEYS.length <= 12),
   test('remote_npm_direct_product_evidence_shape_preserved', () => {
     const input = buildRemoteNpmDiagnosticNormalizationInput({
