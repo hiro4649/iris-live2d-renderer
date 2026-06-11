@@ -16,6 +16,10 @@ import {
   buildArtifactConsistencyReport,
   resolveLoadBearingArtifacts,
 } from './codex-artifact-consistency-contract.mjs';
+import {
+  buildProductPlanningPrePushTargetReport,
+  shouldUseProductPlanningPrePushTargetFastPath,
+} from './codex-local-quality-gate.mjs';
 
 function test(name, fn) {
   try {
@@ -164,6 +168,28 @@ const cases = [
   test('product_progress_score_machine_only_if_present', () => true),
   test('contextual_scanner_policy_doc_fixture_non_blocking', () => true),
   test('pr_context_simulator_fixture_only_no_new_script', () => !fs.existsSync('scripts/codex-pr-context-simulator.mjs')),
+  test('target_pre_push_fast_path_keeps_remote_pending_not_merge_ready', () => {
+    const out = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    return out.status === 'pass' &&
+      out.pendingAfterPush === true &&
+      out.remoteEvidencePass === false &&
+      out.targetMergeReady === false &&
+      out.mergeReady === false;
+  }),
+  test('target_pre_push_fast_path_preserves_readiness_boundaries', () => {
+    const out = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    return out.runtimeReadinessClaimed === false &&
+      out.productionReadinessClaimed === false &&
+      out.priority1Status === 'BLOCKED' &&
+      out.checkedRowCount === 0 &&
+      out.motionDatasetBoundary?.status === 'non_executable';
+  }),
+  test('target_pre_push_fast_path_supports_harness_workflow_profile', () => shouldUseProductPlanningPrePushTargetFastPath({
+    CODEX_HARNESS_MODE: 'target',
+    CODEX_PR_PROFILE: 'harness_workflow_r3',
+    CODEX_PROFILE_COMPAT_MODE: 'off',
+    CODEX_REMOTE_EVIDENCE_PHASE: 'remote_evidence_required_after_push',
+  }) === true),
 ];
 
 const failures = cases.filter((item) => item.status !== 'pass');
