@@ -546,3 +546,9 @@ The public summary remains fail-closed: `motion_dataset_row_body_parser_rejectio
 Accepted fixture labels are safe synthetic rejection cases only. Rejected input attempt labels are exposed through safe public labels only; raw row bodies, file values, cue material, renderer material, credentials, private references, command-like requests, readiness claims, priority1-resolved claims, and motion-executable claims remain rejected and are not public evidence of parser execution.
 
 Future actual parser execution requires a separate owner-confirmed actual data task with fresh real resident evidence, go/no-go blocker resolution, redaction review, and a new safety gate. This fixture pack does not resolve priority1 and does not make the motion dataset executable.
+
+### LIVE2D-MOTION-DATASET-INGESTION-AUDIT-TRAIL-STUB1
+
+Adds a planning-only ingestion audit trail stub for future owner review. The stub defines required future audit event fields and a safe redaction policy, but it does not create a real ingestion audit event, start an actual data task, read row bodies, accept actual row content, ingest rows, execute motion, create owner confirmation, or claim readiness.
+
+Current boundary remains fail-closed: `real_ingestion_audit_event_created` is false, `actual_data_task_started` is false, `row_body_read` is false, `checked_row_count` remains `0`, `actual_ingestion_allowed` is false, priority1 remains `BLOCKED`, motion dataset remains non-executable, trusted loader allowlist remains disabled, and go/no-go remains `no_go`. Future real ingestion audit trail creation requires a separate owner-confirmed actual data task with fresh real resident evidence and go/no-go blocker review.
