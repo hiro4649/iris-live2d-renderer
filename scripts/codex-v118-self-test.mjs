@@ -184,12 +184,63 @@ const cases = [
       out.checkedRowCount === 0 &&
       out.motionDatasetBoundary?.status === 'non_executable';
   }),
+  test('canonical_remote_evidence_envelope_v1_present', () => {
+    const out = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    return out.canonicalRemoteEvidenceEnvelope?.evidenceEnvelopeVersion === 'v1' &&
+      out.canonicalRemoteEvidenceEnvelope?.evidenceKind === 'same_head_remote_quality_gate' &&
+      out.canonicalRemoteEvidenceEnvelope?.repo === 'hiro4649/iris-live2d-renderer' &&
+      out.canonicalRemoteEvidenceEnvelope?.headSha === 'abc' &&
+      out.canonicalRemoteEvidenceEnvelope?.merge?.remoteEvidencePass === false &&
+      out.canonicalRemoteEvidenceEnvelope?.merge?.targetMergeReady === false &&
+      out.canonicalRemoteEvidenceEnvelope?.merge?.mergeReady === false;
+  }),
+  test('task_profile_artifact_retains_mandatory_boundaries', () => {
+    const out = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    const required = out.taskProfileArtifact?.requiredBoundaries || [];
+    return out.taskProfileArtifact?.profileId === 'live2d_planning_only_product_r3_v1' &&
+      required.includes('priority1_blocked') &&
+      required.includes('checked_row_count_zero') &&
+      required.includes('motion_dataset_non_executable') &&
+      required.includes('runtime_readiness_not_claimed') &&
+      required.includes('owner_confirmation_not_confirmed');
+  }),
+  test('profile_compression_cannot_drop_stop_conditions', () => {
+    const out = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    return out.profileCompressionStatus?.status === 'pass' &&
+      out.profileCompressionStatus?.mandatoryStopConditionsRetained === true &&
+      out.profileCompressionStatus?.requiredBoundariesRetained === true &&
+      out.tokenHardBudgetStatus?.requiredBoundariesRetained?.includes('same_head_remote_required');
+  }),
+  test('failure_taxonomy_covers_next_action_repair_classes', () => {
+    const out = buildProductPlanningPrePushTargetReport({ headSha: 'abc' });
+    const labels = out.failureTaxonomyStatus?.labels || [];
+    return out.failureTaxonomyStatus?.status === 'pass' &&
+      out.failureTaxonomyStatus?.nextActionClassificationRequired === true &&
+      labels.includes('body_metadata_repair') &&
+      labels.includes('harness_only_repair') &&
+      labels.includes('same_head_remote_missing') &&
+      labels.includes('readiness_sweetening') &&
+      labels.includes('priority1_false_resolution');
+  }),
   test('target_pre_push_fast_path_supports_harness_workflow_profile', () => shouldUseProductPlanningPrePushTargetFastPath({
     CODEX_HARNESS_MODE: 'target',
     CODEX_PR_PROFILE: 'harness_workflow_r3',
     CODEX_PROFILE_COMPAT_MODE: 'off',
     CODEX_REMOTE_EVIDENCE_PHASE: 'remote_evidence_required_after_push',
   }) === true),
+  test('harness_workflow_profile_can_express_harness_only_scope', () => {
+    const out = buildProductPlanningPrePushTargetReport({
+      headSha: 'abc',
+      profileId: 'harness_only_workflow_r3_v1',
+      productFilesAllowed: false,
+      harnessFilesAllowed: true,
+    });
+    return out.taskProfileArtifact?.profileId === 'harness_only_workflow_r3_v1' &&
+      out.taskProfileArtifact?.fileScope?.productFilesAllowed === false &&
+      out.taskProfileArtifact?.fileScope?.harnessFilesAllowed === true &&
+      out.taskProfileArtifact?.fileScope?.packageLockAllowed === false &&
+      out.taskProfileArtifact?.fileScope?.sdkVendorAllowed === false;
+  }),
 ];
 
 const failures = cases.filter((item) => item.status !== 'pass');
