@@ -445,6 +445,18 @@ The receipt stub keeps `owner_submission_received` false, `owner_submission_acce
 
 Future actual row submission requires a separate owner-confirmed task with row_id-backed JSONL or CSV data, source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
+## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
+
+This manifest is planning-only checksum preflight metadata. It defines safe public labels for a future owner-confirmed row file checksum review, but it does not read any actual file, does not calculate any real hash, does not accept a file reference, does not accept file content, and does not ingest rows.
+
+Safe public status labels include `motion_dataset_row_file_checksum_preflight_manifest_status`, `planning_only_boundary`, `checksum_manifest_only_boundary`, `no_actual_file_read_boundary`, `no_actual_hash_calculation_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_hash_metadata_labels`, `required_hash_algorithm_labels`, `required_file_identity_labels`, `required_owner_confirmation_refs`, `actual_file_read`, `actual_hash_calculated`, `actual_file_reference_accepted`, `actual_file_content_accepted`, `real_row_data_present`, `checked_row_count`, `actual_ingestion_allowed`, `motion_dataset_executable`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+Required hash metadata labels are `source_hash`, `hash_algorithm`, `hash_scope`, `declared_row_count`, `schema_version`, `file_format`, `dataset_name`, `dataset_version_label`, `audit_run_id`, `auditor_version`, `owner_confirmation_scope`, and `safe_next_action`. Allowed algorithm labels are `sha256` and `sha512`; these are labels only and are not computed by this task.
+
+The checksum preflight manifest keeps `actual_file_read` false, `actual_hash_calculated` false, `actual_file_reference_accepted` false, `actual_file_content_accepted` false, `real_row_data_present` false, `checked_row_count` 0, `actual_ingestion_allowed` false, `motion_dataset_executable` false, `trusted_loader_allowlist_enabled` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future actual checksum verification requires a separate owner-confirmed task with the real file handled privately, fresh resident evidence, scoped owner confirmation, quarantine and redaction review, audit review, and go/no-go review.
+
 ## LIVE2D-MOTION-DATASET-REAL-ROW-FINAL-DRY-RUN-CHECKLIST1
 
 This checklist is planning-only final dry-run preparation for a future owner-provided real row ingestion task. It is not actual ingestion, not approval, not owner confirmation, not a go/no-go pass, and not runtime readiness.

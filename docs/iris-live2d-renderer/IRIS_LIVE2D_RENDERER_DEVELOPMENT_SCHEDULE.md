@@ -440,3 +440,17 @@ The receipt stub keeps the current boundary intact: owner submission received re
 Required future receipt metadata labels are request id, expected file format, expected source hash, expected declared row count, expected schema version, expected dataset split plan, expected audit run id, expected owner confirmation scope, and safe next action. Future actual row submission still requires a separate owner-confirmed actual data task with source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
 No runtime readiness or production readiness is claimed by this packet.
+
+## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
+
+Status: planning-only checksum preflight manifest added.
+
+This task adds safe public checksum metadata labels for future owner-confirmed row file review. It does not read an actual file, does not accept a file reference, does not accept file content, does not calculate a real hash, does not parse rows, does not ingest rows, does not create or confirm owner confirmation, does not execute motion, and does not collect evidence.
+
+The checksum manifest keeps the current boundary intact: actual file read remains false, actual hash calculated remains false, actual file reference accepted remains false, actual file content accepted remains false, priority1 remains BLOCKED, motion dataset remains non-executable, checked row count remains 0, actual ingestion remains disallowed, trusted loader allowlist remains disabled, and go/no-go remains no_go.
+
+Required future metadata labels are source hash, hash algorithm, hash scope, declared row count, schema version, file format, dataset name, dataset version label, audit run id, auditor version, owner confirmation scope, and safe next action. Allowed hash algorithm labels are sha256 and sha512, but this task does not compute them.
+
+Future actual checksum verification still requires a separate owner-confirmed task with private handling of the real file, source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
+No runtime readiness or production readiness is claimed by this manifest.
