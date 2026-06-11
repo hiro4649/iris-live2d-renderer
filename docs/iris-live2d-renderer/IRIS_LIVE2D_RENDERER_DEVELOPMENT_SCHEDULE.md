@@ -537,3 +537,8 @@ The boundary remains unchanged: parser dry-run execution remains false, row body
 ## LIVE2D-MOTION-DATASET-REAL-ROW-ACCEPTANCE-CRITERIA-CHECKLIST1
 
 Status: planning-only checklist. Future real row acceptance still requires owner confirmation, source hash review, metadata/checksum verification, parser dry-run, redaction scan, audit manifest, fresh resident evidence, and go/no-go review. This task does not approve actual data, does not start ingestion, keeps priority1 BLOCKED, and keeps the motion dataset non-executable.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-ACTUAL-DATA-TASK-HANDOFF-REVIEW-PACKET1
+
+Status: planning-only handoff packet. Future actual data task start still requires owner confirmation, parser dry-run review, redaction/audit review, rollback review, fresh resident evidence, and go/no-go review. This task starts no ingestion and claims no readiness.

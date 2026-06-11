@@ -569,3 +569,8 @@ Current boundary remains fail-closed: `row_body_parser_enabled` is false, `row_b
 ## LIVE2D-MOTION-DATASET-REAL-ROW-ACCEPTANCE-CRITERIA-CHECKLIST1
 
 The real row acceptance criteria checklist is planning-only. It defines future acceptance and rejection criteria for owner-confirmed real row review, but it is not approval and does not accept actual data. It does not read row bodies, ingest real rows, execute motion, resolve priority1, or claim runtime or production readiness. checked_row_count remains 0, actual_ingestion_allowed remains false, and motion dataset remains non-executable.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-ACTUAL-DATA-TASK-HANDOFF-REVIEW-PACKET1
+
+The owner actual data task handoff review packet is planning-only. It lists future owner review sections and confirmation scopes, but it creates no owner confirmation, does not start an actual data task, does not read row bodies, does not ingest rows, and does not change go/no-go. priority1 remains BLOCKED and motion dataset remains non-executable.

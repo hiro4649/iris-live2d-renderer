@@ -44,6 +44,7 @@ export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA = "iris_liv
 export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_rollback_plan_stub_v1";
 export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_parser_dry_run_envelope_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_CRITERIA_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_real_row_acceptance_criteria_checklist_v1";
+export const LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_actual_data_task_handoff_review_packet_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1130,6 +1131,37 @@ export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_REQUIRED_REJECTION_CRITER
   "go_nogo_no_go",
   "actual_file_unverified",
   "stale_evidence",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REQUIRED_REVIEW_SECTIONS = Object.freeze([
+  "missing_data_gate",
+  "owner_submission_packet",
+  "receipt_stub",
+  "metadata_validator_stub",
+  "checksum_preflight_manifest",
+  "submission_rejection_fixture_pack",
+  "actual_data_task_entry_gate",
+  "parser_contract_stub",
+  "parser_rejection_fixture_pack",
+  "ingestion_audit_trail_stub",
+  "rollback_plan_stub",
+  "parser_dry_run_envelope",
+  "acceptance_criteria_checklist",
+  "fresh_resident_evidence_requirement",
+  "go_nogo_blocker_map",
+  "trusted_loader_boundary",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REQUIRED_CONFIRMATION_SCOPES = Object.freeze([
+  "actual_row_data_submission",
+  "source_hash_review",
+  "row_body_parser_dry_run_review",
+  "redaction_scan_review",
+  "audit_trail_review",
+  "rollback_plan_review",
+  "go_nogo_review",
+  "no_runtime_readiness_claim_review",
+  "no_motion_execution_review",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6638,6 +6670,83 @@ export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) 
     },
   };
   assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
+  return summary;
+}
+
+export function createMotionDatasetOwnerActualDataTaskHandoffReviewPacketSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(
+    source.owner_confirmation_confirmed ||
+      source.owner_handoff_review_confirmed ||
+      source.actual_data_task_started ||
+      source.actual_ingestion_allowed ||
+      source.real_row_data_present ||
+      source.row_body_read ||
+      Number(source.checked_row_count ?? 0) > 0 ||
+      source.motion_dataset_executable ||
+      source.runtime_readiness_claimed ||
+      source.production_readiness_claimed ||
+      source.priority1_status === "RESOLVED" ||
+      source.go_nogo_status === "go"
+  );
+  const blockedReasons = [
+    "owner_actual_data_task_handoff_review_packet_planning_only",
+    "owner_actual_data_task_handoff_review_packet_no_owner_confirmation_created",
+    "owner_actual_data_task_handoff_review_packet_no_actual_data_task_started",
+    "owner_actual_data_task_handoff_review_packet_no_real_row_ingestion",
+    "owner_actual_data_task_handoff_review_packet_no_row_body_read",
+    "owner_actual_data_task_handoff_review_packet_priority1_blocked",
+    "owner_actual_data_task_handoff_review_packet_no_go_preserved",
+  ];
+  if (rejectedAttempt) blockedReasons.push("owner_actual_data_task_handoff_review_packet_rejected_state_promotion");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REVIEW_PACKET_SCHEMA,
+    motion_dataset_owner_actual_data_task_handoff_review_packet_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    handoff_review_packet_only_boundary: true,
+    no_owner_confirmation_created_boundary: true,
+    no_actual_data_task_started_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    handoff_review_packet_only: true,
+    owner_confirmation_required: true,
+    owner_confirmation_confirmed: false,
+    owner_handoff_review_confirmed: false,
+    actual_data_task_started: false,
+    actual_ingestion_allowed: false,
+    real_row_data_present: false,
+    row_body_read: false,
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_owner_review_sections: [...LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REQUIRED_REVIEW_SECTIONS],
+    required_owner_confirmation_scopes: [...LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REQUIRED_CONFIRMATION_SCOPES],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_actual_data_task_review_required_before_task_start",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      handoff_review_packet_only: true,
+      no_owner_confirmation_created: true,
+      no_actual_data_task_started: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset owner actual data task handoff review packet summary");
   return summary;
 }
 
