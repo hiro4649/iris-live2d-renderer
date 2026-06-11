@@ -579,3 +579,8 @@ The owner actual data task handoff review packet is planning-only. It lists futu
 ## LIVE2D-MOTION-DATASET-ACTUAL-DATA-NO-GO-SUMMARY-PROJECTION1
 
 The actual data no-go summary projection is planning-only. It preserves no_go, does not resolve blockers, does not start an actual data task, does not ingest rows, does not read row bodies, and does not claim readiness. priority1 remains BLOCKED and motion dataset remains non-executable.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-SUBMISSION-READINESS-LEDGER1
+
+The owner submission readiness ledger is planning-only. It lists available planning prerequisites and missing future prerequisites, but no submission is received or accepted. It does not read row bodies, ingest rows, resolve priority1, or claim readiness.

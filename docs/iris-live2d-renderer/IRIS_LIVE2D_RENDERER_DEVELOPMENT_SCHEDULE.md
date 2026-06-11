@@ -547,3 +547,8 @@ Status: planning-only handoff packet. Future actual data task start still requir
 ## LIVE2D-MOTION-DATASET-ACTUAL-DATA-NO-GO-SUMMARY-PROJECTION1
 
 Status: planning-only no-go projection. Required safe next actions remain future owner confirmation, future parser dry-run, future redaction scan, future audit, future go/no-go, and no runtime readiness claim.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-SUBMISSION-READINESS-LEDGER1
+
+Status: planning-only ledger. Missing prerequisites remain real row file, owner confirmation, fresh resident evidence, parser dry-run, redaction scan, audit result, go/no-go review, and positive checked_row_count.
