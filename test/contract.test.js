@@ -112,6 +112,9 @@ import {
   LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS,
   LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS,
+  LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA,
+  LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SURFACES,
+  LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_FALSE_READY_REJECTIONS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -193,6 +196,7 @@ import {
   createMotionDatasetFinalOwnerActualDataPacketSummary,
   createMotionDatasetActualDataFreezeStateLedgerSummary,
   createMotionDatasetOwnerWaitStatePacketSummary,
+  createMotionDatasetReadinessNonSweeteningSweepSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -5704,6 +5708,8 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_actual_data_freeze_state_ledger_summary.actual_data_frozen_pending_owner_task, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_owner_wait_state_packet_summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_owner_wait_state_packet_summary.owner_confirmation_confirmed, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_readiness_non_sweetening_sweep_summary.motion_dataset_readiness_non_sweetening_sweep_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_readiness_non_sweetening_sweep_summary.readiness_sweep_promoted_ready, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -5968,6 +5974,8 @@ try {
   assert.equal(provisionedStatus.motion_dataset_actual_data_freeze_state_ledger_summary.actual_data_task_started, false);
   assert.equal(provisionedStatus.motion_dataset_owner_wait_state_packet_summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_owner_wait_state_packet_summary.actual_data_task_started, false);
+  assert.equal(provisionedStatus.motion_dataset_readiness_non_sweetening_sweep_summary.motion_dataset_readiness_non_sweetening_sweep_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_readiness_non_sweetening_sweep_summary.renderer_ready, false);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6117,6 +6125,8 @@ try {
   assert.equal(provisionedHealth.motion_dataset_actual_data_freeze_state_ledger_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedHealth.motion_dataset_owner_wait_state_packet_summary.motion_dataset_owner_wait_state_packet_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_owner_wait_state_packet_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedHealth.motion_dataset_readiness_non_sweetening_sweep_summary.motion_dataset_readiness_non_sweetening_sweep_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_readiness_non_sweetening_sweep_summary.browser_cue_delivery_ready, false);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -7307,4 +7317,22 @@ function assertNoModelPathLeak(serialized) {
   assert.equal(summary.priority1_status, "BLOCKED");
   assert.deepEqual(summary.required_waiting_on_owner_items, [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS]);
   assert.deepEqual(summary.required_waiting_on_system_items, [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS]);
+}
+
+{
+  const summary = createMotionDatasetReadinessNonSweeteningSweepSummary({ readiness_sweep_promoted_ready: true, runtime_readiness_claimed: true, production_readiness_claimed: true, renderer_ready: true, browser_cue_delivery_ready: true, actual_ingestion_allowed: true, checked_row_count: 8, priority1_status: "RESOLVED" });
+  assert.equal(summary.schema, LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA);
+  assert.equal(summary.motion_dataset_readiness_non_sweetening_sweep_status, "planning_only_blocked");
+  assert.equal(summary.readiness_non_sweetening_sweep_only_boundary, true);
+  assert.equal(summary.no_readiness_promotion_boundary, true);
+  assert.equal(summary.readiness_sweep_promoted_ready, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.renderer_ready, false);
+  assert.equal(summary.browser_cue_delivery_ready, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.required_surfaces_checked, [...LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SURFACES]);
+  assert.deepEqual(summary.required_false_ready_rejection_labels, [...LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_FALSE_READY_REJECTIONS]);
 }
