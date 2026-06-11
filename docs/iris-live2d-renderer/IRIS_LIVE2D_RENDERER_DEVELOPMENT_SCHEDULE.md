@@ -602,3 +602,8 @@ The actual data freeze-state ledger is planning-only. It records that actual dat
 ## LIVE2D-MOTION-DATASET-OWNER-WAIT-STATE-PACKET1
 
 The owner wait-state packet is planning-only. It lists future items waiting on the owner and system without creating owner confirmation, starting actual data work, reading row bodies, ingesting rows, resolving priority1, or claiming runtime or production readiness.
+
+
+## LIVE2D-MOTION-DATASET-READINESS-NON-SWEETENING-SWEEP1
+
+The readiness non-sweetening sweep is planning-only. It lists planning surfaces and false-ready rejection labels to prevent schema, fixture, browser smoke, cue, SSE, remote gate, or owner packet existence from becoming runtime readiness, production readiness, owner confirmation, priority1 resolution, or motion dataset execution.

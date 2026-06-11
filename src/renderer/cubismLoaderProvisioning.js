@@ -57,6 +57,7 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_NO_ACTION_PACKET_SCH
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_ACTUAL_DATA_PACKET_SCHEMA = "iris_live2d_motion_dataset_final_owner_actual_data_packet_v1";
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LEDGER_SCHEMA = "iris_live2d_motion_dataset_actual_data_freeze_state_ledger_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_wait_state_packet_v1";
+export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA = "iris_live2d_motion_dataset_readiness_non_sweetening_sweep_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1454,6 +1455,59 @@ export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS = Object.freeze
   "audit_execution_future",
   "fresh_resident_evidence_future",
   "priority1_review_future",
+]);
+
+
+export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SURFACES = Object.freeze([
+  "schema_preflight",
+  "synthetic_fixture_pack",
+  "request_packet",
+  "dry_run_validator",
+  "quarantine_envelope",
+  "owner_handoff_packet",
+  "audit_manifest",
+  "redaction_scanner_fixture_pack",
+  "evidence_link_manifest",
+  "go_nogo_blocker_map",
+  "pre_ingestion_review_packet",
+  "final_dry_run_checklist",
+  "missing_data_gate",
+  "owner_submission_packet",
+  "receipt_stub",
+  "checksum_preflight_manifest",
+  "metadata_validator_stub",
+  "submission_rejection_fixture_pack",
+  "actual_data_task_entry_gate",
+  "parser_contract_stub",
+  "parser_rejection_fixture_pack",
+  "ingestion_audit_trail_stub",
+  "rollback_plan_stub",
+  "parser_dry_run_envelope",
+  "acceptance_criteria_checklist",
+  "owner_handoff_review_packet",
+  "no_go_summary_projection",
+  "submission_readiness_ledger",
+  "preauth_blocker_gate",
+  "owner_confirmation_preflight_envelope",
+  "quarantine_staging_envelope",
+  "redaction_scan_execution_envelope",
+  "parser_execution_request_envelope",
+  "audit_execution_request_envelope",
+  "runbook_no_action_packet",
+  "final_owner_packet",
+]);
+
+export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_FALSE_READY_REJECTIONS = Object.freeze([
+  "fixture_pass_is_not_ready",
+  "schema_exists_is_not_ready",
+  "sse_connected_is_not_ready",
+  "cue_accepted_is_not_ready",
+  "browser_smoke_is_not_ready",
+  "remote_gate_pass_is_not_ready",
+  "planning_surface_pass_is_not_ready",
+  "owner_packet_exists_is_not_confirmation",
+  "checked_row_count_zero_blocks_ready",
+  "priority1_blocks_ready",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7067,6 +7121,40 @@ function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status,
 
 
 
+
+
+export function createMotionDatasetReadinessNonSweeteningSweepSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA,
+    statusKey: "motion_dataset_readiness_non_sweetening_sweep_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      readiness_non_sweetening_sweep_only_boundary: true,
+      no_readiness_promotion_boundary: true,
+      readiness_non_sweetening_sweep_only: true,
+    },
+    flags: {
+      readiness_sweep_promoted_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready: false,
+      browser_cue_delivery_ready: false,
+      actual_ingestion_allowed: false,
+    },
+    arrays: {
+      required_surfaces_checked: [...LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SURFACES],
+      required_false_ready_rejection_labels: [...LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_FALSE_READY_REJECTIONS],
+    },
+    blockedReasons: [
+      "readiness_non_sweetening_sweep_planning_only",
+      "readiness_non_sweetening_sweep_no_readiness_promotion",
+      "readiness_non_sweetening_sweep_checked_row_count_zero",
+      "readiness_non_sweetening_sweep_priority1_blocked",
+    ],
+    safeNextAction: "continue_planning_without_readiness_promotion",
+    context: "motion dataset readiness non-sweetening sweep summary",
+  }, input);
+}
 
 export function createMotionDatasetOwnerWaitStatePacketSummary(input = {}) {
   return createMotionDatasetPlanningOnlyGateSummary({
