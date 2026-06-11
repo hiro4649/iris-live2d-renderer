@@ -481,6 +481,16 @@ The entry gate keeps `actual_data_task_started` false, `owner_submission_receive
 
 Future actual row intake requires a separate owner-confirmed actual data task with private file handling, source hash review, declared row count review, redaction and audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
+## LIVE2D-MOTION-DATASET-ROW-BODY-PARSER-CONTRACT-STUB1
+
+This is a row body parser contract stub only. It defines future row_id-backed JSONL/CSV parser fields and rejection categories, but it does not implement a parser, enable a parser, execute a parser, read row bodies, accept actual row content, ingest rows, execute motion, collect evidence, approve go, resolve priority1, or claim readiness.
+
+Safe public status labels include `motion_dataset_row_body_parser_contract_stub_status`, `planning_only_boundary`, `parser_contract_stub_only_boundary`, `no_parser_execution_boundary`, `no_actual_row_content_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_future_parser_fields`, `required_future_parser_rejection_reasons`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+The parser contract stub keeps `row_body_parser_enabled` false, `row_body_parser_executed` false, `actual_row_content_accepted` false, `row_body_read` false, `real_row_data_present` false, `checked_row_count` 0, `actual_ingestion_allowed` false, `motion_dataset_executable` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future parser implementation requires a separate owner-confirmed actual data task with private file handling, redaction review, source hash review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 This manifest is planning-only checksum preflight metadata. It defines safe public labels for a future owner-confirmed row file checksum review, but it does not read any actual file, does not calculate any real hash, does not accept a file reference, does not accept file content, and does not ingest rows.

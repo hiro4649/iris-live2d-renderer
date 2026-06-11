@@ -481,6 +481,18 @@ Future actual row intake still requires a separate owner-confirmed actual data t
 
 No runtime readiness or production readiness is claimed by this gate.
 
+## LIVE2D-MOTION-DATASET-ROW-BODY-PARSER-CONTRACT-STUB1
+
+Status: planning-only row body parser contract stub added.
+
+This task defines the future row_id-backed parser contract for JSONL/CSV without implementing or running a parser. It does not enable parser execution, read row bodies, accept actual row content, ingest rows, create owner confirmation, approve go, execute motion, collect evidence, resolve priority1, or claim readiness.
+
+The parser contract stub keeps the current boundary intact: row body parser enabled remains false, row body parser executed remains false, row body read remains false, actual row content accepted remains false, actual ingestion remains disallowed, checked row count remains 0, real row data remains absent, priority1 remains BLOCKED, motion dataset remains non-executable, and go/no-go remains no_go.
+
+Future parser implementation still requires a separate owner-confirmed actual data task with private file handling, source hash review, declared row count review, redaction and audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
+No runtime readiness or production readiness is claimed by this parser contract stub.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 Status: planning-only checksum preflight manifest added.
