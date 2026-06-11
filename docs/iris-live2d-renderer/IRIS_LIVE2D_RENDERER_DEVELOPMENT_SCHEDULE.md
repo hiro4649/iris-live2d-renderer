@@ -635,3 +635,7 @@ Planning-only renderer-ready dependency matrix added. Manifest presence, SSE, cu
 Adds a planning-only split policy packet for future real row datasets. The packet records required split labels (`train`, `eval`, `test`, `review_only`, `fixture_only`, `quarantine_only`) and contamination blockers (`duplicate_row_id`, `expected_summary_leak`, `fixture_duplication`, `train_eval_overlap`, `source_hash_missing`, `split_missing`, `row_body_unread`, `priority1_blocked`, `owner_confirmation_missing`, `checked_row_count_zero`).
 
 Boundary: this packet is not ingestion approval, does not ingest rows, does not read row bodies, does not accept real data, does not create or confirm owner confirmation, does not execute motion, does not claim runtime readiness, does not claim production readiness, and does not resolve priority1. `checked_row_count` remains `0`, `real_row_data_present` remains false, `actual_ingestion_allowed` remains false, go/no-go remains `no_go`, and the motion dataset remains non-executable.
+
+### LIVE2D-MOTION-DATASET-SOURCE-HASH-OWNER-CHECKLIST1
+
+Planning-only source hash owner checklist added. Future real hash verification still requires a separate owner-confirmed actual data task; this task performs no file read, no hash calculation, no row ingestion, no owner confirmation, no readiness claim, and keeps checked_row_count at 0.
