@@ -624,3 +624,8 @@ The actual data task runbook packet is planning-only and no-action. It lists saf
 ## LIVE2D-MOTION-DATASET-FINAL-OWNER-ACTUAL-DATA-PACKET1
 
 The final owner actual-data packet is planning-only. It lists future owner packet sections and blockers without creating or confirming owner confirmation, authorizing actual data work, reading files, reading row bodies, ingesting rows, resolving priority1, making the motion dataset executable, or claiming runtime or production readiness.
+
+
+## LIVE2D-MOTION-DATASET-ACTUAL-DATA-FREEZE-STATE-LEDGER1
+
+The actual data freeze-state ledger is planning-only. It records that actual data remains frozen pending future owner-confirmed work and unfreeze conditions. It is not a production freeze, does not start actual data work, does not ingest rows, does not confirm owner approval, does not resolve priority1, and does not claim readiness.
