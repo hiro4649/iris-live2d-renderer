@@ -599,3 +599,8 @@ The owner confirmation preflight envelope is planning-only. It lists future owne
 ## LIVE2D-MOTION-DATASET-ROW-FILE-QUARANTINE-STAGING-ENVELOPE1
 
 The row file quarantine staging envelope is planning-only. It does not quarantine real files, read files, accept raw file locator values, ingest rows, or claim readiness. Quarantine metadata and blockers are future labels only.
+
+
+## LIVE2D-MOTION-DATASET-REDACTION-SCAN-EXECUTION-ENVELOPE-STUB1
+
+The redaction scan execution envelope stub is planning-only. It does not execute redaction scan, read actual files, read row bodies, ingest rows, approve ingestion, or claim readiness.

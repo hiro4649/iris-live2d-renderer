@@ -567,3 +567,8 @@ Status: planning-only owner confirmation preflight. Future actual data work stil
 ## LIVE2D-MOTION-DATASET-ROW-FILE-QUARANTINE-STAGING-ENVELOPE1
 
 Status: planning-only quarantine staging envelope. Future quarantine still requires owner confirmation, source hash review, row count label, redaction scan reference, audit reference, and go/no-go review.
+
+
+## LIVE2D-MOTION-DATASET-REDACTION-SCAN-EXECUTION-ENVELOPE-STUB1
+
+Status: planning-only. Future execution remains blocked until owner confirmation, quarantine, source hash label, redaction policy, audit, and go/no-go review exist.
