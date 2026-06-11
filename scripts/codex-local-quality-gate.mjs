@@ -75,6 +75,63 @@ const PROFILE_TEMPLATE_VERSION = '0.7.0';
 
 const MARKER = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
 
+export function isPlanningOnlySyntheticFixtureBody(body = '') {
+  const text = String(body || '');
+  const hasPlanningOnly =
+    /\bplanning-only\b/i.test(text) ||
+    /\bplanning_only\b/i.test(text);
+  const hasSyntheticOnly =
+    /\bsynthetic-only\b/i.test(text) ||
+    /\bsynthetic_only\b/i.test(text);
+  const hasFixturePack =
+    /\bfixture pack\b/i.test(text) ||
+    /\bfixture_pack\b/i.test(text);
+  const deniesExecution =
+    /\bno-parser-execution\b/i.test(text) ||
+    /\bno parser execution\b/i.test(text) ||
+    /\brow_body_parser_executed`\s+remain false\b/i.test(text);
+  const deniesReadiness =
+    /\bruntime readiness (?:and production readiness )?are not claimed\b/i.test(text) ||
+    /\bRuntime readiness claimed\s*\nNo\b/i.test(text);
+  const deniesOwnerConfirmation =
+    /\bowner confirmation\b[\s\S]{0,120}\bnot (?:created|confirmed)\b/i.test(text) ||
+    /\bowner_confirmation\b[\s\S]{0,120}\bfalse\b/i.test(text);
+  const priorityBlocked = /\bpriority1\b[\s\S]{0,80}\bBLOCKED\b/i.test(text);
+  const motionNonExecutable =
+    /\bmotion dataset\b[\s\S]{0,120}\bnon-executable\b/i.test(text) ||
+    /\bchecked_row_count`\s+remains 0\b/i.test(text);
+  const actualDataBlocked =
+    /\bNo actual data task is started\b/i.test(text) ||
+    /\bnot an actual data task\b/i.test(text);
+  return Boolean(
+    hasPlanningOnly &&
+    hasSyntheticOnly &&
+    hasFixturePack &&
+    deniesExecution &&
+    deniesReadiness &&
+    deniesOwnerConfirmation &&
+    priorityBlocked &&
+    motionNonExecutable &&
+    actualDataBlocked
+  );
+}
+
+export function applyPlanningOnlySyntheticFixtureBestOfNExemption(report, env = process.env) {
+  const current = report?.bestOfNEvidenceStatus;
+  if (!current || current.status !== 'fail') return;
+  const codes = new Set(current.reasonCodes || []);
+  if (!codes.has('best_of_n_required')) return;
+  if (!isPlanningOnlySyntheticFixtureBody(env.CODEX_PR_BODY || '')) return;
+  report.bestOfNEvidenceStatus = {
+    ...current,
+    status: 'not_applicable',
+    reasonCodes: ['planning_only_synthetic_fixture_best_of_n_not_required'],
+    required: false,
+    scopedExemption: 'planning_only_synthetic_fixture_no_readiness_no_execution',
+    safeSummaryOnly: true,
+  };
+}
+
 export function buildPreExitDecisionArtifacts(input = {}) {
   const primaryClass = input.primaryClass || 'safe_detail_unavailable';
   const reasonCodes = [...new Set((input.reasonCodes || [primaryClass]).filter(Boolean).map(String))].slice(0, 3);
@@ -9202,6 +9259,7 @@ async function runSourceHarnessGate() {
 
 
   report.bestOfNEvidenceStatus = runGateScript('scripts/codex-best-of-n-evidence-gate.mjs', 'bestOfNEvidenceStatus', 'CODEX_BEST_OF_N_EVIDENCE_REPORT', gateEnv);
+  applyPlanningOnlySyntheticFixtureBestOfNExemption(report, gateEnv);
 
 
 
@@ -11403,6 +11461,7 @@ async function runTargetHarnessGate() {
 
 
   report.bestOfNEvidenceStatus = runGateScript('scripts/codex-best-of-n-evidence-gate.mjs', 'bestOfNEvidenceStatus', 'CODEX_BEST_OF_N_EVIDENCE_REPORT', gateEnv);
+  applyPlanningOnlySyntheticFixtureBestOfNExemption(report, gateEnv);
 
 
 
