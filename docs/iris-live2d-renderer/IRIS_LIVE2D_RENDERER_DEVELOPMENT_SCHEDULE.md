@@ -532,3 +532,8 @@ The boundary remains unchanged: rollback_ready remains false, rollback_snapshot_
 This task adds a planning-only parser dry-run envelope. It lists future dry-run inputs and outputs, but it does not enable parser execution, execute a parser, read files, parse row bodies, ingest rows, create owner confirmation, approve go/no-go, claim runtime readiness, claim production readiness, or resolve priority1.
 
 The boundary remains unchanged: parser dry-run execution remains false, row body parser enabled remains false, row body parser executed remains false, actual file read remains false, actual row content accepted remains false, checked row count remains 0, real row data remains absent, actual ingestion remains disallowed, motion dataset remains non-executable, trusted loader allowlist remains disabled, priority1 remains BLOCKED, and go/no-go remains no_go. Future dry-run execution requires a separate owner-confirmed actual data task with fresh real resident evidence and go/no-go blocker review.
+
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-ACCEPTANCE-CRITERIA-CHECKLIST1
+
+Status: planning-only checklist. Future real row acceptance still requires owner confirmation, source hash review, metadata/checksum verification, parser dry-run, redaction scan, audit manifest, fresh resident evidence, and go/no-go review. This task does not approve actual data, does not start ingestion, keeps priority1 BLOCKED, and keeps the motion dataset non-executable.
