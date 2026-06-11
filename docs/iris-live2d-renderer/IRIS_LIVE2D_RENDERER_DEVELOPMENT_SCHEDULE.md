@@ -572,3 +572,8 @@ Status: planning-only quarantine staging envelope. Future quarantine still requi
 ## LIVE2D-MOTION-DATASET-REDACTION-SCAN-EXECUTION-ENVELOPE-STUB1
 
 Status: planning-only. Future execution remains blocked until owner confirmation, quarantine, source hash label, redaction policy, audit, and go/no-go review exist.
+
+
+## LIVE2D-MOTION-DATASET-PARSER-DRY-RUN-EXECUTION-REQUEST-ENVELOPE1
+
+The parser dry-run execution request envelope is planning-only. It records future parser request fields and blockers without executing a parser dry-run, enabling a parser, reading actual files, reading row bodies, ingesting real rows, creating owner confirmation, resolving priority1, or claiming runtime or production readiness.

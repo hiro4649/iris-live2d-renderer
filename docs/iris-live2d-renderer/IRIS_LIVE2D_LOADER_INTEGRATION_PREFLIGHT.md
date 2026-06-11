@@ -604,3 +604,8 @@ The row file quarantine staging envelope is planning-only. It does not quarantin
 ## LIVE2D-MOTION-DATASET-REDACTION-SCAN-EXECUTION-ENVELOPE-STUB1
 
 The redaction scan execution envelope stub is planning-only. It does not execute redaction scan, read actual files, read row bodies, ingest rows, approve ingestion, or claim readiness.
+
+
+## LIVE2D-MOTION-DATASET-PARSER-DRY-RUN-EXECUTION-REQUEST-ENVELOPE1
+
+The parser dry-run execution request envelope is planning-only. It records future parser request fields and blockers without executing a parser dry-run, enabling a parser, reading actual files, reading row bodies, ingesting real rows, creating owner confirmation, resolving priority1, or claiming runtime or production readiness.
