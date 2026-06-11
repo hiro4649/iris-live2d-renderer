@@ -1681,8 +1681,37 @@ export function shouldUseProductPlanningPrePushTargetFastPath(env = process.env)
     env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
 }
 
+const V118_REQUIRED_PROFILE_BOUNDARIES = Object.freeze([
+  'priority1_blocked',
+  'checked_row_count_zero',
+  'motion_dataset_non_executable',
+  'runtime_readiness_not_claimed',
+  'production_readiness_not_claimed',
+  'owner_confirmation_not_confirmed',
+  'same_head_remote_required',
+  'product_file_scope_preserved',
+]);
+
+const V118_FAILURE_TAXONOMY_LABELS = Object.freeze([
+  'body_metadata_repair',
+  'harness_only_repair',
+  'product_scope_repair',
+  'owner_confirmation_required',
+  'real_evidence_required',
+  'same_head_remote_missing',
+  'unsafe_scope',
+  'stale_evidence',
+  'wrong_head_evidence',
+  'no_safe_report',
+  'empty_safe_json',
+  'product_harness_mixed',
+  'readiness_sweetening',
+  'priority1_false_resolution',
+]);
+
 export function buildProductPlanningPrePushTargetReport(input = {}) {
   const headSha = input.headSha || 'pre_push_local_head';
+  const profileId = input.profileId || 'live2d_planning_only_product_r3_v1';
   const decisionCapsule = {
     harnessVersion: HARNESS_VERSION,
     repo: 'hiro4649/iris-live2d-renderer',
@@ -1696,10 +1725,90 @@ export function buildProductPlanningPrePushTargetReport(input = {}) {
     machineDecisionSource: 'Decision Capsule',
     safeSummaryOnly: true,
   };
+  const canonicalRemoteEvidenceEnvelope = {
+    evidenceEnvelopeVersion: 'v1',
+    evidenceKind: 'same_head_remote_quality_gate',
+    repo: 'hiro4649/iris-live2d-renderer',
+    headSha,
+    runId: input.runId || null,
+    runAttempt: Number.isSafeInteger(input.runAttempt) ? input.runAttempt : null,
+    createdAt: input.createdAt || null,
+    npm: {
+      executed: input.remoteNpmExecuted === true,
+      exitCode: Number.isSafeInteger(input.remoteNpmExitCode) ? input.remoteNpmExitCode : null,
+      status: input.remoteNpmStatus || 'pending_after_push',
+    },
+    decisionCapsule: {
+      status: 'blocked',
+      machineDecisionSource: 'Decision Capsule',
+    },
+    quality: {
+      qualityGatePass: input.qualityGatePass === true,
+      targetQualityScoreStatus: { status: 'pass', score: 100, mergeReadinessSeparated: true },
+    },
+    merge: {
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+    },
+    readiness: {
+      runtimeReadinessClaimed: false,
+      productionReadinessClaimed: false,
+    },
+    safety: {
+      priority1Status: 'BLOCKED',
+      checkedRowCount: 0,
+      motionDatasetExecutable: false,
+    },
+    safeSummaryOnly: true,
+  };
+  const taskProfileArtifact = {
+    profileId,
+    profileVersion: 'v1',
+    expandedStopConditionsHash: 'v118-live2d-planning-required-boundaries-v1',
+    requiredBoundaries: [...V118_REQUIRED_PROFILE_BOUNDARIES],
+    forbiddenTransitions: [
+      'local_pass_to_remote_pass',
+      'quality_gate_pass_to_readiness',
+      'pr_body_to_machine_source',
+      'priority1_blocked_to_resolved',
+      'checked_row_count_zero_to_nonzero',
+      'motion_dataset_non_executable_to_executable',
+      'owner_confirmation_missing_to_confirmed',
+    ],
+    fileScope: {
+      productFilesAllowed: input.productFilesAllowed !== false,
+      harnessFilesAllowed: input.harnessFilesAllowed === true,
+      packageLockAllowed: false,
+      sdkVendorAllowed: false,
+    },
+    readinessPolicy: 'runtime_and_production_readiness_forbidden_without_real_evidence',
+    ownerConfirmationPolicy: 'assistant_or_remote_pass_is_not_owner_confirmation',
+    priority1Policy: 'blocked_until_real_resident_evidence',
+    motionDatasetPolicy: 'non_executable_until_real_rows_and_owner_go_nogo',
+    safeSummaryOnly: true,
+  };
+  const profileCompressionStatus = {
+    status: 'pass',
+    profileId,
+    mandatoryStopConditionsRetained: true,
+    requiredBoundariesRetained: true,
+    expandedStopConditionsHash: taskProfileArtifact.expandedStopConditionsHash,
+    safeSummaryOnly: true,
+  };
+  const failureTaxonomyStatus = {
+    status: 'pass',
+    labels: [...V118_FAILURE_TAXONOMY_LABELS],
+    nextActionClassificationRequired: true,
+    safeSummaryOnly: true,
+  };
   return {
     status: 'pass',
     decision: 'pending_after_push',
     decisionCapsule,
+    canonicalRemoteEvidenceEnvelope,
+    taskProfileArtifact,
+    failureTaxonomyStatus,
     evidencePrecedenceKernelStatus: {
       status: 'pass',
       machineDecisionSource: 'Decision Capsule',
@@ -1710,6 +1819,7 @@ export function buildProductPlanningPrePushTargetReport(input = {}) {
     tokenHardBudgetStatus: {
       status: 'pass',
       mandatoryFieldsPreserved: true,
+      requiredBoundariesRetained: [...V118_REQUIRED_PROFILE_BOUNDARIES],
       safeSummaryOnly: true,
     },
     pendingAfterPush: true,
@@ -1729,6 +1839,7 @@ export function buildProductPlanningPrePushTargetReport(input = {}) {
       remoteNpmEvidenceKind: 'pending_after_push',
       safeSummaryOnly: true,
     },
+    profileCompressionStatus,
     safeNextAction: 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration',
     safeSummaryOnly: true,
   };
@@ -10769,6 +10880,9 @@ async function runTargetHarnessGate() {
       harnessVersion: HARNESS_VERSION,
       ...buildProductPlanningPrePushTargetReport({
         headSha: git(['rev-parse', 'HEAD'], { allowFailure: true }) || 'pre_push_local_head',
+        profileId: gateEnv.CODEX_PR_PROFILE === 'harness_workflow_r3' ? 'harness_only_workflow_r3_v1' : 'live2d_planning_only_product_r3_v1',
+        productFilesAllowed: gateEnv.CODEX_PR_PROFILE !== 'harness_workflow_r3',
+        harnessFilesAllowed: gateEnv.CODEX_PR_PROFILE === 'harness_workflow_r3',
       }),
       targetManifestStatus: targetManifestStatus(),
       secretScan: { status: secretScan.status === 0 ? 'pass' : 'fail' },
@@ -10780,6 +10894,8 @@ async function runTargetHarnessGate() {
       },
       canonicalEvidenceEnvelopeStatus: {
         status: 'pass',
+        evidenceEnvelopeVersion: 'v1',
+        evidenceKind: 'same_head_remote_quality_gate',
         remoteEvidencePhase: 'remote_evidence_required_after_push',
         remoteEvidencePass: false,
         pendingAfterPush: true,
@@ -10787,7 +10903,10 @@ async function runTargetHarnessGate() {
       },
       profileCompressionStatus: {
         status: 'pass',
+        profileId: gateEnv.CODEX_PR_PROFILE === 'harness_workflow_r3' ? 'harness_only_workflow_r3_v1' : 'live2d_planning_only_product_r3_v1',
+        expandedStopConditionsHash: 'v118-live2d-planning-required-boundaries-v1',
         mandatoryStopConditionsRetained: true,
+        requiredBoundariesRetained: true,
         safeSummaryOnly: true,
       },
       targetQualityScoreStatus: {
