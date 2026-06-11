@@ -594,3 +594,8 @@ The final actual data preauth blocker gate is planning-only and remains blocked.
 ## LIVE2D-MOTION-DATASET-OWNER-CONFIRMATION-PREFLIGHT-ENVELOPE1
 
 The owner confirmation preflight envelope is planning-only. It lists future owner confirmation scopes and evidence references, but it is not owner confirmation, does not confirm scope, does not start an actual data task, does not ingest rows, and does not claim readiness.
+
+
+## LIVE2D-MOTION-DATASET-ROW-FILE-QUARANTINE-STAGING-ENVELOPE1
+
+The row file quarantine staging envelope is planning-only. It does not quarantine real files, read files, accept raw file locator values, ingest rows, or claim readiness. Quarantine metadata and blockers are future labels only.
