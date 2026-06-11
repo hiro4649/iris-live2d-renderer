@@ -41,6 +41,7 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA = "iris_li
 export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA = "iris_live2d_motion_dataset_row_body_parser_contract_stub_v1";
 export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_row_body_parser_rejection_fixture_pack_v1";
 export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_audit_trail_stub_v1";
+export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_rollback_plan_stub_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1054,6 +1055,29 @@ export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REDACTION_POLICY =
   "no_owner_note_material",
   "no_memo_material",
   "no_command_material",
+]);
+
+export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS = Object.freeze([
+  "rollback_plan_id",
+  "ingestion_batch_id",
+  "source_hash_label",
+  "pre_ingestion_snapshot_ref",
+  "post_ingestion_snapshot_ref",
+  "audit_event_ref",
+  "owner_confirmation_ref",
+  "go_nogo_ref",
+  "rollback_reason_labels",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS = Object.freeze([
+  "missing_pre_ingestion_snapshot",
+  "missing_owner_confirmation",
+  "missing_audit_event",
+  "missing_go_nogo_ref",
+  "missing_source_hash",
+  "missing_batch_id",
+  "priority1_blocked",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6479,6 +6503,89 @@ export function createMotionDatasetIngestionAuditTrailStubSummary(input = {}) {
     },
   };
   assertSafePublicObject(summary, "motion dataset ingestion audit trail stub summary");
+  return summary;
+}
+
+export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(
+    source.rollback_ready ||
+      source.rollback_snapshot_created ||
+      source.rollback_plan_approved ||
+      source.real_ingestion_audit_event_created ||
+      source.actual_data_task_started ||
+      source.real_row_data_present ||
+      source.row_body_read ||
+      source.actual_ingestion_allowed ||
+      source.motion_dataset_executable ||
+      source.runtime_readiness_claimed ||
+      source.production_readiness_claimed ||
+      source.owner_confirmation_confirmed ||
+      source.priority1_status === "RESOLVED" ||
+      source.go_nogo_status === "go"
+  );
+  const blockedReasons = [
+    "rollback_plan_stub_planning_only",
+    "rollback_plan_stub_not_rollback_ready",
+    "rollback_plan_stub_no_real_row_ingestion",
+    "rollback_plan_stub_no_row_body_read",
+    "rollback_plan_stub_priority1_blocked",
+    "rollback_plan_stub_motion_dataset_non_executable",
+    "rollback_plan_stub_no_go_preserved",
+  ];
+  if (rejectedAttempt) {
+    blockedReasons.push("rollback_plan_stub_rejected_state_promotion");
+  }
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA,
+    motion_dataset_ingestion_rollback_plan_stub_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    rollback_plan_stub_only_boundary: true,
+    no_rollback_ready_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    rollback_plan_stub_only: true,
+    rollback_ready: false,
+    rollback_snapshot_created: false,
+    rollback_plan_approved: false,
+    real_ingestion_audit_event_created: false,
+    actual_data_task_started: false,
+    actual_row_content_accepted: false,
+    row_body_read: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    owner_confirmation_status: "schema_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_future_rollback_fields: [...LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS],
+    required_rollback_blockers: [...LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_actual_data_task_required_before_rollback_readiness",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      rollback_plan_stub_only: true,
+      no_rollback_ready: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
   return summary;
 }
 

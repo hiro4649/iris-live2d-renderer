@@ -64,6 +64,9 @@ import {
   LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REQUIRED_EVENT_FIELDS,
   LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REDACTION_POLICY,
   LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA,
+  LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS,
+  LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -129,6 +132,7 @@ import {
   createMotionDatasetRowBodyParserContractStubSummary,
   createMotionDatasetRowBodyParserRejectionFixturePackSummary,
   createMotionDatasetIngestionAuditTrailStubSummary,
+  createMotionDatasetIngestionRollbackPlanStubSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -1925,6 +1929,66 @@ try {
   assert.equal(unsafeIngestionAuditTrailStub.blocked_reasons.includes("ingestion_audit_trail_stub_rejected_state_promotion"), true);
   assertSafe(JSON.stringify(unsafeIngestionAuditTrailStub));
   assertNoModelPathLeak(JSON.stringify(unsafeIngestionAuditTrailStub));
+
+  const defaultRollbackPlanStub = createMotionDatasetIngestionRollbackPlanStubSummary();
+  assert.equal(defaultRollbackPlanStub.schema, LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA);
+  assert.equal(defaultRollbackPlanStub.motion_dataset_ingestion_rollback_plan_stub_status, "planning_only_blocked");
+  assert.equal(defaultRollbackPlanStub.planning_only_boundary, true);
+  assert.equal(defaultRollbackPlanStub.rollback_plan_stub_only_boundary, true);
+  assert.equal(defaultRollbackPlanStub.no_rollback_ready_boundary, true);
+  assert.equal(defaultRollbackPlanStub.no_real_row_ingestion_boundary, true);
+  assert.equal(defaultRollbackPlanStub.no_row_body_read_boundary, true);
+  assert.equal(defaultRollbackPlanStub.rollback_ready, false);
+  assert.equal(defaultRollbackPlanStub.rollback_snapshot_created, false);
+  assert.equal(defaultRollbackPlanStub.rollback_plan_approved, false);
+  assert.equal(defaultRollbackPlanStub.real_ingestion_audit_event_created, false);
+  assert.equal(defaultRollbackPlanStub.actual_data_task_started, false);
+  assert.equal(defaultRollbackPlanStub.row_body_read, false);
+  assert.equal(defaultRollbackPlanStub.real_row_data_present, false);
+  assert.equal(defaultRollbackPlanStub.checked_row_count, 0);
+  assert.equal(defaultRollbackPlanStub.actual_ingestion_allowed, false);
+  assert.equal(defaultRollbackPlanStub.motion_dataset_executable, false);
+  assert.equal(defaultRollbackPlanStub.runtime_readiness_claimed, false);
+  assert.equal(defaultRollbackPlanStub.production_readiness_claimed, false);
+  assert.equal(defaultRollbackPlanStub.priority1_status, "BLOCKED");
+  assert.equal(defaultRollbackPlanStub.owner_confirmation_confirmed, false);
+  assert.equal(defaultRollbackPlanStub.go_nogo_status, "no_go");
+  assert.deepEqual(defaultRollbackPlanStub.required_future_rollback_fields, [...LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS]);
+  assert.deepEqual(defaultRollbackPlanStub.required_rollback_blockers, [...LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS]);
+  assert.equal(defaultRollbackPlanStub.required_future_rollback_fields.includes("rollback_plan_id"), true);
+  assert.equal(defaultRollbackPlanStub.required_rollback_blockers.includes("priority1_blocked"), true);
+  assertSafe(JSON.stringify(defaultRollbackPlanStub));
+  assertNoModelPathLeak(JSON.stringify(defaultRollbackPlanStub));
+
+  const unsafeRollbackPlanStub = createMotionDatasetIngestionRollbackPlanStubSummary({
+    rollback_ready: true,
+    rollback_snapshot_created: true,
+    rollback_plan_approved: true,
+    real_ingestion_audit_event_created: true,
+    actual_data_task_started: true,
+    row_body_read: true,
+    real_row_data_present: true,
+    actual_ingestion_allowed: true,
+    motion_dataset_executable: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    owner_confirmation_confirmed: true,
+    priority1_status: "RESOLVED",
+    go_nogo_status: "go",
+  });
+  assert.equal(unsafeRollbackPlanStub.rollback_ready, false);
+  assert.equal(unsafeRollbackPlanStub.rollback_snapshot_created, false);
+  assert.equal(unsafeRollbackPlanStub.rollback_plan_approved, false);
+  assert.equal(unsafeRollbackPlanStub.actual_ingestion_allowed, false);
+  assert.equal(unsafeRollbackPlanStub.motion_dataset_executable, false);
+  assert.equal(unsafeRollbackPlanStub.runtime_readiness_claimed, false);
+  assert.equal(unsafeRollbackPlanStub.production_readiness_claimed, false);
+  assert.equal(unsafeRollbackPlanStub.owner_confirmation_confirmed, false);
+  assert.equal(unsafeRollbackPlanStub.priority1_status, "BLOCKED");
+  assert.equal(unsafeRollbackPlanStub.go_nogo_status, "no_go");
+  assert.equal(unsafeRollbackPlanStub.blocked_reasons.includes("rollback_plan_stub_rejected_state_promotion"), true);
+  assertSafe(JSON.stringify(unsafeRollbackPlanStub));
+  assertNoModelPathLeak(JSON.stringify(unsafeRollbackPlanStub));
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
@@ -5467,6 +5531,11 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_audit_trail_stub_summary.real_ingestion_audit_event_created, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_audit_trail_stub_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_audit_trail_stub_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_rollback_plan_stub_summary.motion_dataset_ingestion_rollback_plan_stub_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_rollback_plan_stub_summary.rollback_plan_stub_only_boundary, true);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_rollback_plan_stub_summary.rollback_ready, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_rollback_plan_stub_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_ingestion_rollback_plan_stub_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -5684,6 +5753,10 @@ try {
   assert.equal(provisionedStatus.motion_dataset_ingestion_audit_trail_stub_summary.no_real_ingestion_audit_event_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_ingestion_audit_trail_stub_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedStatus.motion_dataset_ingestion_audit_trail_stub_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedStatus.motion_dataset_ingestion_rollback_plan_stub_summary.motion_dataset_ingestion_rollback_plan_stub_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_ingestion_rollback_plan_stub_summary.no_rollback_ready_boundary, true);
+  assert.equal(provisionedStatus.motion_dataset_ingestion_rollback_plan_stub_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedStatus.motion_dataset_ingestion_rollback_plan_stub_summary.go_nogo_status, "no_go");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -5786,6 +5859,10 @@ try {
   assert.equal(provisionedHealth.motion_dataset_ingestion_audit_trail_stub_summary.row_body_read, false);
   assert.equal(provisionedHealth.motion_dataset_ingestion_audit_trail_stub_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_ingestion_audit_trail_stub_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_ingestion_rollback_plan_stub_summary.motion_dataset_ingestion_rollback_plan_stub_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_ingestion_rollback_plan_stub_summary.rollback_ready, false);
+  assert.equal(provisionedHealth.motion_dataset_ingestion_rollback_plan_stub_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_ingestion_rollback_plan_stub_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
