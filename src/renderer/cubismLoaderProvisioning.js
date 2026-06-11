@@ -53,6 +53,7 @@ export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_ENVELOPE_SCHEMA =
 export const LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_ENVELOPE_STUB_SCHEMA = "iris_live2d_motion_dataset_redaction_scan_execution_envelope_stub_v1";
 export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_EXECUTION_REQUEST_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_parser_dry_run_execution_request_envelope_v1";
 export const LIVE2D_MOTION_DATASET_AUDIT_EXECUTION_REQUEST_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_audit_execution_request_envelope_v1";
+export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_NO_ACTION_PACKET_SCHEMA = "iris_live2d_motion_dataset_actual_data_task_runbook_no_action_packet_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1355,6 +1356,32 @@ export const LIVE2D_MOTION_DATASET_AUDIT_EXECUTION_REQUEST_REQUIRED_OUTPUTS = Ob
   "issue_row_count_future",
   "audit_result_ref",
   "safe_next_action",
+]);
+
+
+export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_SAFE_STEPS = Object.freeze([
+  "verify_owner_confirmation_scope",
+  "verify_source_hash_label",
+  "verify_quarantine_ref",
+  "verify_redaction_scan_ref",
+  "verify_parser_dry_run_ref",
+  "verify_audit_ref",
+  "verify_go_nogo_ref",
+  "verify_priority1_status",
+  "verify_no_readiness_claim",
+  "stop_before_actual_ingestion",
+]);
+
+export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_BLOCKERS = Object.freeze([
+  "owner_confirmation_missing",
+  "source_hash_missing",
+  "quarantine_missing",
+  "redaction_scan_missing",
+  "parser_dry_run_missing",
+  "audit_missing",
+  "go_nogo_no_go",
+  "priority1_blocked",
+  "checked_row_count_zero",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6964,6 +6991,43 @@ function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status,
 }
 
 
+
+
+export function createMotionDatasetActualDataTaskRunbookNoActionPacketSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_NO_ACTION_PACKET_SCHEMA,
+    statusKey: "motion_dataset_actual_data_task_runbook_no_action_packet_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      runbook_no_action_packet_only_boundary: true,
+      no_actual_data_task_started_boundary: true,
+      no_external_action_boundary: true,
+      no_real_row_ingestion_boundary: true,
+      no_row_body_read_boundary: true,
+      runbook_no_action_packet_only: true,
+    },
+    flags: {
+      actual_data_task_started: false,
+      external_action_performed: false,
+      actual_ingestion_allowed: false,
+      real_row_data_present: false,
+      owner_confirmation_confirmed: false,
+    },
+    arrays: {
+      required_safe_runbook_steps: [...LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_SAFE_STEPS],
+      required_runbook_blockers: [...LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_BLOCKERS],
+    },
+    blockedReasons: [
+      "actual_data_task_runbook_no_action_packet_planning_only",
+      "actual_data_task_runbook_no_action_packet_no_external_action",
+      "actual_data_task_runbook_no_action_packet_no_actual_data_task_started",
+      "actual_data_task_runbook_no_action_packet_no_real_row_ingestion",
+      "actual_data_task_runbook_no_action_packet_priority1_blocked",
+    ],
+    safeNextAction: "future_owner_confirmed_actual_data_task_runbook_review_required",
+    context: "motion dataset actual data task runbook no-action packet summary",
+  }, input);
+}
 
 export function createMotionDatasetAuditExecutionRequestEnvelopeSummary(input = {}) {
   return createMotionDatasetPlanningOnlyGateSummary({

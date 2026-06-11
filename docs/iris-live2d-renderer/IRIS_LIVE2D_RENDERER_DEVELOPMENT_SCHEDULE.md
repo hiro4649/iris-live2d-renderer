@@ -582,3 +582,8 @@ The parser dry-run execution request envelope is planning-only. It records futur
 ## LIVE2D-MOTION-DATASET-AUDIT-EXECUTION-REQUEST-ENVELOPE1
 
 The audit execution request envelope is planning-only. It records future audit inputs and outputs without starting audit execution, creating a real ingestion audit event, reading row bodies, ingesting rows, confirming owner approval, resolving priority1, or claiming runtime or production readiness.
+
+
+## LIVE2D-MOTION-DATASET-ACTUAL-DATA-TASK-RUNBOOK-NO-ACTION-PACKET1
+
+The actual data task runbook packet is planning-only and no-action. It lists safe future runbook steps and blockers without starting an actual data task, performing external actions, reading row bodies, ingesting rows, confirming owner approval, resolving priority1, or claiming runtime or production readiness.
