@@ -574,3 +574,8 @@ The real row acceptance criteria checklist is planning-only. It defines future a
 ## LIVE2D-MOTION-DATASET-OWNER-ACTUAL-DATA-TASK-HANDOFF-REVIEW-PACKET1
 
 The owner actual data task handoff review packet is planning-only. It lists future owner review sections and confirmation scopes, but it creates no owner confirmation, does not start an actual data task, does not read row bodies, does not ingest rows, and does not change go/no-go. priority1 remains BLOCKED and motion dataset remains non-executable.
+
+
+## LIVE2D-MOTION-DATASET-ACTUAL-DATA-NO-GO-SUMMARY-PROJECTION1
+
+The actual data no-go summary projection is planning-only. It preserves no_go, does not resolve blockers, does not start an actual data task, does not ingest rows, does not read row bodies, and does not claim readiness. priority1 remains BLOCKED and motion dataset remains non-executable.
