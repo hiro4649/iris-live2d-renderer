@@ -62,6 +62,7 @@ export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA = "i
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_live2d_motion_dataset_owner_submission_form_spec_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
+export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1630,6 +1631,34 @@ export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REJECTION_REASONS = Obj
   "recovery_capability_missing",
   "priority1_blocked",
   "checked_row_count_zero",
+]);
+
+export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCIES = Object.freeze([
+  "fresh_heartbeat",
+  "real_model_load_supported",
+  "model_loaded",
+  "scene_loaded",
+  "model_matches",
+  "scene_matches",
+  "cue_capability_confirmed",
+  "last_cue_applied_success",
+  "recovery_capability_confirmed",
+  "motion_allowlist_synced",
+  "fresh_resident_evidence_present",
+  "owner_confirmation_confirmed",
+]);
+
+export const LIVE2D_MOTION_DATASET_RENDERER_READY_FALSE_READY_BLOCKERS = Object.freeze([
+  "manifest_exists_only",
+  "sse_connected_only",
+  "cue_accepted_only",
+  "browser_smoke_only",
+  "fixture_pass_only",
+  "remote_gate_pass_only",
+  "checked_row_count_zero",
+  "priority1_blocked",
+  "owner_confirmation_missing",
+  "fresh_evidence_missing",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7344,6 +7373,40 @@ export function createMotionDatasetMotionAllowlistSyncReviewSummary(input = {}) 
     ],
     safeNextAction: "keep_experimental_motion_labels_review_only_until_renderer_support_exists",
     context: "motion dataset motion allowlist sync review summary",
+  }, input);
+}
+
+export function createMotionDatasetRendererReadyDependencyMatrixSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA,
+    statusKey: "motion_dataset_renderer_ready_dependency_matrix_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      renderer_ready_dependency_matrix_only_boundary: true,
+      no_renderer_ready_claim_boundary: true,
+      no_real_row_ingestion_boundary: true,
+      renderer_ready_dependency_matrix_only: true,
+    },
+    flags: {
+      renderer_ready_dependency_matrix_only: true,
+      renderer_ready_dependency_matrix_claims_ready: false,
+      renderer_ready: false,
+      browser_cue_delivery_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+    },
+    arrays: {
+      required_renderer_ready_dependencies: [...LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCIES],
+      required_false_ready_blockers: [...LIVE2D_MOTION_DATASET_RENDERER_READY_FALSE_READY_BLOCKERS],
+    },
+    blockedReasons: [
+      "renderer_ready_dependency_matrix_planning_only",
+      "renderer_ready_dependency_matrix_no_ready_claim",
+      "renderer_ready_dependency_matrix_priority1_blocked",
+      "renderer_ready_dependency_matrix_checked_row_count_zero",
+    ],
+    safeNextAction: "do_not_claim_renderer_ready_until_all_real_dependencies_are_present",
+    context: "motion dataset renderer ready dependency matrix summary",
   }, input);
 }
 

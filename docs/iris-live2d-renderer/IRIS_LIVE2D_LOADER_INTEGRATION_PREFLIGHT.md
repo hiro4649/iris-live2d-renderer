@@ -657,3 +657,7 @@ Adds a planning-only redaction policy matrix for future owner review. The matrix
 ### LIVE2D-MOTION-DATASET-MOTION-ALLOWLIST-SYNC-REVIEW1
 
 Adds a planning-only motion allowlist sync review. Runtime supported motion styles remain unchanged, experimental labels remain review-only, no motion is executed, no runtime allowlist is enabled, priority1 remains BLOCKED, and checked_row_count remains 0.
+
+### LIVE2D-MOTION-DATASET-RENDERER-READY-DEPENDENCY-MATRIX1
+
+Adds a planning-only renderer-ready dependency matrix. It lists real dependencies and false-ready blockers, but it does not claim renderer_ready, execute the renderer, ingest rows, create owner confirmation, resolve priority1, or claim runtime or production readiness.

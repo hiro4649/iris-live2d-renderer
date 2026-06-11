@@ -625,3 +625,7 @@ Planning-only redaction policy matrix added for future real-row preparation. It 
 ### LIVE2D-MOTION-DATASET-MOTION-ALLOWLIST-SYNC-REVIEW1
 
 Planning-only motion allowlist sync review added. It compares supported and experimental labels without changing runtime support, executing motion, enabling any allowlist, ingesting rows, creating owner confirmation, or claiming readiness.
+
+### LIVE2D-MOTION-DATASET-RENDERER-READY-DEPENDENCY-MATRIX1
+
+Planning-only renderer-ready dependency matrix added. Manifest presence, SSE, cue acceptance, browser smoke, fixtures, remote gates, and zero checked rows remain false-ready blockers rather than readiness evidence.
