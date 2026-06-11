@@ -135,6 +135,9 @@ import {
   LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_BLOCKERS,
   LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA,
   LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_REQUIRED_ITEMS,
+  LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_FUTURE_ACTIONS,
+  LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA,
+  LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_REASONS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -224,6 +227,7 @@ import {
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
+  createMotionDatasetFinalOwnerWaitForDataGateSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -2264,6 +2268,58 @@ try {
   assert.equal(unsafeSourceHashOwnerChecklist.missing_owner_items.includes("source_hash_label"), true);
   assert.equal(unsafeSourceHashOwnerChecklist.hash_verification_blockers.includes("source_hash_owner_checklist_rejected_real_hash_or_ingestion_attempt"), true);
   assertSafe(JSON.stringify(unsafeSourceHashOwnerChecklist));
+
+  const defaultFinalOwnerWaitGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
+  assert.equal(defaultFinalOwnerWaitGate.schema, LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA);
+  assert.equal(defaultFinalOwnerWaitGate.motion_dataset_final_owner_wait_for_data_gate_status, "waiting_for_owner_data");
+  assert.equal(defaultFinalOwnerWaitGate.final_owner_wait_for_data_gate_only_boundary, true);
+  assert.equal(defaultFinalOwnerWaitGate.no_owner_confirmation_created_boundary, true);
+  assert.equal(defaultFinalOwnerWaitGate.no_actual_data_task_started_boundary, true);
+  assert.equal(defaultFinalOwnerWaitGate.final_owner_wait_gate_confirms_owner, false);
+  assert.equal(defaultFinalOwnerWaitGate.owner_confirmation_confirmed, false);
+  assert.equal(defaultFinalOwnerWaitGate.owner_submission_received, false);
+  assert.equal(defaultFinalOwnerWaitGate.actual_data_task_started, false);
+  assert.equal(defaultFinalOwnerWaitGate.actual_ingestion_allowed, false);
+  assert.equal(defaultFinalOwnerWaitGate.real_row_data_present, false);
+  assert.equal(defaultFinalOwnerWaitGate.checked_row_count, 0);
+  assert.deepEqual(defaultFinalOwnerWaitGate.required_wait_reasons, [...LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_REASONS]);
+  assert.deepEqual(defaultFinalOwnerWaitGate.future_owner_actions, [...LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_FUTURE_ACTIONS]);
+  assert.equal(defaultFinalOwnerWaitGate.priority1_status, "BLOCKED");
+  assert.equal(defaultFinalOwnerWaitGate.go_nogo_status, "no_go");
+  assert.equal(defaultFinalOwnerWaitGate.motion_dataset_executable, false);
+  assert.equal(defaultFinalOwnerWaitGate.runtime_readiness_claimed, false);
+  assert.equal(defaultFinalOwnerWaitGate.production_readiness_claimed, false);
+  assertSafe(JSON.stringify(defaultFinalOwnerWaitGate));
+
+  const unsafeFinalOwnerWaitGate = createMotionDatasetFinalOwnerWaitForDataGateSummary({
+    required_wait_reasons: ["real_row_file_missing"],
+    final_owner_wait_gate_confirms_owner: true,
+    owner_confirmation_confirmed: true,
+    owner_submission_received: true,
+    actual_data_task_started: true,
+    actual_ingestion_allowed: true,
+    real_row_data_present: true,
+    checked_row_count: 3,
+    motion_dataset_executable: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_status: "RESOLVED",
+    go_nogo_status: "go",
+  });
+  assert.equal(unsafeFinalOwnerWaitGate.motion_dataset_final_owner_wait_for_data_gate_status, "blocked");
+  assert.equal(unsafeFinalOwnerWaitGate.final_owner_wait_gate_confirms_owner, false);
+  assert.equal(unsafeFinalOwnerWaitGate.owner_confirmation_confirmed, false);
+  assert.equal(unsafeFinalOwnerWaitGate.owner_submission_received, false);
+  assert.equal(unsafeFinalOwnerWaitGate.actual_data_task_started, false);
+  assert.equal(unsafeFinalOwnerWaitGate.actual_ingestion_allowed, false);
+  assert.equal(unsafeFinalOwnerWaitGate.real_row_data_present, false);
+  assert.equal(unsafeFinalOwnerWaitGate.checked_row_count, 0);
+  assert.equal(unsafeFinalOwnerWaitGate.motion_dataset_executable, false);
+  assert.equal(unsafeFinalOwnerWaitGate.priority1_status, "BLOCKED");
+  assert.equal(unsafeFinalOwnerWaitGate.go_nogo_status, "no_go");
+  assert.equal(unsafeFinalOwnerWaitGate.wait_for_data_reasons.includes("final_owner_wait_gate_rejected_owner_or_actual_data_attempt"), true);
+  assert.equal(unsafeFinalOwnerWaitGate.missing_wait_reasons.includes("owner_confirmation_missing"), true);
+  assertSafe(JSON.stringify(unsafeFinalOwnerWaitGate));
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
