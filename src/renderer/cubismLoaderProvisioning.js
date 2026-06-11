@@ -46,6 +46,7 @@ export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA = "iris_live2d
 export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_CRITERIA_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_real_row_acceptance_criteria_checklist_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_ACTUAL_DATA_TASK_HANDOFF_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_actual_data_task_handoff_review_packet_v1";
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_NO_GO_SUMMARY_PROJECTION_SCHEMA = "iris_live2d_motion_dataset_actual_data_no_go_summary_projection_v1";
+export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_LEDGER_SCHEMA = "iris_live2d_motion_dataset_owner_submission_readiness_ledger_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1187,6 +1188,32 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_NO_GO_SUMMARY_REQUIRED_SAFE_NEXT_
   "future_audit_required",
   "future_go_nogo_required",
   "no_runtime_readiness_claim",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_READY_PREREQUISITE_LABELS = Object.freeze([
+  "schema_preflight_available",
+  "submission_packet_available",
+  "receipt_stub_available",
+  "metadata_validator_stub_available",
+  "checksum_preflight_manifest_available",
+  "parser_contract_stub_available",
+  "parser_rejection_fixture_available",
+  "audit_trail_stub_available",
+  "rollback_plan_stub_available",
+  "parser_dry_run_envelope_available",
+  "acceptance_criteria_available",
+  "handoff_review_packet_available",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_MISSING_PREREQUISITE_LABELS = Object.freeze([
+  "real_row_file_missing",
+  "owner_confirmation_missing",
+  "fresh_resident_evidence_missing",
+  "parser_dry_run_missing",
+  "redaction_scan_missing",
+  "audit_result_missing",
+  "go_nogo_review_missing",
+  "positive_checked_row_count_missing",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6695,6 +6722,47 @@ export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) 
     },
   };
   assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
+  return summary;
+}
+
+export function createMotionDatasetOwnerSubmissionReadinessLedgerSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(source.owner_submission_received || source.owner_submission_accepted || source.actual_data_task_started || source.actual_ingestion_allowed || source.real_row_data_present || source.row_body_read || Number(source.checked_row_count ?? 0) > 0 || source.motion_dataset_executable || source.runtime_readiness_claimed || source.production_readiness_claimed || source.owner_confirmation_confirmed || source.priority1_status === "RESOLVED" || source.go_nogo_status === "go");
+  const blockedReasons = ["submission_readiness_ledger_planning_only", "submission_readiness_ledger_no_submission_accepted", "submission_readiness_ledger_no_real_row_ingestion", "submission_readiness_ledger_no_row_body_read", "submission_readiness_ledger_priority1_blocked", "submission_readiness_ledger_no_go_preserved"];
+  if (rejectedAttempt) blockedReasons.push("submission_readiness_ledger_rejected_state_promotion");
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_LEDGER_SCHEMA,
+    motion_dataset_owner_submission_readiness_ledger_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    submission_readiness_ledger_only_boundary: true,
+    no_submission_accepted_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    submission_readiness_ledger_only: true,
+    owner_submission_received: false,
+    owner_submission_accepted: false,
+    actual_data_task_started: false,
+    actual_ingestion_allowed: false,
+    real_row_data_present: false,
+    row_body_read: false,
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    go_nogo_status: "no_go",
+    required_ready_prerequisite_labels: [...LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_READY_PREREQUISITE_LABELS],
+    required_missing_prerequisite_labels: [...LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_MISSING_PREREQUISITE_LABELS],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_submission_and_confirmation_required_before_acceptance",
+    boundary_policy: { ...createBoundaryPolicy(), planning_only: true, submission_readiness_ledger_only: true, no_submission_accepted: true, no_real_row_ingestion: true, no_row_body_read: true, no_motion_execution: true, no_runtime_readiness_claim: true, no_production_readiness_claim: true },
+  };
+  assertSafePublicObject(summary, "motion dataset owner submission readiness ledger summary");
   return summary;
 }
 
