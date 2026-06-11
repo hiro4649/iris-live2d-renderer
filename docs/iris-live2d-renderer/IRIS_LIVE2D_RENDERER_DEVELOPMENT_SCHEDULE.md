@@ -562,3 +562,8 @@ Status: planning-only blocker gate. Preauth blockers remain owner confirmation m
 ## LIVE2D-MOTION-DATASET-OWNER-CONFIRMATION-PREFLIGHT-ENVELOPE1
 
 Status: planning-only owner confirmation preflight. Future actual data work still requires real owner confirmation, source hash review, parser dry-run review, redaction scan review, audit execution review, rollback review, and go/no-go review.
+
+
+## LIVE2D-MOTION-DATASET-ROW-FILE-QUARANTINE-STAGING-ENVELOPE1
+
+Status: planning-only quarantine staging envelope. Future quarantine still requires owner confirmation, source hash review, row count label, redaction scan reference, audit reference, and go/no-go review.

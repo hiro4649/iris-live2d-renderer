@@ -30,6 +30,7 @@ import {
   createMotionDatasetOwnerSubmissionReadinessLedgerSummary,
   createMotionDatasetFinalActualDataPreauthBlockerGateSummary,
   createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary,
+  createMotionDatasetRowFileQuarantineStagingEnvelopeSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -176,6 +177,7 @@ export function createRendererState({
       const motionDatasetOwnerSubmissionReadinessLedger = createMotionDatasetOwnerSubmissionReadinessLedgerSummary();
       const motionDatasetFinalActualDataPreauthBlockerGate = createMotionDatasetFinalActualDataPreauthBlockerGateSummary();
       const motionDatasetOwnerConfirmationPreflightEnvelope = createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary();
+      const motionDatasetRowFileQuarantineStagingEnvelope = createMotionDatasetRowFileQuarantineStagingEnvelopeSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const status = {
         ok: true,
@@ -275,6 +277,7 @@ export function createRendererState({
           motion_dataset_owner_submission_readiness_ledger_summary: motionDatasetOwnerSubmissionReadinessLedger,
           motion_dataset_final_actual_data_preauth_blocker_gate_summary: motionDatasetFinalActualDataPreauthBlockerGate,
           motion_dataset_owner_confirmation_preflight_envelope_summary: motionDatasetOwnerConfirmationPreflightEnvelope,
+          motion_dataset_row_file_quarantine_staging_envelope_summary: motionDatasetRowFileQuarantineStagingEnvelope,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
@@ -324,6 +327,7 @@ export function createRendererState({
           motion_dataset_owner_submission_readiness_ledger_summary: motionDatasetOwnerSubmissionReadinessLedger,
           motion_dataset_final_actual_data_preauth_blocker_gate_summary: motionDatasetFinalActualDataPreauthBlockerGate,
           motion_dataset_owner_confirmation_preflight_envelope_summary: motionDatasetOwnerConfirmationPreflightEnvelope,
+          motion_dataset_row_file_quarantine_staging_envelope_summary: motionDatasetRowFileQuarantineStagingEnvelope,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
@@ -414,6 +418,7 @@ export function createRendererState({
         motion_dataset_owner_submission_readiness_ledger_summary: status.renderer_health.motion_dataset_owner_submission_readiness_ledger_summary,
         motion_dataset_final_actual_data_preauth_blocker_gate_summary: status.renderer_health.motion_dataset_final_actual_data_preauth_blocker_gate_summary,
         motion_dataset_owner_confirmation_preflight_envelope_summary: status.renderer_health.motion_dataset_owner_confirmation_preflight_envelope_summary,
+        motion_dataset_row_file_quarantine_staging_envelope_summary: status.renderer_health.motion_dataset_row_file_quarantine_staging_envelope_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
@@ -560,6 +565,7 @@ export function createRendererState({
       const motionDatasetOwnerSubmissionReadinessLedger = createMotionDatasetOwnerSubmissionReadinessLedgerSummary();
       const motionDatasetFinalActualDataPreauthBlockerGate = createMotionDatasetFinalActualDataPreauthBlockerGateSummary();
       const motionDatasetOwnerConfirmationPreflightEnvelope = createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary();
+      const motionDatasetRowFileQuarantineStagingEnvelope = createMotionDatasetRowFileQuarantineStagingEnvelopeSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
@@ -618,6 +624,7 @@ export function createRendererState({
       response.motion_dataset_owner_submission_readiness_ledger_summary = motionDatasetOwnerSubmissionReadinessLedger;
       response.motion_dataset_final_actual_data_preauth_blocker_gate_summary = motionDatasetFinalActualDataPreauthBlockerGate;
       response.motion_dataset_owner_confirmation_preflight_envelope_summary = motionDatasetOwnerConfirmationPreflightEnvelope;
+      response.motion_dataset_row_file_quarantine_staging_envelope_summary = motionDatasetRowFileQuarantineStagingEnvelope;
       response.motion_dataset_row_file_checksum_preflight_manifest_summary = motionDatasetRowFileChecksumPreflightManifest;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
@@ -729,6 +736,7 @@ export function createRendererState({
       const motionDatasetOwnerSubmissionReadinessLedger = createMotionDatasetOwnerSubmissionReadinessLedgerSummary();
       const motionDatasetFinalActualDataPreauthBlockerGate = createMotionDatasetFinalActualDataPreauthBlockerGateSummary();
       const motionDatasetOwnerConfirmationPreflightEnvelope = createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary();
+      const motionDatasetRowFileQuarantineStagingEnvelope = createMotionDatasetRowFileQuarantineStagingEnvelopeSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const response = {
         ok: true,
@@ -812,6 +820,7 @@ export function createRendererState({
           motion_dataset_owner_submission_readiness_ledger_summary: motionDatasetOwnerSubmissionReadinessLedger,
           motion_dataset_final_actual_data_preauth_blocker_gate_summary: motionDatasetFinalActualDataPreauthBlockerGate,
           motion_dataset_owner_confirmation_preflight_envelope_summary: motionDatasetOwnerConfirmationPreflightEnvelope,
+          motion_dataset_row_file_quarantine_staging_envelope_summary: motionDatasetRowFileQuarantineStagingEnvelope,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
@@ -861,6 +870,7 @@ export function createRendererState({
           motion_dataset_owner_submission_readiness_ledger_summary: motionDatasetOwnerSubmissionReadinessLedger,
           motion_dataset_final_actual_data_preauth_blocker_gate_summary: motionDatasetFinalActualDataPreauthBlockerGate,
           motion_dataset_owner_confirmation_preflight_envelope_summary: motionDatasetOwnerConfirmationPreflightEnvelope,
+          motion_dataset_row_file_quarantine_staging_envelope_summary: motionDatasetRowFileQuarantineStagingEnvelope,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,

@@ -49,6 +49,7 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_NO_GO_SUMMARY_PROJECTION_SCHEMA =
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_READINESS_LEDGER_SCHEMA = "iris_live2d_motion_dataset_owner_submission_readiness_ledger_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_BLOCKER_GATE_SCHEMA = "iris_live2d_motion_dataset_final_actual_data_preauth_blocker_gate_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_owner_confirmation_preflight_envelope_v1";
+export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_row_file_quarantine_staging_envelope_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1265,6 +1266,30 @@ export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENC
   "rollback_plan_ref_future",
   "go_nogo_ref_future",
   "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_REQUIRED_METADATA = Object.freeze([
+  "quarantine_id",
+  "submission_request_id",
+  "source_hash_label",
+  "declared_row_count_label",
+  "file_format_label",
+  "schema_version_label",
+  "quarantine_reason_labels",
+  "redaction_scan_ref",
+  "audit_ref",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_REQUIRED_BLOCKERS = Object.freeze([
+  "owner_confirmation_missing",
+  "real_row_file_missing",
+  "source_hash_missing",
+  "file_format_missing",
+  "redaction_scan_missing",
+  "audit_missing",
+  "priority1_blocked",
+  "checked_row_count_zero",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6871,6 +6896,20 @@ function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status,
   };
   assertSafePublicObject(summary, context);
   return summary;
+}
+
+export function createMotionDatasetRowFileQuarantineStagingEnvelopeSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_ENVELOPE_SCHEMA,
+    statusKey: "motion_dataset_row_file_quarantine_staging_envelope_status",
+    status: "planning_only_blocked",
+    boundaries: { quarantine_staging_envelope_only_boundary: true, no_quarantine_completed_boundary: true, no_actual_file_read_boundary: true, no_real_row_ingestion_boundary: true, no_row_body_read_boundary: true, quarantine_staging_envelope_only: true },
+    flags: { actual_file_content_accepted: false, actual_row_content_accepted: false },
+    arrays: { required_future_quarantine_metadata: [...LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_REQUIRED_METADATA], required_future_quarantine_blockers: [...LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_REQUIRED_BLOCKERS] },
+    blockedReasons: ["quarantine_staging_envelope_planning_only", "quarantine_staging_envelope_no_quarantine_completed", "quarantine_staging_envelope_no_actual_file_read", "quarantine_staging_envelope_no_real_row_ingestion", "quarantine_staging_envelope_no_row_body_read", "quarantine_staging_envelope_priority1_blocked"],
+    safeNextAction: "future_owner_confirmed_quarantine_staging_required_before_file_review",
+    context: "motion dataset row file quarantine staging envelope summary",
+  }, input);
 }
 
 export function createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary(input = {}) {
