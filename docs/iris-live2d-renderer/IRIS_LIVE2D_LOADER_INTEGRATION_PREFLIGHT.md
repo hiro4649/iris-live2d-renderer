@@ -589,3 +589,8 @@ The owner submission readiness ledger is planning-only. It lists available plann
 ## LIVE2D-MOTION-DATASET-FINAL-ACTUAL-DATA-PREAUTH-BLOCKER-GATE1
 
 The final actual data preauth blocker gate is planning-only and remains blocked. It does not preauthorize actual data, start an actual data task, ingest rows, read row bodies, resolve priority1, or claim readiness. Clearance conditions are future-only labels.
+
+
+## LIVE2D-MOTION-DATASET-OWNER-CONFIRMATION-PREFLIGHT-ENVELOPE1
+
+The owner confirmation preflight envelope is planning-only. It lists future owner confirmation scopes and evidence references, but it is not owner confirmation, does not confirm scope, does not start an actual data task, does not ingest rows, and does not claim readiness.
