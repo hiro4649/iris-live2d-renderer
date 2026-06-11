@@ -471,6 +471,16 @@ The rejection fixture pack keeps `owner_submission_received` false, `owner_submi
 
 Future actual owner row data rejection testing requires a separate owner-confirmed actual data task with private file handling, redaction review, source hash review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
+## LIVE2D-MOTION-DATASET-ACTUAL-DATA-TASK-ENTRY-GATE1
+
+This is an actual-data task entry gate only. It defines the safe prerequisites and blocking conditions that must be satisfied before a future owner-confirmed actual data task may begin, but it does not start an actual data task, accept files, accept row bodies, read files, parse JSONL or CSV, calculate hashes, ingest rows, execute motion, collect evidence, create owner confirmation, approve ingestion, or claim readiness.
+
+Safe public status labels include `motion_dataset_actual_data_task_entry_gate_status`, `planning_only_boundary`, `entry_gate_only_boundary`, `no_actual_data_task_started_boundary`, `no_submission_accepted_boundary`, `no_actual_file_read_boundary`, `no_actual_hash_calculation_boundary`, `no_actual_row_content_boundary`, `no_parser_execution_boundary`, `no_real_row_ingestion_boundary`, `no_row_body_read_boundary`, `required_entry_prerequisites`, `required_blocking_conditions`, `safe_next_action`, `runtime_readiness_claimed`, and `production_readiness_claimed`.
+
+The entry gate keeps `actual_data_task_started` false, `owner_submission_received` false, `owner_submission_accepted` false, `actual_file_read` false, `actual_hash_calculated` false, `actual_row_content_accepted` false, `row_body_parser_enabled` false, `row_body_parser_executed` false, `real_row_data_present` false, `checked_row_count` 0, `actual_ingestion_allowed` false, `motion_dataset_executable` false, `go_nogo_status` no_go, `priority1_status` BLOCKED, `runtime_readiness_claimed` false, and `production_readiness_claimed` false.
+
+Future actual row intake requires a separate owner-confirmed actual data task with private file handling, source hash review, declared row count review, redaction and audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
+
 ## LIVE2D-MOTION-DATASET-ROW-FILE-CHECKSUM-PREFLIGHT-MANIFEST1
 
 This manifest is planning-only checksum preflight metadata. It defines safe public labels for a future owner-confirmed row file checksum review, but it does not read any actual file, does not calculate any real hash, does not accept a file reference, does not accept file content, and does not ingest rows.
