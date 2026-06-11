@@ -59,6 +59,7 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LEDGER_SCHEMA = "iri
 export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_wait_state_packet_v1";
 export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA = "iris_live2d_motion_dataset_readiness_non_sweetening_sweep_v1";
 export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_planning_completion_review_packet_v1";
+export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_live2d_motion_dataset_owner_submission_form_spec_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1564,6 +1565,31 @@ export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKER
   "go_nogo_review_missing",
   "priority1_blocked",
   "checked_row_count_zero",
+]);
+
+
+export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_REQUIRED_FIELDS = Object.freeze([
+  "submission_request_id",
+  "file_format_label",
+  "declared_row_count_label",
+  "source_hash_label",
+  "schema_version_label",
+  "dataset_split_plan_label",
+  "owner_confirmation_scope_label",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_REJECTED_FIELDS = Object.freeze([
+  "dataset_body_material_rejected",
+  "file_material_rejected",
+  "file_reference_rejected",
+  "cue_material_rejected",
+  "renderer_material_rejected",
+  "network_value_rejected",
+  "credential_label_rejected",
+  "sensitive_label_rejected",
+  "local_reference_rejected",
+  "owner_note_rejected",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7179,6 +7205,40 @@ function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status,
 
 
 
+
+
+export function createMotionDatasetOwnerSubmissionFormSpecSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA,
+    statusKey: "motion_dataset_owner_submission_form_spec_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      owner_submission_form_spec_only_boundary: true,
+      no_real_data_accepted_boundary: true,
+      no_owner_confirmation_created_boundary: true,
+      owner_submission_form_spec_only: true,
+    },
+    flags: {
+      owner_submission_form_accepts_real_data: false,
+      owner_confirmation_confirmed: false,
+      actual_data_task_started: false,
+      actual_ingestion_allowed: false,
+      real_row_data_present: false,
+    },
+    arrays: {
+      required_form_fields: [...LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_REQUIRED_FIELDS],
+      rejected_form_fields: [...LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_REJECTED_FIELDS],
+    },
+    blockedReasons: [
+      "owner_submission_form_spec_planning_only",
+      "owner_submission_form_spec_no_real_data_accepted",
+      "owner_submission_form_spec_no_owner_confirmation_created",
+      "owner_submission_form_spec_priority1_blocked",
+    ],
+    safeNextAction: "future_owner_submission_must_use_safe_labels_only",
+    context: "motion dataset owner submission form spec summary",
+  }, input);
+}
 
 export function createMotionDatasetPlanningCompletionReviewPacketSummary(input = {}) {
   return createMotionDatasetPlanningOnlyGateSummary({
