@@ -53,6 +53,10 @@ import {
   LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_BLOCKING_CONDITIONS,
   LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_REQUIRED_PREREQUISITES,
   LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA,
+  LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASONS,
+  LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS,
+  LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SAFE_PUBLIC_REJECTION_REASONS,
+  LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -115,6 +119,7 @@ import {
   createMotionDatasetOwnerRowDataMetadataValidatorStubSummary,
   createMotionDatasetOwnerRowDataSubmissionRejectionFixturePackSummary,
   createMotionDatasetActualDataTaskEntryGateSummary,
+  createMotionDatasetRowBodyParserContractStubSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -1723,6 +1728,66 @@ try {
   assert.equal(JSON.stringify(unsafeActualDataTaskEntryGate).includes("private-row"), false);
   assertSafe(JSON.stringify(unsafeActualDataTaskEntryGate));
   assertNoModelPathLeak(JSON.stringify(unsafeActualDataTaskEntryGate));
+
+  const defaultRowBodyParserContractStub = createMotionDatasetRowBodyParserContractStubSummary();
+  assert.equal(defaultRowBodyParserContractStub.schema, LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA);
+  assert.equal(defaultRowBodyParserContractStub.motion_dataset_row_body_parser_contract_stub_status, "planning_only_blocked");
+  assert.equal(defaultRowBodyParserContractStub.parser_contract_stub_only_boundary, true);
+  assert.equal(defaultRowBodyParserContractStub.row_body_parser_enabled, false);
+  assert.equal(defaultRowBodyParserContractStub.row_body_parser_executed, false);
+  assert.equal(defaultRowBodyParserContractStub.actual_row_content_accepted, false);
+  assert.equal(defaultRowBodyParserContractStub.row_body_read, false);
+  assert.equal(defaultRowBodyParserContractStub.real_row_data_present, false);
+  assert.equal(defaultRowBodyParserContractStub.checked_row_count, 0);
+  assert.equal(defaultRowBodyParserContractStub.actual_ingestion_allowed, false);
+  assert.equal(defaultRowBodyParserContractStub.motion_dataset_executable, false);
+  assert.equal(defaultRowBodyParserContractStub.runtime_readiness_claimed, false);
+  assert.equal(defaultRowBodyParserContractStub.production_readiness_claimed, false);
+  assert.equal(defaultRowBodyParserContractStub.priority1_status, "BLOCKED");
+  assert.equal(defaultRowBodyParserContractStub.owner_confirmation_confirmed, false);
+  assert.equal(defaultRowBodyParserContractStub.go_nogo_status, "no_go");
+  assert.deepEqual(defaultRowBodyParserContractStub.required_future_parser_fields, [...LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS]);
+  assert.deepEqual(defaultRowBodyParserContractStub.required_future_parser_rejection_reasons, [...LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SAFE_PUBLIC_REJECTION_REASONS]);
+  assert.equal(LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASONS.includes("raw_cue_payload_present"), true);
+  assert.equal(defaultRowBodyParserContractStub.required_future_parser_fields.includes("row_id"), true);
+  assert.equal(defaultRowBodyParserContractStub.required_future_parser_rejection_reasons.includes("cue_material_present"), true);
+  assertSafe(JSON.stringify(defaultRowBodyParserContractStub));
+  assertNoModelPathLeak(JSON.stringify(defaultRowBodyParserContractStub));
+
+  const unsafeRowBodyParserContractStub = createMotionDatasetRowBodyParserContractStubSummary({
+    row_body_parser_enabled: true,
+    row_body_parser_executed: true,
+    raw_jsonl_body: "private-jsonl",
+    raw_dataset_row_body: "private-row",
+    actual_row_content_accepted: true,
+    row_body_read: true,
+    real_row_data_present: true,
+    checked_row_count: 5,
+    actual_ingestion_allowed: true,
+    motion_dataset_executable: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    owner_confirmation_confirmed: true,
+    priority1_resolved: true,
+  });
+  assert.equal(unsafeRowBodyParserContractStub.row_body_parser_enabled, false);
+  assert.equal(unsafeRowBodyParserContractStub.row_body_parser_executed, false);
+  assert.equal(unsafeRowBodyParserContractStub.actual_row_content_accepted, false);
+  assert.equal(unsafeRowBodyParserContractStub.row_body_read, false);
+  assert.equal(unsafeRowBodyParserContractStub.checked_row_count, 0);
+  assert.equal(unsafeRowBodyParserContractStub.real_row_data_present, false);
+  assert.equal(unsafeRowBodyParserContractStub.actual_ingestion_allowed, false);
+  assert.equal(unsafeRowBodyParserContractStub.motion_dataset_executable, false);
+  assert.equal(unsafeRowBodyParserContractStub.runtime_readiness_claimed, false);
+  assert.equal(unsafeRowBodyParserContractStub.production_readiness_claimed, false);
+  assert.equal(unsafeRowBodyParserContractStub.owner_confirmation_confirmed, false);
+  assert.equal(unsafeRowBodyParserContractStub.priority1_status, "BLOCKED");
+  assert.equal(unsafeRowBodyParserContractStub.blocked_reasons.includes("row_body_parser_contract_stub_rejected_parser_execution"), true);
+  assert.equal(unsafeRowBodyParserContractStub.blocked_reasons.includes("row_body_parser_contract_stub_rejected_row_body_read"), true);
+  assert.equal(unsafeRowBodyParserContractStub.blocked_reasons.includes("row_body_parser_contract_stub_rejected_readiness_claim"), true);
+  assert.equal(JSON.stringify(unsafeRowBodyParserContractStub).includes("private-row"), false);
+  assertSafe(JSON.stringify(unsafeRowBodyParserContractStub));
+  assertNoModelPathLeak(JSON.stringify(unsafeRowBodyParserContractStub));
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
@@ -5249,6 +5314,12 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_actual_data_task_entry_gate_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_actual_data_task_entry_gate_summary.checked_row_count, 0);
   assert.equal(provisionedRuntimeConfig.motion_dataset_actual_data_task_entry_gate_summary.priority1_status, "BLOCKED");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_body_parser_contract_stub_summary.motion_dataset_row_body_parser_contract_stub_status, "planning_only_blocked");
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_body_parser_contract_stub_summary.row_body_parser_enabled, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_body_parser_contract_stub_summary.row_body_parser_executed, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_body_parser_contract_stub_summary.row_body_read, false);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_body_parser_contract_stub_summary.checked_row_count, 0);
+  assert.equal(provisionedRuntimeConfig.motion_dataset_row_body_parser_contract_stub_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -5453,6 +5524,11 @@ try {
   assert.equal(provisionedStatus.motion_dataset_actual_data_task_entry_gate_summary.row_body_read, false);
   assert.equal(provisionedStatus.motion_dataset_actual_data_task_entry_gate_summary.owner_confirmation_confirmed, false);
   assert.equal(provisionedStatus.motion_dataset_actual_data_task_entry_gate_summary.go_nogo_status, "no_go");
+  assert.equal(provisionedStatus.motion_dataset_row_body_parser_contract_stub_summary.motion_dataset_row_body_parser_contract_stub_status, "planning_only_blocked");
+  assert.equal(provisionedStatus.motion_dataset_row_body_parser_contract_stub_summary.row_body_parser_enabled, false);
+  assert.equal(provisionedStatus.motion_dataset_row_body_parser_contract_stub_summary.row_body_parser_executed, false);
+  assert.equal(provisionedStatus.motion_dataset_row_body_parser_contract_stub_summary.actual_ingestion_allowed, false);
+  assert.equal(provisionedStatus.motion_dataset_row_body_parser_contract_stub_summary.go_nogo_status, "no_go");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -5542,6 +5618,11 @@ try {
   assert.equal(provisionedHealth.motion_dataset_actual_data_task_entry_gate_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedHealth.motion_dataset_actual_data_task_entry_gate_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_actual_data_task_entry_gate_summary.production_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_row_body_parser_contract_stub_summary.motion_dataset_row_body_parser_contract_stub_status, "planning_only_blocked");
+  assert.equal(provisionedHealth.motion_dataset_row_body_parser_contract_stub_summary.row_body_parser_enabled, false);
+  assert.equal(provisionedHealth.motion_dataset_row_body_parser_contract_stub_summary.row_body_read, false);
+  assert.equal(provisionedHealth.motion_dataset_row_body_parser_contract_stub_summary.runtime_readiness_claimed, false);
+  assert.equal(provisionedHealth.motion_dataset_row_body_parser_contract_stub_summary.production_readiness_claimed, false);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);

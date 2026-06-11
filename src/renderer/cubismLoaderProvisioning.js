@@ -38,6 +38,7 @@ export const LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA =
 export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_STUB_SCHEMA = "iris_live2d_motion_dataset_owner_row_data_metadata_validator_stub_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_dataset_owner_row_data_submission_rejection_fixture_pack_v1";
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA = "iris_live2d_motion_dataset_actual_data_task_entry_gate_v1";
+export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA = "iris_live2d_motion_dataset_row_body_parser_contract_stub_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -889,6 +890,73 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_BLOCKING_CONDITIO
   "checked_row_count_zero",
   "priority1_blocked",
   "actual_ingestion_not_allowed",
+]);
+
+export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS = Object.freeze([
+  "row_id",
+  "dataset_split",
+  "source_line",
+  "scenario_id",
+  "cue_kind",
+  "motion_label",
+  "expression_label",
+  "gaze_label",
+  "breath_label",
+  "body_label",
+  "camera_label",
+  "timing_label",
+  "intensity_label",
+  "recovery_plan_label",
+  "visibility_guard_label",
+  "comfort_guard_label",
+  "audit_metadata_ref",
+  "redaction_status",
+  "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASONS = Object.freeze([
+  "missing_row_id",
+  "duplicate_row_id",
+  "unsupported_motion_label",
+  "experimental_motion_executable_attempt",
+  "raw_cue_payload_present",
+  "raw_renderer_payload_present",
+  "raw_model_path_present",
+  "raw_motion_path_present",
+  "endpoint_value_present",
+  "token_value_present",
+  "secret_value_present",
+  "private_path_present",
+  "world_command_present",
+  "obs_command_present",
+  "game_input_present",
+  "os_command_present",
+  "memory_commit_present",
+  "relationship_commit_present",
+  "readiness_claim_present",
+  "owner_confirmation_claim_present",
+]);
+
+export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SAFE_PUBLIC_REJECTION_REASONS = Object.freeze([
+  "missing_row_id",
+  "duplicate_row_id",
+  "unsupported_motion_label",
+  "experimental_motion_executable_attempt",
+  "cue_material_present",
+  "renderer_material_present",
+  "model_reference_material_present",
+  "motion_reference_material_present",
+  "network_value_present",
+  "credential_value_present",
+  "private_reference_present",
+  "world_operation_request_present",
+  "obs_operation_request_present",
+  "game_interaction_request_present",
+  "os_operation_request_present",
+  "memory_commit_present",
+  "relationship_commit_present",
+  "readiness_claim_present",
+  "owner_confirmation_claim_present",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6043,6 +6111,118 @@ export function createMotionDatasetActualDataTaskEntryGateSummary(input = {}) {
     },
   };
   assertSafePublicObject(summary, "motion dataset actual data task entry gate summary");
+  return summary;
+}
+
+export function createMotionDatasetRowBodyParserContractStubSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawFields = [
+    ...detectedMotionDatasetRawFields(source),
+    ...detectedRejectedRequestFields(source, [
+      "raw_jsonl_body",
+      "raw_csv_body",
+      "raw_dataset_row_body",
+      "raw_row_body",
+      "actual_file_content",
+      "actual_file_path_value",
+      "raw_cue_payload",
+      "raw_renderer_payload",
+      "raw_model_path",
+      "raw_motion_path",
+      "endpoint_value",
+      "token_value",
+      "secret_value",
+      "private_local_path",
+      "world_command",
+      "obs_command",
+      "game_input",
+      "os_command",
+      "memory_commit",
+      "relationship_commit",
+      "owner_private_note",
+      "raw_owner_confirmation_note",
+    ]),
+  ];
+  const safeRejectedFieldLabels = [...new Set(rawFields)]
+    .map((field) => safeOwnerRowSubmissionRejectedFieldLabel(field))
+    .filter(Boolean)
+    .sort();
+  const parserRequested = source.row_body_parser_enabled === true || source.row_body_parser_executed === true || source.parser_executed === true;
+  const rowBodyReadRequested = source.row_body_read === true || source.raw_jsonl_body !== undefined || source.raw_csv_body !== undefined || source.raw_dataset_row_body !== undefined;
+  const rowContentRequested = source.actual_row_content_accepted === true || source.row !== undefined || source.dataset_row !== undefined;
+  const ingestionRequested = source.actual_ingestion_allowed === true || source.ingestion_approved === true;
+  const realRowRequested = source.real_row_data_present === true || source.row_data_present === true;
+  const checkedRowCountRequested = Number.isSafeInteger(source.checked_row_count) && source.checked_row_count > 0;
+  const motionExecutionRequested = source.motion_dataset_executable === true || source.motion_execution_enabled === true;
+  const readinessRequested = source.renderer_ready === true || source.runtime_readiness_claimed === true || source.production_readiness_claimed === true;
+  const ownerConfirmationRequested = source.owner_confirmation_created === true || source.owner_confirmation_confirmed === true || source.owner_confirmation_status === "confirmed";
+  const priorityResolvedRequested = source.priority1_status === "RESOLVED" || source.priority1_resolved === true || source.blocker_resolved === true;
+  const blockedReasons = [
+    "row_body_parser_contract_stub_planning_only",
+    "row_body_parser_contract_stub_no_parser_execution",
+    "row_body_parser_contract_stub_no_actual_row_content",
+    "row_body_parser_contract_stub_no_real_row_ingestion",
+    "row_body_parser_contract_stub_no_row_body_read",
+    "row_body_parser_contract_stub_priority1_blocked",
+    "row_body_parser_contract_stub_go_nogo_no_go",
+  ];
+  if (rawFields.length) blockedReasons.push("row_body_parser_contract_stub_rejected_unsafe_material");
+  if (parserRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_parser_execution");
+  if (rowBodyReadRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_row_body_read");
+  if (rowContentRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_actual_row_content");
+  if (ingestionRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_ingestion");
+  if (realRowRequested || checkedRowCountRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_real_row_or_checked_count");
+  if (motionExecutionRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_motion_execution");
+  if (readinessRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_readiness_claim");
+  if (ownerConfirmationRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_owner_confirmation");
+  if (priorityResolvedRequested) blockedReasons.push("row_body_parser_contract_stub_rejected_priority1_resolution");
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA,
+    safe_summary_only: true,
+    motion_dataset_row_body_parser_contract_stub_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    parser_contract_stub_only_boundary: true,
+    no_parser_execution_boundary: true,
+    no_actual_row_content_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    no_motion_execution_boundary: true,
+    no_readiness_boundary: true,
+    parser_contract_stub_only: true,
+    row_body_parser_enabled: false,
+    row_body_parser_executed: false,
+    actual_row_content_accepted: false,
+    row_body_read: false,
+    real_row_data_present: false,
+    checked_row_count: 0,
+    actual_ingestion_allowed: false,
+    motion_dataset_executable: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_future_parser_fields: [...LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS],
+    required_future_parser_rejection_reasons: [...LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SAFE_PUBLIC_REJECTION_REASONS],
+    detected_rejected_sensitive_material_labels: safeRejectedFieldLabels,
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_parser_implementation_required_before_row_body_read",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      parser_contract_stub_only: true,
+      no_parser_execution: true,
+      no_actual_row_content: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset row body parser contract stub summary");
   return summary;
 }
 
