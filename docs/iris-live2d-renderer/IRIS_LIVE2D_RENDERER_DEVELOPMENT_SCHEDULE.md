@@ -506,3 +506,11 @@ Required future metadata labels are source hash, hash algorithm, hash scope, dec
 Future actual checksum verification still requires a separate owner-confirmed task with private handling of the real file, source hash review, declared row count review, quarantine and redaction review, audit review, fresh resident evidence, scoped owner confirmation, and go/no-go review.
 
 No runtime readiness or production readiness is claimed by this manifest.
+
+### LIVE2D-MOTION-DATASET-ROW-BODY-PARSER-REJECTION-FIXTURE-PACK1
+
+Status: planning-only complete when the matching PR is merged. This task adds a synthetic parser rejection fixture pack so future parser work has a safe public contract for expected rejection categories without reading actual row bodies or enabling ingestion.
+
+Boundaries preserved: no parser execution, no actual row content, no row body read, no real row ingestion, no owner confirmation creation, no go decision, no runtime readiness, no production readiness, priority1 remains `BLOCKED`, and motion dataset remains non-executable with `checked_row_count` fixed at `0`.
+
+Next safe step after this task is an ingestion audit trail stub or a separate owner-confirmed actual data task plan. Actual parser execution, actual file reads, actual hash calculation, real row ingestion, and trusted loader enablement remain out of scope.

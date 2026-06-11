@@ -536,3 +536,13 @@ Required owner submission items are metadata labels only: file label, declared f
 The file shape is expressed as safe categories only. Row body material, local locations, cue material, renderer material, network locations, credentials, commands, owner notes, and diagnostic material remain rejected from public status surfaces.
 
 The packet preserves `actual_ingestion_allowed: false`, `real_row_data_present: false`, `checked_row_count: 0`, `motion_dataset_executable: false`, `trusted_loader_allowlist_enabled: false`, `go_nogo_status: no_go`, and `priority1_status: BLOCKED`.
+
+### Motion Dataset Row Body Parser Rejection Fixture Pack
+
+`LIVE2D-MOTION-DATASET-ROW-BODY-PARSER-REJECTION-FIXTURE-PACK1` adds a synthetic-only parser rejection fixture pack for future review preparation. It is not a real parser, does not read row bodies, does not accept actual row content, does not ingest real rows, and does not create runtime or production readiness.
+
+The public summary remains fail-closed: `motion_dataset_row_body_parser_rejection_fixture_pack_status` is `planning_only_blocked`, `synthetic_only_boundary` is true, `parser_rejection_fixture_pack_only_boundary` is true, `row_body_parser_enabled` is false, `row_body_parser_executed` is false, `checked_row_count` is `0`, `actual_ingestion_allowed` is false, `motion_dataset_executable` is false, `priority1_status` remains `BLOCKED`, owner confirmation remains unconfirmed, and go/no-go remains `no_go`.
+
+Accepted fixture labels are safe synthetic rejection cases only. Rejected input attempt labels are exposed through safe public labels only; raw row bodies, file values, cue material, renderer material, credentials, private references, command-like requests, readiness claims, priority1-resolved claims, and motion-executable claims remain rejected and are not public evidence of parser execution.
+
+Future actual parser execution requires a separate owner-confirmed actual data task with fresh real resident evidence, go/no-go blocker resolution, redaction review, and a new safety gate. This fixture pack does not resolve priority1 and does not make the motion dataset executable.
