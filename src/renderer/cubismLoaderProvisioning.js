@@ -60,6 +60,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA = "iris_live2d
 export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA = "iris_live2d_motion_dataset_readiness_non_sweetening_sweep_v1";
 export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_planning_completion_review_packet_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_live2d_motion_dataset_owner_submission_form_spec_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1590,6 +1591,34 @@ export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_REJECTED_FIELDS = Objec
   "sensitive_label_rejected",
   "local_reference_rejected",
   "owner_note_rejected",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_CATEGORIES = Object.freeze([
+  "dataset_row_material",
+  "cue_material",
+  "renderer_material",
+  "model_reference",
+  "motion_reference",
+  "network_value",
+  "credential_label",
+  "sensitive_label",
+  "local_reference",
+  "world_action",
+  "obs_action",
+  "game_action",
+  "os_action",
+  "memory_commit",
+  "relationship_commit",
+  "owner_note",
+  "k_memo_material",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_ACTIONS = Object.freeze([
+  "reject",
+  "redact_field_name_only",
+  "safe_category_only",
+  "manual_owner_review_required",
+  "block_actual_ingestion",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7237,6 +7266,40 @@ export function createMotionDatasetOwnerSubmissionFormSpecSummary(input = {}) {
     ],
     safeNextAction: "future_owner_submission_must_use_safe_labels_only",
     context: "motion dataset owner submission form spec summary",
+  }, input);
+}
+
+export function createMotionDatasetRealRowRedactionPolicyMatrixSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA,
+    statusKey: "motion_dataset_real_row_redaction_policy_matrix_status",
+    status: "planning_only_blocked",
+    boundaries: {
+      redaction_policy_matrix_only_boundary: true,
+      no_redaction_scan_executed_boundary: true,
+      no_real_row_ingestion_boundary: true,
+      redaction_policy_matrix_only: true,
+    },
+    flags: {
+      redaction_policy_matrix_only: true,
+      redaction_scan_executed: false,
+      redaction_policy_matrix_claims_scan_complete: false,
+      actual_file_read: false,
+      actual_row_content_accepted: false,
+      actual_ingestion_allowed: false,
+    },
+    arrays: {
+      required_redaction_categories: [...LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_CATEGORIES],
+      required_redaction_actions: [...LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_ACTIONS],
+    },
+    blockedReasons: [
+      "real_row_redaction_policy_matrix_planning_only",
+      "real_row_redaction_policy_matrix_no_scan_executed",
+      "real_row_redaction_policy_matrix_no_actual_row_content",
+      "real_row_redaction_policy_matrix_priority1_blocked",
+    ],
+    safeNextAction: "future_owner_data_submission_requires_separate_redaction_scan_task",
+    context: "motion dataset real row redaction policy matrix summary",
   }, input);
 }
 

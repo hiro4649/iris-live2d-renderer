@@ -41,6 +41,7 @@ import {
   createMotionDatasetReadinessNonSweeteningSweepSummary,
   createMotionDatasetPlanningCompletionReviewPacketSummary,
   createMotionDatasetOwnerSubmissionFormSpecSummary,
+  createMotionDatasetRealRowRedactionPolicyMatrixSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetRealRowIntakeRequestPacketSummary,
@@ -198,6 +199,7 @@ export function createRendererState({
       const motionDatasetReadinessNonSweeteningSweep = createMotionDatasetReadinessNonSweeteningSweepSummary();
       const motionDatasetPlanningCompletionReviewPacket = createMotionDatasetPlanningCompletionReviewPacketSummary();
       const motionDatasetOwnerSubmissionFormSpec = createMotionDatasetOwnerSubmissionFormSpecSummary();
+      const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const status = {
         ok: true,
@@ -308,6 +310,7 @@ export function createRendererState({
           motion_dataset_readiness_non_sweetening_sweep_summary: motionDatasetReadinessNonSweeteningSweep,
           motion_dataset_planning_completion_review_packet_summary: motionDatasetPlanningCompletionReviewPacket,
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
+          motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
@@ -368,6 +371,7 @@ export function createRendererState({
           motion_dataset_readiness_non_sweetening_sweep_summary: motionDatasetReadinessNonSweeteningSweep,
           motion_dataset_planning_completion_review_packet_summary: motionDatasetPlanningCompletionReviewPacket,
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
+          motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
@@ -469,6 +473,7 @@ export function createRendererState({
         motion_dataset_readiness_non_sweetening_sweep_summary: status.renderer_health.motion_dataset_readiness_non_sweetening_sweep_summary,
         motion_dataset_planning_completion_review_packet_summary: status.renderer_health.motion_dataset_planning_completion_review_packet_summary,
         motion_dataset_owner_submission_form_spec_summary: status.renderer_health.motion_dataset_owner_submission_form_spec_summary,
+        motion_dataset_real_row_redaction_policy_matrix_summary: status.renderer_health.motion_dataset_real_row_redaction_policy_matrix_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
         motion_dataset_row_schema_preflight_summary: status.renderer_health.motion_dataset_row_schema_preflight_summary,
@@ -626,6 +631,7 @@ export function createRendererState({
       const motionDatasetReadinessNonSweeteningSweep = createMotionDatasetReadinessNonSweeteningSweepSummary();
       const motionDatasetPlanningCompletionReviewPacket = createMotionDatasetPlanningCompletionReviewPacketSummary();
       const motionDatasetOwnerSubmissionFormSpec = createMotionDatasetOwnerSubmissionFormSpecSummary();
+      const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const response = createBrowserRuntimeConfig({
         modelId: state.modelId,
@@ -695,6 +701,7 @@ export function createRendererState({
       response.motion_dataset_readiness_non_sweetening_sweep_summary = motionDatasetReadinessNonSweeteningSweep;
       response.motion_dataset_planning_completion_review_packet_summary = motionDatasetPlanningCompletionReviewPacket;
       response.motion_dataset_owner_submission_form_spec_summary = motionDatasetOwnerSubmissionFormSpec;
+      response.motion_dataset_real_row_redaction_policy_matrix_summary = motionDatasetRealRowRedactionPolicyMatrix;
       response.motion_dataset_row_file_checksum_preflight_manifest_summary = motionDatasetRowFileChecksumPreflightManifest;
       response.motion_dataset_synthetic_row_fixture_pack_summary = motionDatasetSyntheticRowFixturePack;
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
@@ -817,6 +824,7 @@ export function createRendererState({
       const motionDatasetReadinessNonSweeteningSweep = createMotionDatasetReadinessNonSweeteningSweepSummary();
       const motionDatasetPlanningCompletionReviewPacket = createMotionDatasetPlanningCompletionReviewPacketSummary();
       const motionDatasetOwnerSubmissionFormSpec = createMotionDatasetOwnerSubmissionFormSpecSummary();
+      const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const response = {
         ok: true,
@@ -911,6 +919,7 @@ export function createRendererState({
           motion_dataset_readiness_non_sweetening_sweep_summary: motionDatasetReadinessNonSweeteningSweep,
           motion_dataset_planning_completion_review_packet_summary: motionDatasetPlanningCompletionReviewPacket,
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
+          motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
           motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
           motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
@@ -971,6 +980,7 @@ export function createRendererState({
           motion_dataset_readiness_non_sweetening_sweep_summary: motionDatasetReadinessNonSweeteningSweep,
           motion_dataset_planning_completion_review_packet_summary: motionDatasetPlanningCompletionReviewPacket,
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
+          motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,

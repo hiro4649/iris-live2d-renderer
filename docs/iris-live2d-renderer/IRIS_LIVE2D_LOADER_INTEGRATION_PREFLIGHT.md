@@ -649,3 +649,7 @@ The planning completion review packet is planning-only. It summarizes completed 
 ## LIVE2D-MOTION-DATASET-OWNER-SUBMISSION-FORM-SPEC1
 
 The owner submission form spec is planning-only. It defines safe future form labels and rejected raw/private fields without accepting real data, requesting row bodies, creating owner confirmation, ingesting rows, resolving priority1, or claiming runtime or production readiness.
+
+### LIVE2D-MOTION-DATASET-REAL-ROW-REDACTION-POLICY-MATRIX1
+
+Adds a planning-only redaction policy matrix for future owner review. The matrix defines safe public categories and required actions, but it does not scan data, execute redaction, read files, accept row content, ingest rows, create owner confirmation, or claim runtime or production readiness. priority1 remains BLOCKED and the motion dataset remains non-executable with checked_row_count 0.
