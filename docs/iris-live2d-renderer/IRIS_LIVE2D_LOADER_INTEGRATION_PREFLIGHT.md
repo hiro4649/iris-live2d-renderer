@@ -564,3 +564,8 @@ Current boundary remains fail-closed: `rollback_ready` is false, `rollback_snaps
 Adds a planning-only parser dry-run envelope for future row parser work. It defines future dry-run inputs and outputs, but it does not enable the parser, execute the parser, read files, parse row bodies, ingest rows, create owner confirmation, approve go/no-go, execute motion, or claim readiness.
 
 Current boundary remains fail-closed: `row_body_parser_enabled` is false, `row_body_parser_executed` is false, `parser_dry_run_executed` is false, `actual_file_read` is false, `actual_row_content_accepted` is false, `row_body_read` is false, `checked_row_count` remains `0`, real row data remains absent, actual ingestion remains disallowed, priority1 remains `BLOCKED`, motion dataset remains non-executable, and go/no-go remains `no_go`. Future parser dry-run execution requires a separate owner-confirmed actual data task with source hash review and go/no-go blocker review.
+
+
+## LIVE2D-MOTION-DATASET-REAL-ROW-ACCEPTANCE-CRITERIA-CHECKLIST1
+
+The real row acceptance criteria checklist is planning-only. It defines future acceptance and rejection criteria for owner-confirmed real row review, but it is not approval and does not accept actual data. It does not read row bodies, ingest real rows, execute motion, resolve priority1, or claim runtime or production readiness. checked_row_count remains 0, actual_ingestion_allowed remains false, and motion dataset remains non-executable.

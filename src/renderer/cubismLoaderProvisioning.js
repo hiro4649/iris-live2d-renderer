@@ -43,6 +43,7 @@ export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA
 export const LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_audit_trail_stub_v1";
 export const LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA = "iris_live2d_motion_dataset_ingestion_rollback_plan_stub_v1";
 export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_parser_dry_run_envelope_v1";
+export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_CRITERIA_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_real_row_acceptance_criteria_checklist_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -1100,6 +1101,35 @@ export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_OUTPUTS = Ob
   "redaction_status",
   "audit_ref",
   "safe_next_action",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_REQUIRED_CRITERIA = Object.freeze([
+  "owner_confirmation_confirmed",
+  "source_hash_present",
+  "declared_row_count_present",
+  "metadata_validator_pass_future",
+  "checksum_verified_future",
+  "parser_dry_run_pass_future",
+  "redaction_scan_pass_future",
+  "audit_manifest_pass_future",
+  "go_nogo_review_pass_future",
+  "fresh_resident_evidence_present",
+  "renderer_ready_dependencies_satisfied",
+  "unsupported_motion_absent",
+  "checked_row_count_positive_after_future_ingestion",
+]);
+
+export const LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_REQUIRED_REJECTION_CRITERIA = Object.freeze([
+  "owner_confirmation_missing",
+  "source_hash_missing",
+  "raw_row_body_unredacted",
+  "unsupported_motion_present",
+  "experimental_motion_executable",
+  "renderer_ready_dependencies_missing",
+  "priority1_blocked",
+  "go_nogo_no_go",
+  "actual_file_unverified",
+  "stale_evidence",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -6608,6 +6638,83 @@ export function createMotionDatasetIngestionRollbackPlanStubSummary(input = {}) 
     },
   };
   assertSafePublicObject(summary, "motion dataset ingestion rollback plan stub summary");
+  return summary;
+}
+
+export function createMotionDatasetRealRowAcceptanceCriteriaChecklistSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const rejectedAttempt = Boolean(
+    source.actual_data_accepted ||
+      source.actual_ingestion_allowed ||
+      source.real_row_data_present ||
+      source.row_body_read ||
+      Number(source.checked_row_count ?? 0) > 0 ||
+      source.motion_dataset_executable ||
+      source.runtime_readiness_claimed ||
+      source.production_readiness_claimed ||
+      source.owner_confirmation_confirmed ||
+      source.priority1_status === "RESOLVED" ||
+      source.go_nogo_status === "go"
+  );
+  const blockedReasons = [
+    "acceptance_criteria_checklist_planning_only",
+    "acceptance_criteria_checklist_no_acceptance_approval",
+    "acceptance_criteria_checklist_no_actual_data_accepted",
+    "acceptance_criteria_checklist_no_real_row_ingestion",
+    "acceptance_criteria_checklist_no_row_body_read",
+    "acceptance_criteria_checklist_priority1_blocked",
+    "acceptance_criteria_checklist_no_go_preserved",
+  ];
+  if (rejectedAttempt) {
+    blockedReasons.push("acceptance_criteria_checklist_rejected_state_promotion");
+  }
+
+  const summary = {
+    schema: LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_CRITERIA_CHECKLIST_SCHEMA,
+    motion_dataset_real_row_acceptance_criteria_checklist_status: "planning_only_blocked",
+    planning_only_boundary: true,
+    acceptance_criteria_checklist_only_boundary: true,
+    no_acceptance_approval_boundary: true,
+    no_actual_data_accepted_boundary: true,
+    no_real_row_ingestion_boundary: true,
+    no_row_body_read_boundary: true,
+    acceptance_criteria_checklist_only: true,
+    actual_data_accepted: false,
+    actual_ingestion_allowed: false,
+    real_row_data_present: false,
+    row_body_read: false,
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    renderer_ready: false,
+    model_loaded: false,
+    scene_loaded: false,
+    browser_cue_delivery_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    owner_confirmation_confirmed: false,
+    owner_confirmation_status: "schema_only",
+    go_nogo_status: "no_go",
+    go_candidate: false,
+    blocker_resolved: false,
+    required_acceptance_criteria: [...LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_REQUIRED_CRITERIA],
+    required_rejection_criteria: [...LIVE2D_MOTION_DATASET_REAL_ROW_ACCEPTANCE_REQUIRED_REJECTION_CRITERIA],
+    blocked_reasons: [...new Set(blockedReasons)],
+    safe_next_action: "future_owner_confirmed_real_row_acceptance_review_required_before_actual_data_acceptance",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      planning_only: true,
+      acceptance_criteria_checklist_only: true,
+      no_acceptance_approval: true,
+      no_actual_data_accepted: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_motion_execution: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "motion dataset real row acceptance criteria checklist summary");
   return summary;
 }
 
