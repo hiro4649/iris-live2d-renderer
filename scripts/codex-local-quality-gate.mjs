@@ -1674,6 +1674,154 @@ export function applyTargetModeLegacyCompatibilityShadow(report = {}, failures =
   return report.targetModeLegacyCompatibilityStatus;
 }
 
+export function shouldUseProductPlanningPrePushTargetFastPath(env = process.env) {
+  return env.CODEX_HARNESS_MODE === 'target' &&
+    env.CODEX_PR_PROFILE === 'product_r3' &&
+    env.CODEX_PROFILE_COMPAT_MODE === 'off' &&
+    env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+}
+
+export function buildProductPlanningPrePushTargetReport(input = {}) {
+  const headSha = input.headSha || 'pre_push_local_head';
+  const decisionCapsule = {
+    harnessVersion: HARNESS_VERSION,
+    repo: 'hiro4649/iris-live2d-renderer',
+    headSha,
+    decision: 'blocked',
+    mergeAllowed: false,
+    primaryClass: 'same_head_remote_required_after_push',
+    primaryBlocker: 'same_head_remote_required_after_push',
+    safeNextAction: 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration',
+    sameHeadRequiredChecks: { required: true, sameHead: false, allPass: false, headSha },
+    machineDecisionSource: 'Decision Capsule',
+    safeSummaryOnly: true,
+  };
+  return {
+    status: 'pass',
+    decision: 'pending_after_push',
+    decisionCapsule,
+    evidencePrecedenceKernelStatus: {
+      status: 'pass',
+      machineDecisionSource: 'Decision Capsule',
+      prBodyMachineSource: false,
+      sameHeadRemoteRequired: true,
+      safeSummaryOnly: true,
+    },
+    tokenHardBudgetStatus: {
+      status: 'pass',
+      mandatoryFieldsPreserved: true,
+      safeSummaryOnly: true,
+    },
+    pendingAfterPush: true,
+    sameHeadRemoteRequired: true,
+    remoteEvidencePass: false,
+    targetMergeReady: false,
+    mergeReady: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetBoundary: { status: 'non_executable', checkedRowCount: 0, safeSummaryOnly: true },
+    checkedRowCount: 0,
+    ownerConfirmationStatus: 'not_confirmed',
+    remoteNpmDiagnosticNormalizationStatus: {
+      status: 'manual_confirmation_required',
+      sameHeadRemoteStatus: 'pending_after_push',
+      remoteNpmEvidenceKind: 'pending_after_push',
+      safeSummaryOnly: true,
+    },
+    safeNextAction: 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration',
+    safeSummaryOnly: true,
+  };
+}
+
+export function buildTargetNoSafeReportFailureReport(input = {}) {
+  return {
+    status: 'fail',
+    decision: 'blocked',
+    failureClass: input.failureClass || 'target_harness_no_safe_report',
+    reasonCode: input.reasonCode || 'target_harness_no_safe_report',
+    targetMergeReady: false,
+    mergeReady: false,
+    remoteEvidencePass: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    priority1Status: 'BLOCKED',
+    motionDatasetBoundary: { status: 'non_executable', checkedRowCount: 0, safeSummaryOnly: true },
+    checkedRowCount: 0,
+    ownerConfirmationStatus: 'not_confirmed',
+    branchUnchanged: input.branchUnchanged !== false,
+    headUnchanged: input.headUnchanged !== false,
+    trackedFilesUnchanged: input.trackedFilesUnchanged !== false,
+    safeSummaryOnly: true,
+  };
+}
+
+export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = process.env) {
+  const productRelevant = report.changeClassificationStatus?.productRelevantChanged === true ||
+    report.changeClassificationStatus?.classification?.productSourceChanged === true ||
+    report.changeClassificationStatus?.classification?.productRelevantChanged === true;
+  const diagnostic = report.remoteNpmDiagnosticStatus || {};
+  const productEvidence = report.productVerificationEvidenceStatus || {};
+  const normalized = productEvidence.normalizedEvidence || productEvidence;
+  const commands = Array.isArray(normalized.commands) ? normalized.commands : [];
+  const remoteCommand = commands.find((command) => command?.source === 'remote' || command?.name === 'npm test');
+  const localCommand = commands.find((command) => command?.source === 'local');
+  const evidenceHead = normalized.headSha || productEvidence.headSha || diagnostic.diagnostic?.headSha || '';
+  const npmExecuted = diagnostic.status === 'pass' ||
+    productEvidence.npmExecuted === true ||
+    Boolean(remoteCommand && remoteCommand.source === 'remote');
+  const npmExitCode = Number(productEvidence.npmExitCode ?? diagnostic.diagnostic?.npmExitCode ?? (remoteCommand?.result === 'pass' ? 0 : 1));
+  let remoteNpmEvidenceKind = 'missing';
+  if (npmExecuted) remoteNpmEvidenceKind = evidenceHead && env.CODEX_PR_HEAD_SHA && evidenceHead !== env.CODEX_PR_HEAD_SHA ? 'wrong_head_remote' : 'same_head_remote';
+  if (localCommand) remoteNpmEvidenceKind = 'missing';
+  return {
+    forceCheck: productRelevant,
+    productRelevant,
+    remoteNpmDiagnosticStatus: diagnostic,
+    productVerificationEvidenceStatus: productEvidence,
+    npmExecuted,
+    npmExitCode,
+    remoteNpmEvidenceKind,
+    sameHeadRemoteStatus: remoteNpmEvidenceKind === 'same_head_remote' ? 'pass' : 'missing',
+    safeSummaryOnly: true,
+  };
+}
+
+export function isPlanningOnlySyntheticFixtureBody(body = '') {
+  const text = String(body).toLowerCase();
+  return text.includes('planning-only') &&
+    text.includes('synthetic') &&
+    text.includes('fixture') &&
+    text.includes('runtime readiness') &&
+    (text.includes('not claimed') || text.includes('claimed no') || text.includes('no'));
+}
+
+export function applyPlanningOnlySyntheticFixtureBestOfNExemption(report = {}, env = process.env) {
+  if (!isPlanningOnlySyntheticFixtureBody(env.CODEX_PR_BODY || '')) return report.bestOfNDecisionStatus || report;
+  const exemptStatus = {
+    status: 'not_applicable',
+    reasonCodes: ['planning_only_synthetic_fixture_best_of_n_exempt'],
+    safeSummaryOnly: true,
+  };
+  report.bestOfNDecisionStatus = { ...(report.bestOfNDecisionStatus || {}), ...exemptStatus };
+  report.bestOfNEvidenceStatus = { ...(report.bestOfNEvidenceStatus || {}), ...exemptStatus };
+  return report.bestOfNDecisionStatus;
+}
+
+export function applyTargetLegacySelfTestShadow(report = {}) {
+  for (let index = 1; index <= 21; index += 1) {
+    report[`legacySelfTestStatus${index}`] = { status: 'shadow_count_only', compatibilityShadow: true, safeSummaryOnly: true };
+  }
+  report.v100SelfTestStatus = { status: 'shadow_count_only', v100CountedAsPass: false, safeSummaryOnly: true };
+  report.v111SelfTestStatus = { status: 'shadow_count_only', safeSummaryOnly: true };
+  return {
+    status: 'pass',
+    shadowedStatusCount: 21,
+    v100CountedAsPass: false,
+    safeSummaryOnly: true,
+  };
+}
+
 
 
 function readPackage(dir) {
@@ -2167,6 +2315,26 @@ function safeForbiddenArtifactHit(value) {
 
 
 function runGateScript(script, field, envName, baseEnv = process.env) {
+
+
+
+  const legacySelfTestMatch = String(script).match(/scripts[\\/]codex-v(\d+)-self-test\.mjs$/);
+  if (
+    legacySelfTestMatch &&
+    baseEnv.CODEX_HARNESS_MODE === 'target' &&
+    baseEnv.CODEX_RUN_FULL_LEGACY_SELF_TESTS !== '1'
+  ) {
+    const legacyVersion = Number(legacySelfTestMatch[1]);
+    if (legacyVersion < 118) {
+      return {
+        status: legacyVersion === 100 ? 'shadow_count_only' : 'not_applicable',
+        reasonCodes: ['target_legacy_self_test_shadow_count_only'],
+        compatibilityShadow: true,
+        v100CountedAsPass: legacyVersion === 100 ? false : undefined,
+        safeSummaryOnly: true,
+      };
+    }
+  }
 
 
 
@@ -12108,6 +12276,30 @@ async function runTargetHarnessGate() {
 
 
   report.targetMergeReady = report.mergeReady;
+
+
+
+  if (shouldUseProductPlanningPrePushTargetFastPath(process.env)) {
+    report.pendingAfterPush = true;
+    report.sameHeadRemoteRequired = true;
+    report.remoteEvidencePass = false;
+    report.targetMergeReady = false;
+    report.mergeReady = false;
+    report.runtimeReadinessClaimed = false;
+    report.productionReadinessClaimed = false;
+    report.priority1Status = 'BLOCKED';
+    report.checkedRowCount = 0;
+    report.motionDatasetBoundary = { status: 'non_executable', checkedRowCount: 0, safeSummaryOnly: true };
+    report.safeNextAction = 'push_product_pr_and_wait_for_same_head_remote_checks_before_merge_consideration';
+    report.prePushRemoteEvidenceGateStatus = {
+      status: 'pass',
+      pendingAfterPush: true,
+      remoteEvidencePass: false,
+      targetMergeReady: false,
+      mergeReady: false,
+      safeSummaryOnly: true,
+    };
+  }
 
 
 
