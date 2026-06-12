@@ -1,5 +1,19 @@
 # AGENTS.md
 
+## IRIS Live2D Renderer Working Guide
+
+This repository contains the IRIS Live2D renderer. Use Node.js >=20. Normal work
+should be small, renderer-scoped, and verified with the narrowest relevant
+command.
+
+Default commands:
+- Test: `npm test`
+- Local server: `npm start` only when explicitly asked.
+
+Do not claim renderer, runtime, production, or Live2D readiness unless the owner
+explicitly scopes that evidence. Done means the relevant command was run or the
+reason it could not run is recorded without raw logs or secret-like output.
+
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
 CODEX_QUALITY_HARNESS_FILE v1.1.8
 
