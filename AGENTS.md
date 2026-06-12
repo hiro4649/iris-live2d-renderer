@@ -15,7 +15,7 @@ explicitly scopes that evidence. Done means the relevant command was run or the
 reason it could not run is recorded without raw logs or secret-like output.
 
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-CODEX_QUALITY_HARNESS_FILE v1.1.8
+CODEX_QUALITY_HARNESS_FILE v1.1.9
 
 ## Prime Directive
 
@@ -95,6 +95,8 @@ load-bearing artifact consistency, emit delta-only final summaries, and read
 failures through safe artifacts only. Keep operator-visible statuses within the
 budget and keep target rollout out of Source body tasks.
 For v1.1.8 Final Decision Kernel, Evidence Capsule, Mode-Aware Artifact Contract, and Convergence Gate, use `docs/process/CODEX_V118_SPEC.md`. Preserve Final Decision authority, Evidence Capsule freshness boundaries, artifact consistency, safe failure reading, token budget enforcement, scope boundaries, same-head required checks, raw-log prohibition, 8-session default fail, and target rollout separation.
+For v1.1.9 Maintainer Orchestration Lite and Worker Proof Contract, use `docs/process/CODEX_V119_SPEC.md`. v1.1.9 adds preparatory orchestration evidence only: Orchestration Capsule, Worker Proof, and Owner Decision Brief. v1.1.8 Final Decision remains final pass/block/mergeAllowed/exit-code authority. Preserve the three-artifact P0 cap, token/surface limits, safe-output rules, raw-log prohibition, 8-session default fail, product/harness separation, workflow-as-artifact-exposure-only, and target rollout separation.
+
 
 ## Plan-First Rule
 
