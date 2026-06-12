@@ -164,3 +164,116 @@ Do not start that task in this PR. It must be metadata-only. It must not include
 | trusted_loader_allowlist_enabled | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
+
+## Metadata-Only Owner Intake Preflight
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-PREFLIGHT1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INTAKE_PREFLIGHT_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_intake_preflight_status
+
+This preflight is planning-only and metadata-only. It defines safe labels that the owner may provide in a future task. It does not receive actual file content, actual file path values, row bodies, verified hashes, parser output, redaction scan output, audit output, owner confirmation, or readiness evidence.
+
+### Metadata-Only Status Projection
+
+| Field | Value |
+| --- | --- |
+| status | planning_only |
+| metadata_only_boundary | true |
+| owner_intake_preflight_only_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-REJECTION-FIXTURE-PACK1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1 |
+
+### Required Owner Metadata Fields
+
+These are labels only. They are not verified data, not actual row content, not file paths, and not readiness evidence.
+
+| Field | Boundary |
+| --- | --- |
+| submission_request_id | Safe request identifier label only. |
+| file_format_label | Declared format label only. |
+| declared_row_count_label | Declared count label only; checked_row_count remains 0. |
+| source_hash_label | Declared hash label only; source_hash_verified remains false. |
+| hash_algorithm_label | Declared algorithm label only. |
+| schema_version_label | Declared schema label only; rows are not validated. |
+| dataset_version_label | Declared dataset version label only. |
+| dataset_split_plan_label | Declared split plan label only; split is not applied. |
+| owner_confirmation_scope_label | Scope label only; owner_confirmation_confirmed remains false. |
+| safe_next_action | Next planning step label only. |
+
+### Rejected Owner Metadata Fields
+
+The following fields are rejected in this preflight and must not appear as accepted public intake values.
+
+| Rejected field | Reason |
+| --- | --- |
+| raw_dataset_row_body | Would be actual row content. |
+| actual_file_content | Actual file content is not accepted. |
+| actual_file_path_value | Actual path values are not accepted. |
+| raw_cue_payload | Raw cue payloads are out of scope. |
+| raw_renderer_payload | Raw renderer payloads are out of scope. |
+| raw_model_path | Raw model paths are private/sensitive. |
+| raw_motion_path | Raw motion paths are private/sensitive. |
+| endpoint_value | Endpoint values are not public intake metadata. |
+| token_value | Token values are forbidden. |
+| secret_value | Secret values are forbidden. |
+| private_local_path | Private local paths are forbidden. |
+| raw_owner_note | Owner private notes are not public evidence. |
+| raw_k_memo_text | Raw K memo text is not accepted. |
+| shell_body | Shell bodies are not accepted. |
+| command_payload | Command payloads are not accepted. |
+
+### Required Owner Metadata Blockers
+
+| Blocker | Status |
+| --- | --- |
+| owner_confirmation_missing | blocked |
+| real_row_file_not_accepted_in_this_task | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| schema_version_not_validated_against_rows | blocked |
+| dataset_split_not_applied | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+
+### Rules
+
+Metadata-only means label names and declared counts only. This preflight must not accept file path values, file content, row bodies, raw dataset rows, raw owner notes, raw K memo text, tokens, secrets, endpoints, or command payloads.
+
+source_hash_label is not a verified source hash. declared_row_count_label is not checked_row_count. This preflight must not set owner_submission_received, owner_submission_accepted, owner_confirmation_confirmed, actual_ingestion_allowed, runtime_readiness_claimed, production_readiness_claimed, renderer_ready, or motion_dataset_executable to true.
+
+### Completion Index Update
+
+The metadata-only owner intake preflight is now a planning artifact. It improves specification clarity but does not raise the conservative implementation or production readiness estimates. Production readiness remains below 20 percent.
+
+Next recommended task after this preflight: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-REJECTION-FIXTURE-PACK1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1. Do not start either task in this PR, and do not start actual ingestion.
