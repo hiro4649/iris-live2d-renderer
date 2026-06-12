@@ -364,3 +364,95 @@ This fixture pack is metadata-only and synthetic-only. It describes safe rejecti
 ### Completion Index Update For AW
 
 The metadata-only rejection fixture pack is now a planning artifact. It adds synthetic-only rejection coverage without changing implementation readiness or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1. Do not start actual ingestion.
+## Metadata-Only Owner Intake Dry-Run Validator
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INTAKE_DRY_RUN_VALIDATOR_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_intake_dry_run_validator_status
+
+This validator is metadata-only and dry-run-only. It validates the presence and rejection labels for future owner metadata intake without receiving actual owner submission, accepting real data, reading row bodies, accepting file path values, calculating or verifying hashes, checking declared row counts against actual rows, executing parsers, executing redaction scans, executing audits, creating owner confirmation, or claiming readiness.
+
+### Dry-Run Validator Status Projection
+
+| Field | Value |
+| --- | --- |
+| status | planning_only |
+| metadata_only_boundary | true |
+| dry_run_only_boundary | true |
+| owner_intake_validator_only_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-OWNER-HANDOFF-PACKET1 or LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1 |
+
+### Required Dry-Run Input Labels
+
+| Label | Boundary |
+| --- | --- |
+| submission_request_id | Required label only. |
+| file_format_label | Required label only. |
+| declared_row_count_label | Required label only; not checked row count. |
+| source_hash_label | Required label only; not verified. |
+| hash_algorithm_label | Required label only. |
+| schema_version_label | Required label only; rows are not validated. |
+| dataset_version_label | Required label only. |
+| dataset_split_plan_label | Required label only; split is not applied. |
+| owner_confirmation_scope_label | Required label only; owner confirmation remains false. |
+
+### Required Dry-Run Rejection Reasons
+
+| Rejection reason | Boundary |
+| --- | --- |
+| missing_submission_request_id | Required label missing. |
+| missing_file_format_label | Required label missing. |
+| missing_declared_row_count_label | Required label missing. |
+| missing_source_hash_label | Required label missing. |
+| missing_hash_algorithm_label | Required label missing. |
+| missing_schema_version_label | Required label missing. |
+| missing_dataset_version_label | Required label missing. |
+| missing_dataset_split_plan_label | Required label missing. |
+| missing_owner_confirmation_scope_label | Required label missing. |
+| raw_dataset_row_body_present | Row body must be rejected. |
+| actual_file_content_present | Actual file content must be rejected. |
+| actual_file_path_value_present | File path values must be rejected. |
+| source_hash_marked_verified | Source hash verification is forbidden. |
+| declared_row_count_marked_checked | Declared count is not checked row count. |
+| owner_confirmation_marked_confirmed | Owner confirmation is not created. |
+| actual_ingestion_requested | Actual ingestion is forbidden. |
+| parser_execution_requested | Parser execution is forbidden. |
+| redaction_scan_execution_requested | Redaction scan execution is forbidden. |
+| audit_execution_requested | Audit execution is forbidden. |
+| priority1_blocked | priority1 remains BLOCKED. |
+| checked_row_count_zero | checked_row_count remains 0. |
+
+### Completion Index Update For AX
+
+The metadata-only dry-run validator is now a planning artifact. It adds label-level validation planning only and does not raise implementation readiness or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-OWNER-HANDOFF-PACKET1 or LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1. Do not start actual ingestion.
