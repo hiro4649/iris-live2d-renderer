@@ -277,3 +277,90 @@ source_hash_label is not a verified source hash. declared_row_count_label is not
 The metadata-only owner intake preflight is now a planning artifact. It improves specification clarity but does not raise the conservative implementation or production readiness estimates. Production readiness remains below 20 percent.
 
 Next recommended task after this preflight: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-REJECTION-FIXTURE-PACK1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1. Do not start either task in this PR, and do not start actual ingestion.
+## Metadata-Only Owner Intake Rejection Fixture Pack
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-REJECTION-FIXTURE-PACK1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INTAKE_REJECTION_FIXTURE_PACK_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_intake_rejection_fixture_pack_status
+
+This fixture pack is metadata-only and synthetic-only. It describes safe rejection labels for unsafe owner metadata intake attempts. It does not accept actual owner metadata, file content, file path values, row bodies, verified hashes, parser execution, redaction scan execution, audit execution, owner confirmation, or readiness evidence.
+
+### Rejection Fixture Status Projection
+
+| Field | Value |
+| --- | --- |
+| status | planning_only |
+| metadata_only_boundary | true |
+| synthetic_only_boundary | true |
+| rejection_fixture_pack_only_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1 |
+
+### Accepted Safe Fixture Cases
+
+| Fixture case | Boundary |
+| --- | --- |
+| safe_metadata_labels_only | Synthetic label-only fixture. |
+| safe_declared_row_count_label_only | Declared count label only; not checked_row_count. |
+| safe_source_hash_label_only | Source hash label only; not verified. |
+| safe_schema_version_label_only | Schema label only; rows are not validated. |
+| safe_dataset_split_label_only | Split label only; split is not applied. |
+| safe_owner_confirmation_scope_label_only | Scope label only; owner confirmation remains false. |
+
+### Rejected Metadata Attempt Cases
+
+| Rejected case | Reason |
+| --- | --- |
+| raw_dataset_row_body_present | Row bodies are not accepted. |
+| actual_file_content_present | Actual file content is not accepted. |
+| actual_file_path_value_present | Actual path values are not accepted. |
+| source_hash_marked_verified | Source hash labels are not verification. |
+| declared_row_count_marked_checked | Declared labels are not checked row counts. |
+| owner_submission_marked_received | This task receives no owner submission. |
+| owner_submission_marked_accepted | This task accepts no owner submission. |
+| owner_confirmation_marked_confirmed | Owner confirmation is not created. |
+| parser_execution_requested | Parser execution is forbidden. |
+| redaction_scan_execution_requested | Redaction scan execution is forbidden. |
+| audit_execution_requested | Audit execution is forbidden. |
+| actual_ingestion_requested | Actual ingestion is forbidden. |
+| runtime_readiness_requested | Runtime readiness is not claimed. |
+| production_readiness_requested | Production readiness is not claimed. |
+| trusted_loader_enablement_requested | Trusted loader enablement is forbidden. |
+| unsupported_raw_payload_present | Raw payloads are not accepted. |
+| secret_or_endpoint_present | Secrets and endpoints are forbidden. |
+| raw_k_memo_present | Raw K memo text is not accepted. |
+| command_payload_present | Command payloads are not accepted. |
+
+### Completion Index Update For AW
+
+The metadata-only rejection fixture pack is now a planning artifact. It adds synthetic-only rejection coverage without changing implementation readiness or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1. Do not start actual ingestion.
