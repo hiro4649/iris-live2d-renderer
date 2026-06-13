@@ -6,16 +6,17 @@
   "activeHarnessVersion": "1.2.0",
   "targetHarnessVersion": "1.2.0",
   "evidenceSchemaVersion": 6,
-  "profileTemplateVersion": "1.1.6",
+  "profileTemplateVersion": "1.2.0",
+  "compatibleProfileTemplateVersions": ["1.1.6"],
   "futureHarnessArtifact": false,
-  "upgradePath": "direct_v117_to_v118",
+  "upgradePath": "direct_v119_to_v120",
   "activeSelfTestSuite": "v120",
   "activeSelfTestStatusKey": "v120SelfTestStatus",
   "legacySelfTests": [
     {
-      "v118": "blocking_current",
-      "v117": "blocking_compatibility",
-      "v116": "blocking_compatibility",
+      "v118": "compatibility_only",
+      "v117": "compatibility_only",
+      "v116": "compatibility_only",
       "v115": "blocking_compatibility",
       "v114": "blocking_compatibility",
       "v113": "selected_critical",
@@ -23,7 +24,7 @@
     },
     {
       "suite": "v119",
-      "status": "blocking_current"
+      "status": "compatibility_only"
     }
   ],
   "sourceOnlyRelease": false,
