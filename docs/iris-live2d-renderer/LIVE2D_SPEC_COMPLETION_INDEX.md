@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-CONFIRMATION-SCOPE-PREFLIGHT1, metadata-only owner confirmation scope planning only |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1, metadata-only actual data blocker map planning only |
 
 ## Completion Matrix
 
@@ -147,7 +147,7 @@ Missing or incomplete coverage remains for viewer_comfort_motion, subtitle_overl
 
 ## Next Recommended Task
 
-Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-CONFIRMATION-SCOPE-PREFLIGHT1.
+Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1.
 
 Do not start that task in this PR. It must be metadata-only. It must not include row body, file path value, real hash calculation, parser execution, redaction scan execution, audit execution, or actual ingestion.
 
@@ -742,3 +742,96 @@ This owner confirmation scope preflight is metadata-only and planning-only. It d
 ### Completion Index Update For BA
 
 The metadata-only owner confirmation scope preflight is now a planning artifact. It defines the future confirmation scope labels and blockers needed before any separate owner confirmation task can be considered. It does not create or confirm owner confirmation, receive or accept owner submission, authorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1. Do not start actual ingestion.
+
+## Metadata-Only Actual Data Task Blocker Map
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_ACTUAL_DATA_TASK_BLOCKER_MAP_SCHEMA
+Status label: live2d_real_row_metadata_only_actual_data_task_blocker_map_status
+
+This actual data task blocker map is metadata-only and planning-only. It maps the blockers that must remain closed before any future actual data task can be considered. It does not start an actual data task, preauthorize actual data, receive owner submission, accept owner submission, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, confirm owner confirmation, or claim readiness.
+
+### Actual Data Task Blocker Map Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| actual_data_task_blocker_map_only_boundary | true |
+| actual_data_task_blocker_map_only | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-RECEIPT-REQUEST-STUB1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-PREAUTH-NO-GO-SUMMARY1 |
+
+### Required Actual Data Task Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_confirmation_missing | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| real_row_file_not_accepted | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| schema_version_not_validated_against_rows | blocked |
+| dataset_split_not_applied | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+| motion_dataset_non_executable | blocked |
+| trusted_loader_disabled | blocked |
+| runtime_readiness_not_claimed | blocked |
+| production_readiness_not_claimed | blocked |
+
+### Required Clearance Conditions
+
+| condition | boundary |
+| --- | --- |
+| future_owner_confirmation_confirmed | Future condition only; not created or confirmed here. |
+| future_owner_submission_received | Future condition only; no owner submission is received here. |
+| future_source_hash_verified | Future condition only; no hash is calculated or verified here. |
+| future_declared_row_count_checked | Future condition only; checked_row_count remains 0 here. |
+| future_parser_dry_run_passed | Future condition only; no parser dry-run executes here. |
+| future_redaction_scan_passed | Future condition only; no redaction scan executes here. |
+| future_audit_execution_passed | Future condition only; no audit executes here. |
+| future_go_nogo_review_passed | Future condition only; no go/no-go review passes here. |
+| future_checked_row_count_positive | Future condition only; checked_row_count remains 0 here. |
+| future_priority1_resolution_candidate | Future condition only; priority1 remains BLOCKED here. |
+
+### Completion Index Update For BB
+
+The metadata-only actual data task blocker map is now a planning artifact. It maps the blockers and future clearance conditions required before any separate actual data task can be considered. It does not start or preauthorize actual data work, receive or accept owner submission, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, confirm owner confirmation, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-RECEIPT-REQUEST-STUB1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-PREAUTH-NO-GO-SUMMARY1. Do not start actual ingestion.
