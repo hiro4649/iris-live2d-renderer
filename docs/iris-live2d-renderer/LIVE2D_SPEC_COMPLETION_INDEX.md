@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1, metadata-only audit link planning only |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-CONFIRMATION-SCOPE-PREFLIGHT1, metadata-only owner confirmation scope planning only |
 
 ## Completion Matrix
 
@@ -147,7 +147,7 @@ Missing or incomplete coverage remains for viewer_comfort_motion, subtitle_overl
 
 ## Next Recommended Task
 
-Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1.
+Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-CONFIRMATION-SCOPE-PREFLIGHT1.
 
 Do not start that task in this PR. It must be metadata-only. It must not include row body, file path value, real hash calculation, parser execution, redaction scan execution, audit execution, or actual ingestion.
 
@@ -654,3 +654,91 @@ This audit link is metadata-only and planning-only. It links metadata-only owner
 ### Completion Index Update For AZ
 
 The metadata-only audit link is now a planning artifact. It links existing metadata-only intake planning artifacts to future audit references without executing audit work or creating real ingestion audit events. It does not accept owner submission, real data, file paths, file content, row bodies, verified hashes, checked row counts, parser output, redaction scan output, audit output, owner confirmation, or readiness evidence. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-CONFIRMATION-SCOPE-PREFLIGHT1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1. Do not start actual ingestion.
+
+## Metadata-Only Owner Confirmation Scope Preflight
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-CONFIRMATION-SCOPE-PREFLIGHT1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_CONFIRMATION_SCOPE_PREFLIGHT_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_confirmation_scope_preflight_status
+
+This owner confirmation scope preflight is metadata-only and planning-only. It defines the future scope labels that a separate owner confirmation task would need before actual data work can be considered. It does not create owner confirmation, confirm owner confirmation, receive owner submission, accept owner submission, start an actual data task, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, or claim readiness.
+
+### Owner Confirmation Scope Preflight Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_confirmation_scope_preflight_only_boundary | true |
+| owner_confirmation_scope_preflight_only | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1 |
+
+### Required Future Owner Confirmation Scopes
+
+| scope | boundary |
+| --- | --- |
+| metadata_labels_scope | Future owner confirmation may reference label names only. |
+| source_hash_label_scope | Future owner confirmation may reference the source_hash_label only; it is not verified here. |
+| declared_row_count_label_scope | Future owner confirmation may reference the declared_row_count_label only; it is not checked_row_count. |
+| dataset_split_plan_label_scope | Future owner confirmation may reference split planning labels only. |
+| schema_version_label_scope | Future owner confirmation may reference schema labels only; no row validation occurs. |
+| future_actual_data_task_scope | Future-only scope; this task does not start or approve actual data work. |
+| future_parser_dry_run_scope | Future-only scope; no parser dry-run executes. |
+| future_redaction_scan_scope | Future-only scope; no redaction scan executes. |
+| future_audit_execution_scope | Future-only scope; no audit executes. |
+| future_go_nogo_review_scope | Future-only scope; no go/no-go review is completed. |
+
+### Required Scope Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_confirmation_missing | blocked |
+| owner_submission_not_received | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| actual_data_task_not_started | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+
+### Completion Index Update For BA
+
+The metadata-only owner confirmation scope preflight is now a planning artifact. It defines the future confirmation scope labels and blockers needed before any separate owner confirmation task can be considered. It does not create or confirm owner confirmation, receive or accept owner submission, authorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1. Do not start actual ingestion.
