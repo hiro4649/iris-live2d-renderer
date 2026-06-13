@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-PREFLIGHT1, metadata-only and not started in this PR |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-OWNER-HANDOFF-PACKET1, metadata-only owner handoff packet planning only |
 
 ## Completion Matrix
 
@@ -147,7 +147,7 @@ Missing or incomplete coverage remains for viewer_comfort_motion, subtitle_overl
 
 ## Next Recommended Task
 
-Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-PREFLIGHT1.
+Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-OWNER-HANDOFF-PACKET1.
 
 Do not start that task in this PR. It must be metadata-only. It must not include row body, file path value, real hash calculation, parser execution, redaction scan execution, audit execution, or actual ingestion.
 
@@ -456,3 +456,118 @@ This validator is metadata-only and dry-run-only. It validates the presence and 
 ### Completion Index Update For AX
 
 The metadata-only dry-run validator is now a planning artifact. It adds label-level validation planning only and does not raise implementation readiness or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-OWNER-HANDOFF-PACKET1 or LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1. Do not start actual ingestion.
+
+## Metadata-Only Owner Intake Owner Handoff Packet
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-OWNER-HANDOFF-PACKET1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_intake_owner_handoff_packet_status
+
+This owner handoff packet is metadata-only and planning-only. It tells the owner which safe metadata labels to prepare later and which materials must not be sent in this task. It is not owner confirmation, not owner submission, not actual data intake, not hash verification, not declared row count verification, not parser execution, not redaction scan execution, not audit execution, and not a readiness claim.
+
+### Owner Handoff Packet Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_handoff_packet_only_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_handoff_packet_only | true |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1 |
+
+### Required Owner Handoff Sections
+
+| section | purpose |
+| --- | --- |
+| purpose | State that this is metadata-only owner handoff planning. |
+| safe_metadata_labels_to_prepare_later | List only label names the owner may prepare later. |
+| materials_not_to_send_in_this_task | Block raw data, file paths, row bodies, secrets, endpoints, and command material. |
+| owner_confirmation_scope_future | Reserve owner confirmation for a future scoped task. |
+| source_hash_label_future | Treat source_hash_label as a future label only, not a verified hash. |
+| declared_row_count_label_future | Treat declared_row_count_label as a future label only, not checked_row_count. |
+| dataset_split_plan_label_future | Keep dataset split planning as label-only metadata. |
+| blocked_until_future_actual_data_task | Preserve actual data blocking until a separate future task. |
+| safe_next_action | Point to the metadata-only audit link task. |
+
+### Required Owner Safe Metadata Labels
+
+| label | boundary |
+| --- | --- |
+| submission_request_id | Label only; no owner submission received. |
+| file_format_label | Label only; no file content or file path value accepted. |
+| declared_row_count_label | Label only; declared row count is not checked_row_count. |
+| source_hash_label | Label only; source hash is not verified. |
+| hash_algorithm_label | Label only; no real hash calculation. |
+| schema_version_label | Label only; no parser execution. |
+| dataset_version_label | Label only; no actual data accepted. |
+| dataset_split_plan_label | Label only; no motion dataset execution. |
+| owner_confirmation_scope_label | Label only; no owner confirmation created or confirmed. |
+
+### Required Owner Prohibited Materials
+
+| material | rejection boundary |
+| --- | --- |
+| raw_dataset_row_body | Do not send row body. |
+| actual_file_content | Do not send file content. |
+| actual_file_path_value | Do not send file path value. |
+| raw_cue_payload | Do not send raw cue payload. |
+| raw_renderer_payload | Do not send raw renderer payload. |
+| raw_model_path | Do not send raw model path. |
+| raw_motion_path | Do not send raw motion path. |
+| endpoint_value | Do not send endpoint values. |
+| token_value | Do not send token values. |
+| secret_value | Do not send secret values. |
+| private_local_path | Do not send private local paths. |
+| raw_owner_note | Do not send raw owner notes. |
+| raw_k_memo_text | Do not send raw K memo text. |
+| shell_body | Do not send shell bodies. |
+| command_payload | Do not send command payloads. |
+
+### Required Owner Next Actions
+
+| action | boundary |
+| --- | --- |
+| prepare_metadata_labels_only_later | Prepare labels only in a future owner-scoped step. |
+| do_not_send_raw_row_body_yet | Raw row body remains prohibited. |
+| do_not_send_file_path_value_yet | File path values remain prohibited. |
+| do_not_expect_hash_verification_yet | source_hash_label remains unverified. |
+| do_not_expect_row_count_check_yet | declared_row_count_label is not checked_row_count. |
+| wait_for_future_owner_confirmation_task | Owner confirmation remains future-only. |
+| wait_for_future_actual_data_task | Actual data handling remains future-only. |
+
+### Completion Index Update For AY
+
+The metadata-only owner handoff packet is now a planning artifact. It adds owner-facing metadata label preparation boundaries without accepting owner submission, owner confirmation, actual data, file path values, file content, row bodies, hash calculation, parser execution, redaction scan execution, audit execution, or readiness evidence. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1. Do not start actual ingestion.
