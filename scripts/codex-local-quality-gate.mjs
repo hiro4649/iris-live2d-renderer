@@ -12420,7 +12420,11 @@ async function runTargetHarnessGate() {
 
 
 
-  report.mergeReady = failures.length === 0 && warnings.length === 0;
+  const sameHeadRemotePending = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
+  report.sameHeadRemoteRequired = true;
+  report.localPassIsRemotePass = false;
+  report.remoteEvidencePass = sameHeadRemotePending ? false : report.remoteEvidencePass === true;
+  report.mergeReady = failures.length === 0 && warnings.length === 0 && report.remoteEvidencePass === true;
 
 
 
