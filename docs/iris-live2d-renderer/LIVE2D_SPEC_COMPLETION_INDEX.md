@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1, metadata-only actual data blocker map planning only |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-RECEIPT-REQUEST-STUB1, metadata-only owner submission receipt request stub planning only |
 
 ## Completion Matrix
 
@@ -147,7 +147,7 @@ Missing or incomplete coverage remains for viewer_comfort_motion, subtitle_overl
 
 ## Next Recommended Task
 
-Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-TASK-BLOCKER-MAP1.
+Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-RECEIPT-REQUEST-STUB1.
 
 Do not start that task in this PR. It must be metadata-only. It must not include row body, file path value, real hash calculation, parser execution, redaction scan execution, audit execution, or actual ingestion.
 
@@ -835,3 +835,103 @@ This actual data task blocker map is metadata-only and planning-only. It maps th
 ### Completion Index Update For BB
 
 The metadata-only actual data task blocker map is now a planning artifact. It maps the blockers and future clearance conditions required before any separate actual data task can be considered. It does not start or preauthorize actual data work, receive or accept owner submission, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, confirm owner confirmation, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-RECEIPT-REQUEST-STUB1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-PREAUTH-NO-GO-SUMMARY1. Do not start actual ingestion.
+
+## Metadata-Only Owner Submission Receipt Request Stub
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-RECEIPT-REQUEST-STUB1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_RECEIPT_REQUEST_STUB_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_submission_receipt_request_stub_status
+
+This owner submission receipt request stub is metadata-only and planning-only. It defines the safe labels that a future receipt request would need before any owner submission could be received in a separate task. It does not receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, or claim readiness.
+
+### Owner Submission Receipt Request Stub Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_submission_receipt_request_stub_only_boundary | true |
+| owner_submission_receipt_request_stub_only | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-PREAUTH-NO-GO-SUMMARY1 |
+
+### Required Receipt Request Fields
+
+| field | boundary |
+| --- | --- |
+| receipt_request_id_label | Label only; no owner submission received. |
+| metadata_intake_preflight_ref | Planning reference only. |
+| owner_handoff_packet_ref | Planning reference only. |
+| owner_confirmation_scope_preflight_ref | Planning reference only; no owner confirmation created. |
+| actual_data_task_blocker_map_ref | Planning reference only; no actual data task started. |
+| expected_submission_request_id_label | Label only. |
+| expected_file_format_label | Label only; no file content or file path value accepted. |
+| expected_declared_row_count_label | Label only; declared row count is not checked_row_count. |
+| expected_source_hash_label | Label only; source hash is not verified. |
+| expected_hash_algorithm_label | Label only; no hash calculation. |
+| expected_schema_version_label | Label only; no parser execution. |
+| expected_dataset_version_label | Label only; no actual data accepted. |
+| expected_dataset_split_plan_label | Label only; no motion dataset execution. |
+| expected_owner_confirmation_scope_label | Label only; no owner confirmation created or confirmed. |
+| safe_next_action | Points to the metadata-only actual data preauthorization no-go summary. |
+
+### Required Receipt Request Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_confirmation_missing | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+
+### Completion Index Update For BC
+
+The metadata-only owner submission receipt request stub is now a planning artifact. It defines safe labels and references for a future receipt request without receiving or accepting owner submission. It does not create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-PREAUTH-NO-GO-SUMMARY1. Do not start actual ingestion.
