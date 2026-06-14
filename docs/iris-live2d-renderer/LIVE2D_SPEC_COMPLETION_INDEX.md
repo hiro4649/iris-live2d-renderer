@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-OWNER-HANDOFF1, metadata-only owner submission packet handoff planning only |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-SUBMISSION-STATUS-LEDGER1, metadata-only submission status ledger planning only |
 
 ## Completion Matrix
 
@@ -1663,3 +1663,124 @@ This owner submission packet owner handoff is metadata-only and planning-only. I
 ### Completion Index Update For BI
 
 The metadata-only owner submission packet owner handoff is now a planning artifact. It defines future handoff sections, safe labels, rejected materials, and blockers without sending a real owner packet or receiving owner submission. It does not receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-SUBMISSION-STATUS-LEDGER1. Do not start actual ingestion.
+
+## Metadata-Only Submission Status Ledger
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-SUBMISSION-STATUS-LEDGER1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_SUBMISSION_STATUS_LEDGER_SCHEMA
+Status label: live2d_real_row_metadata_only_submission_status_ledger_status
+
+This submission status ledger is metadata-only and planning-only. It records safe status fields and future transition labels without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+
+### Submission Status Ledger Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| submission_status_ledger_only_boundary | true |
+| submission_status_ledger_only | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-LEDGER-REJECTION-FIXTURE1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-FINAL-WAIT-GATE1 |
+
+### Required Ledger Status Fields
+
+| field | boundary |
+| --- | --- |
+| submission_status_label | Safe label only; no owner submission received. |
+| owner_submission_received | Must remain false in this task. |
+| owner_submission_accepted | Must remain false in this task. |
+| owner_confirmation_created | Must remain false in this task. |
+| owner_confirmation_confirmed | Must remain false in this task. |
+| actual_data_task_started | Must remain false in this task. |
+| actual_data_preauthorized | Must remain false in this task. |
+| source_hash_verified | Must remain false in this task. |
+| declared_row_count_checked | Must remain false in this task. |
+| checked_row_count | Must remain 0 in this task. |
+| actual_ingestion_allowed | Must remain false in this task. |
+| safe_next_action | Safe label only; no approval or readiness claim. |
+
+### Required Ledger Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+
+### Required Ledger Safe Transitions
+
+| transition | boundary |
+| --- | --- |
+| not_started_to_waiting_for_metadata_labels | Metadata-only status label transition. |
+| waiting_for_metadata_labels_to_future_owner_review | Future review label only; no owner submission receipt. |
+| future_owner_review_to_future_actual_data_task_request | Future request label only; no actual data task started. |
+| future_actual_data_task_request_to_future_quarantine_only | Future quarantine label only; no actual data accepted. |
+| future_quarantine_only_to_future_parser_redaction_audit | Future execution label only; no parser, redaction, or audit execution here. |
+| future_parser_redaction_audit_to_future_go_nogo_review | Future review label only; no go/no-go approval here. |
+
+### Forbidden Ledger Transitions
+
+| transition | rejection boundary |
+| --- | --- |
+| metadata_only_to_owner_submission_received | Forbidden in this task. |
+| metadata_only_to_owner_submission_accepted | Forbidden in this task. |
+| metadata_only_to_actual_data_task_started | Forbidden in this task. |
+| metadata_only_to_actual_data_preauthorized | Forbidden in this task. |
+| metadata_only_to_runtime_readiness | Forbidden in this task. |
+| metadata_only_to_production_readiness | Forbidden in this task. |
+| fixture_pass_to_real_evidence | Forbidden in this task. |
+| dry_run_pass_to_owner_confirmation | Forbidden in this task. |
+
+### Completion Index Update For BJ
+
+The metadata-only submission status ledger is now a planning artifact. It records safe status fields, required blockers, safe transitions, and forbidden transitions without receiving or accepting owner submission. It does not create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-LEDGER-REJECTION-FIXTURE1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-FINAL-WAIT-GATE1. Do not start actual ingestion.
