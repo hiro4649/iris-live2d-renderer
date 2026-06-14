@@ -2492,3 +2492,118 @@ This owner submission packet final no-go is metadata-only and planning-only. It 
 ### Completion Index Update For BP
 
 The metadata-only owner submission packet final no-go is now a planning artifact. It records final no-go reasons, planning refs, and safe next actions before any separate future task could request or send an owner submission packet. It does not accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-READY-TO-REQUEST-INDEX1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-OWNER-INSTRUCTION-PENDING-LEDGER1. Do not start actual ingestion.
+
+## Metadata-Only Owner Submission Packet Ready-To-Request Index
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-READY-TO-REQUEST-INDEX1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_PACKET_READY_TO_REQUEST_INDEX_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_submission_packet_ready_to_request_index_status
+
+This ready-to-request index is metadata-only and planning-only. It lists the future prerequisites, blockers, and safe next actions that must remain visible before any separate future task could request an owner submission packet. It does not send a packet, accept owner instruction, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, or claim readiness.
+
+### Ready-To-Request Index Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| ready_to_request_index_only_boundary | true |
+| owner_submission_packet_ready_to_request_index_only | true |
+| packet_request_sent | false |
+| owner_instruction_accepted | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-OWNER-INSTRUCTION-PENDING-LEDGER1 |
+
+### Required Ready-To-Request Prerequisites
+
+| prerequisite | status |
+| --- | --- |
+| owner_submission_packet_final_no_go_ref | present_as_planning_ref |
+| owner_submission_packet_preflight_review_ref | present_as_planning_ref |
+| owner_instruction_gate_ref | present_as_planning_ref |
+| owner_instruction_rejection_gate_ref | present_as_planning_ref |
+| owner_submission_final_wait_gate_ref | present_as_planning_ref |
+| owner_submission_form_final_checklist_ref | present_as_planning_ref |
+| owner_submission_wait_state_ref | present_as_planning_ref |
+| submission_status_ledger_ref | present_as_planning_ref |
+| ledger_rejection_fixture_ref | present_as_planning_ref |
+| actual_data_task_blocker_map_ref | present_as_planning_ref |
+| preauth_no_go_summary_ref | present_as_planning_ref |
+| owner_confirmation_scope_preflight_ref | present_as_planning_ref |
+
+### Required Ready-To-Request Blockers
+
+| blocker | status |
+| --- | --- |
+| explicit_owner_instruction_missing | blocked |
+| packet_request_not_sent | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| schema_version_not_validated_against_rows | blocked |
+| dataset_split_not_applied | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+| motion_dataset_non_executable | blocked |
+| trusted_loader_disabled | blocked |
+| runtime_readiness_not_claimed | blocked |
+| production_readiness_not_claimed | blocked |
+
+### Required Ready-To-Request Safe Next Actions
+
+| action | boundary |
+| --- | --- |
+| keep_waiting_for_explicit_owner_instruction | Required; owner instruction remains unaccepted. |
+| keep_packet_unsent | Required; no owner submission packet is sent in this task. |
+| keep_owner_submission_unreceived | Required; owner_submission_received remains false. |
+| keep_owner_submission_unaccepted | Required; owner_submission_accepted remains false. |
+| keep_actual_data_task_closed | Required; no actual data task starts. |
+| keep_actual_data_preauth_no_go | Required; actual_data_preauthorized remains false. |
+| keep_raw_data_forbidden | Required; no real data is accepted. |
+| keep_file_path_values_forbidden | Required; no file path value is accepted. |
+| keep_hash_unverified | Required; source_hash_verified remains false. |
+| keep_row_count_unchecked | Required; checked_row_count remains 0. |
+| keep_parser_blocked | Required; parser execution remains blocked. |
+| keep_redaction_scan_blocked | Required; redaction scan execution remains blocked. |
+| keep_audit_blocked | Required; audit execution remains blocked. |
+| keep_priority1_blocked | Required; priority1 remains BLOCKED. |
+| keep_motion_dataset_non_executable | Required; motion dataset remains non-executable. |
+| keep_readiness_unclaimed | Required; runtime and production readiness remain unclaimed. |
+
+### Completion Index Update For BQ
+
+The metadata-only owner submission packet ready-to-request index is now a planning artifact. It lists prerequisite refs, blockers, and safe next actions before any separate future task could request an owner submission packet. It does not send a packet, accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-OWNER-INSTRUCTION-PENDING-LEDGER1. Do not start actual ingestion.
