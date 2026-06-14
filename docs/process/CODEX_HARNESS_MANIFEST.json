@@ -6,12 +6,13 @@
     "activeHarnessVersion":  "1.2.1",
     "targetHarnessVersion":  "1.2.1",
     "evidenceSchemaVersion":  6,
-    "profileTemplateVersion":  "1.2.0",
+    "profileTemplateVersion":  "1.2.1",
     "compatibleProfileTemplateVersions":  [
+                                              "1.2.0",
                                               "1.1.6"
                                           ],
     "futureHarnessArtifact":  false,
-    "upgradePath":  "direct_v119_to_v120",
+    "upgradePath":  "direct_v120_to_v121",
     "activeSelfTestSuite":  "v121",
     "activeSelfTestStatusKey":  "v121SelfTestStatus",
     "legacySelfTests":  {
