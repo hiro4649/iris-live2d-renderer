@@ -2740,3 +2740,128 @@ This owner instruction pending ledger is metadata-only and planning-only. It rec
 ### Completion Index Update For BR
 
 The metadata-only actual data owner instruction pending ledger is now a planning artifact. It records that explicit owner instruction is still pending before any separate future task could request an owner submission packet or consider actual data handling. It does not accept owner instruction, send a packet, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is to wait for explicit owner instruction before any owner submission packet request or actual data gate task. Do not start actual ingestion.
+
+## Metadata-Only Owner Instruction Final No-Go
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-FINAL-NO-GO1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INSTRUCTION_FINAL_NO_GO_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_instruction_final_no_go_status
+
+This owner instruction final no-go is metadata-only and planning-only. It records that actual owner instruction acceptance remains final no-go until separate future prerequisites are satisfied. It does not accept owner instruction, send a packet request, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness.
+
+### Owner Instruction Final No-Go Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_instruction_final_no_go_only_boundary | true |
+| owner_instruction_final_no_go_only | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_packet_request_sent_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-PACKET-REQUEST-STOP-GATE1 |
+
+### Required Instruction Final No-Go Reasons
+
+| reason | status |
+| --- | --- |
+| owner_instruction_not_accepted | blocked |
+| packet_request_not_sent | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| schema_version_not_validated_against_rows | blocked |
+| dataset_split_not_applied | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+| motion_dataset_non_executable | blocked |
+| trusted_loader_disabled | blocked |
+| runtime_readiness_not_claimed | blocked |
+| production_readiness_not_claimed | blocked |
+
+### Required Instruction Final No-Go Refs
+
+| ref | boundary |
+| --- | --- |
+| owner_instruction_gate_ref | Planning reference only; owner instruction remains unaccepted. |
+| owner_instruction_rejection_gate_ref | Planning reference only. |
+| owner_submission_packet_preflight_review_ref | Planning reference only; no packet request is sent. |
+| owner_submission_packet_final_no_go_ref | Planning reference only. |
+| owner_submission_packet_ready_to_request_index_ref | Planning reference only. |
+| actual_data_owner_instruction_pending_ledger_ref | Planning reference only; owner instruction remains pending. |
+| owner_submission_final_wait_gate_ref | Planning reference only. |
+| owner_submission_rejection_gate_ref | Planning reference only. |
+| submission_status_ledger_ref | Planning reference only; owner submission remains unreceived. |
+| actual_data_task_blocker_map_ref | Planning reference only; no actual data task starts. |
+
+### Required Instruction Final No-Go Safe Next Actions
+
+| action | boundary |
+| --- | --- |
+| wait_for_explicit_owner_instruction | Required before any future owner packet request review. |
+| do_not_accept_owner_instruction_now | Required; owner_instruction_accepted remains false. |
+| do_not_send_packet_request_now | Required; packet_request_sent remains false. |
+| do_not_accept_submission_now | Required; owner submission remains unreceived and unaccepted. |
+| do_not_accept_raw_data_now | Required; no real data is accepted. |
+| do_not_accept_file_path_value | Required; file path values remain forbidden. |
+| do_not_verify_hash_now | Required; source hash remains unverified. |
+| do_not_check_row_count_now | Required; checked_row_count remains 0. |
+| do_not_start_parser_now | Required; parser execution remains blocked. |
+| do_not_start_redaction_scan_now | Required; redaction scan execution remains blocked. |
+| do_not_start_audit_now | Required; audit execution remains blocked. |
+| do_not_claim_readiness_now | Required; runtime and production readiness remain unclaimed. |
+
+### Completion Index Update For BS
+
+The metadata-only owner instruction final no-go is now a planning artifact. It records that actual owner instruction acceptance remains final no-go before any separate future task could request an owner submission packet or consider actual data handling. It does not accept owner instruction, send a packet request, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-PACKET-REQUEST-STOP-GATE1. Do not start actual ingestion.
