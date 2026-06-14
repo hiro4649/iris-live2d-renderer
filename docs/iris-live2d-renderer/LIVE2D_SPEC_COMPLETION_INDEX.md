@@ -3127,3 +3127,135 @@ This owner packet request preflight ledger is metadata-only and planning-only. I
 ### Completion Index Update For BU
 
 The metadata-only owner packet request preflight ledger is now a planning artifact. It defines safe ledger fields, blockers, future-only transitions, and forbidden transitions before any separate future task could send an owner packet request. It does not send a packet request, accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-PACKET-REQUEST-REJECTION-FIXTURE1. Do not start actual ingestion.
+
+## Metadata-Only Owner Packet Request Rejection Fixture
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-PACKET-REQUEST-REJECTION-FIXTURE1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_PACKET_REQUEST_REJECTION_FIXTURE_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_packet_request_rejection_fixture_status
+
+This owner packet request rejection fixture is metadata-only, planning-only, and synthetic-only. It fixes the unsafe transition cases, rejection reasons, and safe output labels for owner packet request attempts that would cross the metadata-only boundary. It does not send a packet request, accept owner instruction, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness.
+
+### Owner Packet Request Rejection Fixture Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_packet_request_rejection_fixture_only_boundary | true |
+| owner_packet_request_rejection_fixture_only | true |
+| synthetic_only_boundary | true |
+| no_packet_request_sent_boundary | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| packet_request_sent | false |
+| owner_instruction_accepted | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-PACKET-REQUEST-FINAL-WAIT-STATE1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-OWNER-INSTRUCTION-REQUEST-PACKET-STUB1 |
+
+### Required Packet Request Rejection Fixture Cases
+
+| case | rejection boundary |
+| --- | --- |
+| packet_request_marked_sent | Reject packet request sent claims. |
+| owner_instruction_marked_accepted | Reject owner instruction acceptance claims. |
+| owner_submission_marked_received | Reject owner submission receipt claims. |
+| owner_submission_marked_accepted | Reject owner submission acceptance claims. |
+| owner_confirmation_marked_created | Reject owner confirmation creation claims. |
+| owner_confirmation_marked_confirmed | Reject owner confirmation confirmation claims. |
+| actual_data_task_marked_started | Reject actual data task start claims. |
+| actual_data_preauthorization_marked_true | Reject actual data preauthorization claims. |
+| source_hash_marked_verified | Reject verified source hash claims. |
+| declared_row_count_marked_checked | Reject checked row count claims. |
+| checked_row_count_increased | Reject positive checked row counts. |
+| motion_dataset_marked_executable | Reject executable motion dataset claims. |
+| runtime_readiness_requested | Reject runtime readiness claims. |
+| production_readiness_requested | Reject production readiness claims. |
+| trusted_loader_enablement_requested | Reject trusted loader enablement. |
+| priority1_resolution_requested | Reject priority1 resolution. |
+| raw_dataset_row_body_present | Reject row body material. |
+| actual_file_content_present | Reject actual file content. |
+| actual_file_path_value_present | Reject actual file path values. |
+| secret_or_endpoint_present | Reject endpoint, token, or secret material. |
+| raw_k_memo_present | Reject raw K memo material. |
+| command_payload_present | Reject command payload material. |
+
+### Required Packet Request Rejection Reasons
+
+| reason | boundary |
+| --- | --- |
+| packet_request_not_allowed_in_metadata_task | Metadata-only tasks cannot send packet requests. |
+| owner_instruction_not_accepted | Owner instruction remains unaccepted. |
+| owner_submission_not_received | Owner submission remains unreceived. |
+| owner_submission_not_accepted | Owner submission remains unaccepted. |
+| owner_confirmation_missing | Owner confirmation remains missing. |
+| actual_data_task_not_started | Actual data task remains unstarted. |
+| actual_data_preauthorized_false | Actual data remains no-go. |
+| source_hash_not_verified | Source hash remains unverified. |
+| declared_row_count_not_checked | Declared row count remains unchecked. |
+| checked_row_count_zero | checked_row_count remains 0. |
+| motion_dataset_non_executable | Motion dataset remains non-executable. |
+| priority1_blocked | priority1 remains BLOCKED. |
+| trusted_loader_disabled | Trusted loader remains disabled. |
+| runtime_readiness_not_claimed | Runtime readiness remains unclaimed. |
+| production_readiness_not_claimed | Production readiness remains unclaimed. |
+| raw_material_forbidden | Raw material must not be accepted or echoed. |
+| fixture_is_not_real_evidence | Synthetic fixture is not real evidence. |
+| dry_run_is_not_owner_confirmation | Dry-run or fixture status is not owner confirmation. |
+
+### Required Packet Request Rejection Safe Outputs
+
+| output | boundary |
+| --- | --- |
+| reject_reason_label | Safe reason label only. |
+| blocked_boundary_label | Safe boundary label only. |
+| safe_next_action_label | Future planning label only. |
+| no_raw_value_echo | Required; do not echo raw payload, path, token, endpoint, row body, memo, or command material. |
+| no_packet_request_sent | Required; packet_request_sent remains false. |
+| no_owner_instruction_acceptance | Required; owner_instruction_accepted remains false. |
+| no_owner_submission_receipt | Required; owner_submission_received remains false. |
+| no_actual_data_task_start | Required; actual_data_task_started remains false. |
+| no_readiness_promotion | Required; runtime and production readiness remain unclaimed. |
+| no_priority1_resolution | Required; priority1 remains BLOCKED. |
+
+### Completion Index Update For BV
+
+The metadata-only owner packet request rejection fixture is now a planning artifact. It adds synthetic-only rejection cases, rejection reasons, and safe output labels for unsafe owner packet request state transitions. It does not send a packet request, accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-PACKET-REQUEST-FINAL-WAIT-STATE1 or LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-OWNER-INSTRUCTION-REQUEST-PACKET-STUB1. Do not start actual ingestion.
