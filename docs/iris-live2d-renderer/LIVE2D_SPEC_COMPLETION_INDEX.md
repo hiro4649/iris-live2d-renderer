@@ -2607,3 +2607,136 @@ This ready-to-request index is metadata-only and planning-only. It lists the fut
 ### Completion Index Update For BQ
 
 The metadata-only owner submission packet ready-to-request index is now a planning artifact. It lists prerequisite refs, blockers, and safe next actions before any separate future task could request an owner submission packet. It does not send a packet, accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-OWNER-INSTRUCTION-PENDING-LEDGER1. Do not start actual ingestion.
+
+## Metadata-Only Actual Data Owner Instruction Pending Ledger
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-DATA-OWNER-INSTRUCTION-PENDING-LEDGER1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_ACTUAL_DATA_OWNER_INSTRUCTION_PENDING_LEDGER_SCHEMA
+Status label: live2d_real_row_metadata_only_actual_data_owner_instruction_pending_ledger_status
+
+This owner instruction pending ledger is metadata-only and planning-only. It records that a future explicit owner instruction is still pending before any separate future task could request an owner submission packet or consider actual data handling. It does not accept owner instruction, send a packet, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, or claim readiness.
+
+### Owner Instruction Pending Ledger Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_instruction_pending_ledger_only_boundary | true |
+| actual_data_owner_instruction_pending_ledger_only | true |
+| owner_instruction_status | pending |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_instruction_before_any_packet_request |
+
+### Required Pending Ledger Fields
+
+| field | boundary |
+| --- | --- |
+| owner_instruction_status_label | Safe label only; allowed value here is pending. |
+| owner_instruction_gate_ref | Planning reference only; owner instruction remains unaccepted. |
+| owner_instruction_rejection_gate_ref | Planning reference only. |
+| ready_to_request_index_ref | Planning reference only; no packet request is sent. |
+| owner_submission_packet_final_no_go_ref | Planning reference only. |
+| owner_submission_packet_preflight_review_ref | Planning reference only. |
+| owner_submission_final_wait_gate_ref | Planning reference only. |
+| owner_submission_form_final_checklist_ref | Planning reference only. |
+| submission_status_ledger_ref | Planning reference only; owner submission remains unreceived. |
+| actual_data_task_blocker_map_ref | Planning reference only; no actual data task is started. |
+| preauth_no_go_summary_ref | Planning reference only; actual data remains no-go. |
+| safe_next_action_label | Safe label only; wait for explicit owner instruction. |
+
+### Required Pending Ledger Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_instruction_pending | blocked |
+| owner_instruction_not_accepted | blocked |
+| packet_request_not_sent | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| row_body_not_read | blocked |
+| file_path_value_not_accepted | blocked |
+| schema_version_not_validated_against_rows | blocked |
+| dataset_split_not_applied | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| real_ingestion_audit_event_missing | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+| motion_dataset_non_executable | blocked |
+| trusted_loader_disabled | blocked |
+| runtime_readiness_not_claimed | blocked |
+| production_readiness_not_claimed | blocked |
+
+### Required Pending Ledger Safe Transitions
+
+| transition | boundary |
+| --- | --- |
+| pending_to_future_owner_instruction_review | Future-only label; no owner instruction is accepted here. |
+| future_owner_instruction_review_to_future_packet_request_review | Future-only label; no packet request is sent here. |
+| future_packet_request_review_to_future_owner_submission_wait | Future-only label; no owner submission is received here. |
+| future_owner_submission_wait_to_future_actual_data_task_gate | Future-only label; no actual data task starts here. |
+| future_actual_data_task_gate_to_future_quarantine_review | Future-only label; no real data is accepted here. |
+
+### Forbidden Pending Ledger Transitions
+
+| transition | rejection boundary |
+| --- | --- |
+| pending_to_owner_instruction_accepted | Forbidden in this task. |
+| pending_to_packet_request_sent | Forbidden in this task. |
+| pending_to_owner_submission_received | Forbidden in this task. |
+| pending_to_owner_submission_accepted | Forbidden in this task. |
+| pending_to_owner_confirmation_created | Forbidden in this task. |
+| pending_to_actual_data_task_started | Forbidden in this task. |
+| pending_to_actual_data_preauthorized | Forbidden in this task. |
+| pending_to_real_data_accepted | Forbidden in this task. |
+| pending_to_file_path_value_accepted | Forbidden in this task. |
+| pending_to_source_hash_verified | Forbidden in this task. |
+| pending_to_declared_row_count_checked | Forbidden in this task. |
+| pending_to_parser_executed | Forbidden in this task. |
+| pending_to_redaction_scan_executed | Forbidden in this task. |
+| pending_to_audit_executed | Forbidden in this task. |
+| pending_to_priority1_resolved | Forbidden in this task. |
+| pending_to_motion_dataset_executable | Forbidden in this task. |
+| pending_to_trusted_loader_enabled | Forbidden in this task. |
+| pending_to_runtime_ready | Forbidden in this task. |
+| pending_to_production_ready | Forbidden in this task. |
+
+### Completion Index Update For BR
+
+The metadata-only actual data owner instruction pending ledger is now a planning artifact. It records that explicit owner instruction is still pending before any separate future task could request an owner submission packet or consider actual data handling. It does not accept owner instruction, send a packet, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is to wait for explicit owner instruction before any owner submission packet request or actual data gate task. Do not start actual ingestion.
