@@ -11420,6 +11420,13 @@ async function runTargetHarnessGate() {
   runV119Gates(report, gateEnv);
   runV120Gates(report, gateEnv);
   runV121Gates(report, gateEnv);
+  if (isGithubAuthAvailable()) {
+    report.githubAuthStatus = {
+      status: 'pass',
+      reasonCodes: ['github_auth_available'],
+      safeSummaryOnly: true,
+    };
+  }
 
 
   report.workflowPreflightStatus = runGateScript('scripts/codex-workflow-preflight.mjs', 'workflowPreflightStatus', 'CODEX_WORKFLOW_PREFLIGHT_REPORT', gateEnv);
