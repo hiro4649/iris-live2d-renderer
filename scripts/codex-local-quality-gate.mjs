@@ -12975,6 +12975,13 @@ async function runSourceHarnessCoreContractGate() {
   runV119Gates(report, gateEnv);
   runV120Gates(report, gateEnv);
   runV121Gates(report, gateEnv);
+  if (isGithubAuthAvailable()) {
+    report.githubAuthStatus = {
+      status: 'pass',
+      reasonCodes: ['github_auth_available'],
+      safeSummaryOnly: true,
+    };
+  }
   writeV117LoadBearingArtifacts(report);
 
   for (const [key, value] of Object.entries({
