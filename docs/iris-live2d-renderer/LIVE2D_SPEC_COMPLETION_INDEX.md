@@ -2253,3 +2253,122 @@ This owner submission packet preflight review is metadata-only and planning-only
 ### Completion Index Update For BN
 
 The metadata-only owner submission packet preflight review is now a planning artifact. It defines future review inputs, blockers, and safe output labels before any separate future task could send an owner submission packet. It does not accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REJECTION-GATE1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-FINAL-NO-GO1. Do not start actual ingestion.
+
+## Metadata-Only Owner Instruction Rejection Gate
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REJECTION-GATE1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INSTRUCTION_REJECTION_GATE_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_instruction_rejection_gate_status
+
+This owner instruction rejection gate is metadata-only and planning-only. It defines safe rejection labels for future owner instruction attempts that would cross the metadata-only boundary. It does not accept owner instruction, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, or claim readiness.
+
+### Owner Instruction Rejection Gate Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_instruction_rejection_gate_only_boundary | true |
+| owner_instruction_rejection_gate_only | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_instruction_accepted | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-FINAL-NO-GO1 |
+
+### Required Instruction Rejection Inputs
+
+| input | boundary |
+| --- | --- |
+| metadata_labels_only | Safe labels only; no raw values. |
+| owner_instruction_gate_ref | Planning reference only; owner instruction remains unaccepted. |
+| owner_submission_packet_preflight_review_ref | Planning reference only; no packet sent. |
+| owner_submission_final_wait_gate_ref | Planning reference only. |
+| owner_submission_form_final_checklist_ref | Planning reference only. |
+| owner_submission_wait_state_ref | Planning reference only. |
+| submission_status_ledger_ref | Planning reference only; ledger state remains blocked. |
+| ledger_rejection_fixture_ref | Planning reference only; synthetic-only fixture remains non-evidence. |
+| safe_next_action | Safe label only; no owner instruction acceptance or readiness claim. |
+
+### Required Instruction Rejection Reasons
+
+| reason | rejection boundary |
+| --- | --- |
+| direct_owner_instruction_acceptance_value_present | Reject any direct acceptance value. |
+| direct_owner_confirmation_value_present | Reject owner confirmation creation or confirmation values. |
+| direct_actual_data_approval_value_present | Reject actual data approval or preauthorization values. |
+| owner_submission_marked_received | Reject owner submission receipt claims. |
+| owner_submission_marked_accepted | Reject owner submission acceptance claims. |
+| actual_data_task_started_requested | Reject actual data task start requests. |
+| actual_data_preauthorization_requested | Reject actual data preauthorization requests. |
+| raw_dataset_row_body_present | Reject row body material. |
+| actual_file_content_present | Reject actual file content. |
+| actual_file_path_value_present | Reject actual file path values. |
+| source_hash_marked_verified | Reject verified source hash claims. |
+| declared_row_count_marked_checked | Reject checked row count claims. |
+| parser_execution_requested | Reject parser execution requests. |
+| redaction_scan_execution_requested | Reject redaction scan execution requests. |
+| audit_execution_requested | Reject audit execution requests. |
+| runtime_readiness_requested | Reject runtime readiness claims. |
+| production_readiness_requested | Reject production readiness claims. |
+| trusted_loader_enablement_requested | Reject trusted loader enablement requests. |
+| priority1_resolution_requested | Reject priority1 resolution requests. |
+| unsupported_raw_payload_present | Reject unsupported raw payload material. |
+| secret_or_endpoint_present | Reject endpoint, token, or secret material. |
+| raw_k_memo_present | Reject raw K memo material. |
+| command_payload_present | Reject command payload material. |
+
+### Required Instruction Rejection Safe Outputs
+
+| output | boundary |
+| --- | --- |
+| reject_reason_label | Safe reason label only; do not echo raw rejected material. |
+| blocked_boundary_label | Safe boundary label only. |
+| safe_next_action_label | Future planning label only. |
+| no_raw_value_echo | Required; no raw payload, path, token, endpoint, row body, or private note output. |
+| no_owner_instruction_acceptance | Required; owner_instruction_accepted remains false. |
+| no_owner_submission_receipt | Required; owner_submission_received remains false. |
+| no_actual_data_task_start | Required; actual_data_task_started remains false. |
+| no_readiness_promotion | Required; runtime and production readiness remain unclaimed. |
+| no_priority1_resolution | Required; priority1 remains BLOCKED. |
+
+### Completion Index Update For BO
+
+The metadata-only owner instruction rejection gate is now a planning artifact. It defines rejection inputs, rejection reasons, and safe output labels for future owner instruction attempts that would cross the metadata-only boundary. It does not accept owner instruction, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-FINAL-NO-GO1. Do not start actual ingestion.
