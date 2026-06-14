@@ -3789,3 +3789,150 @@ This owner instruction request final wait state is metadata-only and planning-on
 ### Completion Index Update For BZ
 
 The metadata-only owner instruction request final wait state is now a planning artifact. It records the wait state after the rejection gate without sending an owner instruction request, accepting owner instruction, sending a packet request, receiving or accepting owner submission, creating or confirming owner confirmation, starting or preauthorizing actual data work, accepting real data, reading file paths, reading file content, reading row bodies, verifying hashes, checking row counts, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-PREFLIGHT-LEDGER1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-NO-GO1. Do not start actual ingestion.
+
+## Metadata-Only Owner Instruction Request Preflight Ledger
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-PREFLIGHT-LEDGER1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INSTRUCTION_REQUEST_PREFLIGHT_LEDGER_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_instruction_request_preflight_ledger_status
+
+This owner instruction request preflight ledger is metadata-only and planning-only. It records the labels, blockers, safe future transitions, and forbidden transitions that must remain in place before any future owner instruction request review. It does not send an owner instruction request, accept owner instruction, send a packet request, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness.
+
+### Owner Instruction Request Preflight Ledger Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_instruction_request_preflight_ledger_only_boundary | true |
+| owner_instruction_request_preflight_ledger_only | true |
+| no_owner_instruction_request_sent_boundary | true |
+| no_owner_instruction_requested_boundary | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_packet_request_sent_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-NO-GO1 |
+
+### Required Instruction Request Preflight Fields
+
+| field | boundary |
+| --- | --- |
+| instruction_request_status_label | Safe status label only. |
+| owner_instruction_request_sent | Must remain false. |
+| owner_instruction_requested | Must remain false. |
+| owner_instruction_accepted | Must remain false. |
+| packet_request_sent | Must remain false. |
+| owner_submission_received | Must remain false. |
+| owner_submission_accepted | Must remain false. |
+| owner_confirmation_created | Must remain false. |
+| owner_confirmation_confirmed | Must remain false. |
+| actual_data_task_started | Must remain false. |
+| actual_data_preauthorized | Must remain false. |
+| source_hash_verified | Must remain false. |
+| declared_row_count_checked | Must remain false. |
+| checked_row_count | Must remain 0. |
+| actual_ingestion_allowed | Must remain false. |
+| safe_next_action | Safe planning label only. |
+
+### Required Instruction Request Preflight Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_instruction_request_not_sent | blocked |
+| owner_instruction_not_requested | blocked |
+| owner_instruction_not_accepted | blocked |
+| packet_request_not_sent | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+| motion_dataset_non_executable | blocked |
+| trusted_loader_disabled | blocked |
+
+### Required Instruction Request Preflight Safe Transitions
+
+| transition | boundary |
+| --- | --- |
+| not_started_to_waiting_for_explicit_owner_instruction | Future planning label only. |
+| waiting_for_explicit_owner_instruction_to_future_instruction_request_review | Future planning label only. |
+| future_instruction_request_review_to_future_instruction_request_packet | Future planning label only. |
+| future_instruction_request_packet_to_future_packet_request_review | Future planning label only. |
+| future_packet_request_review_to_future_owner_submission | Future planning label only. |
+| future_owner_submission_to_future_actual_data_task_request | Future planning label only. |
+| future_actual_data_task_request_to_future_quarantine_only | Future planning label only. |
+| future_quarantine_only_to_future_parser_redaction_audit | Future planning label only. |
+| future_parser_redaction_audit_to_future_go_nogo_review | Future planning label only. |
+
+### Forbidden Instruction Request Preflight Transitions
+
+| transition | rejection boundary |
+| --- | --- |
+| metadata_only_to_owner_instruction_request_sent | Forbidden. |
+| metadata_only_to_owner_instruction_requested | Forbidden. |
+| metadata_only_to_owner_instruction_accepted | Forbidden. |
+| metadata_only_to_packet_request_sent | Forbidden. |
+| metadata_only_to_owner_submission_received | Forbidden. |
+| metadata_only_to_owner_submission_accepted | Forbidden. |
+| metadata_only_to_actual_data_task_started | Forbidden. |
+| metadata_only_to_actual_data_preauthorized | Forbidden. |
+| metadata_only_to_runtime_readiness | Forbidden. |
+| metadata_only_to_production_readiness | Forbidden. |
+| fixture_pass_to_real_evidence | Forbidden. |
+| dry_run_pass_to_owner_confirmation | Forbidden. |
+
+### Completion Index Update For CA
+
+The metadata-only owner instruction request preflight ledger is now a planning artifact. It defines required status fields, blockers, safe future transition labels, and forbidden transition labels before any future owner instruction request review. It does not send an owner instruction request, accept owner instruction, send a packet request, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-NO-GO1. Do not start actual ingestion.
