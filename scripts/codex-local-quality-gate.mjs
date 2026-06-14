@@ -2,7 +2,7 @@
 
 
 
-// CODEX_QUALITY_HARNESS_FILE v1.2.0
+// CODEX_QUALITY_HARNESS_FILE v1.2.1
 
 
 
@@ -70,7 +70,7 @@ import { buildOwnerDecisionBriefReport } from './codex-owner-decision-brief.mjs'
 
 
 
-const HARNESS_VERSION = '1.2.0';
+const HARNESS_VERSION = '1.2.1';
 
 
 
@@ -79,146 +79,6 @@ const PROFILE_TEMPLATE_VERSION = '0.7.0';
 
 
 const MARKER = `CODEX_QUALITY_HARNESS_FILE v${HARNESS_VERSION}`;
-
-export function shouldUseProductPlanningPrePushTargetFastPath(env = process.env) {
-  return env.CODEX_HARNESS_MODE === 'target' &&
-    env.CODEX_PROFILE_COMPAT_MODE === 'off' &&
-    env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push' &&
-    ['product_r3', 'harness_workflow_r3'].includes(env.CODEX_PR_PROFILE || 'product_r3');
-}
-
-export function buildRemoteNpmDiagnosticNormalizationInput(report = {}, env = process.env) {
-  const evidence = report.productVerificationEvidenceStatus || {};
-  const normalized = evidence.normalizedEvidence || evidence;
-  const commands = Array.isArray(normalized.commands) ? normalized.commands : [];
-  const remoteCommandPass = commands.some((command) => command?.source === 'remote' && command?.result === 'pass');
-  const localCommandPass = commands.some((command) => command?.source === 'local' && command?.result === 'pass');
-  const headSha = normalized.headSha || evidence.headSha || '';
-  const expectedHead = env.CODEX_PR_HEAD_SHA || env.GITHUB_SHA || '';
-  const directRemoteNpmPass = evidence.evidenceType === 'remote_npm_test' && evidence.npmExecuted === true && Number(evidence.npmExitCode || 0) === 0;
-  const sameHead = !headSha || !expectedHead || headSha === expectedHead;
-  const remoteNpmDiagnostic = report.remoteNpmDiagnosticStatus || { status: 'not_applicable', reasonCodes: ['remote_npm_diagnostic_missing'], safeSummaryOnly: true };
-  const remoteEvidencePass = remoteNpmDiagnostic.status === 'pass' || remoteCommandPass || directRemoteNpmPass;
-  const wrongHead = Boolean(headSha && expectedHead && headSha !== expectedHead);
-  const remoteNpmEvidenceKind = wrongHead ? 'wrong_head_remote' : (remoteEvidencePass && sameHead ? 'same_head_remote' : 'missing');
-  return {
-    productRelevant: report.changeClassificationStatus?.productRelevantChanged === true,
-    changeClassificationStatus: report.changeClassificationStatus || {},
-    remoteNpmDiagnosticStatus: remoteNpmDiagnostic,
-    productVerificationEvidenceStatus: evidence.status ? evidence : { status: 'not_applicable', safeSummaryOnly: true },
-    prHeadSha: expectedHead,
-    npmExecuted: remoteEvidencePass && !localCommandPass,
-    npmExitCode: remoteEvidencePass ? 0 : undefined,
-    remoteNpmEvidenceKind,
-    sameHeadRemoteStatus: remoteNpmEvidenceKind === 'same_head_remote' ? 'pass' : 'missing',
-    safeSummaryOnly: true,
-  };
-}
-
-export function isPlanningOnlySyntheticFixtureBody(body = '') {
-  const text = String(body || '').toLowerCase();
-  return text.includes('planning-only boundary') &&
-    text.includes('synthetic-only boundary') &&
-    text.includes('no actual data task is started') &&
-    text.includes('owner confirmation: not created and not confirmed') &&
-    text.includes('priority1 status: blocked') &&
-    text.includes('motion dataset boundary: non-executable') &&
-    text.includes('checked_row_count remains 0');
-}
-
-export function applyPlanningOnlySyntheticFixtureBestOfNExemption(report = {}, env = process.env) {
-  if (!isPlanningOnlySyntheticFixtureBody(env.CODEX_PR_BODY || '')) return report;
-  report.bestOfNEvidenceStatus = {
-    status: 'not_applicable',
-    reasonCodes: ['planning_only_synthetic_fixture_best_of_n_exempt'],
-    required: false,
-    safeSummaryOnly: true,
-  };
-  return report;
-}
-
-export function buildProductPlanningPrePushTargetReport({
-  headSha = 'unknown',
-  profileId = 'live2d_planning_only_product_r3_v1',
-  productFilesAllowed = true,
-  harnessFilesAllowed = false,
-} = {}) {
-  const requiredBoundaries = [
-    'same_head_remote_required',
-    'priority1_blocked',
-    'checked_row_count_zero',
-    'motion_dataset_non_executable',
-    'runtime_readiness_not_claimed',
-    'production_readiness_not_claimed',
-    'owner_confirmation_not_confirmed',
-  ];
-  return {
-    status: 'pass',
-    pendingAfterPush: true,
-    remoteEvidencePass: false,
-    targetMergeReady: false,
-    mergeReady: false,
-    runtimeReadinessClaimed: false,
-    productionReadinessClaimed: false,
-    priority1Status: 'BLOCKED',
-    checkedRowCount: 0,
-    motionDatasetBoundary: { status: 'non_executable', executable: false },
-    canonicalRemoteEvidenceEnvelope: {
-      evidenceEnvelopeVersion: 'v1',
-      evidenceKind: 'same_head_remote_quality_gate',
-      repo: 'hiro4649/iris-live2d-renderer',
-      headSha,
-      merge: {
-        remoteEvidencePass: false,
-        targetMergeReady: false,
-        mergeReady: false,
-      },
-      safeSummaryOnly: true,
-    },
-    taskProfileArtifact: {
-      profileId,
-      requiredBoundaries,
-      fileScope: {
-        productFilesAllowed,
-        harnessFilesAllowed,
-        packageLockAllowed: false,
-        sdkVendorAllowed: false,
-      },
-      safeSummaryOnly: true,
-    },
-    profileCompressionStatus: {
-      status: 'pass',
-      mandatoryStopConditionsRetained: true,
-      requiredBoundariesRetained: true,
-      safeSummaryOnly: true,
-    },
-    tokenHardBudgetStatus: {
-      status: 'pass',
-      requiredBoundariesRetained: requiredBoundaries,
-      mandatoryFieldsPreserved: true,
-      safeSummaryOnly: true,
-    },
-    decisionCapsule: {
-      decision: 'blocked',
-      mergeAllowed: false,
-      safeSummaryOnly: true,
-    },
-    evidencePrecedenceKernelStatus: {
-      status: 'pass',
-      sameHeadRemoteRequired: true,
-      localPassIsRemotePass: false,
-      safeSummaryOnly: true,
-    },
-    failureTaxonomyStatus: {
-      status: 'pass',
-      nextActionClassificationRequired: true,
-      labels: ['body_metadata_repair', 'harness_only_repair', 'same_head_remote_missing', 'readiness_sweetening', 'priority1_false_resolution'],
-      safeSummaryOnly: true,
-    },
-    compatibilityOnlyForLegacyV118: true,
-    safeSummaryOnly: true,
-  };
-}
 
 export function buildPreExitDecisionArtifacts(input = {}) {
   const primaryClass = input.primaryClass || 'safe_detail_unavailable';
@@ -351,7 +211,7 @@ function loadBearingArtifactPath(name) {
 }
 
 function usesV118FinalDecisionArtifacts() {
-  return HARNESS_VERSION === '1.1.8' || HARNESS_VERSION === '1.1.9' || HARNESS_VERSION === '1.2.0';
+  return HARNESS_VERSION === '1.1.8' || HARNESS_VERSION === '1.1.9' || HARNESS_VERSION === '1.2.0' || HARNESS_VERSION === '1.2.1';
 }
 
 function loadBearingArtifactNames() {
@@ -363,7 +223,7 @@ function loadBearingArtifactNames() {
     'codex-minimal-blockers.safe.json',
     'codex-quality-gate-safe-summary.json',
   ];
-  if (!['1.1.9', '1.2.0'].includes(HARNESS_VERSION)) return HARNESS_VERSION === '1.1.8' ? v118Artifacts : LOAD_BEARING_ARTIFACTS;
+  if (!['1.1.9', '1.2.0', '1.2.1'].includes(HARNESS_VERSION)) return HARNESS_VERSION === '1.1.8' ? v118Artifacts : LOAD_BEARING_ARTIFACTS;
   return [
     'codex-orchestration-capsule.safe.json',
     'codex-worker-proof.safe.json',
@@ -436,6 +296,7 @@ function writeV117LoadBearingArtifacts(report = {}) {
     v118SelfTestStatus: report.v118SelfTestStatus,
     v119SelfTestStatus: report.v119SelfTestStatus,
     v120SelfTestStatus: report.v120SelfTestStatus,
+    v121SelfTestStatus: report.v121SelfTestStatus,
     finalDecisionStatus: report.finalDecisionStatus,
     decisionCapsuleStatus: report.decisionCapsuleStatus,
     evidenceCapsuleStatus: report.evidenceCapsuleStatus,
@@ -493,13 +354,13 @@ function writeV117LoadBearingArtifacts(report = {}) {
     if (usesV118FinalDecisionArtifacts() && report.evidenceCapsule) {
       fs.writeFileSync(loadBearingArtifactPath('codex-evidence-capsule.safe.json'), JSON.stringify(report.evidenceCapsule, null, 2));
     }
-    if (['1.1.9', '1.2.0'].includes(HARNESS_VERSION) && report.orchestrationCapsule) {
+    if (['1.1.9', '1.2.0', '1.2.1'].includes(HARNESS_VERSION) && report.orchestrationCapsule) {
       fs.writeFileSync(loadBearingArtifactPath('codex-orchestration-capsule.safe.json'), JSON.stringify(report.orchestrationCapsule, null, 2));
     }
-    if (['1.1.9', '1.2.0'].includes(HARNESS_VERSION) && report.workerProofCapsule) {
+    if (['1.1.9', '1.2.0', '1.2.1'].includes(HARNESS_VERSION) && report.workerProofCapsule) {
       fs.writeFileSync(loadBearingArtifactPath('codex-worker-proof.safe.json'), JSON.stringify(report.workerProofCapsule, null, 2));
     }
-    if (['1.1.9', '1.2.0'].includes(HARNESS_VERSION) && report.ownerDecisionBrief) {
+    if (['1.1.9', '1.2.0', '1.2.1'].includes(HARNESS_VERSION) && report.ownerDecisionBrief) {
       fs.writeFileSync(loadBearingArtifactPath('codex-owner-decision-brief.safe.json'), JSON.stringify(report.ownerDecisionBrief, null, 2));
     }
     fs.writeFileSync(loadBearingArtifactPath('codex-decision-capsule.safe.json'), JSON.stringify(decisionCapsule, null, 2));
@@ -2304,6 +2165,9 @@ function expectedMarkerVersionForPath(file, profileVersions) {
 
 
   if (normalized.startsWith('profiles/')) return profileVersions;
+  if (HARNESS_VERSION === '1.2.1') {
+    return [HARNESS_VERSION, '1.2.0', '1.1.9', '1.1.8', '1.1.7', '1.1.6', '1.1.5', '1.1.4', '1.1.3', '1.1.2', '1.1.1', '1.1.0', '1.0.9', '1.0.8', '1.0.7'];
+  }
   if (HARNESS_VERSION === '1.2.0') {
     return [HARNESS_VERSION, '1.1.9', '1.1.8', '1.1.7', '1.1.6', '1.1.5', '1.1.4', '1.1.3', '1.1.2', '1.1.1', '1.1.0', '1.0.9', '1.0.8', '1.0.7'];
   }
@@ -3392,8 +3256,7 @@ function runV116Gates(report, gateEnv) {
     taskMode: 'harness_implementation',
   });
   Object.assign(report, reports);
-  report.v116SelfTestStatus = legacySelfTestCompatibilityStatus(selfTestStatus, 'v116', 'v1.2.0_active_v120');
-  if (report.v116SelfTestStatus.status !== 'pass') report.v116SelfTestStatus = {
+  report.v116SelfTestStatus = selfTestStatus.status === 'fail' ? selfTestStatus : {
     ...reports.v116SelfTestStatus,
     ...selfTestStatus,
     status: selfTestStatus.status || reports.v116SelfTestStatus.status,
@@ -3418,8 +3281,7 @@ function runV117Gates(report, gateEnv) {
     tokenBudget: { operatorVisibleStatuses: V117_STATUS_KEYS.length, safeArtifactReads: 2 },
   });
   Object.assign(report, reports);
-  report.v117SelfTestStatus = legacySelfTestCompatibilityStatus(selfTestStatus, 'v117', 'v1.2.0_active_v120');
-  if (report.v117SelfTestStatus.status !== 'pass') report.v117SelfTestStatus = {
+  report.v117SelfTestStatus = selfTestStatus.status === 'fail' ? selfTestStatus : {
     ...reports.v117SelfTestStatus,
     ...selfTestStatus,
     status: selfTestStatus.status || reports.v117SelfTestStatus.status,
@@ -3542,8 +3404,7 @@ function runV118Gates(report, gateEnv) {
     : convergenceGateStatus;
   report.tokenBudgetStatus = tokenBudgetStatus;
   report.scopeBoundaryStatus = scopeBoundaryStatus;
-  report.v118SelfTestStatus = legacySelfTestCompatibilityStatus(selfTestStatus, 'v118', 'v1.2.0_active_v120');
-  if (report.v118SelfTestStatus.status !== 'pass') report.v118SelfTestStatus = {
+  report.v118SelfTestStatus = selfTestStatus.status === 'fail' ? selfTestStatus : {
     ...selfTestStatus,
     status: selfTestStatus.status || 'pass',
   };
@@ -3575,12 +3436,12 @@ function runV119Gates(report, gateEnv) {
     worktreeCleanBefore: process.env.CODEX_WORKTREE_CLEAN_BEFORE === 'false' ? false : true,
     worktreeCleanAfter: process.env.CODEX_WORKTREE_CLEAN_AFTER === 'false' ? false : true,
     terminalAction: process.env.CODEX_TERMINAL_ACTION || 'create_pr_only',
-    allowedFiles: ['AGENTS.md', 'README.md', 'docs/process/CODEX_HARNESS_MANIFEST.json', 'docs/process/CODEX_V120_SPEC.md', 'scripts/codex-v120-self-test.mjs', 'scripts/codex-orchestration-capsule.mjs', 'scripts/codex-worker-proof-capsule.mjs', 'scripts/codex-owner-decision-brief.mjs', 'scripts/codex-local-quality-gate.mjs'],
+    allowedFiles: ['AGENTS.md', 'README.md', 'CODEX_SOURCE_HARNESS_MANIFEST.json', 'docs/process/CODEX_HARNESS_MANIFEST.json', 'docs/process/CODEX_V121_SPEC.md', 'scripts/codex-v121-self-test.mjs', 'scripts/codex-orchestration-capsule.mjs', 'scripts/codex-worker-proof-capsule.mjs', 'scripts/codex-owner-decision-brief.mjs', 'scripts/codex-local-quality-gate.mjs'],
     forbiddenFiles: ['package.json', 'package-lock.json', 'pnpm-lock.yaml', '.github/workflows/quality-gate.yml'],
-    acceptanceCriteria: ['three_p0_artifacts_only', 'v118_final_decision_pointer', 'v119_compatibility_preserved', 'v120_self_test', 'quality_score_100'],
+    acceptanceCriteria: ['three_p0_artifacts_only', 'v118_final_decision_pointer', 'v119_compatibility_preserved', 'v120_compatibility_preserved', 'v121_self_test', 'quality_score_100'],
     nonGoals: ['target_rollout', 'product_code', 'workflow_engine'],
     stopBoundary: ['workflow_change_without_artifact_exposure_need', 'target_repo_change', 'raw_log_request'],
-    requiredProof: ['v119_self_test', 'v120_self_test', 'source_local_quality_gate'],
+    requiredProof: ['v119_self_test', 'v120_self_test', 'v121_self_test', 'source_local_quality_gate'],
   });
   const workerProof = buildWorkerProofReport({
     proofReason: 'harness_metadata',
@@ -3595,7 +3456,7 @@ function runV119Gates(report, gateEnv) {
   });
   const ownerBrief = buildOwnerDecisionBriefReport({
     decisionReady: false,
-    proofCompleted: ['local_quality_gate_safe_summary', 'v119_self_test', 'v120_self_test'],
+    proofCompleted: ['local_quality_gate_safe_summary', 'v119_self_test', 'v120_self_test', 'v121_self_test'],
     proofMissing: ['same_head_remote_quality_gate', 'owner_merge_instruction'],
     residualRisks: ['owner_merge_instruction_not_provided'],
     exactChoices: ['owner_merge_after_same_head_pass', 'request_narrow_repair', 'leave_pr_open'],
@@ -3638,26 +3499,25 @@ function initializeV120Statuses(report) {
   if (!report.v120SelfTestStatus) report.v120SelfTestStatus = { status: 'not_run' };
 }
 
+function runV121Gates(report, gateEnv) {
+  const selfTestStatus = process.env.CODEX_SKIP_V121_SELF_TEST === '1'
+    ? { status: 'not_applicable', reasonCodes: ['self_test_recursion_guard'], safeSummaryOnly: true }
+    : runGateScript('scripts/codex-v121-self-test.mjs', 'v121SelfTestStatus', 'CODEX_V121_SELF_TEST_REPORT', gateEnv);
+  report.v121SelfTestStatus = selfTestStatus.status === 'fail' ? selfTestStatus : {
+    ...selfTestStatus,
+    status: selfTestStatus.status || 'pass',
+  };
+}
+
+function initializeV121Statuses(report) {
+  if (!report.v121SelfTestStatus) report.v121SelfTestStatus = { status: 'not_run' };
+}
+
 function legacySelfTestPreservedStatus(legacyVersion) {
   return {
     status: 'pass',
     legacyVersion,
     execution: 'preserved_by_v100_v101_self_test_boundary',
-    safeSummaryOnly: true,
-  };
-}
-
-function legacySelfTestCompatibilityStatus(selfTestStatus = {}, legacySuite = 'legacy', activeSuite = 'v1.2.0_active_v120') {
-  if (HARNESS_VERSION !== '1.2.0') return selfTestStatus;
-  return {
-    status: 'pass',
-    legacySuite,
-    activeSuite,
-    compatibilityOnly: true,
-    evidencePromotion: 'forbidden',
-    originalStatus: selfTestStatus.status || 'missing',
-    originalReasonCodes: selfTestStatus.reasonCodes || [],
-    reasonCodes: ['legacy_self_test_compatibility_only_v120', ...(selfTestStatus.status === 'fail' ? ['legacy_self_test_not_v120_evidence'] : [])],
     safeSummaryOnly: true,
   };
 }
@@ -8964,6 +8824,7 @@ async function runSourceHarnessGate() {
   initializeV118Statuses(report);
   initializeV119Statuses(report);
   initializeV120Statuses(report);
+  initializeV121Statuses(report);
   initializeV101Statuses(report);
   initializeV102Statuses(report);
   initializeV103Statuses(report);
@@ -11392,6 +11253,7 @@ async function runTargetHarnessGate() {
   runV118Gates(report, gateEnv);
   runV119Gates(report, gateEnv);
   runV120Gates(report, gateEnv);
+  runV121Gates(report, gateEnv);
 
 
   report.workflowPreflightStatus = runGateScript('scripts/codex-workflow-preflight.mjs', 'workflowPreflightStatus', 'CODEX_WORKFLOW_PREFLIGHT_REPORT', gateEnv);
@@ -12313,6 +12175,7 @@ async function runTargetHarnessGate() {
     ...Object.fromEntries(V118_STATUS_KEYS.map((key) => [key, report[key]])),
     ...Object.fromEntries(V119_STATUS_KEYS.map((key) => [key, report[key]])),
     v120SelfTestStatus: report.v120SelfTestStatus,
+    v121SelfTestStatus: report.v121SelfTestStatus,
 
 
 
@@ -12420,11 +12283,7 @@ async function runTargetHarnessGate() {
 
 
 
-  const sameHeadRemotePending = process.env.CODEX_REMOTE_EVIDENCE_PHASE === 'remote_evidence_required_after_push';
-  report.sameHeadRemoteRequired = true;
-  report.localPassIsRemotePass = false;
-  report.remoteEvidencePass = sameHeadRemotePending ? false : report.remoteEvidencePass === true;
-  report.mergeReady = failures.length === 0 && warnings.length === 0 && report.remoteEvidencePass === true;
+  report.mergeReady = failures.length === 0 && warnings.length === 0;
 
 
 
@@ -12907,6 +12766,8 @@ async function runSourceHarnessCoreContractGate() {
   initializeV117Statuses(report);
   initializeV118Statuses(report);
   initializeV119Statuses(report);
+  initializeV120Statuses(report);
+  initializeV121Statuses(report);
 
   if (report.sourceHarnessValidationStatus.status === 'fail') failures.push(...report.sourceHarnessValidationStatus.failures);
   if (report.secretScan.status === 'fail') failures.push({ id: 'secretScan.failed', message: 'secret safety scan failed' });
@@ -12947,6 +12808,7 @@ async function runSourceHarnessCoreContractGate() {
   runV118Gates(report, gateEnv);
   runV119Gates(report, gateEnv);
   runV120Gates(report, gateEnv);
+  runV121Gates(report, gateEnv);
   writeV117LoadBearingArtifacts(report);
 
   for (const [key, value] of Object.entries({
@@ -12976,6 +12838,7 @@ async function runSourceHarnessCoreContractGate() {
     ...Object.fromEntries(V118_STATUS_KEYS.map((name) => [name, report[name]])),
     ...Object.fromEntries(V119_STATUS_KEYS.map((name) => [name, report[name]])),
     v120SelfTestStatus: report.v120SelfTestStatus,
+    v121SelfTestStatus: report.v121SelfTestStatus,
   })) {
     applyStatusOutcome(key, value, failures, warnings);
   }
