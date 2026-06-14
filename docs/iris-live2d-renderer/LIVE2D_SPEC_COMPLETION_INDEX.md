@@ -3384,3 +3384,157 @@ This owner packet request final wait state is metadata-only and planning-only. I
 ### Completion Index Update For BW
 
 The metadata-only owner packet request final wait state is now a planning artifact. It records that the workflow remains waiting for explicit owner instruction before any separate future task could request or send an owner packet. It does not request owner instruction, accept owner instruction, send a packet request, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-OWNER-INSTRUCTION-REQUEST-PACKET-STUB1. Do not start actual ingestion.
+
+## Metadata-Only Actual Owner Instruction Request Packet Stub
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-ACTUAL-OWNER-INSTRUCTION-REQUEST-PACKET-STUB1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_ACTUAL_OWNER_INSTRUCTION_REQUEST_PACKET_STUB_SCHEMA
+Status label: live2d_real_row_metadata_only_actual_owner_instruction_request_packet_stub_status
+
+This actual owner instruction request packet stub is metadata-only and planning-only. It defines the future packet sections, safe metadata labels, rejected fields, and blockers for a possible later owner instruction request packet without sending any request. It does not request owner instruction, accept owner instruction, send a packet request, receive owner submission, accept owner submission, create owner confirmation, confirm owner confirmation, start an actual data task, preauthorize actual data, accept real data, read row bodies, accept file path values, read actual files, calculate hashes, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness.
+
+### Owner Instruction Request Packet Stub Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_instruction_request_packet_stub_only_boundary | true |
+| owner_instruction_request_packet_stub_only | true |
+| no_owner_instruction_requested_boundary | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_packet_request_sent_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-REJECTION-GATE1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-WAIT-STATE1 |
+
+### Required Instruction Request Packet Sections
+
+| section | boundary |
+| --- | --- |
+| purpose | State that this is a metadata-only request packet stub. |
+| metadata_only_scope_notice | State that no owner instruction request is sent here. |
+| request_not_sent_notice | State that owner_instruction_requested remains false. |
+| owner_instruction_not_accepted_notice | State that owner_instruction_accepted remains false. |
+| packet_request_not_sent_notice | State that packet_request_sent remains false. |
+| actual_data_task_not_started_notice | State that actual data task remains unstarted. |
+| safe_metadata_labels_to_prepare_later | Labels only; no raw data values. |
+| materials_not_to_send_yet | Reject raw data, paths, endpoints, tokens, and command material. |
+| future_owner_instruction_scope | Future-only scope label. |
+| future_packet_request_scope | Future-only scope label. |
+| future_actual_data_task_boundary | Future-only boundary label. |
+| safe_next_action | Safe planning label only. |
+
+### Required Instruction Request Packet Safe Fields
+
+| field | boundary |
+| --- | --- |
+| instruction_request_id_label | Label only; no request is sent. |
+| submission_request_id_label | Label only; no owner submission is received. |
+| receipt_request_id_label | Label only; no owner submission receipt exists. |
+| file_format_label | Label only; no actual file is read. |
+| declared_row_count_label | Label only; not checked_row_count. |
+| source_hash_label | Label only; source hash remains unverified. |
+| hash_algorithm_label | Label only; no hash calculation occurs. |
+| schema_version_label | Label only; no row validation occurs. |
+| dataset_version_label | Label only; no actual data is accepted. |
+| dataset_split_plan_label | Label only; no dataset split is applied. |
+| owner_confirmation_scope_label | Label only; no owner confirmation is created. |
+| owner_packet_request_final_wait_state_ref | Planning reference only. |
+| owner_packet_request_preflight_ledger_ref | Planning reference only. |
+| owner_packet_request_rejection_fixture_ref | Planning reference only; synthetic fixture remains non-evidence. |
+| safe_next_action_label | Future planning label only. |
+
+### Required Instruction Request Packet Rejected Fields
+
+| field | rejection boundary |
+| --- | --- |
+| raw_dataset_row_body | Reject row body material. |
+| actual_file_content | Reject actual file content. |
+| actual_file_path_value | Reject actual file path values. |
+| raw_cue_payload | Reject raw cue payloads. |
+| raw_renderer_payload | Reject raw renderer payloads. |
+| raw_model_path | Reject raw model paths. |
+| raw_motion_path | Reject raw motion paths. |
+| endpoint_value | Reject endpoint values. |
+| token_value | Reject token values. |
+| secret_value | Reject secret values. |
+| private_local_path | Reject private local paths. |
+| raw_owner_note | Reject raw owner notes. |
+| raw_k_memo_text | Reject raw K memo text. |
+| shell_body | Reject shell bodies. |
+| command_payload | Reject command payloads. |
+| direct_owner_instruction_acceptance_value | Reject direct owner instruction acceptance. |
+| direct_owner_confirmation_value | Reject owner confirmation values. |
+| direct_actual_data_approval_value | Reject actual data approval values. |
+| source_hash_verified_value | Reject verified source hash values. |
+| declared_row_count_checked_value | Reject checked row count values. |
+
+### Required Instruction Request Packet Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_instruction_not_requested | blocked |
+| owner_instruction_not_accepted | blocked |
+| packet_request_not_sent | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| real_row_file_not_accepted | blocked |
+| schema_version_not_validated_against_rows | blocked |
+| dataset_split_not_applied | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+
+### Completion Index Update For BX
+
+The metadata-only actual owner instruction request packet stub is now a planning artifact. It defines future request packet sections, safe fields, rejected fields, and blockers without sending any owner instruction request. It does not request owner instruction, accept owner instruction, send a packet request, receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-REJECTION-GATE1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-WAIT-STATE1. Do not start actual ingestion.
