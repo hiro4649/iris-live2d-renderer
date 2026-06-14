@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REQUEST-PACKET-DRY-RUN1, metadata-only request packet dry-run planning only |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REJECTION-GATE1, metadata-only owner submission rejection gate planning only |
 
 ## Completion Matrix
 
@@ -147,7 +147,7 @@ Missing or incomplete coverage remains for viewer_comfort_motion, subtitle_overl
 
 ## Next Recommended Task
 
-Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REQUEST-PACKET-DRY-RUN1.
+Recommended next task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REJECTION-GATE1.
 
 Do not start that task in this PR. It must be metadata-only. It must not include row body, file path value, real hash calculation, parser execution, redaction scan execution, audit execution, or actual ingestion.
 
@@ -1412,3 +1412,115 @@ This owner submission request packet dry-run is metadata-only and planning-only.
 ### Completion Index Update For BG
 
 The metadata-only owner submission request packet dry-run is now a planning artifact. It defines future request packet sections, safe fields, rejected fields, and blockers without sending a request packet or receiving owner submission. It does not receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REJECTION-GATE1. Do not start actual ingestion.
+
+## Metadata-Only Owner Submission Rejection Gate
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REJECTION-GATE1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_REJECTION_GATE_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_submission_rejection_gate_status
+
+This owner submission rejection gate is metadata-only and planning-only. It defines future rejection conditions and safe outputs for an owner submission boundary without receiving owner submission, accepting owner submission, judging an actual submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+
+### Owner Submission Rejection Gate Status Projection
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_submission_rejection_gate_only_boundary | true |
+| owner_submission_rejection_gate_only | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-OWNER-HANDOFF1 or LIVE2D-REAL-ROW-METADATA-ONLY-SUBMISSION-STATUS-LEDGER1 |
+
+### Required Rejection Gate Inputs
+
+| input | boundary |
+| --- | --- |
+| metadata_labels_only | Labels only; no actual owner submission received. |
+| request_packet_dry_run_ref | Planning reference only. |
+| owner_submission_form_final_checklist_ref | Planning reference only. |
+| owner_submission_wait_state_ref | Planning reference only. |
+| owner_confirmation_scope_preflight_ref | Planning reference only; no owner confirmation created. |
+| actual_data_task_blocker_map_ref | Planning reference only; no actual data task started. |
+| safe_next_action | Label only; no approval or readiness claim. |
+
+### Required Rejection Gate Reasons
+
+| reason | boundary |
+| --- | --- |
+| raw_dataset_row_body_present | Reject without echoing raw value. |
+| actual_file_content_present | Reject without reading or echoing content. |
+| actual_file_path_value_present | Reject without accepting path value. |
+| direct_owner_confirmation_value_present | Reject direct confirmation in this task. |
+| direct_actual_data_approval_value_present | Reject actual data approval in this task. |
+| source_hash_marked_verified | Reject verified source hash claims. |
+| declared_row_count_marked_checked | Reject checked row count claims. |
+| owner_submission_marked_received | Reject submission receipt claims. |
+| owner_submission_marked_accepted | Reject submission acceptance claims. |
+| actual_data_task_started_requested | Reject actual data task start requests. |
+| actual_data_preauthorization_requested | Reject preauthorization requests. |
+| parser_execution_requested | Reject parser execution requests. |
+| redaction_scan_execution_requested | Reject redaction scan execution requests. |
+| audit_execution_requested | Reject audit execution requests. |
+| runtime_readiness_requested | Reject runtime readiness requests. |
+| production_readiness_requested | Reject production readiness requests. |
+| trusted_loader_enablement_requested | Reject trusted loader enablement requests. |
+| priority1_resolution_requested | Reject priority1 resolution requests. |
+| unsupported_raw_payload_present | Reject raw payload material. |
+| secret_or_endpoint_present | Reject secrets or endpoint values. |
+| raw_k_memo_present | Reject raw K memo text. |
+| command_payload_present | Reject command payloads. |
+
+### Required Rejection Gate Safe Outputs
+
+| output | boundary |
+| --- | --- |
+| reject_reason_label | Safe label only; no raw value echo. |
+| blocked_boundary_label | Safe label only; preserves blockers. |
+| safe_next_action_label | Safe label only; no approval. |
+| no_raw_value_echo | Required for all rejection outputs. |
+| no_owner_submission_receipt | Required; owner_submission_received remains false. |
+| no_actual_data_task_start | Required; actual_data_task_started remains false. |
+| no_readiness_promotion | Required; runtime and production readiness remain unclaimed. |
+
+### Completion Index Update For BH
+
+The metadata-only owner submission rejection gate is now a planning artifact. It defines future rejection inputs, rejection reasons, and safe outputs without receiving or judging an actual owner submission. It does not receive or accept owner submission, create or confirm owner confirmation, start or preauthorize actual data work, accept real data, read file paths, read file content, read row bodies, verify hashes, check row counts, execute parser dry-runs, execute redaction scans, execute audits, create real ingestion audit events, approve go/no-go, resolve priority1, enable trusted loader, or claim readiness. It does not raise the conservative implementation or production readiness estimates. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-OWNER-HANDOFF1 or LIVE2D-REAL-ROW-METADATA-ONLY-SUBMISSION-STATUS-LEDGER1. Do not start actual ingestion.
