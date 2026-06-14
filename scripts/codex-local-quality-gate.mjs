@@ -10885,6 +10885,31 @@ async function runTargetHarnessGate() {
 
 
 
+  if (shouldUseProductPlanningPrePushTargetFastPath(process.env)) {
+    const report = buildProductPlanningPrePushTargetReport({
+      headSha: process.env.CODEX_PR_HEAD_SHA || process.env.GITHUB_SHA || '',
+      productFilesAllowed: true,
+      harnessFilesAllowed: process.env.CODEX_PR_PROFILE === 'harness_workflow_r3',
+    });
+    report.marker = MARKER;
+    report.harnessVersion = HARNESS_VERSION;
+    report.v122SelfTestStatus = runGateScript('scripts/codex-v122-self-test.mjs', 'v122SelfTestStatus', 'CODEX_V122_SELF_TEST_REPORT', {
+      ...process.env,
+      CODEX_QUALITY_REPORT: 'json',
+    });
+    report.status = report.v122SelfTestStatus.status === 'fail' ? 'fail' : 'pass';
+    if (jsonReport) console.log(JSON.stringify(report, null, 2));
+    else {
+      console.log(`status: ${report.status}`);
+      console.log('targetMergeReady: false');
+      console.log('mergeReady: false');
+      console.log('sameHeadStatus: remote_evidence_required_after_push');
+    }
+    process.exit(report.status === 'pass' ? 0 : 1);
+  }
+
+
+
   const failures = [];
 
 
