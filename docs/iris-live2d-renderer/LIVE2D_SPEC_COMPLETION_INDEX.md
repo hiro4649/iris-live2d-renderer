@@ -5967,6 +5967,33 @@ The real probe request rejection gate rejects unsafe or premature probe request 
 | rendererReadyClaimed | false |
 | rendererReadyCandidate | false |
 
+## Renderer Ready Real Probe Preflight Blocker Matrix
+
+Task: LIVE2D-RENDERER-READY-REAL-PROBE-PREFLIGHT-BLOCKER-MATRIX1
+
+The real probe preflight blocker matrix records why a real renderer probe is still no-go. This is preflight status only. It does not request, execute, or authorize a probe and does not claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_real_probe_preflight_blocker_matrix | added |
+| realProbePreflightStatus | no_go |
+| probeAllowed | false |
+| owner_confirmation_missing | blocker |
+| explicit_owner_scope_missing | blocker |
+| actual_renderer_process_unverified | blocker |
+| fresh_heartbeat_missing | blocker |
+| model_load_unverified | blocker |
+| scene_load_unverified | blocker |
+| cue_capability_unverified | blocker |
+| last_cue_applied_missing | blocker |
+| priority1_blocked | blocker |
+| checked_row_count_zero | blocker |
+| trusted_loader_disabled | blocker |
+| rendererProbeRequested | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1

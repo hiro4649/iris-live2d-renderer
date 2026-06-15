@@ -61,6 +61,7 @@ import {
   createRendererReadyOwnerHandoffRedactionGuardSummary,
   createRendererReadyRealProbeRequestStubSummary,
   createRendererReadyRealProbeRequestRejectionGateSummary,
+  createRendererReadyRealProbePreflightBlockerMatrixSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -242,6 +243,7 @@ export function createRendererState({
       const rendererReadyOwnerHandoffRedactionGuard = createRendererReadyOwnerHandoffRedactionGuardSummary();
       const rendererReadyRealProbeRequestStub = createRendererReadyRealProbeRequestStubSummary();
       const rendererReadyRealProbeRequestRejectionGate = createRendererReadyRealProbeRequestRejectionGateSummary();
+      const rendererReadyRealProbePreflightBlockerMatrix = createRendererReadyRealProbePreflightBlockerMatrixSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -376,6 +378,7 @@ export function createRendererState({
           renderer_ready_owner_handoff_redaction_guard_summary: rendererReadyOwnerHandoffRedactionGuard,
           renderer_ready_real_probe_request_stub_summary: rendererReadyRealProbeRequestStub,
           renderer_ready_real_probe_request_rejection_gate_summary: rendererReadyRealProbeRequestRejectionGate,
+          renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -459,6 +462,7 @@ export function createRendererState({
           renderer_ready_owner_handoff_redaction_guard_summary: rendererReadyOwnerHandoffRedactionGuard,
           renderer_ready_real_probe_request_stub_summary: rendererReadyRealProbeRequestStub,
           renderer_ready_real_probe_request_rejection_gate_summary: rendererReadyRealProbeRequestRejectionGate,
+          renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -583,6 +587,7 @@ export function createRendererState({
         renderer_ready_owner_handoff_redaction_guard_summary: status.renderer_health.renderer_ready_owner_handoff_redaction_guard_summary,
         renderer_ready_real_probe_request_stub_summary: status.renderer_health.renderer_ready_real_probe_request_stub_summary,
         renderer_ready_real_probe_request_rejection_gate_summary: status.renderer_health.renderer_ready_real_probe_request_rejection_gate_summary,
+        renderer_ready_real_probe_preflight_blocker_matrix_summary: status.renderer_health.renderer_ready_real_probe_preflight_blocker_matrix_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -761,6 +766,7 @@ export function createRendererState({
       const rendererReadyOwnerHandoffRedactionGuard = createRendererReadyOwnerHandoffRedactionGuardSummary();
       const rendererReadyRealProbeRequestStub = createRendererReadyRealProbeRequestStubSummary();
       const rendererReadyRealProbeRequestRejectionGate = createRendererReadyRealProbeRequestRejectionGateSummary();
+      const rendererReadyRealProbePreflightBlockerMatrix = createRendererReadyRealProbePreflightBlockerMatrixSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -854,6 +860,7 @@ export function createRendererState({
       response.renderer_ready_owner_handoff_redaction_guard_summary = rendererReadyOwnerHandoffRedactionGuard;
       response.renderer_ready_real_probe_request_stub_summary = rendererReadyRealProbeRequestStub;
       response.renderer_ready_real_probe_request_rejection_gate_summary = rendererReadyRealProbeRequestRejectionGate;
+      response.renderer_ready_real_probe_preflight_blocker_matrix_summary = rendererReadyRealProbePreflightBlockerMatrix;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -1000,6 +1007,7 @@ export function createRendererState({
       const rendererReadyOwnerHandoffRedactionGuard = createRendererReadyOwnerHandoffRedactionGuardSummary();
       const rendererReadyRealProbeRequestStub = createRendererReadyRealProbeRequestStubSummary();
       const rendererReadyRealProbeRequestRejectionGate = createRendererReadyRealProbeRequestRejectionGateSummary();
+      const rendererReadyRealProbePreflightBlockerMatrix = createRendererReadyRealProbePreflightBlockerMatrixSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1117,6 +1125,7 @@ export function createRendererState({
           renderer_ready_owner_handoff_redaction_guard_summary: rendererReadyOwnerHandoffRedactionGuard,
           renderer_ready_real_probe_request_stub_summary: rendererReadyRealProbeRequestStub,
           renderer_ready_real_probe_request_rejection_gate_summary: rendererReadyRealProbeRequestRejectionGate,
+          renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1200,6 +1209,7 @@ export function createRendererState({
           renderer_ready_owner_handoff_redaction_guard_summary: rendererReadyOwnerHandoffRedactionGuard,
           renderer_ready_real_probe_request_stub_summary: rendererReadyRealProbeRequestStub,
           renderer_ready_real_probe_request_rejection_gate_summary: rendererReadyRealProbeRequestRejectionGate,
+          renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
