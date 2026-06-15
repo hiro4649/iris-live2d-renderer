@@ -5669,6 +5669,40 @@ The owner action freeze status rejects unexpected unsafe promotion fields into a
 | trusted_loader_boundary | disabled |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready False-Positive Dependency Surface
+
+Task: LIVE2D-RENDERER-READY-FALSE-POSITIVE-DEPENDENCY-SURFACE1
+
+The renderer readiness dependency surface is a read-only blocker summary for `/status`, `/health`, and `/renderer/runtime-config`. It prevents fixture success, manifest presence, SSE connection, cue acceptance, local checks, or partial heartbeat labels from becoming renderer readiness. It does not execute the renderer, run Cubism SDK code, load a model, load a scene, apply a cue, collect a browser probe, create owner confirmation, start actual data work, enable a trusted loader, resolve priority1, or claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_false_positive_dependency_surface | added |
+| safe_status_only | true |
+| not_renderer_ready | true |
+| not_runtime_ready | true |
+| not_production_ready | true |
+| not_actual_probe | true |
+| required_real_evidence_labels | fresh_heartbeat, real_model_load, model_loaded, scene_loaded, model_scene_match, cue_capability_confirmed, last_cue_applied_success |
+| renderer_ready_status | blocked_until_real_renderer_evidence |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| fresh_heartbeat_present | false |
+| real_model_load_supported | false |
+| model_loaded | false |
+| scene_loaded | false |
+| cue_capability_confirmed | false |
+| last_cue_applied_success | false |
+| fixture_pass_is_real_ready | false |
+| manifest_only_is_real_ready | false |
+| sse_connected_is_real_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Post-PR256 Owner Action Freeze Status Schema Allowlist
 
 Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-STATUS-SCHEMA-ALLOWLIST1

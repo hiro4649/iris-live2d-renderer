@@ -63,6 +63,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_liv
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
+export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
@@ -1729,6 +1730,19 @@ export const LIVE2D_MOTION_DATASET_RENDERER_READY_FALSE_READY_BLOCKERS = Object.
   "priority1_blocked",
   "owner_confirmation_missing",
   "fresh_evidence_missing",
+]);
+
+export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS = Object.freeze([
+  "fresh_heartbeat_missing",
+  "real_model_load_not_confirmed",
+  "model_loaded_false",
+  "scene_loaded_false",
+  "model_scene_match_unconfirmed",
+  "cue_capability_unconfirmed",
+  "last_cue_applied_missing",
+  "fixture_pass_is_not_real_ready",
+  "manifest_only_is_not_real_ready",
+  "sse_connected_is_not_real_ready",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7478,6 +7492,62 @@ export function createMotionDatasetRendererReadyDependencyMatrixSummary(input = 
     safeNextAction: "do_not_claim_renderer_ready_until_all_real_dependencies_are_present",
     context: "motion dataset renderer ready dependency matrix summary",
   }, input);
+}
+
+export function createRendererReadyFalsePositiveDependencySurfaceSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA,
+    safe_summary_only: true,
+    renderer_ready_status: "blocked_until_real_renderer_evidence",
+    renderer_ready_claimed: false,
+    renderer_ready_candidate: false,
+    renderer_ready_blocked_reasons: [...LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS],
+    fresh_heartbeat_present: false,
+    real_model_load_supported: false,
+    model_loaded: false,
+    scene_loaded: false,
+    model_matches_expected: false,
+    scene_matches_expected: false,
+    cue_capability_confirmed: false,
+    last_cue_applied: false,
+    last_cue_applied_success: false,
+    fixture_pass_is_real_ready: false,
+    manifest_only_is_real_ready: false,
+    sse_connected_is_real_ready: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    trusted_loader_allowlist_enabled: false,
+    safe_next_action: "wait_for_explicit_owner_action_and_real_renderer_evidence",
+    observed_inputs_sanitized: {
+      fresh_heartbeat_present: source.fresh_heartbeat_present === true ? "observed_but_not_sufficient" : "missing",
+      real_model_load_supported: source.real_model_load_supported === true ? "observed_but_not_sufficient" : "missing",
+      model_loaded: source.model_loaded === true ? "observed_but_not_sufficient" : "missing",
+      scene_loaded: source.scene_loaded === true ? "observed_but_not_sufficient" : "missing",
+      model_matches_expected: source.model_matches_expected === true ? "observed_but_not_sufficient" : "missing",
+      scene_matches_expected: source.scene_matches_expected === true ? "observed_but_not_sufficient" : "missing",
+      cue_capability_confirmed: source.cue_capability_confirmed === true ? "observed_but_not_sufficient" : "missing",
+      last_cue_applied_success: source.last_cue_applied_success === true ? "observed_but_not_sufficient" : "missing",
+    },
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      no_actual_renderer_probe: true,
+      no_actual_live2d_execution: true,
+      no_actual_model_load: true,
+      no_actual_scene_load: true,
+      no_actual_cue_application: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready false positive dependency surface summary");
+  return summary;
 }
 
 export function createMotionDatasetPlanningCompletionReviewPacketSummary(input = {}) {
