@@ -5650,6 +5650,44 @@ This runtime/status surface exposes the PR252 owner action lane freeze as a safe
 | motion_dataset_boundary | non_executable |
 | trusted_loader_boundary | disabled |
 
+## Renderer Ready Evidence Schema Violation Guard
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-SCHEMA-VIOLATION-GUARD1
+
+The renderer-ready evidence schema violation guard is a negative contract for synthetic status inputs only. It rejects unsafe source types, renderer/cue body material, model/motion locator material, network locator material, credential material, private locator material, shell material, and ready-promotion fields back to a safe false summary. It does not execute a renderer probe, browser probe, Cubism SDK, model load, scene load, cue application, heartbeat collection, owner action, owner confirmation, trusted loader enablement, actual data task, or readiness review.
+
+| field | value |
+| --- | --- |
+| schema_violation_guard | added |
+| safe_summary_only | true |
+| negative_contract_only | true |
+| schema_violation_rejected | true |
+| unknown_source_type_rejected | true |
+| unsafe_source_type_rejected | true |
+| renderer_body_material_rejected | true |
+| cue_body_material_rejected | true |
+| model_locator_material_rejected | true |
+| motion_locator_material_rejected | true |
+| network_locator_material_rejected | true |
+| auth_material_rejected | true |
+| private_locator_material_rejected | true |
+| shell_material_rejected | true |
+| ready_promotion_field_rejected | true |
+| source_value_echoed | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
 ## Renderer Ready Fresh Evidence Envelope Schema
 
 Task: LIVE2D-RENDERER-READY-FRESH-EVIDENCE-ENVELOPE-SCHEMA1
