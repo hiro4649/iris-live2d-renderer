@@ -5994,6 +5994,31 @@ The real probe preflight blocker matrix records why a real renderer probe is sti
 | rendererReadyClaimed | false |
 | rendererReadyCandidate | false |
 
+## Renderer Ready Evidence Collector Manifest Stub
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-COLLECTOR-MANIFEST-STUB1
+
+The evidence collector manifest stub lists future collector labels only. No collector runs here, no real renderer evidence is present, no values are echoed, and readiness remains false.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_collector_manifest_stub | added |
+| evidenceCollectorManifestStatus | stub_not_executed |
+| renderer_heartbeat_collector | label_only |
+| model_load_collector | label_only |
+| scene_load_collector | label_only |
+| cue_capability_collector | label_only |
+| last_cue_applied_collector | label_only |
+| redaction_collector | label_only |
+| audit_reference_collector | label_only |
+| collectorsExecuted | false |
+| realRendererEvidencePresent | false |
+| sourceValueEchoed | false |
+| rendererProbeRequested | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
