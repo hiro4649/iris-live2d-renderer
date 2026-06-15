@@ -5622,6 +5622,53 @@ This runtime/status surface exposes the PR252 owner action lane freeze as a safe
 | motion_dataset_boundary | non_executable |
 | trusted_loader_boundary | disabled |
 
+## Post-PR256 Owner Action Freeze Unexpected Field Rejection Guard
+
+Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-UNEXPECTED-FIELD-REJECTION-GUARD1
+
+The owner action freeze status rejects unexpected unsafe promotion fields into a fail-closed status without echoing raw values. This remains a safe status contract guard only: it does not send owner action, request owner instructions, send handoff packets, create owner confirmation, start actual data work, read row bodies, accept file path values, read files, calculate hashes, execute parser/redaction/audit work, enable a trusted loader, resolve priority1, or claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| post_pr256_unexpected_field_rejection_guard | added |
+| unsafe_promotion_rejected | true |
+| raw_value_echo | false |
+| safe_summary_only | true |
+| not_owner_action | true |
+| not_owner_instruction_request | true |
+| not_owner_handoff | true |
+| not_owner_confirmation | true |
+| not_actual_data | true |
+| not_readiness | true |
+| owner_action_request_sent | false |
+| owner_action_requested | false |
+| owner_action_accepted | false |
+| owner_handoff_sent | false |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| row_body_read | false |
+| actual_file_read | false |
+| file_reference_value_accepted | false |
+| hash_calculation_performed | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| parser_execution_started | false |
+| redaction_scan_execution_started | false |
+| audit_execution_started | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
+| trusted_loader_allowlist_enabled | false |
+
 ## Post-PR256 Owner Action Freeze Status Schema Allowlist
 
 Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-STATUS-SCHEMA-ALLOWLIST1

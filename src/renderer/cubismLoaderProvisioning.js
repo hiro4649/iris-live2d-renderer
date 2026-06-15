@@ -8620,7 +8620,30 @@ export function createMotionDatasetFinalOwnerWaitForDataGateSummary(input = {}) 
 
 export function createOwnerActionLaneFreezeStatusSummary(input = {}) {
   const source = input && typeof input === "object" ? input : {};
-  const unsafeAttempt = source.owner_action_request_sent === true
+  const unexpectedUnsafeAttempt = [
+    "ownerActionRequestSent",
+    "ownerActionRequested",
+    "ownerActionAccepted",
+    "ownerHandoffSent",
+    "ownerConfirmationCreated",
+    "ownerConfirmationConfirmed",
+    "actualDataTaskStarted",
+    "actualDataPreauthorized",
+    "runtimeReadinessClaimed",
+    "productionReadinessClaimed",
+    "priority1Status",
+    "checkedRowCount",
+    "motionDatasetExecutable",
+    "trustedLoaderAllowlistEnabled",
+    "actualFilePathValue",
+    "rawDatasetRowBody",
+    "endpoint",
+    "token",
+    "secret",
+    "commandPayload",
+  ].some((key) => Object.hasOwn(source, key));
+  const unsafeAttempt = unexpectedUnsafeAttempt
+    || source.owner_action_request_sent === true
     || source.owner_action_requested === true
     || source.owner_action_accepted === true
     || source.owner_handoff_sent === true

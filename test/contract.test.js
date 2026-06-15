@@ -2501,6 +2501,7 @@ try {
   assertSafe(JSON.stringify(unsafeOwnerActionLaneFreeze));
   assertOwnerActionLaneFreezeRejectsUnsafePromotion();
   assertOwnerActionLaneFreezeStatusRedactionSweep();
+  assertOwnerActionLaneFreezeUnexpectedFieldRejectionGuard();
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
@@ -7224,6 +7225,7 @@ try {
       "owner_action_lane_freeze_cross_surface_consistency",
       "owner_action_lane_freeze_status_redaction_sweep",
       "owner_action_lane_freeze_status_schema_allowlist",
+      "owner_action_lane_freeze_unexpected_field_rejection_guard",
     ],
   }));
 } finally {
@@ -7741,7 +7743,8 @@ function assertOwnerActionLaneFreezeStatusRedactionSweep() {
     connection_string: "private-connection-string",
     password: "private-password",
   });
-  assert.equal(summary.owner_action_lane_freeze_status, "waiting_for_explicit_owner_action");
+  assert.equal(summary.owner_action_lane_freeze_status, "blocked_unsafe_state_attempt");
+  assert.equal(summary.unsafe_state_attempt_rejected, true);
   assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
   assert.equal(summary.owner_confirmation_created, false);
   assert.equal(summary.actual_data_task_started, false);
@@ -7789,6 +7792,97 @@ function assertOwnerActionLaneFreezeStatusRedactionSweep() {
     "relationship_score",
     "hidden_score",
     "connection_string",
+  ]) {
+    assert.equal(serialized.includes(forbidden), false, forbidden);
+  }
+  assertSafe(serialized);
+}
+
+function assertOwnerActionLaneFreezeUnexpectedFieldRejectionGuard() {
+  const summary = createOwnerActionLaneFreezeStatusSummary({
+    ownerActionRequestSent: true,
+    ownerActionRequested: true,
+    ownerActionAccepted: true,
+    ownerHandoffSent: true,
+    ownerConfirmationCreated: true,
+    ownerConfirmationConfirmed: true,
+    actualDataTaskStarted: true,
+    actualDataPreauthorized: true,
+    runtimeReadinessClaimed: true,
+    productionReadinessClaimed: true,
+    priority1Status: "RESOLVED",
+    checkedRowCount: 1,
+    motionDatasetExecutable: true,
+    trustedLoaderAllowlistEnabled: true,
+    actualFilePathValue: "C:\\unsafe\\path",
+    rawDatasetRowBody: "unsafe-row-body",
+    endpoint: "https://unsafe.example",
+    token: "unsafe-token",
+    secret: "unsafe-secret",
+    commandPayload: "unsafe-command",
+  });
+  assert.equal(summary.owner_action_lane_freeze_status, "blocked_unsafe_state_attempt");
+  assert.equal(summary.unsafe_state_attempt_rejected, true);
+  assert.equal(summary.owner_action_request_sent, false);
+  assert.equal(summary.owner_action_requested, false);
+  assert.equal(summary.owner_action_accepted, false);
+  assert.equal(summary.owner_handoff_sent, false);
+  assert.equal(summary.owner_instruction_request_sent, false);
+  assert.equal(summary.owner_instruction_requested, false);
+  assert.equal(summary.owner_instruction_accepted, false);
+  assert.equal(summary.packet_request_sent, false);
+  assert.equal(summary.owner_submission_received, false);
+  assert.equal(summary.owner_submission_accepted, false);
+  assert.equal(summary.owner_confirmation_created, false);
+  assert.equal(summary.owner_confirmation_confirmed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.real_data_accepted, false);
+  assert.equal(summary.row_body_read, false);
+  assert.equal(summary.actual_file_read, false);
+  assert.equal(summary.file_reference_value_accepted, false);
+  assert.equal(summary.hash_calculation_performed, false);
+  assert.equal(summary.source_hash_verified, false);
+  assert.equal(summary.declared_row_count_checked, false);
+  assert.equal(summary.parser_execution_started, false);
+  assert.equal(summary.redaction_scan_execution_started, false);
+  assert.equal(summary.audit_execution_started, false);
+  assert.equal(summary.real_ingestion_audit_event_created, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_boundary, "non_executable");
+  assert.equal(summary.trusted_loader_boundary, "disabled");
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.renderer_ready, false);
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
+
+  const serialized = JSON.stringify(summary);
+  for (const forbidden of [
+    "ownerActionRequestSent",
+    "ownerActionRequested",
+    "ownerActionAccepted",
+    "ownerHandoffSent",
+    "ownerConfirmationCreated",
+    "ownerConfirmationConfirmed",
+    "actualDataTaskStarted",
+    "actualDataPreauthorized",
+    "runtimeReadinessClaimed",
+    "productionReadinessClaimed",
+    "priority1Status",
+    "checkedRowCount",
+    "motionDatasetExecutable",
+    "trustedLoaderAllowlistEnabled",
+    "actualFilePathValue",
+    "rawDatasetRowBody",
+    "commandPayload",
+    "C:\\unsafe\\path",
+    "unsafe-row-body",
+    "https://unsafe.example",
+    "unsafe-token",
+    "unsafe-secret",
+    "unsafe-command",
   ]) {
     assert.equal(serialized.includes(forbidden), false, forbidden);
   }
