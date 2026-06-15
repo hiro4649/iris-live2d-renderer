@@ -6298,6 +6298,12 @@ try {
   assert.equal(provisionedHealth.loader_provisioning.provisioning_status, "candidate_present");
   assert.equal(provisionedHealth.loader_provisioning.trusted_loader_allowlist_enabled, false);
   assertOwnerActionLaneFreezeStatusSurface(provisionedHealth.owner_action_lane_freeze_status_summary);
+  assertOwnerActionLaneFreezeCrossSurfaceConsistency({
+    runtimeConfig: provisionedRuntimeConfig.owner_action_lane_freeze_status_summary,
+    status: provisionedStatus.owner_action_lane_freeze_status_summary,
+    statusRendererHealth: provisionedStatus.renderer_health.owner_action_lane_freeze_status_summary,
+    health: provisionedHealth.owner_action_lane_freeze_status_summary,
+  });
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_owner_confirmation_status, "owner_confirmation_required");
   assert.equal(provisionedHealth.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_missing_owner_confirmation"), true);
@@ -7106,6 +7112,7 @@ try {
       "motion_dataset_boundary_labels_not_runtime_executable",
       "owner_action_lane_freeze_status_surface",
       "owner_action_lane_freeze_contract_regression_guard",
+      "owner_action_lane_freeze_cross_surface_consistency",
     ],
   }));
 } finally {
@@ -7545,6 +7552,52 @@ function assertOwnerActionLaneFreezeRejectsUnsafePromotion() {
     assert.equal(summary.renderer_ready, false);
     assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
     assertSafe(JSON.stringify(summary));
+  }
+}
+
+function assertOwnerActionLaneFreezeCrossSurfaceConsistency(surfaces) {
+  const canonical = surfaces.runtimeConfig;
+  for (const [surfaceName, summary] of Object.entries(surfaces)) {
+    assertOwnerActionLaneFreezeStatusSurface(summary);
+    assert.equal(summary.schema, canonical.schema, surfaceName);
+    assert.equal(summary.safe_summary_only, canonical.safe_summary_only, surfaceName);
+    assert.equal(summary.owner_action_lane_freeze_status, canonical.owner_action_lane_freeze_status, surfaceName);
+    assert.equal(summary.owner_action_lane_freeze_reason, canonical.owner_action_lane_freeze_reason, surfaceName);
+    assert.equal(summary.owner_action_lane_completed_as_metadata_only, canonical.owner_action_lane_completed_as_metadata_only, surfaceName);
+    assert.equal(summary.owner_action_request_sent, canonical.owner_action_request_sent, surfaceName);
+    assert.equal(summary.owner_action_requested, canonical.owner_action_requested, surfaceName);
+    assert.equal(summary.owner_action_accepted, canonical.owner_action_accepted, surfaceName);
+    assert.equal(summary.owner_handoff_sent, canonical.owner_handoff_sent, surfaceName);
+    assert.equal(summary.owner_instruction_request_sent, canonical.owner_instruction_request_sent, surfaceName);
+    assert.equal(summary.owner_instruction_requested, canonical.owner_instruction_requested, surfaceName);
+    assert.equal(summary.owner_instruction_accepted, canonical.owner_instruction_accepted, surfaceName);
+    assert.equal(summary.packet_request_sent, canonical.packet_request_sent, surfaceName);
+    assert.equal(summary.owner_submission_received, canonical.owner_submission_received, surfaceName);
+    assert.equal(summary.owner_submission_accepted, canonical.owner_submission_accepted, surfaceName);
+    assert.equal(summary.owner_confirmation_created, canonical.owner_confirmation_created, surfaceName);
+    assert.equal(summary.owner_confirmation_confirmed, canonical.owner_confirmation_confirmed, surfaceName);
+    assert.equal(summary.actual_data_task_started, canonical.actual_data_task_started, surfaceName);
+    assert.equal(summary.actual_data_preauthorized, canonical.actual_data_preauthorized, surfaceName);
+    assert.equal(summary.real_data_accepted, canonical.real_data_accepted, surfaceName);
+    assert.equal(summary.row_body_read, canonical.row_body_read, surfaceName);
+    assert.equal(summary.actual_file_read, canonical.actual_file_read, surfaceName);
+    assert.equal(summary.file_reference_value_accepted, canonical.file_reference_value_accepted, surfaceName);
+    assert.equal(summary.hash_calculation_performed, canonical.hash_calculation_performed, surfaceName);
+    assert.equal(summary.source_hash_verified, canonical.source_hash_verified, surfaceName);
+    assert.equal(summary.declared_row_count_checked, canonical.declared_row_count_checked, surfaceName);
+    assert.equal(summary.parser_execution_started, canonical.parser_execution_started, surfaceName);
+    assert.equal(summary.redaction_scan_execution_started, canonical.redaction_scan_execution_started, surfaceName);
+    assert.equal(summary.audit_execution_started, canonical.audit_execution_started, surfaceName);
+    assert.equal(summary.real_ingestion_audit_event_created, canonical.real_ingestion_audit_event_created, surfaceName);
+    assert.equal(summary.runtime_readiness_claimed, canonical.runtime_readiness_claimed, surfaceName);
+    assert.equal(summary.production_readiness_claimed, canonical.production_readiness_claimed, surfaceName);
+    assert.equal(summary.priority1_status, canonical.priority1_status, surfaceName);
+    assert.equal(summary.checked_row_count, canonical.checked_row_count, surfaceName);
+    assert.equal(summary.motion_dataset_boundary, canonical.motion_dataset_boundary, surfaceName);
+    assert.equal(summary.trusted_loader_boundary, canonical.trusted_loader_boundary, surfaceName);
+    assert.equal(summary.trusted_loader_allowlist_enabled, canonical.trusted_loader_allowlist_enabled, surfaceName);
+    assert.equal(summary.renderer_ready, canonical.renderer_ready, surfaceName);
+    assert.equal(summary.safe_next_action, canonical.safe_next_action, surfaceName);
   }
 }
 
