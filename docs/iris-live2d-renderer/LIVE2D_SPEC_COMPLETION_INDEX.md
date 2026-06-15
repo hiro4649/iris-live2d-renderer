@@ -5626,3 +5626,39 @@ This runtime/status surface exposes the PR252 owner action lane freeze as a safe
 | safe_next_action | wait_for_explicit_owner_action |
 
 The summary may appear on `/status`, `/health`, and `/renderer/runtime-config` to make the freeze visible to safe status clients. It must remain a non-executing status surface and must not read row bodies, accept actual file paths, read actual files, calculate hashes, execute parser/redaction/audit work, enable a trusted loader, or create readiness evidence.
+
+## Post-PR252 Owner Action Freeze Contract Regression Guard
+
+Task: LIVE2D-POST-PR252-OWNER-ACTION-FREEZE-CONTRACT-REGRESSION-GUARD1
+
+The contract guard keeps the runtime/status freeze surface from becoming a false owner action, false confirmation, false actual data start, false trusted loader enablement, or false readiness signal. It uses synthetic contract inputs only and does not read row bodies, accept actual file references, read actual files, calculate hashes, execute parser/redaction/audit work, create owner confirmation, or create real ingestion evidence.
+
+| regression guard | expected result |
+| --- | --- |
+| owner action request attempt | rejected to safe false |
+| owner action acceptance attempt | rejected to safe false |
+| owner handoff attempt | rejected to safe false |
+| owner instruction request attempt | rejected to safe false |
+| packet request attempt | rejected to safe false |
+| owner submission received attempt | rejected to safe false |
+| owner submission accepted attempt | rejected to safe false |
+| owner confirmation attempt | rejected to safe false |
+| actual data task start attempt | rejected to safe false |
+| actual data preapproval attempt | rejected to safe false |
+| row body read attempt | rejected to safe false |
+| actual file read attempt | rejected to safe false |
+| file reference value attempt | rejected to safe false |
+| hash calculation attempt | rejected to safe false |
+| source hash verification attempt | rejected to safe false |
+| declared row count check attempt | rejected to safe false |
+| parser execution attempt | rejected to safe false |
+| redaction scan execution attempt | rejected to safe false |
+| audit execution attempt | rejected to safe false |
+| real ingestion audit event attempt | rejected to safe false |
+| runtime readiness attempt | rejected to safe false |
+| production readiness attempt | rejected to safe false |
+| priority1 resolution attempt | rejected to BLOCKED |
+| checked row count increase attempt | rejected to 0 |
+| motion dataset executable attempt | rejected to non_executable |
+| trusted loader enablement attempt | rejected to disabled |
+| renderer ready attempt | rejected to false |
