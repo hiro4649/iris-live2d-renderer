@@ -5662,3 +5662,36 @@ The contract guard keeps the runtime/status freeze surface from becoming a false
 | motion dataset executable attempt | rejected to non_executable |
 | trusted loader enablement attempt | rejected to disabled |
 | renderer ready attempt | rejected to false |
+
+## Post-PR254 Owner Action Freeze Cross-Surface Consistency
+
+Task: LIVE2D-POST-PR254-OWNER-ACTION-FREEZE-CROSS-SURFACE-CONSISTENCY1
+
+The owner action freeze status must preserve the same safe meaning on `/status`, `/health`, and `/renderer/runtime-config`. This guard is read-only status and contract consistency only. It does not send or accept owner action, does not send owner handoff, does not create owner confirmation, does not start or preapprove actual data, does not read row bodies or actual files, does not calculate hashes, does not execute parser/redaction/audit work, does not enable trusted loader, does not resolve priority1, and does not claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| post_pr254_cross_surface_consistency | added |
+| status_surfaces_checked | health/status/runtime-config |
+| safe_status_only | true |
+| not_owner_action | true |
+| not_actual_data | true |
+| not_owner_confirmation | true |
+| not_readiness | true |
+| owner_action_request_sent | false |
+| owner_action_requested | false |
+| owner_action_accepted | false |
+| owner_handoff_sent | false |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
+| safe_next_action | wait_for_explicit_owner_action |
