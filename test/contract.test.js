@@ -157,6 +157,7 @@ import {
   LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_PACKET_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_STUB_ITEMS,
   LIVE2D_RENDERER_READY_OWNER_HANDOFF_NOT_SENT_GUARD_SCHEMA,
+  LIVE2D_RENDERER_READY_OWNER_HANDOFF_REDACTION_GUARD_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -268,6 +269,7 @@ import {
   createRendererReadyCrossSurfaceBlockerConsistencySummary,
   createRendererReadyOwnerEvidenceHandoffPacketStubSummary,
   createRendererReadyOwnerHandoffNotSentGuardSummary,
+  createRendererReadyOwnerHandoffRedactionGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6165,6 +6167,7 @@ try {
   assertRendererReadyCrossSurfaceBlockerConsistency(provisionedRuntimeConfig.renderer_ready_cross_surface_blocker_consistency_summary);
   assertRendererReadyOwnerEvidenceHandoffPacketStub(provisionedRuntimeConfig.renderer_ready_owner_evidence_handoff_packet_stub_summary);
   assertRendererReadyOwnerHandoffNotSentGuard(provisionedRuntimeConfig.renderer_ready_owner_handoff_not_sent_guard_summary);
+  assertRendererReadyOwnerHandoffRedactionGuard(provisionedRuntimeConfig.renderer_ready_owner_handoff_redaction_guard_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6459,6 +6462,7 @@ try {
   assertRendererReadyCrossSurfaceBlockerConsistency(provisionedStatus.renderer_ready_cross_surface_blocker_consistency_summary);
   assertRendererReadyOwnerEvidenceHandoffPacketStub(provisionedStatus.renderer_ready_owner_evidence_handoff_packet_stub_summary);
   assertRendererReadyOwnerHandoffNotSentGuard(provisionedStatus.renderer_ready_owner_handoff_not_sent_guard_summary);
+  assertRendererReadyOwnerHandoffRedactionGuard(provisionedStatus.renderer_ready_owner_handoff_redaction_guard_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6643,6 +6647,7 @@ try {
   assertRendererReadyCrossSurfaceBlockerConsistency(provisionedHealth.renderer_ready_cross_surface_blocker_consistency_summary);
   assertRendererReadyOwnerEvidenceHandoffPacketStub(provisionedHealth.renderer_ready_owner_evidence_handoff_packet_stub_summary);
   assertRendererReadyOwnerHandoffNotSentGuard(provisionedHealth.renderer_ready_owner_handoff_not_sent_guard_summary);
+  assertRendererReadyOwnerHandoffRedactionGuard(provisionedHealth.renderer_ready_owner_handoff_redaction_guard_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7405,6 +7410,7 @@ try {
       "renderer_ready_owner_evidence_handoff_packet_stub",
       "renderer_ready_post_guard_completion_review",
       "renderer_ready_owner_handoff_not_sent_guard",
+      "renderer_ready_owner_handoff_redaction_guard",
     ],
   }));
 } finally {
@@ -8754,6 +8760,36 @@ function assertRendererReadyOwnerHandoffNotSentGuard(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyOwnerHandoffRedactionGuard(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_OWNER_HANDOFF_REDACTION_GUARD_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.ownerHandoffRedactionGuardStatus, "safe_labels_only");
+  assert.equal(summary.packetSummarySafeLabelsOnly, true);
+  assert.equal(summary.networkLocatorRejected, true);
+  assert.equal(summary.authMaterialRejected, true);
+  assert.equal(summary.modelLocatorRejected, true);
+  assert.equal(summary.motionLocatorRejected, true);
+  assert.equal(summary.cueMaterialRejected, true);
+  assert.equal(summary.rendererMaterialRejected, true);
+  assert.equal(summary.shellMaterialRejected, true);
+  assert.equal(summary.operatorPrivateNoteRejected, true);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.ownerEvidenceHandoffSent, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -9433,4 +9469,11 @@ for (const fixture of [
   assertRendererReadyOwnerHandoffNotSentGuard(summary);
   assert.equal(summary.handoffPacketIsNotOwnerConfirmation, true);
   assert.equal(summary.handoffPacketIsNotReadiness, true);
+}
+
+{
+  const summary = createRendererReadyOwnerHandoffRedactionGuardSummary();
+  assertRendererReadyOwnerHandoffRedactionGuard(summary);
+  assert.equal(summary.packetSummarySafeLabelsOnly, true);
+  assert.equal(summary.sourceValueEchoed, false);
 }
