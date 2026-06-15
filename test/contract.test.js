@@ -138,6 +138,7 @@ import {
   LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_FUTURE_ACTIONS,
   LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA,
   LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_REASONS,
+  LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
@@ -228,6 +229,7 @@ import {
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
+  createOwnerActionLaneFreezeStatusSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
@@ -2320,6 +2322,75 @@ try {
   assert.equal(unsafeFinalOwnerWaitGate.wait_for_data_reasons.includes("final_owner_wait_gate_rejected_owner_or_actual_data_attempt"), true);
   assert.equal(unsafeFinalOwnerWaitGate.missing_wait_reasons.includes("owner_confirmation_missing"), true);
   assertSafe(JSON.stringify(unsafeFinalOwnerWaitGate));
+
+  const defaultOwnerActionLaneFreeze = createOwnerActionLaneFreezeStatusSummary();
+  assert.equal(defaultOwnerActionLaneFreeze.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_action_lane_freeze_status, "waiting_for_explicit_owner_action");
+  assert.equal(defaultOwnerActionLaneFreeze.owner_action_lane_completed_as_metadata_only, true);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_action_request_sent, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_action_requested, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_action_accepted, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_handoff_sent, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_instruction_request_sent, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_instruction_requested, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_instruction_accepted, false);
+  assert.equal(defaultOwnerActionLaneFreeze.packet_request_sent, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_submission_received, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_submission_accepted, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_confirmation_created, false);
+  assert.equal(defaultOwnerActionLaneFreeze.owner_confirmation_confirmed, false);
+  assert.equal(defaultOwnerActionLaneFreeze.actual_data_task_started, false);
+  assert.equal(defaultOwnerActionLaneFreeze.actual_data_preauthorized, false);
+  assert.equal(defaultOwnerActionLaneFreeze.real_data_accepted, false);
+  assert.equal(defaultOwnerActionLaneFreeze.row_body_read, false);
+  assert.equal(defaultOwnerActionLaneFreeze.actual_file_read, false);
+  assert.equal(defaultOwnerActionLaneFreeze.file_reference_value_accepted, false);
+  assert.equal(defaultOwnerActionLaneFreeze.hash_calculation_performed, false);
+  assert.equal(defaultOwnerActionLaneFreeze.source_hash_verified, false);
+  assert.equal(defaultOwnerActionLaneFreeze.declared_row_count_checked, false);
+  assert.equal(defaultOwnerActionLaneFreeze.parser_execution_started, false);
+  assert.equal(defaultOwnerActionLaneFreeze.redaction_scan_execution_started, false);
+  assert.equal(defaultOwnerActionLaneFreeze.audit_execution_started, false);
+  assert.equal(defaultOwnerActionLaneFreeze.real_ingestion_audit_event_created, false);
+  assert.equal(defaultOwnerActionLaneFreeze.runtime_readiness_claimed, false);
+  assert.equal(defaultOwnerActionLaneFreeze.production_readiness_claimed, false);
+  assert.equal(defaultOwnerActionLaneFreeze.priority1_status, "BLOCKED");
+  assert.equal(defaultOwnerActionLaneFreeze.checked_row_count, 0);
+  assert.equal(defaultOwnerActionLaneFreeze.motion_dataset_boundary, "non_executable");
+  assert.equal(defaultOwnerActionLaneFreeze.trusted_loader_boundary, "disabled");
+  assert.equal(defaultOwnerActionLaneFreeze.trusted_loader_allowlist_enabled, false);
+  assert.equal(defaultOwnerActionLaneFreeze.renderer_ready, false);
+  assert.equal(defaultOwnerActionLaneFreeze.safe_next_action, "wait_for_explicit_owner_action");
+  assert.equal(defaultOwnerActionLaneFreeze.unsafe_state_attempt_rejected, false);
+  assert.equal(defaultOwnerActionLaneFreeze.boundary_policy.no_owner_action_request, true);
+  assertSafe(JSON.stringify(defaultOwnerActionLaneFreeze));
+
+  const unsafeOwnerActionLaneFreeze = createOwnerActionLaneFreezeStatusSummary({
+    owner_action_requested: true,
+    owner_confirmation_confirmed: true,
+    actual_data_task_started: true,
+    actual_data_preauthorized: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    checked_row_count: 1,
+    priority1_status: "RESOLVED",
+    trusted_loader_boundary: "enabled",
+    motion_dataset_boundary: "executable",
+  });
+  assert.equal(unsafeOwnerActionLaneFreeze.owner_action_lane_freeze_status, "blocked_unsafe_state_attempt");
+  assert.equal(unsafeOwnerActionLaneFreeze.owner_action_requested, false);
+  assert.equal(unsafeOwnerActionLaneFreeze.owner_confirmation_confirmed, false);
+  assert.equal(unsafeOwnerActionLaneFreeze.actual_data_task_started, false);
+  assert.equal(unsafeOwnerActionLaneFreeze.actual_data_preauthorized, false);
+  assert.equal(unsafeOwnerActionLaneFreeze.runtime_readiness_claimed, false);
+  assert.equal(unsafeOwnerActionLaneFreeze.production_readiness_claimed, false);
+  assert.equal(unsafeOwnerActionLaneFreeze.checked_row_count, 0);
+  assert.equal(unsafeOwnerActionLaneFreeze.priority1_status, "BLOCKED");
+  assert.equal(unsafeOwnerActionLaneFreeze.trusted_loader_boundary, "disabled");
+  assert.equal(unsafeOwnerActionLaneFreeze.motion_dataset_boundary, "non_executable");
+  assert.equal(unsafeOwnerActionLaneFreeze.safe_next_action, "wait_for_explicit_owner_action");
+  assert.equal(unsafeOwnerActionLaneFreeze.unsafe_state_attempt_rejected, true);
+  assertSafe(JSON.stringify(unsafeOwnerActionLaneFreeze));
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
@@ -5696,6 +5767,7 @@ try {
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.real_probe_started, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.runtime_readiness_claimed, false);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.production_readiness_claimed, false);
+  assertOwnerActionLaneFreezeStatusSurface(provisionedRuntimeConfig.owner_action_lane_freeze_status_summary);
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.priority1_status, "BLOCKED");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.motion_dataset_status, "non_executable");
   assert.equal(provisionedRuntimeConfig.real_evidence_freshness_threshold_summary.trusted_loader_allowlist_enabled, false);
@@ -5942,6 +6014,8 @@ try {
   const provisionedStatus = await provisioned.getJson("/status");
   assert.equal(provisionedStatus.renderer_ready, false);
   assert.equal(provisionedStatus.renderer_health.loader_provisioning.provisioning_status, "candidate_present");
+  assertOwnerActionLaneFreezeStatusSurface(provisionedStatus.owner_action_lane_freeze_status_summary);
+  assertOwnerActionLaneFreezeStatusSurface(provisionedStatus.renderer_health.owner_action_lane_freeze_status_summary);
   assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
   assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_candidate_status, "candidate_present_diagnostic_only");
   assert.equal(provisionedStatus.trusted_loader_preflight_summary.trusted_loader_readiness_claimed, false);
@@ -6222,6 +6296,7 @@ try {
   assert.equal(provisionedHealth.renderer_ready, false);
   assert.equal(provisionedHealth.loader_provisioning.provisioning_status, "candidate_present");
   assert.equal(provisionedHealth.loader_provisioning.trusted_loader_allowlist_enabled, false);
+  assertOwnerActionLaneFreezeStatusSurface(provisionedHealth.owner_action_lane_freeze_status_summary);
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_allowlist_status, "disabled");
   assert.equal(provisionedHealth.trusted_loader_preflight_summary.trusted_loader_owner_confirmation_status, "owner_confirmation_required");
   assert.equal(provisionedHealth.trusted_loader_enablement_gate_summary.trusted_loader_enablement_blockers.includes("blocked_missing_owner_confirmation"), true);
@@ -7028,6 +7103,7 @@ try {
       "trusted_loader_owner_handoff_no_readiness_sweetening",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
+      "owner_action_lane_freeze_status_surface",
     ],
   }));
 } finally {
@@ -7390,6 +7466,52 @@ async function startHarness(state, options = {}) {
       return new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     },
   };
+}
+
+function assertOwnerActionLaneFreezeStatusSurface(summary) {
+  assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.owner_action_lane_freeze_status, "waiting_for_explicit_owner_action");
+  assert.equal(summary.owner_action_lane_completed_as_metadata_only, true);
+  assert.equal(summary.owner_action_request_sent, false);
+  assert.equal(summary.owner_action_requested, false);
+  assert.equal(summary.owner_action_accepted, false);
+  assert.equal(summary.owner_handoff_sent, false);
+  assert.equal(summary.owner_instruction_request_sent, false);
+  assert.equal(summary.owner_instruction_requested, false);
+  assert.equal(summary.owner_instruction_accepted, false);
+  assert.equal(summary.packet_request_sent, false);
+  assert.equal(summary.owner_submission_received, false);
+  assert.equal(summary.owner_submission_accepted, false);
+  assert.equal(summary.owner_confirmation_created, false);
+  assert.equal(summary.owner_confirmation_confirmed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.real_data_accepted, false);
+  assert.equal(summary.row_body_read, false);
+  assert.equal(summary.actual_file_read, false);
+  assert.equal(summary.file_reference_value_accepted, false);
+  assert.equal(summary.hash_calculation_performed, false);
+  assert.equal(summary.source_hash_verified, false);
+  assert.equal(summary.declared_row_count_checked, false);
+  assert.equal(summary.parser_execution_started, false);
+  assert.equal(summary.redaction_scan_execution_started, false);
+  assert.equal(summary.audit_execution_started, false);
+  assert.equal(summary.real_ingestion_audit_event_created, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_boundary, "non_executable");
+  assert.equal(summary.trusted_loader_boundary, "disabled");
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.renderer_ready, false);
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
+  assert.equal(summary.unsafe_state_attempt_rejected, false);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
 }
 
 function assertSafe(serialized) {

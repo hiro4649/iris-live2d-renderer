@@ -66,6 +66,7 @@ export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "ir
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
+export const LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA = "iris_live2d_owner_action_lane_freeze_status_v1";
 
 
 export const LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES = Object.freeze([
@@ -8614,6 +8615,105 @@ export function createMotionDatasetFinalOwnerWaitForDataGateSummary(input = {}) 
     },
   };
   assertSafePublicObject(summary, "motion dataset final owner wait for data gate summary");
+  return summary;
+}
+
+export function createOwnerActionLaneFreezeStatusSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const unsafeAttempt = source.owner_action_request_sent === true
+    || source.owner_action_requested === true
+    || source.owner_action_accepted === true
+    || source.owner_handoff_sent === true
+    || source.owner_instruction_request_sent === true
+    || source.owner_instruction_requested === true
+    || source.owner_instruction_accepted === true
+    || source.packet_request_sent === true
+    || source.owner_submission_received === true
+    || source.owner_submission_accepted === true
+    || source.owner_confirmation_created === true
+    || source.owner_confirmation_confirmed === true
+    || source.actual_data_task_started === true
+    || source.actual_data_preauthorized === true
+    || source.real_data_accepted === true
+    || source.row_body_read === true
+    || source.actual_file_read === true
+    || source.file_path_value_accepted === true
+    || source.hash_calculation_performed === true
+    || source.source_hash_verified === true
+    || source.declared_row_count_checked === true
+    || source.parser_execution_started === true
+    || source.redaction_scan_execution_started === true
+    || source.audit_execution_started === true
+    || source.real_ingestion_audit_event_created === true
+    || source.runtime_readiness_claimed === true
+    || source.production_readiness_claimed === true
+    || source.priority1_status === "RESOLVED"
+    || Number(source.checked_row_count ?? 0) > 0
+    || source.motion_dataset_boundary === "executable"
+    || source.motion_dataset_executable === true
+    || source.trusted_loader_boundary === "enabled"
+    || source.trusted_loader_allowlist_enabled === true
+    || source.renderer_ready === true;
+  const summary = {
+    schema: LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA,
+    safe_summary_only: true,
+    owner_action_lane_freeze_status: unsafeAttempt ? "blocked_unsafe_state_attempt" : "waiting_for_explicit_owner_action",
+    owner_action_lane_freeze_reason: "post_pr252_freeze_register",
+    owner_action_lane_completed_as_metadata_only: true,
+    owner_action_request_sent: false,
+    owner_action_requested: false,
+    owner_action_accepted: false,
+    owner_handoff_sent: false,
+    owner_instruction_request_sent: false,
+    owner_instruction_requested: false,
+    owner_instruction_accepted: false,
+    packet_request_sent: false,
+    owner_submission_received: false,
+    owner_submission_accepted: false,
+    owner_confirmation_created: false,
+    owner_confirmation_confirmed: false,
+    actual_data_task_started: false,
+    actual_data_preauthorized: false,
+    real_data_accepted: false,
+    row_body_read: false,
+    actual_file_read: false,
+    file_reference_value_accepted: false,
+    hash_calculation_performed: false,
+    source_hash_verified: false,
+    declared_row_count_checked: false,
+    parser_execution_started: false,
+    redaction_scan_execution_started: false,
+    audit_execution_started: false,
+    real_ingestion_audit_event_created: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    checked_row_count: 0,
+    motion_dataset_boundary: "non_executable",
+    trusted_loader_boundary: "disabled",
+    trusted_loader_allowlist_enabled: false,
+    renderer_ready: false,
+    safe_next_action: "wait_for_explicit_owner_action",
+    unsafe_state_attempt_rejected: unsafeAttempt,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      no_owner_action_request: true,
+      no_owner_action_acceptance: true,
+      no_owner_handoff: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_actual_data_preapproval: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_parser_execution: true,
+      no_redaction_scan_execution: true,
+      no_audit_execution: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "owner action lane freeze status summary");
   return summary;
 }
 
