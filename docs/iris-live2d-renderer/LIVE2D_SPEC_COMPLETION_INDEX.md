@@ -5790,6 +5790,30 @@ The renderer-ready safe next action catalog exposes only safe future action labe
 | motion_dataset_boundary | non_executable |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Cross-Surface Blocker Consistency
+
+Task: LIVE2D-RENDERER-READY-CROSS-SURFACE-BLOCKER-CONSISTENCY2
+
+The renderer-ready cross-surface blocker consistency guard keeps the same safe no-go meaning across status, health, runtime-config, and heartbeat surfaces. It is consistency metadata only and does not collect renderer evidence, execute a renderer probe, create owner confirmation, start actual data work, enable trusted loader, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_cross_surface_blocker_consistency | added |
+| consistency_status | consistent_safe_no_go |
+| surfaces_checked | status/health/runtime_config/heartbeat |
+| go_nogo_status_consistent | true |
+| blocker_reasons_consistent | true |
+| readiness_flags_consistent | true |
+| owner_data_trusted_loader_flags_consistent | true |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| owner_confirmation_created | false |
+| actual_data_task_started | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
