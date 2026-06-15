@@ -78,6 +78,7 @@ export const LIVE2D_RENDERER_READY_CROSS_SURFACE_BLOCKER_CONSISTENCY_SCHEMA = "i
 export const LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_PACKET_STUB_SCHEMA = "iris_live2d_renderer_ready_owner_evidence_handoff_packet_stub_v1";
 export const LIVE2D_RENDERER_READY_OWNER_HANDOFF_NOT_SENT_GUARD_SCHEMA = "iris_live2d_renderer_ready_owner_handoff_not_sent_guard_v1";
 export const LIVE2D_RENDERER_READY_OWNER_HANDOFF_REDACTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_owner_handoff_redaction_guard_v1";
+export const LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_STUB_SCHEMA = "iris_live2d_renderer_ready_real_probe_request_stub_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
@@ -8654,6 +8655,54 @@ export function createRendererReadyOwnerHandoffRedactionGuardSummary() {
     },
   };
   assertSafePublicObject(summary, "renderer ready owner handoff redaction guard summary");
+  return summary;
+}
+
+export function createRendererReadyRealProbeRequestStubSummary() {
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_STUB_SCHEMA,
+    safe_summary_only: true,
+    rendererProbeRequestStatus: "draft_not_sent",
+    rendererProbeRequested: false,
+    rendererProbeExecuted: false,
+    realRendererEvidencePresent: false,
+    ownerConfirmationRequired: true,
+    ownerConfirmationConfirmed: false,
+    ownerConfirmationCreated: false,
+    rendererReadyClaimed: false,
+    rendererReadyCandidate: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    actual_data_task_started: false,
+    actual_data_preauthorized: false,
+    priority1Status: "BLOCKED",
+    priority1_status: "BLOCKED",
+    checkedRowCount: 0,
+    checked_row_count: 0,
+    motionDatasetExecutable: false,
+    motion_dataset_executable: false,
+    trustedLoaderAllowlistEnabled: false,
+    trusted_loader_allowlist_enabled: false,
+    safeNextAction: "wait_for_explicit_owner_action_and_real_renderer_evidence",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      request_stub_only: true,
+      no_probe_request_sent: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_actual_live2d_execution: true,
+      no_actual_model_load: true,
+      no_actual_scene_load: true,
+      no_actual_cue_application: true,
+      no_actual_heartbeat_collection: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready real probe request stub summary");
   return summary;
 }
 

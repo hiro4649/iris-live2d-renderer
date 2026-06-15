@@ -5915,6 +5915,32 @@ The owner handoff redaction guard keeps the owner evidence handoff packet stub a
 | motion_dataset_boundary | non_executable |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Real Probe Request Stub
+
+Task: LIVE2D-RENDERER-READY-REAL-PROBE-REQUEST-STUB1
+
+The real probe request stub defines a future request shape without sending or executing it. It keeps renderer probe requested false, renderer probe executed false, real renderer evidence absent, and owner confirmation required but unconfirmed.
+
+| field | value |
+| --- | --- |
+| renderer_ready_real_probe_request_stub | added |
+| rendererProbeRequestStatus | draft_not_sent |
+| rendererProbeRequested | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| ownerConfirmationRequired | true |
+| ownerConfirmationConfirmed | false |
+| ownerConfirmationCreated | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| actual_data_task_started | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
