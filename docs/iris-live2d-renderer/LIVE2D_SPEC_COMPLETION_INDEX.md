@@ -4592,3 +4592,139 @@ This safe handoff packet is metadata-only and planning-only. It defines the futu
 ### Completion Index Update For CF
 
 The metadata-only owner instruction request safe handoff packet is now a planning artifact. It defines future packet sections, planning refs, unresolved blockers, prohibited materials, and safe next actions without sending an owner handoff, sending an owner instruction request, requesting or accepting owner instruction, sending a packet request, receiving or accepting owner submission, creating or confirming owner confirmation, starting or preauthorizing actual data work, accepting real data, reading file paths, reading file content, reading row bodies, verifying hashes, checking row counts, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness. It does not raise the conservative implementation or production readiness estimates and does not increase production readiness. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-HANDOFF-REJECTION-GATE1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-OWNER-WAIT-STATE1. Do not start actual ingestion.
+
+## Metadata-Only Owner Instruction Request Handoff Rejection Gate
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-HANDOFF-REJECTION-GATE1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INSTRUCTION_REQUEST_HANDOFF_REJECTION_GATE_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_instruction_request_handoff_rejection_gate_status
+
+This handoff rejection gate is metadata-only and planning-only. It fixes the rejected state transitions for the owner instruction request safe handoff packet lane without sending an owner handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
+
+### Handoff Rejection Gate Default State
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_instruction_request_handoff_rejection_gate_only_boundary | true |
+| owner_instruction_request_handoff_rejection_gate_only | true |
+| no_owner_handoff_sent_boundary | true |
+| no_owner_instruction_preauthorized_boundary | true |
+| no_owner_instruction_request_sent_boundary | true |
+| no_owner_instruction_requested_boundary | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_packet_request_sent_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_handoff_sent | false |
+| owner_instruction_preauthorized | false |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-OWNER-WAIT-STATE1 |
+
+### Required Handoff Rejection Inputs
+
+| input | boundary |
+| --- | --- |
+| metadata_labels_only | Labels only; no raw values. |
+| owner_instruction_request_safe_handoff_packet_ref | Planning reference only; no handoff sent. |
+| owner_instruction_request_owner_wait_gate_ref | Planning reference only; owner wait remains active. |
+| owner_instruction_request_completion_review_ref | Planning reference only. |
+| owner_instruction_preauth_blocker_map_ref | Planning reference only; no preauthorization. |
+| owner_instruction_request_final_no_go_ref | Planning reference only; no go/no-go approval. |
+| owner_instruction_request_preflight_ledger_ref | Planning reference only. |
+| owner_instruction_request_rejection_gate_ref | Planning reference only. |
+| actual_owner_instruction_request_packet_stub_ref | Planning reference only; no request is sent. |
+| safe_next_action | Safe next label only. |
+
+### Required Handoff Rejection Reasons
+
+| rejection reason | boundary |
+| --- | --- |
+| owner_handoff_marked_sent | Rejects any handoff-sent transition. |
+| owner_instruction_preauthorized_marked_true | Rejects owner instruction preauthorization. |
+| owner_instruction_request_marked_sent | Rejects owner instruction request sending. |
+| owner_instruction_marked_requested | Rejects owner instruction requested state. |
+| owner_instruction_marked_accepted | Rejects owner instruction acceptance. |
+| packet_request_marked_sent | Rejects packet request sending. |
+| owner_submission_marked_received | Rejects owner submission receipt. |
+| owner_submission_marked_accepted | Rejects owner submission acceptance. |
+| owner_confirmation_marked_created | Rejects owner confirmation creation. |
+| owner_confirmation_marked_confirmed | Rejects owner confirmation confirmation. |
+| actual_data_task_marked_started | Rejects actual data task start. |
+| actual_data_preauthorization_marked_true | Rejects actual data preauthorization. |
+| source_hash_marked_verified | Rejects source hash verification. |
+| declared_row_count_marked_checked | Rejects declared row count checking. |
+| checked_row_count_increased | Rejects nonzero checked row count. |
+| motion_dataset_marked_executable | Rejects executable motion dataset state. |
+| runtime_readiness_requested | Rejects runtime readiness request. |
+| production_readiness_requested | Rejects production readiness request. |
+| trusted_loader_enablement_requested | Rejects trusted loader enablement. |
+| priority1_resolution_requested | Rejects priority1 resolution. |
+| raw_dataset_row_body_present | Rejects raw row body material. |
+| actual_file_content_present | Rejects actual file content. |
+| actual_file_path_value_present | Rejects actual file path values. |
+| secret_or_endpoint_present | Rejects secret or endpoint material. |
+| raw_k_memo_present | Rejects raw K memo material. |
+| command_payload_present | Rejects command payload material. |
+
+### Required Handoff Rejection Safe Outputs
+
+| safe output | boundary |
+| --- | --- |
+| reject_reason_label | Safe label only. |
+| blocked_boundary_label | Safe label only. |
+| safe_next_action_label | Safe label only. |
+| no_raw_value_echo | Required; do not echo unsafe material. |
+| no_owner_handoff_sent | Required; owner_handoff_sent remains false. |
+| no_owner_instruction_request_sent | Required; owner_instruction_request_sent remains false. |
+| no_owner_instruction_acceptance | Required; owner_instruction_accepted remains false. |
+| no_packet_request_sent | Required; packet_request_sent remains false. |
+| no_owner_submission_receipt | Required; owner submission remains not received. |
+| no_actual_data_task_start | Required; actual_data_task_started remains false. |
+| no_readiness_promotion | Required; readiness remains unclaimed. |
+| no_priority1_resolution | Required; priority1 remains BLOCKED. |
+
+### Completion Index Update For CG
+
+The metadata-only owner instruction request handoff rejection gate is now a planning artifact. It defines safe inputs, rejection reasons, and safe output labels for unsafe handoff-related state transitions without sending an owner handoff, sending an owner instruction request, requesting or accepting owner instruction, sending a packet request, receiving or accepting owner submission, creating or confirming owner confirmation, starting or preauthorizing actual data work, accepting real data, reading file paths, reading file content, reading row bodies, verifying hashes, checking row counts, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness. It does not raise the conservative implementation or production readiness estimates and does not increase production readiness. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-FINAL-OWNER-WAIT-STATE1. Do not start actual ingestion.
