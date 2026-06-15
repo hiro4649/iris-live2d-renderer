@@ -56,6 +56,7 @@ import {
   createRendererReadyBlockerReasonAllowlistSummary,
   createRendererReadySafeNextActionCatalogSummary,
   createRendererReadyCrossSurfaceBlockerConsistencySummary,
+  createRendererReadyOwnerEvidenceHandoffPacketStubSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -232,6 +233,7 @@ export function createRendererState({
       const rendererReadyBlockerReasonAllowlist = createRendererReadyBlockerReasonAllowlistSummary();
       const rendererReadySafeNextActionCatalog = createRendererReadySafeNextActionCatalogSummary();
       const rendererReadyCrossSurfaceBlockerConsistency = createRendererReadyCrossSurfaceBlockerConsistencySummary();
+      const rendererReadyOwnerEvidenceHandoffPacketStub = createRendererReadyOwnerEvidenceHandoffPacketStubSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -361,6 +363,7 @@ export function createRendererState({
           renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           renderer_ready_safe_next_action_catalog_summary: rendererReadySafeNextActionCatalog,
           renderer_ready_cross_surface_blocker_consistency_summary: rendererReadyCrossSurfaceBlockerConsistency,
+          renderer_ready_owner_evidence_handoff_packet_stub_summary: rendererReadyOwnerEvidenceHandoffPacketStub,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -439,6 +442,7 @@ export function createRendererState({
           renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           renderer_ready_safe_next_action_catalog_summary: rendererReadySafeNextActionCatalog,
           renderer_ready_cross_surface_blocker_consistency_summary: rendererReadyCrossSurfaceBlockerConsistency,
+          renderer_ready_owner_evidence_handoff_packet_stub_summary: rendererReadyOwnerEvidenceHandoffPacketStub,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -558,6 +562,7 @@ export function createRendererState({
         renderer_ready_blocker_reason_allowlist_summary: status.renderer_health.renderer_ready_blocker_reason_allowlist_summary,
         renderer_ready_safe_next_action_catalog_summary: status.renderer_health.renderer_ready_safe_next_action_catalog_summary,
         renderer_ready_cross_surface_blocker_consistency_summary: status.renderer_health.renderer_ready_cross_surface_blocker_consistency_summary,
+        renderer_ready_owner_evidence_handoff_packet_stub_summary: status.renderer_health.renderer_ready_owner_evidence_handoff_packet_stub_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -731,6 +736,7 @@ export function createRendererState({
       const rendererReadyBlockerReasonAllowlist = createRendererReadyBlockerReasonAllowlistSummary();
       const rendererReadySafeNextActionCatalog = createRendererReadySafeNextActionCatalogSummary();
       const rendererReadyCrossSurfaceBlockerConsistency = createRendererReadyCrossSurfaceBlockerConsistencySummary();
+      const rendererReadyOwnerEvidenceHandoffPacketStub = createRendererReadyOwnerEvidenceHandoffPacketStubSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -819,6 +825,7 @@ export function createRendererState({
       response.renderer_ready_blocker_reason_allowlist_summary = rendererReadyBlockerReasonAllowlist;
       response.renderer_ready_safe_next_action_catalog_summary = rendererReadySafeNextActionCatalog;
       response.renderer_ready_cross_surface_blocker_consistency_summary = rendererReadyCrossSurfaceBlockerConsistency;
+      response.renderer_ready_owner_evidence_handoff_packet_stub_summary = rendererReadyOwnerEvidenceHandoffPacketStub;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -960,6 +967,7 @@ export function createRendererState({
       const rendererReadyBlockerReasonAllowlist = createRendererReadyBlockerReasonAllowlistSummary();
       const rendererReadySafeNextActionCatalog = createRendererReadySafeNextActionCatalogSummary();
       const rendererReadyCrossSurfaceBlockerConsistency = createRendererReadyCrossSurfaceBlockerConsistencySummary();
+      const rendererReadyOwnerEvidenceHandoffPacketStub = createRendererReadyOwnerEvidenceHandoffPacketStubSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1072,6 +1080,7 @@ export function createRendererState({
           renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           renderer_ready_safe_next_action_catalog_summary: rendererReadySafeNextActionCatalog,
           renderer_ready_cross_surface_blocker_consistency_summary: rendererReadyCrossSurfaceBlockerConsistency,
+          renderer_ready_owner_evidence_handoff_packet_stub_summary: rendererReadyOwnerEvidenceHandoffPacketStub,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1150,6 +1159,7 @@ export function createRendererState({
           renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           renderer_ready_safe_next_action_catalog_summary: rendererReadySafeNextActionCatalog,
           renderer_ready_cross_surface_blocker_consistency_summary: rendererReadyCrossSurfaceBlockerConsistency,
+          renderer_ready_owner_evidence_handoff_packet_stub_summary: rendererReadyOwnerEvidenceHandoffPacketStub,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
