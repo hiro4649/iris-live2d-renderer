@@ -5694,6 +5694,44 @@ The renderer readiness evidence envelope is a read-only safe status contract for
 
 Required blocker labels remain: missing_fresh_heartbeat_evidence, missing_real_model_load_evidence, missing_model_loaded_evidence, missing_scene_loaded_evidence, missing_model_scene_match_evidence, missing_cue_capability_evidence, missing_last_cue_applied_evidence, fixture_evidence_is_not_real_evidence, manual_label_is_not_real_evidence, stale_evidence_is_not_ready, priority1_blocked, checked_row_count_zero, and trusted_loader_disabled.
 
+## Renderer Ready Stale Evidence Downgrade Contract
+
+Task: LIVE2D-RENDERER-READY-STALE-EVIDENCE-DOWNGRADE-CONTRACT1
+
+The stale evidence downgrade contract is a read-only negative contract for `/status`, `/health`, and `/renderer/runtime-config`. Stale evidence, fixture labels, manual labels, manifest-only availability, SSE connection, and cue acceptance are explicitly downgraded away from renderer readiness unless fresh real renderer evidence exists later. This contract does not run a renderer probe, does not execute the Cubism SDK, does not load a real model or scene, does not apply a cue, does not collect fresh heartbeat evidence, does not read row bodies or actual files, does not calculate hashes, does not create owner confirmation, does not enable trusted loader, and does not claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_stale_evidence_downgrade_contract | added |
+| stale_evidence_is_not_ready | true |
+| fixture_evidence_is_not_real_ready | true |
+| manual_label_is_not_real_ready | true |
+| manifest_only_is_not_real_ready | true |
+| sse_connected_is_not_real_ready | true |
+| cue_accepted_is_not_last_cue_applied | true |
+| safe_status_only | true |
+| negative_contract_only | true |
+| renderer_readiness_evidence_freshness | stale |
+| renderer_readiness_evidence_stale | true |
+| stale_evidence_is_renderer_ready | false |
+| fixture_evidence_is_real_evidence | false |
+| manual_evidence_is_real_evidence | false |
+| real_probe_evidence_present | false |
+| fresh_heartbeat_evidence_fresh | false |
+| real_model_load_evidence_fresh | false |
+| last_cue_applied_evidence_fresh | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
+Required rejection labels remain: stale_evidence_is_not_renderer_ready, fixture_evidence_is_not_real_evidence, manual_label_is_not_real_evidence, manifest_only_is_not_real_ready, sse_connected_is_not_real_ready, cue_accepted_is_not_last_cue_applied, missing_fresh_heartbeat_evidence, missing_fresh_model_load_evidence, missing_fresh_last_cue_applied_evidence, priority1_blocked, and checked_row_count_zero.
+
 ## Post-PR256 Owner Action Freeze Unexpected Field Rejection Guard
 
 Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-UNEXPECTED-FIELD-REJECTION-GUARD1
