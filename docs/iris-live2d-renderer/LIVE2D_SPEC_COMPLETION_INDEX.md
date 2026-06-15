@@ -6045,6 +6045,29 @@ The evidence collector redaction guard keeps collector output as safe summary on
 | rendererReadyClaimed | false |
 | rendererReadyCandidate | false |
 
+## Renderer Ready Audit Reference Stub
+
+Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
+
+The renderer readiness audit reference stub records that an audit reference is required before readiness can be considered. The reference is not present, no audit entry is created, no audit execution starts, and readiness remains false.
+
+| field | value |
+| --- | --- |
+| renderer_ready_audit_reference_stub | added |
+| rendererReadinessAuditReferenceRequired | true |
+| rendererReadinessAuditReferencePresent | false |
+| rendererReadinessAuditEntryCreated | false |
+| auditExecutionStarted | false |
+| sourceValueEchoed | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
