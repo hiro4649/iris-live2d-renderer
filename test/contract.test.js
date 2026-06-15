@@ -165,6 +165,7 @@ import {
   LIVE2D_RENDERER_READY_REAL_PROBE_PREFLIGHT_BLOCKERS,
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_MANIFEST_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_LABELS,
+  LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_REDACTION_GUARD_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -281,6 +282,7 @@ import {
   createRendererReadyRealProbeRequestRejectionGateSummary,
   createRendererReadyRealProbePreflightBlockerMatrixSummary,
   createRendererReadyEvidenceCollectorManifestStubSummary,
+  createRendererReadyEvidenceCollectorRedactionGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6183,6 +6185,7 @@ try {
   assertRendererReadyRealProbeRequestRejectionGate(provisionedRuntimeConfig.renderer_ready_real_probe_request_rejection_gate_summary);
   assertRendererReadyRealProbePreflightBlockerMatrix(provisionedRuntimeConfig.renderer_ready_real_probe_preflight_blocker_matrix_summary);
   assertRendererReadyEvidenceCollectorManifestStub(provisionedRuntimeConfig.renderer_ready_evidence_collector_manifest_stub_summary);
+  assertRendererReadyEvidenceCollectorRedactionGuard(provisionedRuntimeConfig.renderer_ready_evidence_collector_redaction_guard_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6482,6 +6485,7 @@ try {
   assertRendererReadyRealProbeRequestRejectionGate(provisionedStatus.renderer_ready_real_probe_request_rejection_gate_summary);
   assertRendererReadyRealProbePreflightBlockerMatrix(provisionedStatus.renderer_ready_real_probe_preflight_blocker_matrix_summary);
   assertRendererReadyEvidenceCollectorManifestStub(provisionedStatus.renderer_ready_evidence_collector_manifest_stub_summary);
+  assertRendererReadyEvidenceCollectorRedactionGuard(provisionedStatus.renderer_ready_evidence_collector_redaction_guard_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6671,6 +6675,7 @@ try {
   assertRendererReadyRealProbeRequestRejectionGate(provisionedHealth.renderer_ready_real_probe_request_rejection_gate_summary);
   assertRendererReadyRealProbePreflightBlockerMatrix(provisionedHealth.renderer_ready_real_probe_preflight_blocker_matrix_summary);
   assertRendererReadyEvidenceCollectorManifestStub(provisionedHealth.renderer_ready_evidence_collector_manifest_stub_summary);
+  assertRendererReadyEvidenceCollectorRedactionGuard(provisionedHealth.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7438,6 +7443,7 @@ try {
       "renderer_ready_real_probe_request_rejection_gate",
       "renderer_ready_real_probe_preflight_blocker_matrix",
       "renderer_ready_evidence_collector_manifest_stub",
+      "renderer_ready_evidence_collector_redaction_guard",
     ],
   }));
 } finally {
@@ -8907,6 +8913,35 @@ function assertRendererReadyEvidenceCollectorManifestStub(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyEvidenceCollectorRedactionGuard(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_REDACTION_GUARD_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.collectorRedactionGuardStatus, "safe_summary_only");
+  assert.equal(summary.collectorOutputSafeSummaryOnly, true);
+  assert.equal(summary.networkLocatorRejected, true);
+  assert.equal(summary.authMaterialRejected, true);
+  assert.equal(summary.modelLocatorRejected, true);
+  assert.equal(summary.motionLocatorRejected, true);
+  assert.equal(summary.cueMaterialRejected, true);
+  assert.equal(summary.rendererMaterialRejected, true);
+  assert.equal(summary.shellMaterialRejected, true);
+  assert.equal(summary.evidenceBodyRejected, true);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.collectorsExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -9621,4 +9656,11 @@ for (const fixture of [
   assertRendererReadyEvidenceCollectorManifestStub(summary);
   assert.equal(summary.collectorLabels.includes("renderer_heartbeat_collector"), true);
   assert.equal(summary.collectorsExecuted, false);
+}
+
+{
+  const summary = createRendererReadyEvidenceCollectorRedactionGuardSummary();
+  assertRendererReadyEvidenceCollectorRedactionGuard(summary);
+  assert.equal(summary.collectorOutputSafeSummaryOnly, true);
+  assert.equal(summary.evidenceBodyRejected, true);
 }

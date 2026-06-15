@@ -6019,6 +6019,32 @@ The evidence collector manifest stub lists future collector labels only. No coll
 | rendererReadyClaimed | false |
 | rendererReadyCandidate | false |
 
+## Renderer Ready Evidence Collector Redaction Guard
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-COLLECTOR-REDACTION-GUARD1
+
+The evidence collector redaction guard keeps collector output as safe summary only. Unsafe locator, auth, cue, renderer, shell, and evidence-body categories are rejected without echoing values. No collector runs and no readiness is claimed.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_collector_redaction_guard | added |
+| collectorRedactionGuardStatus | safe_summary_only |
+| collectorOutputSafeSummaryOnly | true |
+| networkLocatorRejected | true |
+| authMaterialRejected | true |
+| modelLocatorRejected | true |
+| motionLocatorRejected | true |
+| cueMaterialRejected | true |
+| rendererMaterialRejected | true |
+| shellMaterialRejected | true |
+| evidenceBodyRejected | true |
+| sourceValueEchoed | false |
+| collectorsExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
