@@ -2391,6 +2391,7 @@ try {
   assert.equal(unsafeOwnerActionLaneFreeze.safe_next_action, "wait_for_explicit_owner_action");
   assert.equal(unsafeOwnerActionLaneFreeze.unsafe_state_attempt_rejected, true);
   assertSafe(JSON.stringify(unsafeOwnerActionLaneFreeze));
+  assertOwnerActionLaneFreezeRejectsUnsafePromotion();
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
@@ -7104,6 +7105,7 @@ try {
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
       "owner_action_lane_freeze_status_surface",
+      "owner_action_lane_freeze_contract_regression_guard",
     ],
   }));
 } finally {
@@ -7466,6 +7468,84 @@ async function startHarness(state, options = {}) {
       return new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     },
   };
+}
+
+function assertOwnerActionLaneFreezeRejectsUnsafePromotion() {
+  for (const unsafeInput of [
+    { owner_action_request_sent: true },
+    { owner_action_requested: true },
+    { owner_action_accepted: true },
+    { owner_handoff_sent: true },
+    { owner_instruction_request_sent: true },
+    { owner_instruction_requested: true },
+    { owner_instruction_accepted: true },
+    { packet_request_sent: true },
+    { owner_submission_received: true },
+    { owner_submission_accepted: true },
+    { owner_confirmation_created: true },
+    { owner_confirmation_confirmed: true },
+    { actual_data_task_started: true },
+    { actual_data_preauthorized: true },
+    { real_data_accepted: true },
+    { row_body_read: true },
+    { actual_file_read: true },
+    { file_path_value_accepted: true },
+    { hash_calculation_performed: true },
+    { source_hash_verified: true },
+    { declared_row_count_checked: true },
+    { parser_execution_started: true },
+    { redaction_scan_execution_started: true },
+    { audit_execution_started: true },
+    { real_ingestion_audit_event_created: true },
+    { runtime_readiness_claimed: true },
+    { production_readiness_claimed: true },
+    { priority1_status: "RESOLVED" },
+    { checked_row_count: 1 },
+    { motion_dataset_boundary: "executable" },
+    { motion_dataset_executable: true },
+    { trusted_loader_boundary: "enabled" },
+    { trusted_loader_allowlist_enabled: true },
+    { renderer_ready: true },
+  ]) {
+    const summary = createOwnerActionLaneFreezeStatusSummary(unsafeInput);
+    assert.equal(summary.owner_action_lane_freeze_status, "blocked_unsafe_state_attempt");
+    assert.equal(summary.unsafe_state_attempt_rejected, true);
+    assert.equal(summary.owner_action_request_sent, false);
+    assert.equal(summary.owner_action_requested, false);
+    assert.equal(summary.owner_action_accepted, false);
+    assert.equal(summary.owner_handoff_sent, false);
+    assert.equal(summary.owner_instruction_request_sent, false);
+    assert.equal(summary.owner_instruction_requested, false);
+    assert.equal(summary.owner_instruction_accepted, false);
+    assert.equal(summary.packet_request_sent, false);
+    assert.equal(summary.owner_submission_received, false);
+    assert.equal(summary.owner_submission_accepted, false);
+    assert.equal(summary.owner_confirmation_created, false);
+    assert.equal(summary.owner_confirmation_confirmed, false);
+    assert.equal(summary.actual_data_task_started, false);
+    assert.equal(summary.actual_data_preauthorized, false);
+    assert.equal(summary.real_data_accepted, false);
+    assert.equal(summary.row_body_read, false);
+    assert.equal(summary.actual_file_read, false);
+    assert.equal(summary.file_reference_value_accepted, false);
+    assert.equal(summary.hash_calculation_performed, false);
+    assert.equal(summary.source_hash_verified, false);
+    assert.equal(summary.declared_row_count_checked, false);
+    assert.equal(summary.parser_execution_started, false);
+    assert.equal(summary.redaction_scan_execution_started, false);
+    assert.equal(summary.audit_execution_started, false);
+    assert.equal(summary.real_ingestion_audit_event_created, false);
+    assert.equal(summary.runtime_readiness_claimed, false);
+    assert.equal(summary.production_readiness_claimed, false);
+    assert.equal(summary.priority1_status, "BLOCKED");
+    assert.equal(summary.checked_row_count, 0);
+    assert.equal(summary.motion_dataset_boundary, "non_executable");
+    assert.equal(summary.trusted_loader_boundary, "disabled");
+    assert.equal(summary.trusted_loader_allowlist_enabled, false);
+    assert.equal(summary.renderer_ready, false);
+    assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
+    assertSafe(JSON.stringify(summary));
+  }
 }
 
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
