@@ -4867,3 +4867,148 @@ This final owner wait state is metadata-only and planning-only. It records the o
 ### Completion Index Update For CH
 
 The metadata-only owner instruction request final owner wait state is now a planning artifact. It records the lane's final explicit-owner-action wait state without sending an owner handoff, sending an owner instruction request, requesting or accepting owner instruction, sending a packet request, receiving or accepting owner submission, creating or confirming owner confirmation, starting or preauthorizing actual data work, accepting real data, reading file paths, reading file content, reading row bodies, verifying hashes, checking row counts, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness. It does not raise the conservative implementation or production readiness estimates and does not increase production readiness. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-WAIT-SUMMARY1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-REQUEST-BLOCKER-REGISTER1. Do not start actual ingestion.
+
+## Metadata-Only Owner Action Wait Summary
+
+Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-WAIT-SUMMARY1
+
+Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_ACTION_WAIT_SUMMARY_SCHEMA
+Status label: live2d_real_row_metadata_only_owner_action_wait_summary_status
+
+This owner action wait summary is metadata-only and planning-only. It records that the owner action lane is still waiting for explicit owner action without sending an owner action request, accepting owner action, sending an owner handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
+
+### Owner Action Wait Summary Default State
+
+| field | value |
+| --- | --- |
+| metadata_only_boundary | true |
+| owner_action_wait_summary_only_boundary | true |
+| owner_action_wait_summary_only | true |
+| no_owner_action_requested_boundary | true |
+| no_owner_action_accepted_boundary | true |
+| no_owner_handoff_sent_boundary | true |
+| no_owner_instruction_preauthorized_boundary | true |
+| no_owner_instruction_request_sent_boundary | true |
+| no_owner_instruction_requested_boundary | true |
+| no_owner_instruction_accepted_boundary | true |
+| no_packet_request_sent_boundary | true |
+| no_owner_submission_received_boundary | true |
+| no_owner_submission_accepted_boundary | true |
+| no_owner_confirmation_created_boundary | true |
+| no_owner_confirmation_confirmed_boundary | true |
+| no_actual_data_task_started_boundary | true |
+| no_actual_data_preauthorized_boundary | true |
+| no_real_data_accepted_boundary | true |
+| no_row_body_read_boundary | true |
+| no_actual_file_read_boundary | true |
+| no_file_path_value_boundary | true |
+| no_hash_calculation_boundary | true |
+| no_parser_execution_boundary | true |
+| no_redaction_scan_execution_boundary | true |
+| no_audit_execution_boundary | true |
+| owner_action_requested | false |
+| owner_action_accepted | false |
+| owner_handoff_sent | false |
+| owner_instruction_preauthorized | false |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| actual_file_read | false |
+| actual_file_path_accepted | false |
+| actual_file_content_accepted | false |
+| actual_hash_calculated | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| row_body_read | false |
+| actual_row_content_accepted | false |
+| real_row_data_present | false |
+| checked_row_count | 0 |
+| actual_ingestion_allowed | false |
+| parser_dry_run_executed | false |
+| redaction_scan_executed | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-REQUEST-BLOCKER-REGISTER1 |
+
+### Required Owner Action Wait Refs
+
+| ref | boundary |
+| --- | --- |
+| owner_instruction_request_final_owner_wait_state_ref | Planning reference only; owner wait remains active. |
+| owner_instruction_request_handoff_rejection_gate_ref | Planning reference only. |
+| owner_instruction_request_safe_handoff_packet_ref | Planning reference only; no handoff sent. |
+| owner_instruction_request_owner_wait_gate_ref | Planning reference only. |
+| owner_instruction_request_completion_review_ref | Planning reference only. |
+| owner_instruction_preauth_blocker_map_ref | Planning reference only; no preauthorization. |
+| owner_instruction_request_final_no_go_ref | Planning reference only; no go/no-go approval. |
+| actual_owner_instruction_request_packet_stub_ref | Planning reference only; no request is sent. |
+| actual_data_owner_instruction_pending_ledger_ref | Planning reference only; actual data remains pending. |
+| safe_next_action | Safe label only. |
+
+### Required Owner Action Wait Blockers
+
+| blocker | status |
+| --- | --- |
+| owner_explicit_action_missing | blocked |
+| owner_action_not_requested | blocked |
+| owner_action_not_accepted | blocked |
+| owner_handoff_not_sent | blocked |
+| owner_instruction_preauthorized_false | blocked |
+| owner_instruction_request_not_sent | blocked |
+| owner_instruction_not_requested | blocked |
+| owner_instruction_not_accepted | blocked |
+| packet_request_not_sent | blocked |
+| owner_submission_not_received | blocked |
+| owner_submission_not_accepted | blocked |
+| owner_confirmation_missing | blocked |
+| actual_data_task_not_started | blocked |
+| actual_data_preauthorized_false | blocked |
+| source_hash_not_verified | blocked |
+| declared_row_count_not_checked | blocked |
+| parser_dry_run_not_executed | blocked |
+| redaction_scan_not_executed | blocked |
+| audit_execution_not_started | blocked |
+| go_nogo_review_missing | blocked |
+| priority1_blocked | blocked |
+| checked_row_count_zero | blocked |
+| motion_dataset_non_executable | blocked |
+| trusted_loader_disabled | blocked |
+| runtime_readiness_not_claimed | blocked |
+| production_readiness_not_claimed | blocked |
+
+### Required Owner Action Wait Safe Next Actions
+
+| safe next action | boundary |
+| --- | --- |
+| wait_for_explicit_owner_action | Safe wait label only. |
+| do_not_send_owner_action_request_now | Required; owner_action_requested remains false. |
+| do_not_accept_owner_action_now | Required; owner_action_accepted remains false. |
+| do_not_send_handoff_now | Required; owner_handoff_sent remains false. |
+| do_not_send_instruction_request_now | Required; owner_instruction_request_sent remains false. |
+| do_not_request_instruction_now | Required; owner_instruction_requested remains false. |
+| do_not_accept_instruction_now | Required; owner_instruction_accepted remains false. |
+| do_not_send_packet_request_now | Required; packet_request_sent remains false. |
+| do_not_accept_submission_now | Required; owner submission remains not received and not accepted. |
+| do_not_accept_raw_data_now | Required; no real row data is accepted. |
+| do_not_accept_file_path_value | Required; no actual file path value is accepted. |
+| do_not_verify_hash_now | Required; source_hash_verified remains false. |
+| do_not_check_row_count_now | Required; checked_row_count remains 0. |
+| do_not_start_parser_now | Required; parser execution remains false. |
+| do_not_start_redaction_scan_now | Required; redaction scan execution remains false. |
+| do_not_start_audit_now | Required; audit execution remains false. |
+| do_not_claim_readiness_now | Required; runtime and production readiness remain unclaimed. |
+
+### Completion Index Update For CI
+
+The metadata-only owner action wait summary is now a planning artifact. It records the owner action lane as waiting for explicit owner action without sending an owner action request, accepting owner action, sending an owner handoff, sending an owner instruction request, requesting or accepting owner instruction, sending a packet request, receiving or accepting owner submission, creating or confirming owner confirmation, starting or preauthorizing actual data work, accepting real data, reading file paths, reading file content, reading row bodies, verifying hashes, checking row counts, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness. It does not raise the conservative implementation or production readiness estimates and does not increase production readiness. The next recommended task is LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-REQUEST-BLOCKER-REGISTER1. Do not start actual ingestion.
