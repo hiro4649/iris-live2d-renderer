@@ -5861,6 +5861,31 @@ The renderer-ready post-guard completion review records that DA through DE added
 | motion_dataset_boundary | non_executable |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Owner Handoff Not-Sent Guard
+
+Task: LIVE2D-RENDERER-READY-OWNER-HANDOFF-NOT-SENT-GUARD1
+
+The owner handoff not-sent guard records that an owner evidence handoff packet may exist only as a draft stub. It is not sent, not owner confirmation, not readiness approval, not actual data work, and not trusted loader enablement.
+
+| field | value |
+| --- | --- |
+| renderer_ready_owner_handoff_not_sent_guard | added |
+| ownerEvidenceHandoffPacketStatus | draft_not_sent |
+| ownerEvidenceHandoffSent | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| handoffPacketIsNotOwnerConfirmation | true |
+| handoffPacketIsNotReadiness | true |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| actual_data_task_started | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
