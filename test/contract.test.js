@@ -156,6 +156,7 @@ import {
   LIVE2D_RENDERER_READY_CROSS_SURFACE_BLOCKER_SURFACES,
   LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_PACKET_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_STUB_ITEMS,
+  LIVE2D_RENDERER_READY_OWNER_HANDOFF_NOT_SENT_GUARD_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -266,6 +267,7 @@ import {
   createRendererReadySafeNextActionCatalogSummary,
   createRendererReadyCrossSurfaceBlockerConsistencySummary,
   createRendererReadyOwnerEvidenceHandoffPacketStubSummary,
+  createRendererReadyOwnerHandoffNotSentGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6162,6 +6164,7 @@ try {
   assertRendererReadySafeNextActionCatalog(provisionedRuntimeConfig.renderer_ready_safe_next_action_catalog_summary);
   assertRendererReadyCrossSurfaceBlockerConsistency(provisionedRuntimeConfig.renderer_ready_cross_surface_blocker_consistency_summary);
   assertRendererReadyOwnerEvidenceHandoffPacketStub(provisionedRuntimeConfig.renderer_ready_owner_evidence_handoff_packet_stub_summary);
+  assertRendererReadyOwnerHandoffNotSentGuard(provisionedRuntimeConfig.renderer_ready_owner_handoff_not_sent_guard_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6455,6 +6458,7 @@ try {
   assertRendererReadySafeNextActionCatalog(provisionedStatus.renderer_ready_safe_next_action_catalog_summary);
   assertRendererReadyCrossSurfaceBlockerConsistency(provisionedStatus.renderer_ready_cross_surface_blocker_consistency_summary);
   assertRendererReadyOwnerEvidenceHandoffPacketStub(provisionedStatus.renderer_ready_owner_evidence_handoff_packet_stub_summary);
+  assertRendererReadyOwnerHandoffNotSentGuard(provisionedStatus.renderer_ready_owner_handoff_not_sent_guard_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6638,6 +6642,7 @@ try {
   assertRendererReadySafeNextActionCatalog(provisionedHealth.renderer_ready_safe_next_action_catalog_summary);
   assertRendererReadyCrossSurfaceBlockerConsistency(provisionedHealth.renderer_ready_cross_surface_blocker_consistency_summary);
   assertRendererReadyOwnerEvidenceHandoffPacketStub(provisionedHealth.renderer_ready_owner_evidence_handoff_packet_stub_summary);
+  assertRendererReadyOwnerHandoffNotSentGuard(provisionedHealth.renderer_ready_owner_handoff_not_sent_guard_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7399,6 +7404,7 @@ try {
       "renderer_ready_cross_surface_blocker_consistency",
       "renderer_ready_owner_evidence_handoff_packet_stub",
       "renderer_ready_post_guard_completion_review",
+      "renderer_ready_owner_handoff_not_sent_guard",
     ],
   }));
 } finally {
@@ -8721,6 +8727,33 @@ function assertRendererReadyOwnerEvidenceHandoffPacketStubConsistency(surfaces) 
   }
 }
 
+function assertRendererReadyOwnerHandoffNotSentGuard(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_OWNER_HANDOFF_NOT_SENT_GUARD_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.ownerEvidenceHandoffPacketStatus, "draft_not_sent");
+  assert.equal(summary.ownerEvidenceHandoffSent, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.handoffPacketIsNotOwnerConfirmation, true);
+  assert.equal(summary.handoffPacketIsNotReadiness, true);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.safeNextAction, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -9393,4 +9426,11 @@ for (const fixture of [
   assertRendererReadyOwnerEvidenceHandoffPacketStub(summary);
   assert.equal(summary.requiredStubItems.includes("required_owner_confirmation_label"), true);
   assert.equal(summary.handoffPacketSent, false);
+}
+
+{
+  const summary = createRendererReadyOwnerHandoffNotSentGuardSummary();
+  assertRendererReadyOwnerHandoffNotSentGuard(summary);
+  assert.equal(summary.handoffPacketIsNotOwnerConfirmation, true);
+  assert.equal(summary.handoffPacketIsNotReadiness, true);
 }
