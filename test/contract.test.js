@@ -135,6 +135,8 @@ import {
   LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_REJECTION_LABELS,
   LIVE2D_RENDERER_READY_FRESH_EVIDENCE_ENVELOPE_SCHEMA,
   LIVE2D_RENDERER_READY_FRESH_EVIDENCE_REQUIRED_BLOCKERS,
+  LIVE2D_RENDERER_READY_STALE_EVIDENCE_DOWNGRADE_CONTRACT_SCHEMA,
+  LIVE2D_RENDERER_READY_STALE_EVIDENCE_REJECTION_LABELS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -235,6 +237,7 @@ import {
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
   createRendererReadyFreshEvidenceEnvelopeSummary,
+  createRendererReadyStaleEvidenceDowngradeContractSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6119,6 +6122,7 @@ try {
   assertRendererReadyFalsePositiveDependencySurface(provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary);
   assertRendererReadyFixtureVsRealSeparationContract(provisionedRuntimeConfig.renderer_ready_fixture_vs_real_separation_contract_summary);
   assertRendererReadyFreshEvidenceEnvelope(provisionedRuntimeConfig.renderer_ready_fresh_evidence_envelope_summary);
+  assertRendererReadyStaleEvidenceDowngradeContract(provisionedRuntimeConfig.renderer_ready_stale_evidence_downgrade_contract_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6400,6 +6404,7 @@ try {
   assertRendererReadyFalsePositiveDependencySurface(provisionedStatus.renderer_ready_false_positive_dependency_surface_summary);
   assertRendererReadyFixtureVsRealSeparationContract(provisionedStatus.renderer_ready_fixture_vs_real_separation_contract_summary);
   assertRendererReadyFreshEvidenceEnvelope(provisionedStatus.renderer_ready_fresh_evidence_envelope_summary);
+  assertRendererReadyStaleEvidenceDowngradeContract(provisionedStatus.renderer_ready_stale_evidence_downgrade_contract_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6571,6 +6576,7 @@ try {
   assertRendererReadyFalsePositiveDependencySurface(provisionedHealth.renderer_ready_false_positive_dependency_surface_summary);
   assertRendererReadyFixtureVsRealSeparationContract(provisionedHealth.renderer_ready_fixture_vs_real_separation_contract_summary);
   assertRendererReadyFreshEvidenceEnvelope(provisionedHealth.renderer_ready_fresh_evidence_envelope_summary);
+  assertRendererReadyStaleEvidenceDowngradeContract(provisionedHealth.renderer_ready_stale_evidence_downgrade_contract_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -6585,6 +6591,11 @@ try {
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_fresh_evidence_envelope_summary,
     status: provisionedStatus.renderer_ready_fresh_evidence_envelope_summary,
     health: provisionedHealth.renderer_ready_fresh_evidence_envelope_summary,
+  });
+  assertRendererReadyStaleEvidenceDowngradeContractConsistency({
+    runtimeConfig: provisionedRuntimeConfig.renderer_ready_stale_evidence_downgrade_contract_summary,
+    status: provisionedStatus.renderer_ready_stale_evidence_downgrade_contract_summary,
+    health: provisionedHealth.renderer_ready_stale_evidence_downgrade_contract_summary,
   });
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
@@ -7262,6 +7273,7 @@ try {
       "renderer_ready_false_positive_dependency_surface",
       "renderer_ready_fixture_vs_real_separation_contract",
       "renderer_ready_fresh_evidence_envelope_schema",
+      "renderer_ready_stale_evidence_downgrade_contract",
     ],
   }));
 } finally {
@@ -8075,6 +8087,61 @@ function assertRendererReadyFreshEvidenceEnvelopeConsistency(surfaces) {
   }
 }
 
+function assertRendererReadyStaleEvidenceDowngradeContract(summary, expected = {}) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_STALE_EVIDENCE_DOWNGRADE_CONTRACT_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.stale_evidence_downgrade_contract_status, "blocked_stale_or_non_real_evidence");
+  assert.equal(summary.negative_contract_only, true);
+  assert.equal(summary.renderer_readiness_evidence_freshness, "stale");
+  assert.equal(summary.renderer_readiness_evidence_stale, true);
+  assert.equal(summary.stale_evidence_is_renderer_ready, false);
+  assert.equal(summary.fixture_evidence_present, expected.fixture_evidence_present === true);
+  assert.equal(summary.fixture_evidence_is_real_evidence, false);
+  assert.equal(summary.manual_evidence_present, expected.manual_evidence_present === true);
+  assert.equal(summary.manual_evidence_is_real_evidence, false);
+  assert.equal(summary.real_probe_evidence_present, false);
+  assert.equal(summary.fresh_heartbeat_evidence_present, expected.fresh_heartbeat_evidence_present === true);
+  assert.equal(summary.fresh_heartbeat_evidence_fresh, false);
+  assert.equal(summary.real_model_load_evidence_present, expected.real_model_load_evidence_present === true);
+  assert.equal(summary.real_model_load_evidence_fresh, false);
+  assert.equal(summary.last_cue_applied_evidence_present, expected.last_cue_applied_evidence_present === true);
+  assert.equal(summary.last_cue_applied_evidence_fresh, false);
+  assert.equal(summary.manifest_available, expected.manifest_available === true);
+  assert.equal(summary.manifest_only_is_real_ready, false);
+  assert.equal(summary.sse_connected, expected.sse_connected === true);
+  assert.equal(summary.sse_connected_is_real_ready, false);
+  assert.equal(summary.cue_accepted, expected.cue_accepted === true);
+  assert.equal(summary.cue_accepted_is_last_cue_applied, false);
+  assert.equal(summary.renderer_ready_claimed, false);
+  assert.equal(summary.renderer_ready_candidate, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.deepEqual(summary.required_rejection_labels, [...LIVE2D_RENDERER_READY_STALE_EVIDENCE_REJECTION_LABELS]);
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assertSafe(JSON.stringify(summary));
+}
+
+function assertRendererReadyStaleEvidenceDowngradeContractConsistency(surfaces) {
+  const canonical = surfaces.runtimeConfig;
+  for (const [surfaceName, summary] of Object.entries(surfaces)) {
+    assertRendererReadyStaleEvidenceDowngradeContract(summary, canonical);
+    assert.equal(summary.stale_evidence_downgrade_contract_status, canonical.stale_evidence_downgrade_contract_status, surfaceName);
+    assert.deepEqual(summary.required_rejection_labels, canonical.required_rejection_labels, surfaceName);
+    assert.equal(summary.renderer_ready_claimed, canonical.renderer_ready_claimed, surfaceName);
+    assert.equal(summary.renderer_ready_candidate, canonical.renderer_ready_candidate, surfaceName);
+    assert.equal(summary.runtime_readiness_claimed, canonical.runtime_readiness_claimed, surfaceName);
+    assert.equal(summary.production_readiness_claimed, canonical.production_readiness_claimed, surfaceName);
+    assert.equal(summary.priority1_status, canonical.priority1_status, surfaceName);
+    assert.equal(summary.checked_row_count, canonical.checked_row_count, surfaceName);
+    assert.equal(summary.motion_dataset_executable, canonical.motion_dataset_executable, surfaceName);
+    assert.equal(summary.trusted_loader_allowlist_enabled, canonical.trusted_loader_allowlist_enabled, surfaceName);
+  }
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -8500,4 +8567,43 @@ function assertNoModelPathLeak(serialized) {
   assert.equal(summary.observed_evidence_inputs_sanitized.scene_loaded_evidence_present, "observed_but_missing_fresh_real_evidence");
   assert.equal(summary.observed_evidence_inputs_sanitized.cue_capability_evidence_present, "observed_but_missing_fresh_real_evidence");
   assert.equal(summary.observed_evidence_inputs_sanitized.last_cue_applied_evidence_present, "observed_but_missing_fresh_real_evidence");
+}
+
+{
+  const summary = createRendererReadyStaleEvidenceDowngradeContractSummary({
+    fixture_evidence_present: true,
+    manual_evidence_present: true,
+    manifest_available: true,
+    sse_connected: true,
+    cue_accepted: true,
+    fresh_heartbeat_evidence_present: true,
+    real_model_load_evidence_present: true,
+    last_cue_applied_evidence_present: true,
+    renderer_ready_claimed: true,
+    renderer_ready_candidate: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_status: "RESOLVED",
+    checked_row_count: 22,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+  });
+  assertRendererReadyStaleEvidenceDowngradeContract(summary, {
+    fixture_evidence_present: true,
+    manual_evidence_present: true,
+    manifest_available: true,
+    sse_connected: true,
+    cue_accepted: true,
+    fresh_heartbeat_evidence_present: true,
+    real_model_load_evidence_present: true,
+    last_cue_applied_evidence_present: true,
+  });
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.fixture_evidence_present, "fixture_only_not_real_ready");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.manual_evidence_present, "manual_label_not_real_ready");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.manifest_available, "manifest_only_not_real_ready");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.sse_connected, "sse_only_not_real_ready");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.cue_accepted, "accepted_only_not_applied");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.fresh_heartbeat_evidence_present, "present_but_not_fresh");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.real_model_load_evidence_present, "present_but_not_fresh");
+  assert.equal(summary.observed_stale_or_non_real_inputs_sanitized.last_cue_applied_evidence_present, "present_but_not_fresh");
 }
