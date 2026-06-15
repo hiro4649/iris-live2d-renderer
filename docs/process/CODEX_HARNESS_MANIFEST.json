@@ -1,10 +1,10 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v1.2.3",
-  "schemaVersion": "1.2.3",
-  "sourceHarnessVersion": "1.2.3",
-  "harnessVersion": "1.2.3",
-  "activeHarnessVersion": "1.2.3",
-  "targetHarnessVersion": "1.2.3",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v1.2.4",
+  "schemaVersion": "1.2.4",
+  "sourceHarnessVersion": "1.2.4",
+  "harnessVersion": "1.2.4",
+  "activeHarnessVersion": "1.2.4",
+  "targetHarnessVersion": "1.2.4",
   "evidenceSchemaVersion": 6,
   "profileTemplateVersion": "1.2.1",
   "compatibleProfileTemplateVersions": [
@@ -12,9 +12,9 @@
     "1.1.6"
   ],
   "futureHarnessArtifact": false,
-  "upgradePath": "direct_v121_to_v122",
-  "activeSelfTestSuite": "v123",
-  "activeSelfTestStatusKey": "v123SelfTestStatus",
+  "upgradePath": "direct_v123_to_v124",
+  "activeSelfTestSuite": "v124",
+  "activeSelfTestStatusKey": "v124SelfTestStatus",
   "legacySelfTests": {
     "v122": "blocking_compatibility",
     "v121": "blocking_compatibility",
@@ -27,7 +27,8 @@
     "v114": "blocking_compatibility",
     "v113": "selected_critical",
     "v080_v112": "target_shadow_legacy_count_only",
-    "v123": "blocking_current"
+    "v123": "blocking_compatibility",
+    "v124": "blocking_current"
   },
   "sourceOnlyRelease": false,
   "targetRollout": "completed",
@@ -35,7 +36,7 @@
   "representativeRealPrReplay": "required",
   "representativeLivePrValidation": "required",
   "syntheticRepresentativeValidation": "required",
-  "theme": "Observed Skill Evidence and Decision Closure",
+  "theme": "Goal-Scoped Delegated Autonomy and Evidence Semantics",
   "requiredStatuses": [
     "orchestrationModeStatus",
     "permissionGrantStatus",
@@ -436,7 +437,7 @@
   },
   "targetRepoMode": true,
   "contextRouting": {
-    "version": "1.2.3",
+    "version": "1.2.4",
     "field": "orchestrationCapsule.skillContextRouting",
     "newP0Artifact": false,
     "newTopLevelStatus": false,
@@ -445,7 +446,7 @@
     "tokenOnlyMetadataProfile": false
   },
   "observedSkillDecisionClosure": {
-    "version": "1.2.3",
+    "version": "1.2.4",
     "fields": [
       "orchestrationCapsule.finalDecisionClosure",
       "orchestrationCapsule.workspaceIdentityGate",
@@ -462,7 +463,30 @@
     "newP0Artifact": false,
     "newTopLevelStatus": false,
     "newSkill": false,
-    "targetRollout": "completed",
+    "targetRollout": "not_started",
     "subtitle": "Prove what was read. Prove what worked. Prove why it stopped."
+  },
+  "goalScopedDelegatedAutonomy": {
+    "version": "1.2.4",
+    "name": "Goal-Scoped Delegated Autonomy and Evidence Semantics",
+    "fields": [
+      "orchestrationCapsule.goalContract",
+      "orchestrationCapsule.delegationBoundary",
+      "orchestrationCapsule.evidenceSemanticsKernel",
+      "orchestrationCapsule.targetHarnessFootprintPolicy",
+      "workerProofCapsule.boundedExpertLoop",
+      "workerProofCapsule.expertRoleLedger",
+      "workerProofCapsule.safeFailureDigest",
+      "ownerDecisionBrief.finalDecisionClosureAdapter",
+      "ownerDecisionBrief.ownerBurdenReducer",
+      "ownerDecisionBrief.safeSessionLearningProposal",
+      "ownerDecisionBrief.repoSpecificVisualProofSurface"
+    ],
+    "newP0Artifact": false,
+    "newTopLevelStatus": false,
+    "newSkill": false,
+    "targetRollout": "not_started",
+    "finalAuthority": "v1.1.8_final_decision_kernel",
+    "subtitle": "Delegate technical evaluation inside the goal scope; never create owner authority."
   }
 }

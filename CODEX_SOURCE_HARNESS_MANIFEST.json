@@ -1,12 +1,12 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v1.1.1",
-  "harnessVersion": "1.1.1",
-  "sourceHarnessVersion": "1.1.1",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v1.2.4",
+  "harnessVersion": "1.2.4",
+  "sourceHarnessVersion": "1.2.4",
   "profileTemplateVersion": "0.7.0",
   "compatibleProfileTemplateVersions": [
     "0.7.0"
   ],
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.4",
   "sourceRepoMode": true,
   "genericCore": {
     "mode": "core",
@@ -897,15 +897,17 @@
     "codex-v111-self-test.mjs"
   ],
   "optionalFiles": [],
-  "activeHarnessVersion": "1.1.0",
-  "activeSelfTestSuite": "v111",
-  "activeSelfTestStatusKey": "v111SelfTestStatus",
+  "activeHarnessVersion": "1.2.4",
+  "activeSelfTestSuite": "v124",
+  "activeSelfTestStatusKey": "v124SelfTestStatus",
   "legacySelfTestSuites": {
     "v107": "blocking_compatibility",
     "v106": "advisory",
     "v105": "advisory",
     "v104": "advisory",
-    "v103": "advisory"
+    "v103": "advisory",
+    "v124": "blocking_current",
+    "v123": "blocking_compatibility"
   },
   "targetRollout": "not_started",
   "representativeRealPrValidation": "not_started",
@@ -1305,9 +1307,9 @@
     "vgcBscScanVerificationBoundaryStatus",
     "vgcMainnetReadinessBoundaryStatus"
   ],
-  "targetHarnessVersion": "1.1.0",
+  "targetHarnessVersion": "1.2.4",
   "evidenceSchemaVersion": 6,
-  "theme": "Token Hard Cap, Context Capsule, and Failure Closure",
+  "theme": "Goal-Scoped Delegated Autonomy and Evidence Semantics",
   "requiredStatuses": [
     "v110SelfTestStatus",
     "proSummaryFirstStatus",
@@ -1565,5 +1567,52 @@
     "sessionEfficiencyScoreStatus": [
       "activeSessionCountHardCapStatus"
     ]
+  },
+  "upgradePath": "direct_v123_to_v124",
+  "legacySelfTests": {
+    "v107": "blocking_compatibility",
+    "v106": "advisory",
+    "v105": "advisory",
+    "v104": "advisory",
+    "v103": "advisory",
+    "v124": "blocking_current",
+    "v123": "blocking_compatibility"
+  },
+  "contextRouting": {
+    "version": "1.2.4",
+    "field": "orchestrationCapsule.skillContextRouting",
+    "newP0Artifact": false,
+    "newTopLevelStatus": false,
+    "subtitle": "Read Less, Preserve Authority"
+  },
+  "observedSkillDecisionClosure": {
+    "version": "1.2.4",
+    "newP0Artifact": false,
+    "newTopLevelStatus": false,
+    "newSkill": false,
+    "targetRollout": "not_started"
+  },
+  "goalScopedDelegatedAutonomy": {
+    "version": "1.2.4",
+    "name": "Goal-Scoped Delegated Autonomy and Evidence Semantics",
+    "fields": [
+      "orchestrationCapsule.goalContract",
+      "orchestrationCapsule.delegationBoundary",
+      "orchestrationCapsule.evidenceSemanticsKernel",
+      "orchestrationCapsule.targetHarnessFootprintPolicy",
+      "workerProofCapsule.boundedExpertLoop",
+      "workerProofCapsule.expertRoleLedger",
+      "workerProofCapsule.safeFailureDigest",
+      "ownerDecisionBrief.finalDecisionClosureAdapter",
+      "ownerDecisionBrief.ownerBurdenReducer",
+      "ownerDecisionBrief.safeSessionLearningProposal",
+      "ownerDecisionBrief.repoSpecificVisualProofSurface"
+    ],
+    "newP0Artifact": false,
+    "newTopLevelStatus": false,
+    "newSkill": false,
+    "targetRollout": "not_started",
+    "finalAuthority": "v1.1.8_final_decision_kernel",
+    "subtitle": "Delegate technical evaluation inside the goal scope; never create owner authority."
   }
 }
