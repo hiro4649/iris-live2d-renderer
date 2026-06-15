@@ -79,6 +79,7 @@ export const LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_PACKET_STUB_SCHEMA = "
 export const LIVE2D_RENDERER_READY_OWNER_HANDOFF_NOT_SENT_GUARD_SCHEMA = "iris_live2d_renderer_ready_owner_handoff_not_sent_guard_v1";
 export const LIVE2D_RENDERER_READY_OWNER_HANDOFF_REDACTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_owner_handoff_redaction_guard_v1";
 export const LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_STUB_SCHEMA = "iris_live2d_renderer_ready_real_probe_request_stub_v1";
+export const LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_GATE_SCHEMA = "iris_live2d_renderer_ready_real_probe_request_rejection_gate_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
@@ -259,10 +260,10 @@ export const LIVE2D_RENDERER_READY_EVIDENCE_SCHEMA_VIOLATION_REJECTION_LABELS = 
   "unsafe_source_type",
   "raw_renderer_payload_present",
   "raw_cue_payload_present",
-  "raw_model_path_present",
-  "raw_motion_path_present",
-  "endpoint_present",
-  "token_present",
+  "model_locator_present",
+  "motion_locator_present",
+  "network_locator_present",
+  "auth_material_present",
   "secret_present",
   "private_path_present",
   "actual_file_path_value_present",
@@ -387,13 +388,25 @@ export const LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_STUB_ITEMS = Object.fr
   "required_motion_dataset_executable_label",
 ]);
 
+export const LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_REASONS = Object.freeze([
+  "owner_confirmation_missing",
+  "network_locator_present",
+  "auth_material_present",
+  "model_locator_present",
+  "motion_locator_present",
+  "priority1_blocked",
+  "checked_row_count_zero",
+  "trusted_loader_disabled",
+  "actual_probe_not_allowed_in_this_task",
+]);
+
 const LIVE2D_RENDERER_READY_EVIDENCE_SCHEMA_VIOLATION_FIELD_LABELS = Object.freeze({
   raw_renderer_payload: "raw_renderer_payload_present",
   raw_cue_payload: "raw_cue_payload_present",
-  raw_model_path: "raw_model_path_present",
-  raw_motion_path: "raw_motion_path_present",
-  endpoint: "endpoint_present",
-  token: "token_present",
+  raw_model_path: "model_locator_present",
+  raw_motion_path: "motion_locator_present",
+  endpoint: "network_locator_present",
+  token: "auth_material_present",
   secret: "secret_present",
   private_path: "private_path_present",
   actual_file_path_value: "actual_file_path_value_present",
@@ -1177,8 +1190,8 @@ export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASO
   "experimental_motion_executable_attempt",
   "raw_cue_payload_present",
   "raw_renderer_payload_present",
-  "raw_model_path_present",
-  "raw_motion_path_present",
+  "model_locator_present",
+  "motion_locator_present",
   "endpoint_value_present",
   "token_value_present",
   "secret_value_present",
@@ -8075,10 +8088,10 @@ export function createRendererReadyEvidenceSchemaViolationGuardSummary(input = {
     unsafe_source_type_rejected: uniqueRejectionReasons.includes("unsafe_source_type"),
     renderer_body_material_rejected: uniqueRejectionReasons.includes("raw_renderer_payload_present"),
     cue_body_material_rejected: uniqueRejectionReasons.includes("raw_cue_payload_present"),
-    model_locator_material_rejected: uniqueRejectionReasons.includes("raw_model_path_present"),
-    motion_locator_material_rejected: uniqueRejectionReasons.includes("raw_motion_path_present"),
-    network_locator_material_rejected: uniqueRejectionReasons.includes("endpoint_present"),
-    auth_material_rejected: uniqueRejectionReasons.includes("token_present") || uniqueRejectionReasons.includes("secret_present"),
+    model_locator_material_rejected: uniqueRejectionReasons.includes("model_locator_present"),
+    motion_locator_material_rejected: uniqueRejectionReasons.includes("motion_locator_present"),
+    network_locator_material_rejected: uniqueRejectionReasons.includes("network_locator_present"),
+    auth_material_rejected: uniqueRejectionReasons.includes("auth_material_present") || uniqueRejectionReasons.includes("secret_present"),
     private_locator_material_rejected: uniqueRejectionReasons.includes("private_path_present") || uniqueRejectionReasons.includes("actual_file_path_value_present"),
     shell_material_rejected: uniqueRejectionReasons.includes("command_payload_present"),
     ready_promotion_field_rejected: uniqueRejectionReasons.some((reason) => [
@@ -8703,6 +8716,56 @@ export function createRendererReadyRealProbeRequestStubSummary() {
     },
   };
   assertSafePublicObject(summary, "renderer ready real probe request stub summary");
+  return summary;
+}
+
+export function createRendererReadyRealProbeRequestRejectionGateSummary() {
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_GATE_SCHEMA,
+    safe_summary_only: true,
+    realProbeRequestRejectionGateStatus: "reject",
+    unsafeRequestRejected: true,
+    rejectionReasons: [...LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_REASONS],
+    sourceValueEchoed: false,
+    rendererProbeRequested: false,
+    rendererProbeExecuted: false,
+    realRendererEvidencePresent: false,
+    ownerConfirmationCreated: false,
+    ownerConfirmationConfirmed: false,
+    rendererReadyClaimed: false,
+    rendererReadyCandidate: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    actual_data_task_started: false,
+    actual_data_preauthorized: false,
+    priority1Status: "BLOCKED",
+    priority1_status: "BLOCKED",
+    checkedRowCount: 0,
+    checked_row_count: 0,
+    motionDatasetExecutable: false,
+    motion_dataset_executable: false,
+    trustedLoaderAllowlistEnabled: false,
+    trusted_loader_allowlist_enabled: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      rejection_gate_only: true,
+      no_source_value_echo: true,
+      no_probe_request_sent: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_actual_live2d_execution: true,
+      no_actual_model_load: true,
+      no_actual_scene_load: true,
+      no_actual_cue_application: true,
+      no_actual_heartbeat_collection: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready real probe request rejection gate summary");
   return summary;
 }
 

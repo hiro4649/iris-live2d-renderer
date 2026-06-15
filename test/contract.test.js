@@ -159,6 +159,8 @@ import {
   LIVE2D_RENDERER_READY_OWNER_HANDOFF_NOT_SENT_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_OWNER_HANDOFF_REDACTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_STUB_SCHEMA,
+  LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_GATE_SCHEMA,
+  LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_REASONS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -272,6 +274,7 @@ import {
   createRendererReadyOwnerHandoffNotSentGuardSummary,
   createRendererReadyOwnerHandoffRedactionGuardSummary,
   createRendererReadyRealProbeRequestStubSummary,
+  createRendererReadyRealProbeRequestRejectionGateSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6171,6 +6174,7 @@ try {
   assertRendererReadyOwnerHandoffNotSentGuard(provisionedRuntimeConfig.renderer_ready_owner_handoff_not_sent_guard_summary);
   assertRendererReadyOwnerHandoffRedactionGuard(provisionedRuntimeConfig.renderer_ready_owner_handoff_redaction_guard_summary);
   assertRendererReadyRealProbeRequestStub(provisionedRuntimeConfig.renderer_ready_real_probe_request_stub_summary);
+  assertRendererReadyRealProbeRequestRejectionGate(provisionedRuntimeConfig.renderer_ready_real_probe_request_rejection_gate_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6467,6 +6471,7 @@ try {
   assertRendererReadyOwnerHandoffNotSentGuard(provisionedStatus.renderer_ready_owner_handoff_not_sent_guard_summary);
   assertRendererReadyOwnerHandoffRedactionGuard(provisionedStatus.renderer_ready_owner_handoff_redaction_guard_summary);
   assertRendererReadyRealProbeRequestStub(provisionedStatus.renderer_ready_real_probe_request_stub_summary);
+  assertRendererReadyRealProbeRequestRejectionGate(provisionedStatus.renderer_ready_real_probe_request_rejection_gate_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6653,6 +6658,7 @@ try {
   assertRendererReadyOwnerHandoffNotSentGuard(provisionedHealth.renderer_ready_owner_handoff_not_sent_guard_summary);
   assertRendererReadyOwnerHandoffRedactionGuard(provisionedHealth.renderer_ready_owner_handoff_redaction_guard_summary);
   assertRendererReadyRealProbeRequestStub(provisionedHealth.renderer_ready_real_probe_request_stub_summary);
+  assertRendererReadyRealProbeRequestRejectionGate(provisionedHealth.renderer_ready_real_probe_request_rejection_gate_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7417,6 +7423,7 @@ try {
       "renderer_ready_owner_handoff_not_sent_guard",
       "renderer_ready_owner_handoff_redaction_guard",
       "renderer_ready_real_probe_request_stub",
+      "renderer_ready_real_probe_request_rejection_gate",
     ],
   }));
 } finally {
@@ -8820,6 +8827,29 @@ function assertRendererReadyRealProbeRequestStub(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyRealProbeRequestRejectionGate(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_GATE_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.realProbeRequestRejectionGateStatus, "reject");
+  assert.equal(summary.unsafeRequestRejected, true);
+  assert.deepEqual(summary.rejectionReasons, [...LIVE2D_RENDERER_READY_REAL_PROBE_REQUEST_REJECTION_REASONS]);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.rendererProbeRequested, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -9513,4 +9543,11 @@ for (const fixture of [
   assertRendererReadyRealProbeRequestStub(summary);
   assert.equal(summary.rendererProbeRequested, false);
   assert.equal(summary.rendererProbeExecuted, false);
+}
+
+{
+  const summary = createRendererReadyRealProbeRequestRejectionGateSummary();
+  assertRendererReadyRealProbeRequestRejectionGate(summary);
+  assert.equal(summary.rejectionReasons.includes("owner_confirmation_missing"), true);
+  assert.equal(summary.rejectionReasons.includes("actual_probe_not_allowed_in_this_task"), true);
 }
