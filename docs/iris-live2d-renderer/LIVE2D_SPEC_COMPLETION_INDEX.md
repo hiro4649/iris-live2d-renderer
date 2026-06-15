@@ -358,7 +358,7 @@ This fixture pack is metadata-only and synthetic-only. It describes safe rejecti
 | production_readiness_requested | Production readiness is not claimed. |
 | trusted_loader_enablement_requested | Trusted loader enablement is forbidden. |
 | unsupported_raw_payload_present | Raw payloads are not accepted. |
-| secret_or_endpoint_present | Secrets and endpoints are forbidden. |
+| secret_or_network_locator_present | Secrets and endpoints are forbidden. |
 | raw_k_memo_present | Raw K memo text is not accepted. |
 | command_payload_present | Command payloads are not accepted. |
 
@@ -1506,7 +1506,7 @@ This owner submission rejection gate is metadata-only and planning-only. It defi
 | trusted_loader_enablement_requested | Reject trusted loader enablement requests. |
 | priority1_resolution_requested | Reject priority1 resolution requests. |
 | unsupported_raw_payload_present | Reject raw payload material. |
-| secret_or_endpoint_present | Reject secrets or endpoint values. |
+| secret_or_network_locator_present | Reject secrets or endpoint values. |
 | raw_k_memo_present | Reject raw K memo text. |
 | command_payload_present | Reject command payloads. |
 
@@ -2351,7 +2351,7 @@ This owner instruction rejection gate is metadata-only and planning-only. It def
 | trusted_loader_enablement_requested | Reject trusted loader enablement requests. |
 | priority1_resolution_requested | Reject priority1 resolution requests. |
 | unsupported_raw_payload_present | Reject unsupported raw payload material. |
-| secret_or_endpoint_present | Reject endpoint, token, or secret material. |
+| secret_or_network_locator_present | Reject endpoint, token, or secret material. |
 | raw_k_memo_present | Reject raw K memo material. |
 | command_payload_present | Reject command payload material. |
 
@@ -3214,7 +3214,7 @@ This owner packet request rejection fixture is metadata-only, planning-only, and
 | raw_dataset_row_body_present | Reject row body material. |
 | actual_file_content_present | Reject actual file content. |
 | actual_file_path_value_present | Reject actual file path values. |
-| secret_or_endpoint_present | Reject endpoint, token, or secret material. |
+| secret_or_network_locator_present | Reject endpoint, token, or secret material. |
 | raw_k_memo_present | Reject raw K memo material. |
 | command_payload_present | Reject command payload material. |
 
@@ -3642,7 +3642,7 @@ This owner instruction request rejection gate is metadata-only and planning-only
 | raw_dataset_row_body_present | Reject row body material. |
 | actual_file_content_present | Reject actual file content. |
 | actual_file_path_value_present | Reject actual file path values. |
-| secret_or_endpoint_present | Reject endpoint, token, or secret material. |
+| secret_or_network_locator_present | Reject endpoint, token, or secret material. |
 | raw_k_memo_present | Reject raw K memo material. |
 | command_payload_present | Reject command payload material. |
 
@@ -4704,7 +4704,7 @@ This handoff rejection gate is metadata-only and planning-only. It fixes the rej
 | raw_dataset_row_body_present | Rejects raw row body material. |
 | actual_file_content_present | Rejects actual file content. |
 | actual_file_path_value_present | Rejects actual file path values. |
-| secret_or_endpoint_present | Rejects secret or endpoint material. |
+| secret_or_network_locator_present | Rejects secret or endpoint material. |
 | raw_k_memo_present | Rejects raw K memo material. |
 | command_payload_present | Rejects command payload material. |
 
@@ -5940,6 +5940,32 @@ The real probe request stub defines a future request shape without sending or ex
 | checked_row_count | 0 |
 | motion_dataset_boundary | non_executable |
 | trusted_loader_allowlist_enabled | false |
+
+## Renderer Ready Real Probe Request Rejection Gate
+
+Task: LIVE2D-RENDERER-READY-REAL-PROBE-REQUEST-REJECTION-GATE1
+
+The real probe request rejection gate rejects unsafe or premature probe request attempts as safe labels only. It keeps probe requested false, probe executed false, readiness false, owner confirmation false, priority1 blocked, checked row count zero, and trusted loader disabled.
+
+| field | value |
+| --- | --- |
+| renderer_ready_real_probe_request_rejection_gate | added |
+| rejection_gate_status | reject |
+| unsafe_request_rejected | true |
+| owner_confirmation_missing | rejected |
+| network_locator_present | rejected_label_only |
+| auth_material_present | rejected_label_only |
+| model_locator_present | rejected_label_only |
+| motion_locator_present | rejected_label_only |
+| priority1_blocked | rejected |
+| checked_row_count_zero | rejected |
+| trusted_loader_disabled | rejected |
+| actual_probe_not_allowed_in_this_task | rejected |
+| source_value_echoed | false |
+| rendererProbeRequested | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
 
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
