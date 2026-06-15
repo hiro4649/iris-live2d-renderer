@@ -65,6 +65,7 @@ import {
   createRendererReadyEvidenceCollectorManifestStubSummary,
   createRendererReadyEvidenceCollectorRedactionGuardSummary,
   createRendererReadyAuditReferenceStubSummary,
+  createRendererReadyAuditReferenceMissingGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -250,6 +251,7 @@ export function createRendererState({
       const rendererReadyEvidenceCollectorManifestStub = createRendererReadyEvidenceCollectorManifestStubSummary();
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
+      const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -388,6 +390,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
+          renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -475,6 +478,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
+          renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -603,6 +607,7 @@ export function createRendererState({
         renderer_ready_evidence_collector_manifest_stub_summary: status.renderer_health.renderer_ready_evidence_collector_manifest_stub_summary,
         renderer_ready_evidence_collector_redaction_guard_summary: status.renderer_health.renderer_ready_evidence_collector_redaction_guard_summary,
         renderer_ready_audit_reference_stub_summary: status.renderer_health.renderer_ready_audit_reference_stub_summary,
+        renderer_ready_audit_reference_missing_guard_summary: status.renderer_health.renderer_ready_audit_reference_missing_guard_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -785,6 +790,7 @@ export function createRendererState({
       const rendererReadyEvidenceCollectorManifestStub = createRendererReadyEvidenceCollectorManifestStubSummary();
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
+      const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -882,6 +888,7 @@ export function createRendererState({
       response.renderer_ready_evidence_collector_manifest_stub_summary = rendererReadyEvidenceCollectorManifestStub;
       response.renderer_ready_evidence_collector_redaction_guard_summary = rendererReadyEvidenceCollectorRedactionGuard;
       response.renderer_ready_audit_reference_stub_summary = rendererReadyAuditReferenceStub;
+      response.renderer_ready_audit_reference_missing_guard_summary = rendererReadyAuditReferenceMissingGuard;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -1032,6 +1039,7 @@ export function createRendererState({
       const rendererReadyEvidenceCollectorManifestStub = createRendererReadyEvidenceCollectorManifestStubSummary();
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
+      const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1153,6 +1161,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
+          renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1240,6 +1249,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
+          renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,

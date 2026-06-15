@@ -6068,6 +6068,33 @@ The renderer readiness audit reference stub records that an audit reference is r
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Audit Reference Missing Guard
+
+Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-MISSING-GUARD1
+
+The renderer readiness audit reference missing guard keeps readiness false when the required audit reference is absent. This is safe status only. It does not create an audit entry, execute an audit, run a renderer probe, create owner confirmation, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_audit_reference_missing_guard | added |
+| auditReferencePresent | false |
+| auditReferenceMissing | true |
+| auditReferenceMissingReason | audit_reference_missing |
+| rendererReadinessAuditReferencePresent | false |
+| rendererReadinessAuditEntryCreated | false |
+| auditExecutionStarted | false |
+| sourceValueEchoed | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
