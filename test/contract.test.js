@@ -144,6 +144,8 @@ import {
   LIVE2D_RENDERER_READY_EVIDENCE_COMPLETENESS_BLOCKER_MATRIX_SCHEMA,
   LIVE2D_RENDERER_READY_EVIDENCE_COMPLETENESS_REQUIRED_EVIDENCE,
   LIVE2D_RENDERER_READY_EVIDENCE_COMPLETENESS_MISSING_LABELS,
+  LIVE2D_RENDERER_READY_EVIDENCE_CONFLICT_DOWNGRADE_CONTRACT_SCHEMA,
+  LIVE2D_RENDERER_READY_EVIDENCE_CONFLICT_DOWNGRADE_LABELS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -248,6 +250,7 @@ import {
   createRendererReadyEvidenceSourceAllowlistSummary,
   createRendererReadyEvidenceSchemaViolationGuardSummary,
   createRendererReadyEvidenceCompletenessBlockerMatrixSummary,
+  createRendererReadyEvidenceConflictDowngradeContractSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6138,6 +6141,7 @@ try {
   });
   assertRendererReadyEvidenceSchemaViolationGuard(provisionedRuntimeConfig.renderer_ready_evidence_schema_violation_guard_summary);
   assertRendererReadyEvidenceCompletenessBlockerMatrix(provisionedRuntimeConfig.renderer_ready_evidence_completeness_blocker_matrix_summary);
+  assertRendererReadyEvidenceConflictDowngradeContract(provisionedRuntimeConfig.renderer_ready_evidence_conflict_downgrade_contract_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6425,6 +6429,7 @@ try {
   });
   assertRendererReadyEvidenceSchemaViolationGuard(provisionedStatus.renderer_ready_evidence_schema_violation_guard_summary);
   assertRendererReadyEvidenceCompletenessBlockerMatrix(provisionedStatus.renderer_ready_evidence_completeness_blocker_matrix_summary);
+  assertRendererReadyEvidenceConflictDowngradeContract(provisionedStatus.renderer_ready_evidence_conflict_downgrade_contract_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6602,6 +6607,7 @@ try {
   });
   assertRendererReadyEvidenceSchemaViolationGuard(provisionedHealth.renderer_ready_evidence_schema_violation_guard_summary);
   assertRendererReadyEvidenceCompletenessBlockerMatrix(provisionedHealth.renderer_ready_evidence_completeness_blocker_matrix_summary);
+  assertRendererReadyEvidenceConflictDowngradeContract(provisionedHealth.renderer_ready_evidence_conflict_downgrade_contract_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -6636,6 +6642,11 @@ try {
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_evidence_completeness_blocker_matrix_summary,
     status: provisionedStatus.renderer_ready_evidence_completeness_blocker_matrix_summary,
     health: provisionedHealth.renderer_ready_evidence_completeness_blocker_matrix_summary,
+  });
+  assertRendererReadyEvidenceConflictDowngradeContractConsistency({
+    runtimeConfig: provisionedRuntimeConfig.renderer_ready_evidence_conflict_downgrade_contract_summary,
+    status: provisionedStatus.renderer_ready_evidence_conflict_downgrade_contract_summary,
+    health: provisionedHealth.renderer_ready_evidence_conflict_downgrade_contract_summary,
   });
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
@@ -7317,6 +7328,7 @@ try {
       "renderer_ready_evidence_source_allowlist",
       "renderer_ready_evidence_schema_violation_guard",
       "renderer_ready_evidence_completeness_blocker_matrix",
+      "renderer_ready_evidence_conflict_downgrade_contract",
     ],
   }));
 } finally {
@@ -8372,6 +8384,71 @@ function assertRendererReadyEvidenceCompletenessBlockerMatrixConsistency(surface
   }
 }
 
+function assertRendererReadyEvidenceConflictDowngradeContract(summary, expectedLabels = []) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_EVIDENCE_CONFLICT_DOWNGRADE_CONTRACT_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.negative_contract_only, true);
+  assert.equal(summary.evidenceConflictDowngradeStatus, "downgraded_to_safe_false");
+  assert.equal(summary.evidenceConflictDetected, true);
+  assert.equal(summary.evidenceConflictDowngraded, true);
+  assert.equal(summary.partialEvidenceIsReady, false);
+  assert.equal(summary.conflictingEvidenceIsReady, false);
+  assert.equal(summary.futureTimestampAccepted, false);
+  assert.equal(summary.staleTimestampAccepted, false);
+  assert.equal(summary.staleTimestampDowngraded, true);
+  assert.equal(summary.fixtureEvidenceIsRealReady, false);
+  assert.equal(summary.manualLabelIsRealReady, false);
+  assert.equal(summary.manifestOnlyIsRealReady, false);
+  assert.equal(summary.sseConnectedIsRealReady, false);
+  assert.equal(summary.cueAcceptedIsLastCueApplied, false);
+  assert.deepEqual(summary.requiredConflictLabels, [...LIVE2D_RENDERER_READY_EVIDENCE_CONFLICT_DOWNGRADE_LABELS]);
+  for (const label of expectedLabels) {
+    assert.equal(summary.detectedConflictLabels.includes(label), true, label);
+  }
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.renderer_ready_claimed, false);
+  assert.equal(summary.renderer_ready_candidate, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.owner_confirmation_created, false);
+  assert.equal(summary.owner_confirmation_confirmed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.safeNextAction, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assertSafe(JSON.stringify(summary));
+}
+
+function assertRendererReadyEvidenceConflictDowngradeContractConsistency(surfaces) {
+  const canonical = surfaces.runtimeConfig;
+  for (const [surfaceName, summary] of Object.entries(surfaces)) {
+    assertRendererReadyEvidenceConflictDowngradeContract(summary);
+    assert.equal(summary.evidenceConflictDowngradeStatus, canonical.evidenceConflictDowngradeStatus, surfaceName);
+    assert.equal(summary.evidenceConflictDetected, canonical.evidenceConflictDetected, surfaceName);
+    assert.equal(summary.evidenceConflictDowngraded, canonical.evidenceConflictDowngraded, surfaceName);
+    assert.equal(summary.rendererReadyClaimed, canonical.rendererReadyClaimed, surfaceName);
+    assert.equal(summary.rendererReadyCandidate, canonical.rendererReadyCandidate, surfaceName);
+    assert.equal(summary.runtimeReadinessClaimed, canonical.runtimeReadinessClaimed, surfaceName);
+    assert.equal(summary.productionReadinessClaimed, canonical.productionReadinessClaimed, surfaceName);
+    assert.equal(summary.priority1Status, canonical.priority1Status, surfaceName);
+    assert.equal(summary.checkedRowCount, canonical.checkedRowCount, surfaceName);
+    assert.equal(summary.motionDatasetExecutable, canonical.motionDatasetExecutable, surfaceName);
+    assert.equal(summary.trustedLoaderAllowlistEnabled, canonical.trustedLoaderAllowlistEnabled, surfaceName);
+  }
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -8947,4 +9024,66 @@ for (const sourceType of LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_TYPES) {
   assert.equal(summary.observedInputLabelsSanitized.cueCapability, "observed_but_required_matrix_still_blocked");
   assert.equal(summary.observedInputLabelsSanitized.lastCueApplied, "observed_but_required_matrix_still_blocked");
   assert.equal(summary.observedInputLabelsSanitized.lastCueAppliedSuccess, "observed_but_required_matrix_still_blocked");
+}
+
+for (const fixture of [
+  {
+    input: { freshHeartbeatEvidencePresent: true, realModelLoadEvidencePresent: false },
+    labels: ["fresh_heartbeat_without_model_load", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { modelLoadedEvidencePresent: true, sceneLoadedEvidencePresent: false },
+    labels: ["model_loaded_without_scene_loaded", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { cueCapabilityEvidencePresent: true, lastCueAppliedEvidencePresent: false },
+    labels: ["cue_capability_without_last_cue_applied", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { lastCueAppliedEvidencePresent: true, lastCueAppliedSuccessEvidencePresent: false, lastCueAppliedEvidenceFresh: false },
+    labels: ["last_cue_without_success", "stale_timestamp_downgraded", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { realProbeEvidencePresent: true, allRequiredEvidencePresent: false },
+    labels: ["real_probe_label_without_required_evidence", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { rendererReadinessEvidenceFresh: true, sourceType: "fixture" },
+    labels: ["fixture_source_with_fresh_claim", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { ownerConfirmationCreated: true, ownerConfirmationConfirmed: false },
+    labels: ["owner_confirmation_incomplete", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { ownerConfirmationConfirmed: true, auditRefPresent: false },
+    labels: ["owner_confirmation_incomplete", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { priority1Status: "RESOLVED", checkedRowCount: 0 },
+    labels: ["priority1_resolution_without_checked_rows", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { checkedRowCount: 3, actualDataTaskStarted: false },
+    labels: ["checked_rows_without_actual_data_task", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { motionDatasetExecutable: true, trustedLoaderAllowlistEnabled: false },
+    labels: ["motion_executable_without_trusted_loader", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { futureEvidenceTime: true },
+    labels: ["future_timestamp_rejected", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { staleEvidenceTime: true },
+    labels: ["stale_timestamp_downgraded", "conflicting_renderer_evidence"],
+  },
+  {
+    input: { sourceType: "manual_label" },
+    labels: ["manual_label_is_not_real_ready", "conflicting_renderer_evidence"],
+  },
+]) {
+  const summary = createRendererReadyEvidenceConflictDowngradeContractSummary(fixture.input);
+  assertRendererReadyEvidenceConflictDowngradeContract(summary, fixture.labels);
 }
