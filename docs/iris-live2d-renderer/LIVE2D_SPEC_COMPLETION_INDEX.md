@@ -5721,6 +5721,29 @@ The renderer-ready evidence conflict downgrade contract keeps partial, conflicti
 | raw_value_echo | false |
 | safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
 
+## Renderer Ready Go/No-Go Blocker Surface
+
+Task: LIVE2D-RENDERER-READY-GO-NOGO-BLOCKER-SURFACE1
+
+The renderer-ready go/no-go blocker surface exposes the current readiness decision as a safe status label. Current state remains `no_go`; this is not go approval, owner confirmation, actual renderer evidence, trusted loader enablement, runtime readiness, or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_go_nogo_blocker_surface | added |
+| go_status | no_go |
+| go_approved | false |
+| safe_reasons_only | true |
+| readiness_claimed | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| owner_confirmation_created | false |
+| actual_data_task_started | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
