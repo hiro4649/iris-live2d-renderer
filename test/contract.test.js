@@ -7364,6 +7364,17 @@ try {
   assert.equal(completionIndex.includes("| renderer_ready_claimed | false |"), true);
   assert.equal(completionIndex.includes("| priority1_status | BLOCKED |"), true);
   assert.equal(completionIndex.includes("| checked_row_count | 0 |"), true);
+  assert.equal(completionIndex.includes("LIVE2D-RENDERER-READY-PRE-OWNER-ACTION-COMPLETION-REVIEW2"), true);
+  assert.equal(completionIndex.includes("| renderer_ready_pre_owner_action_completion_review | added |"), true);
+  assert.equal(completionIndex.includes("| dg_owner_handoff_not_sent_guard | completed |"), true);
+  assert.equal(completionIndex.includes("| do_audit_reference_missing_guard | completed |"), true);
+  assert.equal(completionIndex.includes("| explicit_owner_action_missing | blocker |"), true);
+  assert.equal(completionIndex.includes("| real_renderer_probe_missing | blocker |"), true);
+  assert.equal(completionIndex.includes("| audit_reference_missing | blocker |"), true);
+  assert.equal(completionIndex.includes("| motion_dataset_non_executable | blocker |"), true);
+  assert.equal(completionIndex.includes("| trusted_loader_disabled | blocker |"), true);
+  assert.equal(completionIndex.includes("| ownerHandoffSent | false |"), true);
+  assert.equal(completionIndex.includes("| actualRendererProbeExecuted | false |"), true);
 
   console.log(JSON.stringify({
     ok: true,
@@ -7456,6 +7467,7 @@ try {
       "renderer_ready_evidence_collector_redaction_guard",
       "renderer_ready_audit_reference_stub",
       "renderer_ready_audit_reference_missing_guard",
+      "renderer_ready_pre_owner_action_completion_review",
     ],
   }));
 } finally {
