@@ -5744,6 +5744,29 @@ The renderer-ready go/no-go blocker surface exposes the current readiness decisi
 | trusted_loader_allowlist_enabled | false |
 | safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
 
+## Renderer Ready Blocker Reason Allowlist
+
+Task: LIVE2D-RENDERER-READY-BLOCKER-REASON-ALLOWLIST1
+
+The renderer-ready blocker reason allowlist constrains public readiness blocker reasons to safe labels only. Unknown or unsafe diagnostic reasons are rejected to a generic safe blocker label. This is not actual renderer evidence, owner confirmation, actual data handling, trusted loader enablement, runtime readiness, or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_blocker_reason_allowlist | added |
+| allowlist_status | enforced |
+| go_nogo_reasons_included | true |
+| unknown_reason_rejected | true |
+| unsafe_diagnostic_reason_rejected | true |
+| source_value_echoed | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| owner_confirmation_created | false |
+| actual_data_task_started | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
