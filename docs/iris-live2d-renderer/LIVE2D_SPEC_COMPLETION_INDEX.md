@@ -5695,3 +5695,32 @@ The owner action freeze status must preserve the same safe meaning on `/status`,
 | motion_dataset_boundary | non_executable |
 | trusted_loader_boundary | disabled |
 | safe_next_action | wait_for_explicit_owner_action |
+
+## Post-PR254 Owner Action Freeze Status Redaction Sweep
+
+Task: LIVE2D-POST-PR254-OWNER-ACTION-FREEZE-STATUS-REDACTION-SWEEP1
+
+The owner action freeze status surface must remain a safe public summary when unsafe status input attempts include private values or raw material labels. This is contract coverage only and does not execute parser, redaction scan, audit work, renderer work, SDK work, external service calls, owner handoff, owner confirmation, trusted loader enablement, actual data work, or readiness review.
+
+| field | value |
+| --- | --- |
+| post_pr254_status_redaction_sweep | added |
+| surfaces | health/status/runtime-config |
+| raw_value_leak | false |
+| secret_endpoint_leak | false |
+| raw_row_body_leak | false |
+| command_payload_leak | false |
+| owner_private_note_leak | false |
+| safe_summary_only | true |
+| owner_action_request_sent | false |
+| owner_action_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |

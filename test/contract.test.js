@@ -2392,6 +2392,7 @@ try {
   assert.equal(unsafeOwnerActionLaneFreeze.unsafe_state_attempt_rejected, true);
   assertSafe(JSON.stringify(unsafeOwnerActionLaneFreeze));
   assertOwnerActionLaneFreezeRejectsUnsafePromotion();
+  assertOwnerActionLaneFreezeStatusRedactionSweep();
 
   const defaultRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
   assert.equal(defaultRowFileChecksumPreflightManifest.schema, LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA);
@@ -7113,6 +7114,7 @@ try {
       "owner_action_lane_freeze_status_surface",
       "owner_action_lane_freeze_contract_regression_guard",
       "owner_action_lane_freeze_cross_surface_consistency",
+      "owner_action_lane_freeze_status_redaction_sweep",
     ],
   }));
 } finally {
@@ -7599,6 +7601,89 @@ function assertOwnerActionLaneFreezeCrossSurfaceConsistency(surfaces) {
     assert.equal(summary.renderer_ready, canonical.renderer_ready, surfaceName);
     assert.equal(summary.safe_next_action, canonical.safe_next_action, surfaceName);
   }
+}
+
+function assertOwnerActionLaneFreezeStatusRedactionSweep() {
+  const summary = createOwnerActionLaneFreezeStatusSummary({
+    endpoint: "https://secret.example/freeze",
+    token: "secret-token",
+    secret: "private-secret",
+    private_path: "C:\\private\\owner\\row.json",
+    raw_path: "/private/owner/row.json",
+    raw_model_path: "/unsafe/model.moc3",
+    raw_motion_path: "/unsafe/motion.motion3.json",
+    actual_file_path_value: "/private/actual-row.csv",
+    actual_file_content: "private-file-content",
+    raw_dataset_row_body: "private-row-body",
+    raw_row_body: "private-row-body-2",
+    raw_cue_payload: "private-cue-payload",
+    raw_renderer_payload: "private-renderer-payload",
+    raw_command: "private-command",
+    command_payload: "private-command-payload",
+    shell_body: "private-shell-body",
+    world_command: "private-world-command",
+    raw_k_memo: "private-k-memo",
+    owner_private_note: "private-owner-note",
+    candidate_payload: "private-candidate-payload",
+    relationship_score: "private-relationship-score",
+    hidden_score: "private-hidden-score",
+    api_key: "private-api-key",
+    oauth: "private-oauth",
+    connection_string: "private-connection-string",
+    password: "private-password",
+  });
+  assert.equal(summary.owner_action_lane_freeze_status, "waiting_for_explicit_owner_action");
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
+  assert.equal(summary.owner_confirmation_created, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_boundary, "non_executable");
+  assert.equal(summary.trusted_loader_boundary, "disabled");
+
+  const serialized = JSON.stringify(summary);
+  for (const forbidden of [
+    "https://secret.example/freeze",
+    "secret-token",
+    "private-secret",
+    "C:\\private\\owner\\row.json",
+    "/private/owner/row.json",
+    "/unsafe/model.moc3",
+    "/unsafe/motion.motion3.json",
+    "/private/actual-row.csv",
+    "private-file-content",
+    "private-row-body",
+    "private-row-body-2",
+    "private-cue-payload",
+    "private-renderer-payload",
+    "private-command",
+    "private-command-payload",
+    "private-shell-body",
+    "private-world-command",
+    "private-k-memo",
+    "private-owner-note",
+    "private-candidate-payload",
+    "private-relationship-score",
+    "private-hidden-score",
+    "private-api-key",
+    "private-oauth",
+    "private-connection-string",
+    "private-password",
+    "raw_dataset_row_body",
+    "actual_file_path_value",
+    "actual_file_content",
+    "owner_private_note",
+    "command_payload",
+    "candidate_payload",
+    "relationship_score",
+    "hidden_score",
+    "connection_string",
+  ]) {
+    assert.equal(serialized.includes(forbidden), false, forbidden);
+  }
+  assertSafe(serialized);
 }
 
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
