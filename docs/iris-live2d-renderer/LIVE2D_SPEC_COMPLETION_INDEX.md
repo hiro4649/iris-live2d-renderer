@@ -5886,6 +5886,35 @@ The owner handoff not-sent guard records that an owner evidence handoff packet m
 | motion_dataset_boundary | non_executable |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Owner Handoff Redaction Guard
+
+Task: LIVE2D-RENDERER-READY-OWNER-HANDOFF-REDACTION-GUARD1
+
+The owner handoff redaction guard keeps the owner evidence handoff packet stub as safe labels only. Unsafe locator, auth, cue, renderer, shell, and operator-note categories are rejected without echoing values. This is not a handoff send, owner confirmation, actual renderer probe, actual data task, or readiness approval.
+
+| field | value |
+| --- | --- |
+| renderer_ready_owner_handoff_redaction_guard | added |
+| redaction_guard_status | safe_labels_only |
+| packet_summary_safe_labels_only | true |
+| network_locator_rejected | true |
+| auth_material_rejected | true |
+| model_locator_rejected | true |
+| motion_locator_rejected | true |
+| cue_material_rejected | true |
+| renderer_material_rejected | true |
+| shell_material_rejected | true |
+| operator_private_note_rejected | true |
+| source_value_echoed | false |
+| ownerEvidenceHandoffSent | false |
+| ownerConfirmationCreated | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
