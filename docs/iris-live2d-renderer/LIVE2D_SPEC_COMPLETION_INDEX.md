@@ -5621,6 +5621,39 @@ This runtime/status surface exposes the PR252 owner action lane freeze as a safe
 | checked_row_count | 0 |
 | motion_dataset_boundary | non_executable |
 | trusted_loader_boundary | disabled |
+
+## Post-PR256 Owner Action Freeze Status Schema Allowlist
+
+Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-STATUS-SCHEMA-ALLOWLIST1
+
+The owner action freeze status summary is guarded by an explicit safe public schema allowlist. The allowlist is a read-only status contract guard across `/status`, `/health`, and `/renderer/runtime-config`; it does not send or accept owner action, does not send owner handoff, does not create owner confirmation, does not start actual data, does not read row bodies or actual files, does not calculate hashes, does not execute parser/redaction/audit work, does not enable trusted loader, and does not claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| post_pr256_freeze_status_schema_allowlist | added |
+| surfaces | health/status/runtime-config |
+| schema_drift_guard | true |
+| safe_status_only | true |
+| not_owner_action | true |
+| not_actual_data | true |
+| not_owner_confirmation | true |
+| not_readiness | true |
+| owner_action_request_sent | false |
+| owner_action_requested | false |
+| owner_action_accepted | false |
+| owner_handoff_sent | false |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
 | trusted_loader_allowlist_enabled | false |
 | renderer_ready | false |
 | safe_next_action | wait_for_explicit_owner_action |

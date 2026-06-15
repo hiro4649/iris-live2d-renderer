@@ -280,6 +280,114 @@ const sdkCorePath = join(tmpDir, "CubismCore.js");
 const unsafeCorePath = join(tmpDir, "arbitrary-core.js");
 const unsafeCoreExtensionPath = join(tmpDir, "CubismCore.txt");
 const ownerFrameworkLoaderPath = join(tmpDir, "owner-framework-loader.js");
+const OWNER_ACTION_LANE_FREEZE_STATUS_ALLOWED_KEYS = [
+  "schema",
+  "safe_summary_only",
+  "owner_action_lane_freeze_status",
+  "owner_action_lane_freeze_reason",
+  "owner_action_lane_completed_as_metadata_only",
+  "owner_action_request_sent",
+  "owner_action_requested",
+  "owner_action_accepted",
+  "owner_handoff_sent",
+  "owner_instruction_request_sent",
+  "owner_instruction_requested",
+  "owner_instruction_accepted",
+  "packet_request_sent",
+  "owner_submission_received",
+  "owner_submission_accepted",
+  "owner_confirmation_created",
+  "owner_confirmation_confirmed",
+  "actual_data_task_started",
+  "actual_data_preauthorized",
+  "real_data_accepted",
+  "row_body_read",
+  "actual_file_read",
+  "file_reference_value_accepted",
+  "hash_calculation_performed",
+  "source_hash_verified",
+  "declared_row_count_checked",
+  "parser_execution_started",
+  "redaction_scan_execution_started",
+  "audit_execution_started",
+  "real_ingestion_audit_event_created",
+  "runtime_readiness_claimed",
+  "production_readiness_claimed",
+  "priority1_status",
+  "checked_row_count",
+  "motion_dataset_boundary",
+  "trusted_loader_boundary",
+  "trusted_loader_allowlist_enabled",
+  "renderer_ready",
+  "safe_next_action",
+  "unsafe_state_attempt_rejected",
+  "boundary_policy",
+];
+const OWNER_ACTION_LANE_FREEZE_STATUS_REQUIRED_KEYS = [
+  "schema",
+  "owner_action_lane_freeze_status",
+  "owner_action_lane_completed_as_metadata_only",
+  "owner_action_request_sent",
+  "owner_action_requested",
+  "owner_action_accepted",
+  "owner_handoff_sent",
+  "owner_instruction_request_sent",
+  "owner_instruction_requested",
+  "owner_instruction_accepted",
+  "packet_request_sent",
+  "owner_submission_received",
+  "owner_submission_accepted",
+  "owner_confirmation_created",
+  "owner_confirmation_confirmed",
+  "actual_data_task_started",
+  "actual_data_preauthorized",
+  "real_data_accepted",
+  "row_body_read",
+  "actual_file_read",
+  "file_reference_value_accepted",
+  "hash_calculation_performed",
+  "source_hash_verified",
+  "declared_row_count_checked",
+  "parser_execution_started",
+  "redaction_scan_execution_started",
+  "audit_execution_started",
+  "real_ingestion_audit_event_created",
+  "runtime_readiness_claimed",
+  "production_readiness_claimed",
+  "priority1_status",
+  "checked_row_count",
+  "motion_dataset_boundary",
+  "trusted_loader_boundary",
+  "trusted_loader_allowlist_enabled",
+  "renderer_ready",
+  "safe_next_action",
+];
+const OWNER_ACTION_LANE_FREEZE_STATUS_FORBIDDEN_KEYS = [
+  "ownerActionApproved",
+  "ownerActionConfirmed",
+  "ownerConfirmation",
+  "ownerConfirmationStatusConfirmed",
+  "actualDataReady",
+  "realDataReady",
+  "runtimeReady",
+  "productionReady",
+  "rendererReady",
+  "ready",
+  "trustedLoaderEnabled",
+  "trustedLoaderReady",
+  "priority1Resolved",
+  "checkedRows",
+  "sourceHashVerifiedAt",
+  "declaredRowCountCheckedAt",
+  "actualFilePath",
+  "actualFilePathValue",
+  "rawDatasetRowBody",
+  "rawPayload",
+  "endpoint",
+  "token",
+  "secret",
+  "commandPayload",
+];
 await mkdir(join(tmpDir, "textures"), { recursive: true });
 await mkdir(join(tmpDir, "motions"), { recursive: true });
 await mkdir(join(tmpDir, "expressions"), { recursive: true });
@@ -7115,6 +7223,7 @@ try {
       "owner_action_lane_freeze_contract_regression_guard",
       "owner_action_lane_freeze_cross_surface_consistency",
       "owner_action_lane_freeze_status_redaction_sweep",
+      "owner_action_lane_freeze_status_schema_allowlist",
     ],
   }));
 } finally {
@@ -7687,6 +7796,7 @@ function assertOwnerActionLaneFreezeStatusRedactionSweep() {
 }
 
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
+  assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
   assert.equal(summary.safe_summary_only, true);
   assert.equal(summary.owner_action_lane_freeze_status, "waiting_for_explicit_owner_action");
@@ -7730,6 +7840,25 @@ function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
   assert.equal(summary.boundary_policy.no_readiness_claim, true);
   assertSafe(JSON.stringify(summary));
+}
+
+function assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary) {
+  const keys = Object.keys(summary);
+  for (const key of keys) {
+    assert.equal(OWNER_ACTION_LANE_FREEZE_STATUS_ALLOWED_KEYS.includes(key), true, key);
+  }
+  for (const key of OWNER_ACTION_LANE_FREEZE_STATUS_REQUIRED_KEYS) {
+    assert.equal(Object.hasOwn(summary, key), true, key);
+  }
+  for (const key of OWNER_ACTION_LANE_FREEZE_STATUS_FORBIDDEN_KEYS) {
+    assert.equal(Object.hasOwn(summary, key), false, key);
+  }
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_boundary, "non_executable");
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.trusted_loader_boundary, "disabled");
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action");
 }
 
 function assertSafe(serialized) {
