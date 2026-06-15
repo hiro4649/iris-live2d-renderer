@@ -7308,6 +7308,15 @@ try {
   assertSafe(JSON.stringify(authorizedBody));
   await authRequired.close();
 
+  const completionIndex = await readFile("docs/iris-live2d-renderer/LIVE2D_SPEC_COMPLETION_INDEX.md", "utf8");
+  assert.equal(completionIndex.includes("LIVE2D-RENDERER-READY-POST-GUARD-COMPLETION-REVIEW1"), true);
+  assert.equal(completionIndex.includes("| renderer_ready_post_guard_completion_review | added |"), true);
+  assert.equal(completionIndex.includes("| da_go_nogo_blocker_surface | completed |"), true);
+  assert.equal(completionIndex.includes("| de_owner_evidence_handoff_packet_stub | completed |"), true);
+  assert.equal(completionIndex.includes("| renderer_ready_claimed | false |"), true);
+  assert.equal(completionIndex.includes("| priority1_status | BLOCKED |"), true);
+  assert.equal(completionIndex.includes("| checked_row_count | 0 |"), true);
+
   console.log(JSON.stringify({
     ok: true,
     checked: [
@@ -7389,6 +7398,7 @@ try {
       "renderer_ready_safe_next_action_catalog",
       "renderer_ready_cross_surface_blocker_consistency",
       "renderer_ready_owner_evidence_handoff_packet_stub",
+      "renderer_ready_post_guard_completion_review",
     ],
   }));
 } finally {
