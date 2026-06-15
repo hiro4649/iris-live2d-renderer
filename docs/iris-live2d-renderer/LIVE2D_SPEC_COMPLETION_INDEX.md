@@ -5767,6 +5767,29 @@ The renderer-ready blocker reason allowlist constrains public readiness blocker 
 | motion_dataset_boundary | non_executable |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Safe Next Action Catalog
+
+Task: LIVE2D-RENDERER-READY-SAFE-NEXT-ACTION-CATALOG1
+
+The renderer-ready safe next action catalog exposes only safe future action labels while preserving current no-go state. It does not execute any action, request owner confirmation, start actual data work, enable trusted loader, collect renderer evidence, or claim runtime/production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_safe_next_action_catalog | added |
+| catalog_status | available_safe_labels_only |
+| default_safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+| unsafe_action_rejected | true |
+| action_execution_started | false |
+| source_value_echoed | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| owner_confirmation_created | false |
+| actual_data_task_started | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
