@@ -129,6 +129,8 @@ import {
   LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA,
   LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCIES,
   LIVE2D_MOTION_DATASET_RENDERER_READY_FALSE_READY_BLOCKERS,
+  LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA,
+  LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -226,6 +228,7 @@ import {
   createMotionDatasetRealRowRedactionPolicyMatrixSummary,
   createMotionDatasetMotionAllowlistSyncReviewSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
+  createRendererReadyFalsePositiveDependencySurfaceSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6107,6 +6110,7 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_motion_allowlist_sync_review_summary.motion_dataset_executable, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.renderer_ready, false);
+  assertRendererReadyFalsePositiveDependencySurface(provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6385,6 +6389,7 @@ try {
   assert.equal(provisionedStatus.motion_dataset_motion_allowlist_sync_review_summary.motion_allowlist_sync_claims_runtime_enabled, false);
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.browser_cue_delivery_ready, false);
+  assertRendererReadyFalsePositiveDependencySurface(provisionedStatus.renderer_ready_false_positive_dependency_surface_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6553,6 +6558,12 @@ try {
   assert.equal(provisionedHealth.motion_dataset_motion_allowlist_sync_review_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.runtime_readiness_claimed, false);
+  assertRendererReadyFalsePositiveDependencySurface(provisionedHealth.renderer_ready_false_positive_dependency_surface_summary);
+  assertRendererReadyFalsePositiveDependencySurfaceConsistency({
+    runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
+    status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
+    health: provisionedHealth.renderer_ready_false_positive_dependency_surface_summary,
+  });
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedHealth.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -7226,6 +7237,7 @@ try {
       "owner_action_lane_freeze_status_redaction_sweep",
       "owner_action_lane_freeze_status_schema_allowlist",
       "owner_action_lane_freeze_unexpected_field_rejection_guard",
+      "renderer_ready_false_positive_dependency_surface",
     ],
   }));
 } finally {
@@ -7889,6 +7901,52 @@ function assertOwnerActionLaneFreezeUnexpectedFieldRejectionGuard() {
   assertSafe(serialized);
 }
 
+function assertRendererReadyFalsePositiveDependencySurface(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.renderer_ready_status, "blocked_until_real_renderer_evidence");
+  assert.equal(summary.renderer_ready_claimed, false);
+  assert.equal(summary.renderer_ready_candidate, false);
+  assert.deepEqual(summary.renderer_ready_blocked_reasons, [...LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS]);
+  assert.equal(summary.fresh_heartbeat_present, false);
+  assert.equal(summary.real_model_load_supported, false);
+  assert.equal(summary.model_loaded, false);
+  assert.equal(summary.scene_loaded, false);
+  assert.equal(summary.model_matches_expected, false);
+  assert.equal(summary.scene_matches_expected, false);
+  assert.equal(summary.cue_capability_confirmed, false);
+  assert.equal(summary.last_cue_applied, false);
+  assert.equal(summary.last_cue_applied_success, false);
+  assert.equal(summary.fixture_pass_is_real_ready, false);
+  assert.equal(summary.manifest_only_is_real_ready, false);
+  assert.equal(summary.sse_connected_is_real_ready, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assertSafe(JSON.stringify(summary));
+}
+
+function assertRendererReadyFalsePositiveDependencySurfaceConsistency(surfaces) {
+  const canonical = surfaces.runtimeConfig;
+  for (const [surfaceName, summary] of Object.entries(surfaces)) {
+    assertRendererReadyFalsePositiveDependencySurface(summary);
+    assert.equal(summary.renderer_ready_status, canonical.renderer_ready_status, surfaceName);
+    assert.deepEqual(summary.renderer_ready_blocked_reasons, canonical.renderer_ready_blocked_reasons, surfaceName);
+    assert.equal(summary.renderer_ready_claimed, canonical.renderer_ready_claimed, surfaceName);
+    assert.equal(summary.renderer_ready_candidate, canonical.renderer_ready_candidate, surfaceName);
+    assert.equal(summary.runtime_readiness_claimed, canonical.runtime_readiness_claimed, surfaceName);
+    assert.equal(summary.production_readiness_claimed, canonical.production_readiness_claimed, surfaceName);
+    assert.equal(summary.priority1_status, canonical.priority1_status, surfaceName);
+    assert.equal(summary.checked_row_count, canonical.checked_row_count, surfaceName);
+    assert.equal(summary.motion_dataset_executable, canonical.motion_dataset_executable, surfaceName);
+    assert.equal(summary.trusted_loader_allowlist_enabled, canonical.trusted_loader_allowlist_enabled, surfaceName);
+  }
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -8222,4 +8280,35 @@ function assertNoModelPathLeak(serialized) {
   assert.equal(summary.priority1_status, "BLOCKED");
   assert.deepEqual(summary.required_renderer_ready_dependencies, [...LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCIES]);
   assert.deepEqual(summary.required_false_ready_blockers, [...LIVE2D_MOTION_DATASET_RENDERER_READY_FALSE_READY_BLOCKERS]);
+}
+
+{
+  const summary = createRendererReadyFalsePositiveDependencySurfaceSummary({
+    fresh_heartbeat_present: true,
+    real_model_load_supported: true,
+    model_loaded: true,
+    scene_loaded: true,
+    model_matches_expected: true,
+    scene_matches_expected: true,
+    cue_capability_confirmed: true,
+    last_cue_applied_success: true,
+    fixture_pass_is_real_ready: true,
+    manifest_only_is_real_ready: true,
+    sse_connected_is_real_ready: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_status: "RESOLVED",
+    checked_row_count: 12,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+  });
+  assertRendererReadyFalsePositiveDependencySurface(summary);
+  assert.equal(summary.observed_inputs_sanitized.fresh_heartbeat_present, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.real_model_load_supported, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.model_loaded, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.scene_loaded, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.model_matches_expected, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.scene_matches_expected, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.cue_capability_confirmed, "observed_but_not_sufficient");
+  assert.equal(summary.observed_inputs_sanitized.last_cue_applied_success, "observed_but_not_sufficient");
 }
