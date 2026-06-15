@@ -5578,3 +5578,51 @@ This post-PR251 owner action lane freeze register is metadata-only and planning-
 ### Completion Index Update For Post-PR251 Freeze
 
 The owner action lane is frozen after PR251 as metadata-only planning. The completed owner action wait summary, blocker register, final no-go, and completion review do not grant approval, do not send or accept any owner action, do not create owner confirmation, do not start or preauthorize actual data, do not accept real row material, do not verify source hash, do not check declared row count, do not execute parser, redaction, or audit work, do not create real ingestion audit evidence, do not resolve priority1, do not make the motion dataset executable, do not enable trusted loader, and do not claim runtime or production readiness. The only safe next action is to wait for explicit owner action. Do not start the next product task without explicit owner action.
+
+## Post-PR252 Owner Action Freeze Runtime Status Surface
+
+Task: LIVE2D-POST-PR252-OWNER-ACTION-FREEZE-RUNTIME-STATUS-SURFACE1
+
+This runtime/status surface exposes the PR252 owner action lane freeze as a safe public summary only. It is not an owner action request, owner action acceptance, owner handoff, owner instruction request, owner confirmation, actual data approval, actual data preauthorization, trusted loader approval, runtime readiness claim, production readiness claim, or priority1 resolution.
+
+| field | value |
+| --- | --- |
+| post_pr252_runtime_status_surface | added |
+| scope | safe_status_only |
+| owner_action_lane_freeze_status | waiting_for_explicit_owner_action |
+| owner_action_request_sent | false |
+| owner_action_requested | false |
+| owner_action_accepted | false |
+| owner_handoff_sent | false |
+| owner_instruction_request_sent | false |
+| owner_instruction_requested | false |
+| owner_instruction_accepted | false |
+| packet_request_sent | false |
+| owner_submission_received | false |
+| owner_submission_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| real_data_accepted | false |
+| row_body_read | false |
+| actual_file_read | false |
+| file_reference_value_accepted | false |
+| hash_calculation_performed | false |
+| source_hash_verified | false |
+| declared_row_count_checked | false |
+| parser_execution_started | false |
+| redaction_scan_execution_started | false |
+| audit_execution_started | false |
+| real_ingestion_audit_event_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
+| trusted_loader_allowlist_enabled | false |
+| renderer_ready | false |
+| safe_next_action | wait_for_explicit_owner_action |
+
+The summary may appear on `/status`, `/health`, and `/renderer/runtime-config` to make the freeze visible to safe status clients. It must remain a non-executing status surface and must not read row bodies, accept actual file paths, read actual files, calculate hashes, execute parser/redaction/audit work, enable a trusted loader, or create readiness evidence.
