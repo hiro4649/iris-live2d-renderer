@@ -5688,6 +5688,46 @@ The renderer-ready evidence schema violation guard is a negative contract for sy
 | trusted_loader_allowlist_enabled | false |
 | safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
 
+## Renderer Ready Evidence Completeness Blocker Matrix
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
+
+The renderer-ready evidence completeness blocker matrix lists the required evidence that would be needed before renderer readiness can be considered. It is a safe status and contract surface only. It does not execute a renderer probe, browser probe, Cubism SDK, model load, scene load, cue application, heartbeat collection, owner action, owner confirmation, trusted loader enablement, actual data task, or readiness review.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_completeness_blocker_matrix | added |
+| required_evidence_complete | false |
+| missing_required_evidence | listed_safe_labels_only |
+| missing_fresh_heartbeat_evidence | true |
+| missing_real_model_load_evidence | true |
+| missing_model_loaded_evidence | true |
+| missing_scene_loaded_evidence | true |
+| missing_model_scene_match_evidence | true |
+| missing_cue_capability_evidence | true |
+| missing_last_cue_applied_evidence | true |
+| missing_last_cue_applied_success_evidence | true |
+| owner_confirmation_missing | true |
+| priority1_blocked | true |
+| checked_row_count_zero | true |
+| motion_dataset_non_executable | true |
+| trusted_loader_disabled | true |
+| not_renderer_ready | true |
+| not_runtime_ready | true |
+| not_production_ready | true |
+| not_actual_probe | true |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| owner_confirmation_created | false |
+| actual_data_task_started | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
 ## Renderer Ready Fresh Evidence Envelope Schema
 
 Task: LIVE2D-RENDERER-READY-FRESH-EVIDENCE-ENVELOPE-SCHEMA1
