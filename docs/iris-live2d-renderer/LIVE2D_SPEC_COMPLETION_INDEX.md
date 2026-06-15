@@ -5688,6 +5688,39 @@ The renderer-ready evidence schema violation guard is a negative contract for sy
 | trusted_loader_allowlist_enabled | false |
 | safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
 
+## Renderer Ready Evidence Conflict Downgrade Contract
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-CONFLICT-DOWNGRADE-CONTRACT1
+
+The renderer-ready evidence conflict downgrade contract keeps partial, conflicting, future-dated, stale, fixture-only, manual-label-only, manifest-only, SSE-only, cue-accepted-only, and incomplete owner-confirmation labels from becoming renderer readiness. It is a negative contract guard only. It does not execute a renderer probe, browser probe, Cubism SDK, model load, scene load, cue application, heartbeat collection, owner action, owner confirmation, trusted loader enablement, actual data task, or readiness review.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_conflict_downgrade_contract | added |
+| partial_evidence_is_not_ready | true |
+| conflicting_evidence_downgraded | true |
+| future_timestamp_rejected | true |
+| stale_timestamp_downgraded | true |
+| fixture_evidence_is_real_ready | false |
+| manual_label_is_real_ready | false |
+| manifest_only_is_real_ready | false |
+| sse_connected_is_real_ready | false |
+| cue_accepted_is_last_cue_applied | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_data_task_started | false |
+| actual_data_preauthorized | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_allowlist_enabled | false |
+| raw_value_echo | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
