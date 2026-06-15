@@ -53,6 +53,7 @@ import {
   createRendererReadyEvidenceCompletenessBlockerMatrixSummary,
   createRendererReadyEvidenceConflictDowngradeContractSummary,
   createRendererReadyGoNoGoBlockerSurfaceSummary,
+  createRendererReadyBlockerReasonAllowlistSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -226,6 +227,7 @@ export function createRendererState({
       const rendererReadyEvidenceCompletenessBlockerMatrix = rendererReadyEvidenceCompletenessBlockerMatrixFromHeartbeat(heartbeatStatus);
       const rendererReadyEvidenceConflictDowngradeContract = rendererReadyEvidenceConflictDowngradeContractFromHeartbeat(heartbeatStatus);
       const rendererReadyGoNoGoBlockerSurface = createRendererReadyGoNoGoBlockerSurfaceSummary();
+      const rendererReadyBlockerReasonAllowlist = createRendererReadyBlockerReasonAllowlistSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -352,6 +354,7 @@ export function createRendererState({
           renderer_ready_evidence_completeness_blocker_matrix_summary: rendererReadyEvidenceCompletenessBlockerMatrix,
           renderer_ready_evidence_conflict_downgrade_contract_summary: rendererReadyEvidenceConflictDowngradeContract,
           renderer_ready_go_nogo_blocker_surface_summary: rendererReadyGoNoGoBlockerSurface,
+          renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -427,6 +430,7 @@ export function createRendererState({
           renderer_ready_evidence_completeness_blocker_matrix_summary: rendererReadyEvidenceCompletenessBlockerMatrix,
           renderer_ready_evidence_conflict_downgrade_contract_summary: rendererReadyEvidenceConflictDowngradeContract,
           renderer_ready_go_nogo_blocker_surface_summary: rendererReadyGoNoGoBlockerSurface,
+          renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -543,6 +547,7 @@ export function createRendererState({
         renderer_ready_evidence_completeness_blocker_matrix_summary: status.renderer_health.renderer_ready_evidence_completeness_blocker_matrix_summary,
         renderer_ready_evidence_conflict_downgrade_contract_summary: status.renderer_health.renderer_ready_evidence_conflict_downgrade_contract_summary,
         renderer_ready_go_nogo_blocker_surface_summary: status.renderer_health.renderer_ready_go_nogo_blocker_surface_summary,
+        renderer_ready_blocker_reason_allowlist_summary: status.renderer_health.renderer_ready_blocker_reason_allowlist_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -713,6 +718,7 @@ export function createRendererState({
       const rendererReadyEvidenceCompletenessBlockerMatrix = rendererReadyEvidenceCompletenessBlockerMatrixFromHeartbeat(heartbeatStatus);
       const rendererReadyEvidenceConflictDowngradeContract = rendererReadyEvidenceConflictDowngradeContractFromHeartbeat(heartbeatStatus);
       const rendererReadyGoNoGoBlockerSurface = createRendererReadyGoNoGoBlockerSurfaceSummary();
+      const rendererReadyBlockerReasonAllowlist = createRendererReadyBlockerReasonAllowlistSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -798,6 +804,7 @@ export function createRendererState({
       response.renderer_ready_evidence_completeness_blocker_matrix_summary = rendererReadyEvidenceCompletenessBlockerMatrix;
       response.renderer_ready_evidence_conflict_downgrade_contract_summary = rendererReadyEvidenceConflictDowngradeContract;
       response.renderer_ready_go_nogo_blocker_surface_summary = rendererReadyGoNoGoBlockerSurface;
+      response.renderer_ready_blocker_reason_allowlist_summary = rendererReadyBlockerReasonAllowlist;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -936,6 +943,7 @@ export function createRendererState({
       const rendererReadyEvidenceCompletenessBlockerMatrix = rendererReadyEvidenceCompletenessBlockerMatrixFromHeartbeat(heartbeatStatus);
       const rendererReadyEvidenceConflictDowngradeContract = rendererReadyEvidenceConflictDowngradeContractFromHeartbeat(heartbeatStatus);
       const rendererReadyGoNoGoBlockerSurface = createRendererReadyGoNoGoBlockerSurfaceSummary();
+      const rendererReadyBlockerReasonAllowlist = createRendererReadyBlockerReasonAllowlistSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1045,6 +1053,7 @@ export function createRendererState({
           renderer_ready_evidence_completeness_blocker_matrix_summary: rendererReadyEvidenceCompletenessBlockerMatrix,
           renderer_ready_evidence_conflict_downgrade_contract_summary: rendererReadyEvidenceConflictDowngradeContract,
           renderer_ready_go_nogo_blocker_surface_summary: rendererReadyGoNoGoBlockerSurface,
+          renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1120,6 +1129,7 @@ export function createRendererState({
           renderer_ready_evidence_completeness_blocker_matrix_summary: rendererReadyEvidenceCompletenessBlockerMatrix,
           renderer_ready_evidence_conflict_downgrade_contract_summary: rendererReadyEvidenceConflictDowngradeContract,
           renderer_ready_go_nogo_blocker_surface_summary: rendererReadyGoNoGoBlockerSurface,
+          renderer_ready_blocker_reason_allowlist_summary: rendererReadyBlockerReasonAllowlist,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
