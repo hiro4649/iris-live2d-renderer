@@ -67,6 +67,7 @@ export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "i
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
 export const LIVE2D_RENDERER_READY_FRESH_EVIDENCE_ENVELOPE_SCHEMA = "iris_live2d_renderer_ready_fresh_evidence_envelope_v1";
 export const LIVE2D_RENDERER_READY_STALE_EVIDENCE_DOWNGRADE_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_stale_evidence_downgrade_contract_v1";
+export const LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_ALLOWLIST_SCHEMA = "iris_live2d_renderer_ready_evidence_source_allowlist_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
@@ -1790,6 +1791,18 @@ export const LIVE2D_RENDERER_READY_STALE_EVIDENCE_REJECTION_LABELS = Object.free
   "missing_fresh_last_cue_applied_evidence",
   "priority1_blocked",
   "checked_row_count_zero",
+]);
+
+export const LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_TYPES = Object.freeze([
+  "none",
+  "fixture",
+  "manual_label",
+  "manifest_only",
+  "sse_connected_only",
+  "cue_accepted_only",
+  "real_probe",
+  "operator_confirmed",
+  "audit_link",
 ]);
 
 export const LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS = Object.freeze([
@@ -7784,6 +7797,89 @@ export function createRendererReadyStaleEvidenceDowngradeContractSummary(input =
     },
   };
   assertSafePublicObject(summary, "renderer ready stale evidence downgrade contract summary");
+  return summary;
+}
+
+export function createRendererReadyEvidenceSourceAllowlistSummary(input = {}) {
+  const source = input && typeof input === "object" ? input : {};
+  const requestedSourceType = typeof source.source_type === "string" ? source.source_type : "none";
+  const sourceAllowed = LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_TYPES.includes(requestedSourceType);
+  const sourceType = sourceAllowed ? requestedSourceType : "unsafe_source_type";
+  const isFixture = sourceType === "fixture";
+  const isManualLabel = sourceType === "manual_label";
+  const isManifestOnly = sourceType === "manifest_only";
+  const isSseConnectedOnly = sourceType === "sse_connected_only";
+  const isCueAcceptedOnly = sourceType === "cue_accepted_only";
+  const isRealProbe = sourceType === "real_probe";
+  const isOperatorConfirmed = sourceType === "operator_confirmed";
+  const isAuditLink = sourceType === "audit_link";
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_ALLOWLIST_SCHEMA,
+    safe_summary_only: true,
+    renderer_readiness_evidence_source_allowlist_status: sourceAllowed ? "source_type_allowed_not_ready" : "unsafe_source_type",
+    renderer_readiness_evidence_source_allowlist: [...LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_TYPES],
+    renderer_readiness_evidence_source_type: sourceType,
+    renderer_readiness_evidence_source_allowed: sourceAllowed,
+    renderer_readiness_evidence_source_is_real_probe: isRealProbe,
+    renderer_readiness_evidence_source_is_fixture: isFixture,
+    renderer_readiness_evidence_source_is_manual_label: isManualLabel,
+    renderer_readiness_evidence_source_is_real_evidence: false,
+    fixture_evidence_is_real_evidence: false,
+    manual_label_is_real_evidence: false,
+    manifest_only_is_real_evidence: false,
+    sse_connected_only_is_real_evidence: false,
+    cue_accepted_only_is_real_evidence: false,
+    real_probe_label_alone_is_renderer_ready: false,
+    operator_confirmed_auto_confirms_owner: false,
+    audit_link_alone_is_production_ready: false,
+    source_classification: {
+      none: "not_real_evidence",
+      fixture: "not_real_evidence",
+      manual_label: "not_real_evidence",
+      manifest_only: "not_real_evidence",
+      sse_connected_only: "not_real_evidence",
+      cue_accepted_only: "not_real_evidence",
+      real_probe: "not_real_evidence_without_fresh_complete_required_chain",
+      operator_confirmed: "not_owner_confirmation_without_explicit_owner_confirmation_task",
+      audit_link: "not_production_readiness_without_safe_audit_and_fresh_evidence",
+    },
+    observed_source_flags_sanitized: {
+      fixture: isFixture ? "fixture_source_not_real_ready" : "not_selected",
+      manual_label: isManualLabel ? "manual_label_not_real_ready" : "not_selected",
+      manifest_only: isManifestOnly ? "manifest_only_not_real_ready" : "not_selected",
+      sse_connected_only: isSseConnectedOnly ? "sse_only_not_real_ready" : "not_selected",
+      cue_accepted_only: isCueAcceptedOnly ? "cue_accepted_only_not_applied" : "not_selected",
+      real_probe: isRealProbe ? "real_probe_label_alone_not_ready" : "not_selected",
+      operator_confirmed: isOperatorConfirmed ? "operator_label_not_owner_confirmation" : "not_selected",
+      audit_link: isAuditLink ? "audit_link_alone_not_readiness" : "not_selected",
+    },
+    renderer_ready_claimed: false,
+    renderer_ready_candidate: false,
+    runtime_readiness_claimed: false,
+    production_readiness_claimed: false,
+    priority1_status: "BLOCKED",
+    checked_row_count: 0,
+    motion_dataset_executable: false,
+    trusted_loader_allowlist_enabled: false,
+    safe_next_action: "wait_for_explicit_owner_action_and_real_renderer_evidence",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      source_allowlist_only: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_actual_live2d_execution: true,
+      no_actual_model_load: true,
+      no_actual_scene_load: true,
+      no_actual_cue_application: true,
+      no_actual_heartbeat_collection: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready evidence source allowlist summary");
   return summary;
 }
 

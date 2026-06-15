@@ -48,6 +48,7 @@ import {
   createRendererReadyFixtureVsRealSeparationContractSummary,
   createRendererReadyFreshEvidenceEnvelopeSummary,
   createRendererReadyStaleEvidenceDowngradeContractSummary,
+  createRendererReadyEvidenceSourceAllowlistSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -216,6 +217,7 @@ export function createRendererState({
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
       const rendererReadyFreshEvidenceEnvelope = rendererReadyFreshEvidenceEnvelopeFromHeartbeat(heartbeatStatus);
       const rendererReadyStaleEvidenceDowngradeContract = rendererReadyStaleEvidenceDowngradeContractFromHeartbeat(heartbeatStatus);
+      const rendererReadyEvidenceSourceAllowlist = rendererReadyEvidenceSourceAllowlistFromHeartbeat(heartbeatStatus);
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -337,6 +339,7 @@ export function createRendererState({
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           renderer_ready_fresh_evidence_envelope_summary: rendererReadyFreshEvidenceEnvelope,
           renderer_ready_stale_evidence_downgrade_contract_summary: rendererReadyStaleEvidenceDowngradeContract,
+          renderer_ready_evidence_source_allowlist_summary: rendererReadyEvidenceSourceAllowlist,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -407,6 +410,7 @@ export function createRendererState({
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           renderer_ready_fresh_evidence_envelope_summary: rendererReadyFreshEvidenceEnvelope,
           renderer_ready_stale_evidence_downgrade_contract_summary: rendererReadyStaleEvidenceDowngradeContract,
+          renderer_ready_evidence_source_allowlist_summary: rendererReadyEvidenceSourceAllowlist,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -518,6 +522,7 @@ export function createRendererState({
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
         renderer_ready_fresh_evidence_envelope_summary: status.renderer_health.renderer_ready_fresh_evidence_envelope_summary,
         renderer_ready_stale_evidence_downgrade_contract_summary: status.renderer_health.renderer_ready_stale_evidence_downgrade_contract_summary,
+        renderer_ready_evidence_source_allowlist_summary: status.renderer_health.renderer_ready_evidence_source_allowlist_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -683,6 +688,7 @@ export function createRendererState({
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
       const rendererReadyFreshEvidenceEnvelope = rendererReadyFreshEvidenceEnvelopeFromHeartbeat(heartbeatStatus);
       const rendererReadyStaleEvidenceDowngradeContract = rendererReadyStaleEvidenceDowngradeContractFromHeartbeat(heartbeatStatus);
+      const rendererReadyEvidenceSourceAllowlist = rendererReadyEvidenceSourceAllowlistFromHeartbeat(heartbeatStatus);
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -763,6 +769,7 @@ export function createRendererState({
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
       response.renderer_ready_fresh_evidence_envelope_summary = rendererReadyFreshEvidenceEnvelope;
       response.renderer_ready_stale_evidence_downgrade_contract_summary = rendererReadyStaleEvidenceDowngradeContract;
+      response.renderer_ready_evidence_source_allowlist_summary = rendererReadyEvidenceSourceAllowlist;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -896,6 +903,7 @@ export function createRendererState({
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
       const rendererReadyFreshEvidenceEnvelope = rendererReadyFreshEvidenceEnvelopeFromHeartbeat(heartbeatStatus);
       const rendererReadyStaleEvidenceDowngradeContract = rendererReadyStaleEvidenceDowngradeContractFromHeartbeat(heartbeatStatus);
+      const rendererReadyEvidenceSourceAllowlist = rendererReadyEvidenceSourceAllowlistFromHeartbeat(heartbeatStatus);
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1000,6 +1008,7 @@ export function createRendererState({
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           renderer_ready_fresh_evidence_envelope_summary: rendererReadyFreshEvidenceEnvelope,
           renderer_ready_stale_evidence_downgrade_contract_summary: rendererReadyStaleEvidenceDowngradeContract,
+          renderer_ready_evidence_source_allowlist_summary: rendererReadyEvidenceSourceAllowlist,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1070,6 +1079,7 @@ export function createRendererState({
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           renderer_ready_fresh_evidence_envelope_summary: rendererReadyFreshEvidenceEnvelope,
           renderer_ready_stale_evidence_downgrade_contract_summary: rendererReadyStaleEvidenceDowngradeContract,
+          renderer_ready_evidence_source_allowlist_summary: rendererReadyEvidenceSourceAllowlist,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1146,6 +1156,12 @@ function rendererReadyStaleEvidenceDowngradeContractFromHeartbeat(heartbeatStatu
     fresh_heartbeat_evidence_present: heartbeatStatus.heartbeat_present,
     real_model_load_evidence_present: heartbeatStatus.real_model_load_supported,
     last_cue_applied_evidence_present: heartbeatStatus.last_cue_applied,
+  });
+}
+
+function rendererReadyEvidenceSourceAllowlistFromHeartbeat(heartbeatStatus) {
+  return createRendererReadyEvidenceSourceAllowlistSummary({
+    source_type: heartbeatStatus.live2d_evidence_summary?.collector_source_type || "none",
   });
 }
 

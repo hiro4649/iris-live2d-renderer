@@ -5732,6 +5732,35 @@ The stale evidence downgrade contract is a read-only negative contract for `/sta
 
 Required rejection labels remain: stale_evidence_is_not_renderer_ready, fixture_evidence_is_not_real_evidence, manual_label_is_not_real_evidence, manifest_only_is_not_real_ready, sse_connected_is_not_real_ready, cue_accepted_is_not_last_cue_applied, missing_fresh_heartbeat_evidence, missing_fresh_model_load_evidence, missing_fresh_last_cue_applied_evidence, priority1_blocked, and checked_row_count_zero.
 
+## Renderer Ready Evidence Source Allowlist
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-SOURCE-ALLOWLIST1
+
+The renderer readiness evidence source allowlist is a read-only status and contract surface for `/status`, `/health`, `/renderer/runtime-config`, and heartbeat acknowledgement summaries. It classifies source labels without collecting evidence, running a renderer probe, executing Live2D or Cubism SDK code, loading a model or scene, applying a cue, collecting a heartbeat, creating owner confirmation, starting actual data work, enabling trusted loader, or claiming runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_source_allowlist | added |
+| source_types | none, fixture, manual_label, manifest_only, sse_connected_only, cue_accepted_only, real_probe, operator_confirmed, audit_link |
+| fixture_source_is_not_real_ready | true |
+| manual_label_is_not_real_ready | true |
+| manifest_only_is_not_real_ready | true |
+| sse_connected_only_is_not_real_ready | true |
+| cue_accepted_only_is_not_real_ready | true |
+| real_probe_label_alone_is_not_ready | true |
+| owner_confirmation_auto_confirmed | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
+Unknown source types are downgraded to the safe public label `unsafe_source_type` without echoing the raw value. `real_probe`, `operator_confirmed`, and `audit_link` remain labels only in this task and do not create real evidence, owner confirmation, runtime readiness, production readiness, or trusted loader enablement.
+
 ## Post-PR256 Owner Action Freeze Unexpected Field Rejection Guard
 
 Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-UNEXPECTED-FIELD-REJECTION-GUARD1
