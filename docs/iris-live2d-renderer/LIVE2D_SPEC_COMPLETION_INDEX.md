@@ -5532,6 +5532,34 @@ This post-PR251 owner action lane freeze register is metadata-only and planning-
 | checked_row_count | 0 |
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
+
+## Renderer Ready Fixture-Vs-Real Separation Contract
+
+Task: LIVE2D-RENDERER-READY-FIXTURE-VS-REAL-SEPARATION-CONTRACT1
+
+This negative contract keeps fixture pass, manifest availability, SSE connection, cue acceptance, local checks, remote checks, schema manifest pass, and owner action freeze pass from being treated as real renderer readiness. It is contract coverage only and does not execute the renderer, run Cubism SDK code, load a model, apply a cue, perform a browser probe, create owner confirmation, start actual data work, enable trusted loader, resolve priority1, or claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_fixture_vs_real_separation_contract | added |
+| fixture_pass_is_not_real_ready | true |
+| manifest_only_is_not_real_ready | true |
+| sse_connected_is_not_real_ready | true |
+| cue_accepted_is_not_last_cue_applied | true |
+| local_checks_are_not_runtime_readiness | true |
+| remote_checks_are_not_runtime_readiness | true |
+| owner_action_freeze_is_not_renderer_readiness | true |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| raw_value_leak | false |
+| endpoint_token_secret_leak | false |
+| raw_renderer_payload_leak | false |
 | safe_next_action_wait_for_explicit_owner_action | true |
 | no_next_product_task_without_explicit_owner_action | true |
 | next_recommended_task | none until explicit owner action |

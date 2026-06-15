@@ -45,6 +45,7 @@ import {
   createMotionDatasetMotionAllowlistSyncReviewSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
+  createRendererReadyFixtureVsRealSeparationContractSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -210,6 +211,7 @@ export function createRendererState({
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
+      const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -328,6 +330,7 @@ export function createRendererState({
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
+          renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -395,6 +398,7 @@ export function createRendererState({
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
+          renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -503,6 +507,7 @@ export function createRendererState({
         motion_dataset_motion_allowlist_sync_review_summary: status.renderer_health.motion_dataset_motion_allowlist_sync_review_summary,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
+        renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -665,6 +670,7 @@ export function createRendererState({
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
+      const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -742,6 +748,7 @@ export function createRendererState({
       response.motion_dataset_motion_allowlist_sync_review_summary = motionDatasetMotionAllowlistSyncReview;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
+      response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -872,6 +879,7 @@ export function createRendererState({
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
+      const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -973,6 +981,7 @@ export function createRendererState({
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
+          renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1040,6 +1049,7 @@ export function createRendererState({
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
+          renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1076,6 +1086,20 @@ function rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatu
     scene_loaded: heartbeatStatus.scene_loaded,
     model_matches_expected: heartbeatStatus.model_matches,
     scene_matches_expected: heartbeatStatus.scene_matches,
+    cue_capability_confirmed: heartbeatStatus.cue_capability_confirmed,
+    last_cue_applied_success: heartbeatStatus.last_cue_applied,
+  });
+}
+
+function rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus) {
+  return createRendererReadyFixtureVsRealSeparationContractSummary({
+    manifest_available: heartbeatStatus.model3_manifest_available,
+    sse_connected: heartbeatStatus.heartbeat_present,
+    cue_accepted: heartbeatStatus.cue_capability_claimed,
+    fresh_heartbeat_present: heartbeatStatus.heartbeat_fresh,
+    real_model_load_supported: heartbeatStatus.real_model_load_supported,
+    model_loaded: heartbeatStatus.model_loaded,
+    scene_loaded: heartbeatStatus.scene_loaded,
     cue_capability_confirmed: heartbeatStatus.cue_capability_confirmed,
     last_cue_applied_success: heartbeatStatus.last_cue_applied,
   });
