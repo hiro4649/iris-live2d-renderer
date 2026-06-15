@@ -5650,6 +5650,50 @@ This runtime/status surface exposes the PR252 owner action lane freeze as a safe
 | motion_dataset_boundary | non_executable |
 | trusted_loader_boundary | disabled |
 
+## Renderer Ready Fresh Evidence Envelope Schema
+
+Task: LIVE2D-RENDERER-READY-FRESH-EVIDENCE-ENVELOPE-SCHEMA1
+
+The renderer readiness evidence envelope is a read-only safe status contract for `/status`, `/health`, and `/renderer/runtime-config`. It records that renderer readiness still lacks fresh real renderer evidence. It does not run a renderer probe, does not execute the Cubism SDK, does not load a real model or scene, does not apply a cue, does not collect a heartbeat, does not read row bodies or actual files, does not calculate hashes, does not create owner confirmation, does not enable trusted loader, and does not claim runtime or production readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_fresh_evidence_envelope_schema | added |
+| safe_status_only | true |
+| not_renderer_ready | true |
+| not_actual_probe | true |
+| not_actual_model_load | true |
+| not_actual_scene_load | true |
+| not_actual_cue_application | true |
+| fresh_evidence_present | false |
+| evidence_freshness | missing |
+| renderer_readiness_evidence_status | missing_real_renderer_evidence |
+| renderer_readiness_evidence_fresh | false |
+| renderer_readiness_evidence_source_type | none |
+| renderer_readiness_evidence_timestamp_ms | null |
+| renderer_readiness_evidence_stale | true |
+| real_probe_evidence_present | false |
+| fresh_heartbeat_evidence_present | false |
+| real_model_load_evidence_present | false |
+| model_loaded_evidence_present | false |
+| scene_loaded_evidence_present | false |
+| model_scene_match_evidence_present | false |
+| cue_capability_evidence_present | false |
+| last_cue_applied_evidence_present | false |
+| fixture_evidence_is_real_evidence | false |
+| manual_evidence_is_real_evidence | false |
+| renderer_ready_claimed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| safe_next_action | wait_for_explicit_owner_action_and_real_renderer_evidence |
+
+Required blocker labels remain: missing_fresh_heartbeat_evidence, missing_real_model_load_evidence, missing_model_loaded_evidence, missing_scene_loaded_evidence, missing_model_scene_match_evidence, missing_cue_capability_evidence, missing_last_cue_applied_evidence, fixture_evidence_is_not_real_evidence, manual_label_is_not_real_evidence, stale_evidence_is_not_ready, priority1_blocked, checked_row_count_zero, and trusted_loader_disabled.
+
 ## Post-PR256 Owner Action Freeze Unexpected Field Rejection Guard
 
 Task: LIVE2D-POST-PR256-OWNER-ACTION-FREEZE-UNEXPECTED-FIELD-REJECTION-GUARD1
