@@ -71,6 +71,7 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_SUBTITLE_GAZE_GUARD_SCHEMA = "ir
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_PERSONA_PRESSURE_GUARD_SCHEMA = "iris_live2d_motion_identity_and_comfort_persona_pressure_guard_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_BOUNDARY_SCHEMA = "iris_live2d_motion_identity_and_comfort_voice_sync_hint_boundary_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_ADAPTIVE_BOUNDS_SCHEMA = "iris_live2d_motion_identity_and_comfort_adaptive_bounds_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_SCHEMA = "iris_live2d_motion_identity_comfort_development_schedule_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -549,6 +550,36 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_ADAPTIVE_BOUNDS_REJECTIONS = Obj
   "actual_ingestion_requested",
   "checked_row_count_nonzero",
   "priority1_marked_resolved",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_PHASES = Object.freeze([
+  "spec_phase",
+  "fixture_rejection_phase",
+  "dry_run_validator_phase",
+  "recovery_matrix_phase",
+  "context_gate_phase",
+  "subtitle_gaze_guard_phase",
+  "persona_pressure_guard_phase",
+  "voice_sync_hint_boundary_phase",
+  "adaptive_boundedness_phase",
+  "status_surface_phase",
+  "cross_surface_consistency_phase",
+  "redaction_no_sweetening_phase",
+  "future_real_renderer_evidence_phase_owner_action_only",
+  "future_actual_renderer_probe_phase_owner_confirmation_only",
+  "future_trusted_loader_phase_owner_confirmation_and_real_evidence_only",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_BOUNDARIES = Object.freeze([
+  "schedule_is_not_readiness",
+  "schedule_is_not_execution",
+  "schedule_is_not_owner_confirmation",
+  "runtime_readiness_false",
+  "production_readiness_false",
+  "priority1_blocked",
+  "checked_row_count_zero",
+  "motion_dataset_non_executable",
+  "trusted_loader_disabled",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -8845,6 +8876,60 @@ export function createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary(input 
     ],
     safeNextAction: "add_motion_identity_and_comfort_final_integration_review",
     context: "live2d motion identity and comfort adaptive bounds summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortDevelopmentScheduleSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_development_schedule_status",
+    status: "development_schedule_blocked",
+    boundaries: {
+      motion_identity_comfort_development_schedule_only_boundary: true,
+      schedule_planning_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_renderer_probe_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_runtime_allowlist_enablement_boundary: true,
+      no_renderer_ready_claim_boundary: true,
+      no_actual_data_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_development_schedule_only: true,
+      schedule_executes_motion: false,
+      schedule_claims_runtime_ready: false,
+      schedule_claims_production_ready: false,
+      schedule_creates_owner_confirmation: false,
+      future_real_renderer_evidence_phase_started: false,
+      future_actual_renderer_probe_phase_started: false,
+      future_trusted_loader_phase_started: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      motion_dataset_executable: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+    },
+    arrays: {
+      motion_identity_comfort_development_schedule_phases: [...LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_PHASES],
+      motion_identity_comfort_development_schedule_boundaries: [...LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_BOUNDARIES],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_development_schedule_only",
+      "schedule_is_not_readiness",
+      "schedule_is_not_execution",
+      "future_real_renderer_evidence_requires_owner_action",
+      "future_actual_renderer_probe_requires_owner_confirmation",
+      "future_trusted_loader_requires_owner_confirmation_and_real_evidence",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_comfort_completion_review",
+    context: "live2d motion identity comfort development schedule summary",
   }, input);
 }
 

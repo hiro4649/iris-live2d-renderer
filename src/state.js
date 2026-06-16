@@ -52,6 +52,7 @@ import {
   createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary,
   createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary,
   createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary,
+  createLive2dMotionIdentityComfortDevelopmentScheduleSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -273,6 +274,7 @@ export function createRendererState({
       const live2dMotionIdentityAndComfortPersonaPressureGuard = createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary();
       const live2dMotionIdentityAndComfortVoiceSyncHintBoundary = createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary();
       const live2dMotionIdentityAndComfortAdaptiveBounds = createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary();
+      const live2dMotionIdentityComfortDevelopmentSchedule = createLive2dMotionIdentityComfortDevelopmentScheduleSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -447,6 +449,7 @@ export function createRendererState({
           live2d_motion_identity_and_comfort_persona_pressure_guard_summary: live2dMotionIdentityAndComfortPersonaPressureGuard,
           live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: live2dMotionIdentityAndComfortVoiceSyncHintBoundary,
           live2d_motion_identity_and_comfort_adaptive_bounds_summary: live2dMotionIdentityAndComfortAdaptiveBounds,
+          live2d_motion_identity_comfort_development_schedule_summary: live2dMotionIdentityComfortDevelopmentSchedule,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -570,6 +573,7 @@ export function createRendererState({
           live2d_motion_identity_and_comfort_persona_pressure_guard_summary: live2dMotionIdentityAndComfortPersonaPressureGuard,
           live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: live2dMotionIdentityAndComfortVoiceSyncHintBoundary,
           live2d_motion_identity_and_comfort_adaptive_bounds_summary: live2dMotionIdentityAndComfortAdaptiveBounds,
+          live2d_motion_identity_comfort_development_schedule_summary: live2dMotionIdentityComfortDevelopmentSchedule,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -734,6 +738,7 @@ export function createRendererState({
         live2d_motion_identity_and_comfort_persona_pressure_guard_summary: status.renderer_health.live2d_motion_identity_and_comfort_persona_pressure_guard_summary,
         live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: status.renderer_health.live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary,
         live2d_motion_identity_and_comfort_adaptive_bounds_summary: status.renderer_health.live2d_motion_identity_and_comfort_adaptive_bounds_summary,
+        live2d_motion_identity_comfort_development_schedule_summary: status.renderer_health.live2d_motion_identity_comfort_development_schedule_summary,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -952,6 +957,7 @@ export function createRendererState({
       const live2dMotionIdentityAndComfortPersonaPressureGuard = createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary();
       const live2dMotionIdentityAndComfortVoiceSyncHintBoundary = createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary();
       const live2dMotionIdentityAndComfortAdaptiveBounds = createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary();
+      const live2dMotionIdentityComfortDevelopmentSchedule = createLive2dMotionIdentityComfortDevelopmentScheduleSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1085,6 +1091,7 @@ export function createRendererState({
       response.live2d_motion_identity_and_comfort_persona_pressure_guard_summary = live2dMotionIdentityAndComfortPersonaPressureGuard;
       response.live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary = live2dMotionIdentityAndComfortVoiceSyncHintBoundary;
       response.live2d_motion_identity_and_comfort_adaptive_bounds_summary = live2dMotionIdentityAndComfortAdaptiveBounds;
+      response.live2d_motion_identity_comfort_development_schedule_summary = live2dMotionIdentityComfortDevelopmentSchedule;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1271,6 +1278,7 @@ export function createRendererState({
       const live2dMotionIdentityAndComfortPersonaPressureGuard = createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary();
       const live2dMotionIdentityAndComfortVoiceSyncHintBoundary = createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary();
       const live2dMotionIdentityAndComfortAdaptiveBounds = createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary();
+      const live2dMotionIdentityComfortDevelopmentSchedule = createLive2dMotionIdentityComfortDevelopmentScheduleSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1428,6 +1436,7 @@ export function createRendererState({
           live2d_motion_identity_and_comfort_persona_pressure_guard_summary: live2dMotionIdentityAndComfortPersonaPressureGuard,
           live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: live2dMotionIdentityAndComfortVoiceSyncHintBoundary,
           live2d_motion_identity_and_comfort_adaptive_bounds_summary: live2dMotionIdentityAndComfortAdaptiveBounds,
+          live2d_motion_identity_comfort_development_schedule_summary: live2dMotionIdentityComfortDevelopmentSchedule,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
