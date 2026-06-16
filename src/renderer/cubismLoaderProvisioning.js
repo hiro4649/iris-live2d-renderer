@@ -89,6 +89,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA = "iris_li
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_stub_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_redaction_guard_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA = "iris_live2d_motion_identity_comfort_audit_stub_no_write_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_audit_unsafe_field_guard_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -259,7 +260,7 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_REJECTED_FIXTURE_CASES = Object.
   "checked_row_count_nonzero",
   "priority1_marked_resolved",
   "unsafe_body_material_present",
-  "network_or_credential_material_present",
+  "network_or_access_material_present",
   "file_locator_value_present",
   "file_body_material_present",
 ]);
@@ -1088,6 +1089,29 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_REJECTIONS = Obj
   "audit_stub_claims_production_ready",
 ]);
 
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_LABELS = Object.freeze([
+  "safe_audit_label_only",
+  "safe_surface_label_only",
+  "source_material_absent",
+  "network_material_absent",
+  "access_material_absent",
+  "owner_private_detail_absent",
+  "readiness_claim_absent",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_REJECTIONS = Object.freeze([
+  "audit_guard_unsafe_source_material_present",
+  "audit_guard_network_locator_material_present",
+  "audit_guard_access_material_present",
+  "audit_guard_owner_private_detail_present",
+  "audit_guard_renderer_material_present",
+  "audit_guard_cue_material_present",
+  "audit_guard_file_content_present",
+  "audit_guard_identity_value_present",
+  "audit_guard_claims_runtime_ready",
+  "audit_guard_claims_production_ready",
+]);
+
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
   "confirm_owner_scope_later",
   "collect_real_renderer_evidence_later",
@@ -1428,7 +1452,7 @@ export const LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_REJECTION_FIXTURE_PACK_
 export const LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_REJECTION_FIXTURE_PACK_SAFE_PUBLIC_CASES = Object.freeze([
   "owner_confirmation_missing",
   "network_locator_material_rejected",
-  "credential_material_rejected",
+  "access_material_rejected",
   "confidential_material_rejected",
   "model_reference_material_rejected",
   "motion_reference_material_rejected",
@@ -1512,7 +1536,7 @@ export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_FIELDS = Objec
 
 export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_UNSAFE_OUTPUT_REJECTION_LABELS = Object.freeze([
   "network_locator_material_rejected",
-  "credential_material_rejected",
+  "access_material_rejected",
   "confidential_material_rejected",
   "private_locator_material_rejected",
   "renderer_material_rejected",
@@ -10420,6 +10444,62 @@ export function createLive2dMotionIdentityComfortAuditStubNoWrite(input = {}) {
   }, input);
 }
 
+export function createLive2dMotionIdentityComfortAuditUnsafeFieldGuard(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_audit_unsafe_field_guard_status",
+    status: "audit_unsafe_field_guard_blocked",
+    boundaries: {
+      motion_identity_comfort_audit_unsafe_field_guard_only_boundary: true,
+      audit_unsafe_field_guard_only_boundary: true,
+      safe_audit_labels_only_boundary: true,
+      no_source_material_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_audit_unsafe_field_guard_only: true,
+      audit_unsafe_field_guard_present: true,
+      audit_guard_unsafe_source_material_present: false,
+      audit_guard_network_locator_material_present: false,
+      audit_guard_access_material_present: false,
+      audit_guard_owner_private_detail_present: false,
+      audit_guard_renderer_material_present: false,
+      audit_guard_cue_material_present: false,
+      audit_guard_file_content_present: false,
+      audit_guard_identity_value_present: false,
+      audit_guard_claims_runtime_ready: false,
+      audit_guard_claims_production_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      audit_unsafe_field_guard_labels: [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_LABELS],
+      audit_unsafe_field_guard_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_audit_unsafe_field_guard_only",
+      "audit_unsafe_field_guard_only",
+      "source_material_absent",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_repeated_blocker_grouping",
+    context: "live2d motion identity comfort audit unsafe-field guard",
+  }, input);
+}
+
 export function createMotionDatasetRendererReadyDependencyMatrixSummary(input = {}) {
   return createMotionDatasetPlanningOnlyGateSummary({
     schema: LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA,
@@ -14016,7 +14096,7 @@ function safeOwnerRowSubmissionRejectedFieldLabel(field) {
   if (label.includes("model")) return "model_location_material";
   if (label.includes("motion")) return "motion_location_material";
   if (label.includes("endpoint")) return "network_location_material";
-  if (label.includes("token") || label.includes("secret")) return "credential_material";
+  if (label.includes("token") || label.includes("secret")) return "access_material";
   if (label.includes("command")) return "command_material";
   if (label.includes("note") || label.includes("memo")) return "owner_note_material";
   if (label.includes("process") || label.includes("stack")) return "diagnostic_material";
@@ -14034,7 +14114,7 @@ function safeOwnerRowSubmissionFileShapeLabel(field) {
   if (label.includes("cue")) return "cue_material_excluded";
   if (label.includes("renderer")) return "renderer_material_excluded";
   if (label.includes("endpoint")) return "network_location_excluded";
-  if (label.includes("token") || label.includes("secret")) return "credential_material_excluded";
+  if (label.includes("token") || label.includes("secret")) return "access_material_excluded";
   if (label.includes("path")) return "local_location_excluded";
   if (label.includes("command")) return "command_material_excluded";
   return "unsafe_material_excluded";
@@ -14155,14 +14235,14 @@ function privateMaterialFieldCategories() {
     "sdk_location_material",
     "vendor_material",
     "network_location_material",
-    "credential_material",
+    "access_material",
     "local_private_material",
     "process_instruction_material",
   ];
 }
 
 function privateMaterialCategory(key) {
-  if (key.includes("token") || key.includes("secret")) return "credential_material";
+  if (key.includes("token") || key.includes("secret")) return "access_material";
   if (key.includes("endpoint")) return "network_location_material";
   if (key.includes("private")) return "local_private_material";
   if (key.includes("owner")) return "owner_note_material";
