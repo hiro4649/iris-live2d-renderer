@@ -1,4 +1,4 @@
-﻿import { existsSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { assertSafePublicObject, createBoundaryPolicy, safeText } from "../contracts.js";
 
 export const CUBISM_LOADER_PROVISIONING_SCHEMA = "iris_live2d_cubism_loader_provisioning_v1";
@@ -88,6 +88,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA = 
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_owner_handoff_stub_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_stub_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_redaction_guard_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA = "iris_live2d_motion_identity_comfort_audit_stub_no_write_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -1025,7 +1026,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_RULES = Object.freeze
   "admin_ordinary_safe_labels_only",
   "operator_view_safe_labels_only",
   "owner_only_detail_not_exposed",
-  "raw_material_not_reflected",
+  "source_material_not_reflected",
   "readiness_not_claimed",
 ]);
 
@@ -1063,6 +1064,28 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_REJECTIONS
   "role_gate_redaction_reflects_private_support_signal",
   "role_gate_redaction_claims_runtime_ready",
   "role_gate_redaction_claims_production_ready",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_FIELDS = Object.freeze([
+  "audit_stub_id_label",
+  "audit_scope_label",
+  "audit_status_label",
+  "safe_surface_label",
+  "blocked_reason_label",
+  "no_write_boundary_label",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_REJECTIONS = Object.freeze([
+  "audit_stub_writes_artifact",
+  "audit_stub_executes_audit",
+  "audit_stub_reads_source_material",
+  "audit_stub_reads_file_content",
+  "audit_stub_accepts_file_identity_value",
+  "audit_stub_reflects_network_locator_material",
+  "audit_stub_reflects_auth_material",
+  "audit_stub_reflects_owner_private_detail",
+  "audit_stub_claims_runtime_ready",
+  "audit_stub_claims_production_ready",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -10335,6 +10358,65 @@ export function createLive2dMotionIdentityComfortRoleGateRedactionGuard(input = 
     ],
     safeNextAction: "add_motion_identity_comfort_audit_stub_no_write",
     context: "live2d motion identity comfort role gate redaction guard",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortAuditStubNoWrite(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_audit_stub_no_write_status",
+    status: "audit_stub_no_write_blocked",
+    boundaries: {
+      motion_identity_comfort_audit_stub_no_write_only_boundary: true,
+      audit_stub_label_only_boundary: true,
+      audit_execution_not_started_boundary: true,
+      audit_write_disabled_boundary: true,
+      no_source_material_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_audit_stub_no_write_only: true,
+      audit_stub_no_write_present: true,
+      audit_execution_started: false,
+      audit_write_enabled: false,
+      audit_artifact_written: false,
+      audit_source_material_read: false,
+      audit_file_content_read: false,
+      audit_file_identity_value_accepted: false,
+      audit_stub_reflects_network_locator_material: false,
+      audit_stub_reflects_auth_material: false,
+      audit_stub_reflects_owner_private_detail: false,
+      audit_stub_claims_runtime_ready: false,
+      audit_stub_claims_production_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      audit_stub_no_write_fields: [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_FIELDS],
+      audit_stub_no_write_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_audit_stub_no_write_only",
+      "audit_execution_not_started",
+      "audit_write_disabled",
+      "source_material_absent",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_audit_unsafe_field_guard",
+    context: "live2d motion identity comfort audit stub no-write",
   }, input);
 }
 
