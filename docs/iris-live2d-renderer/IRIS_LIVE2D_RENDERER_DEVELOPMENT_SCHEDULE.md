@@ -79,6 +79,14 @@ production_readiness_claimed: no
 - Boundary: voice sync hint boundary planning only, no motion execution, no renderer/browser probe, no cue application, no audio or TTS runtime execution, no external service, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1.
 
+## Inserted Boundary: LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-VOICE-SYNC-HINT-BOUNDARY1 and before any final integration review or runtime motion work.
+- Scope: define adaptation window, maximum consecutive strong motion, cooldown bucket, confidence, freshness, viewer comfort, moderation, dependency pressure, donation/relation, serious focus, safe motion candidate, safe downgrade, and safe recovery labels.
+- Rejections: missing adaptive labels, unbounded adaptive reaction, repeated strong motion without cooldown, low-confidence escalation, stale-context escalation, comfort-risk escalation, serious-focus playful strong motion, moderation-limited personalized strong motion, crisis/minor/romantic/dependency close-up or strong escalation, donation/relation escalation, experimental executable motion, runtime-ready boundary claims, renderer-ready candidate claims, actual data, checked row count increase, and priority1 resolution.
+- Boundary: adaptive bounds planning only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-FINAL-INTEGRATION-REVIEW1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

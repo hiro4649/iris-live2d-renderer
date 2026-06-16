@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 87 percent |
+| spec_completion_estimate | about 88 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1, adaptive bounds next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-FINAL-INTEGRATION-REVIEW1, final integration review next planning |
 
 ## Completion Matrix
 
@@ -86,6 +86,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort subtitle/gaze guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add persona pressure guard next. |
 | motion identity and comfort persona pressure guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add voice sync hint boundary next. |
 | motion identity and comfort voice sync hint boundary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add adaptive bounds next. |
+| motion identity and comfort adaptive bounds | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final integration review next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -204,6 +205,47 @@ Required rejections include missing_subtitle_visibility_label, missing_subtitle_
 | gaze_pressure_risk_closeup_allowed | false |
 | camera_proximity_risk_strong_motion_allowed | false |
 | camera_proximity_risk_closeup_allowed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Adaptive Bounds
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1
+
+Status: adaptive bounds planning only. This surface defines adaptation policy, boundedness status, motion candidate, downgrade/rejection state, safe fallback, confidence, freshness, recent strong motion history, viewer comfort, moderation, dependency pressure, donation/relation, serious focus, cooldown, and recovery labels. It does not execute motion, apply cues, load a model or scene, create owner confirmation, enable a trusted loader, accept actual data, or claim readiness.
+
+### Required Adaptive Bounds Labels
+
+Required labels: adaptiveReactionPolicy, adaptiveReactionBoundednessStatus, adaptiveMotionCandidate, adaptiveMotionDowngraded, adaptiveMotionRejected, adaptiveMotionRejectReason, adaptiveMotionSafeFallback, adaptiveContextConfidence, adaptiveContextFreshness, adaptiveRecentStrongMotionHistory, adaptiveViewerComfortMode, adaptiveModerationBoundary, adaptiveDependencyPressureBoundary, adaptiveDonationRelationBoundary, adaptiveSeriousFocusBoundary, adaptationWindowLabel, maxConsecutiveStrongMotionLabel, cooldownBucketLabel, contextConfidenceLabel, viewerComfortStateLabel, staleCueAllowed, safeMotionCandidate, safeDowngradeMotion, and safeRecoveryMotion.
+
+### Required Adaptive Bounds Rejections
+
+Required rejections include missing_adaptation_window_label, missing_max_consecutive_strong_motion_label, missing_cooldown_bucket_label, missing_context_confidence_label, missing_viewer_comfort_state_label, missing_stale_cue_allowed, missing_safe_motion_candidate, missing_safe_downgrade_motion, missing_safe_recovery_motion, adaptive_reaction_unbounded, repeated_strong_motion_without_cooldown, low_confidence_escalates_motion, stale_context_escalates_motion, comfort_risk_escalates_motion, serious_focus_playful_strong_motion, moderation_limited_personalized_strong_motion, crisis_signal_closeup_selected, minor_signal_closeup_selected, romantic_pressure_closeup_selected, dependency_pressure_strong_motion_selected, donation_relation_escalates_motion, recent_strong_motion_repeat_without_downgrade, experimental_motion_executable_selected, unsafe_renderer_material_present, network_material_present, adaptive_bounds_claims_runtime_ready, renderer_ready_candidate_marked_true, actual_ingestion_requested, checked_row_count_nonzero, and priority1_marked_resolved.
+
+### Preserved Adaptive Bounds Facts
+
+| Fact | Value |
+| --- | --- |
+| adaptive_bounds_executes_motion | false |
+| adaptive_bounds_claims_runtime_ready | false |
+| adaptive_reaction_unbounded | false |
+| repeated_strong_motion_allowed | false |
+| low_confidence_escalation_allowed | false |
+| stale_context_escalation_allowed | false |
+| comfort_risk_escalation_allowed | false |
+| serious_focus_playful_motion_allowed | false |
+| moderation_limited_personalized_strong_motion_allowed | false |
+| crisis_signal_closeup_allowed | false |
+| minor_signal_closeup_allowed | false |
+| romantic_pressure_closeup_allowed | false |
+| dependency_pressure_strong_motion_allowed | false |
+| donation_amount_escalates_motion_allowed | false |
+| relationship_score_escalates_proximity_allowed | false |
+| experimental_motion_labels_executable | false |
 | renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
