@@ -105,6 +105,15 @@ production_readiness_claimed: no
 - Boundary: completion review planning only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, no priority1 resolution, and no readiness claim.
 - Next safe action: continue safe blocker review or wait for owner-gated real renderer evidence.
 
+## Inserted Status Surface: LIVE2D-MOTION-IDENTITY-PROFILE-STATUS-SURFACE1
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-COMPLETION-REVIEW1 and before any comfort policy status surface or runtime motion work.
+- Scope: expose motion identity profile labels on `/status`, `/health`, and `/renderer/runtime-config` style summaries as safe labels only.
+- Safe labels: motionLabel, motionFamily, personaFit, identityRisk, comfortRisk, strongMotion, recoveryRequired, cooldownRequired, maxDurationMsLabel, staleCueAllowed, safeDowngradeMotion, and safeRecoveryMotion.
+- Rejections: motion execution, runtime readiness, production readiness, executable experimental labels, renderer material, network material, owner confirmation, trusted loader enablement, actual data, checked row count increase, and priority1 resolution.
+- Boundary: status surface only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-COMFORT-POLICY-STATUS-SURFACE1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

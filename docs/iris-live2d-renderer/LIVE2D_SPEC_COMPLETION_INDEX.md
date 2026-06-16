@@ -89,6 +89,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort adaptive bounds | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final integration review next. |
 | motion identity comfort development schedule | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add completion review next. |
 | motion identity comfort completion review | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe blocker review; do not claim readiness. |
+| motion identity profile status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add comfort policy status surface next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -267,6 +268,32 @@ Rejected promotions include completion_review_claims_runtime_ready, completion_r
 | completion_review_creates_owner_confirmation | false |
 | completion_review_starts_actual_renderer_probe | false |
 | completion_review_accepts_actual_data | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Profile Status Surface
+
+Task: LIVE2D-MOTION-IDENTITY-PROFILE-STATUS-SURFACE1
+
+Status: safe status surface only. This surface exposes motion identity profile labels on status-style summaries without accepting renderer material, network material, actual data, owner confirmation, trusted loader enablement, or readiness claims. It does not execute motion, apply cues, probe a renderer, load a model or scene, or make experimental labels executable.
+
+Safe labels: motionLabel, motionFamily, personaFit, identityRisk, comfortRisk, strongMotion, recoveryRequired, cooldownRequired, maxDurationMsLabel, staleCueAllowed, safeDowngradeMotion, and safeRecoveryMotion.
+
+Rejected promotions include identity_profile_executes_motion, identity_profile_claims_runtime_ready, identity_profile_claims_production_ready, identity_profile_marks_experimental_executable, identity_profile_accepts_renderer_material, identity_profile_accepts_network_material, identity_profile_creates_owner_confirmation, identity_profile_enables_trusted_loader, identity_profile_accepts_actual_data, identity_profile_sets_checked_row_count_nonzero, and identity_profile_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| identity_profile_present | true |
+| safe_labels_only | true |
+| identity_profile_executes_motion | false |
+| identity_profile_claims_runtime_ready | false |
+| identity_profile_claims_production_ready | false |
+| experimental_labels_executable | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
