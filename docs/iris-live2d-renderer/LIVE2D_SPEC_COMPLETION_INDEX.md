@@ -99,6 +99,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort implementation gap register | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final long continuation review2 next. |
 | motion identity comfort final long continuation review2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe-only follow-up; do not claim readiness. |
 | motion identity comfort public summary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add admin summary redaction next. |
+| motion identity comfort admin summary redaction | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add operator handoff no-action next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -554,6 +555,37 @@ Rejected public summary promotions include public_summary_reflects_network_locat
 | public_summary_reflects_private_support_signal | false |
 | public_summary_claims_runtime_ready | false |
 | public_summary_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Admin Summary Redaction
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-ADMIN-SUMMARY-REDACTION1
+
+Status: admin ordinary summary redaction only. This surface allows only safe labels in an admin ordinary summary and keeps owner-only detail role-gated. It does not expose network locator material, auth material, renderer material, cue material, model or motion locator material, private relation signal, private support signal, or dependency note material.
+
+Admin ordinary fields: admin_ordinary_summary_status, identity_profile_status_label, comfort_policy_status_label, freshness_policy_status_label, strong_motion_policy_status_label, adaptive_bounds_status_label, implementation_gap_status_label, and redaction_boundary_status.
+
+Rejected admin summary promotions include admin_summary_reflects_network_locator_material, admin_summary_reflects_auth_material, admin_summary_reflects_renderer_material, admin_summary_reflects_cue_material, admin_summary_reflects_model_locator_material, admin_summary_reflects_motion_locator_material, admin_summary_reflects_owner_only_detail, admin_summary_reflects_private_relation_signal, admin_summary_reflects_private_support_signal, admin_summary_reflects_dependency_note_material, admin_summary_claims_runtime_ready, and admin_summary_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| admin_ordinary_safe_labels_only | true |
+| owner_only_detail_absent_from_admin_ordinary | true |
+| admin_summary_reflects_network_locator_material | false |
+| admin_summary_reflects_auth_material | false |
+| admin_summary_reflects_renderer_material | false |
+| admin_summary_reflects_cue_material | false |
+| admin_summary_reflects_owner_only_detail | false |
+| admin_summary_reflects_private_relation_signal | false |
+| admin_summary_reflects_private_support_signal | false |
+| admin_summary_claims_runtime_ready | false |
+| admin_summary_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
