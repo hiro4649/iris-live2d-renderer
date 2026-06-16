@@ -166,6 +166,14 @@ production_readiness_claimed: no
 - Boundary: implementation gap audit only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-REGISTER1.
 
+## Inserted Register: LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-REGISTER1
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-AUDIT1 and before final long continuation review2.
+- Scope: group the open implementation gaps into renderer evidence, cue application, model/scene evidence, owner confirmation, trusted loader, priority1, checked row count, motion dataset execution, and readiness claim categories.
+- Safe actions: keep renderer execution blocked, keep cue application blocked, keep model/scene load blocked, keep owner confirmation missing, keep trusted loader disabled, keep priority1 blocked, keep checked row count zero, keep motion dataset non-executable, and keep readiness claims false.
+- Boundary: implementation gap register only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-FINAL-LONG-CONTINUATION-REVIEW2.
+
 ## Reaction Latency Roadmap
 
 縺薙・ roadmap 縺ｯ phase-based schedule 縺ｧ縺ゅｊ縲…alendar date 縺ｯ謖√◆縺ｪ縺・ょ推 phase 縺ｯ蜑肴ｮｵ縺ｮ safety boundary 縺ｨ evidence requirement 繧貞｣翫＆縺壹↓騾ｲ繧√ｋ縲・atency target 縺ｯ local renderer 縺ｮ engineering target 縺ｧ縺ゅｊ縲・・菫｡繝励Λ繝・ヨ繝輔か繝ｼ繝荳翫・ viewer-visible latency 縺ｯ蛻･騾皮匱逕溘☆繧九・
