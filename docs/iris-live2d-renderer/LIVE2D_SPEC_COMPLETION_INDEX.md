@@ -101,6 +101,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort public summary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add admin summary redaction next. |
 | motion identity comfort admin summary redaction | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add operator handoff no-action next. |
 | motion identity comfort operator handoff no-action | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add owner handoff stub next. |
+| motion identity comfort owner handoff stub | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add role gate stub next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -615,6 +616,38 @@ Rejected promotions include operator_handoff_sent, operator_action_executed, ren
 | external_connection_started | false |
 | operator_handoff_claims_runtime_ready | false |
 | operator_handoff_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Owner Handoff Stub
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-OWNER-HANDOFF-STUB1
+
+Status: owner handoff draft stub only. This surface defines the future owner review sections and remaining blockers while keeping the handoff unsent, owner action unrequested, owner confirmation uncreated, actual data unaccepted, renderer execution blocked, cue application blocked, trusted loader disabled, and readiness unclaimed.
+
+Required owner review sections: motion_identity_status_review, comfort_policy_status_review, freshness_policy_status_review, strong_motion_policy_status_review, adaptive_bounds_status_review, implementation_gap_status_review, and remaining_blocker_review.
+
+Remaining safe blockers include real_renderer_evidence_missing, actual_cue_application_evidence_missing, real_model_scene_evidence_missing, owner_confirmation_missing, trusted_loader_disabled, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, and readiness_not_claimed.
+
+Rejected owner handoff promotions include owner_handoff_sent, owner_action_requested, owner_confirmation_created, owner_confirmation_confirmed, owner_handoff_accepts_actual_data, owner_handoff_executes_renderer, owner_handoff_applies_cue, owner_handoff_enables_trusted_loader, owner_handoff_claims_runtime_ready, and owner_handoff_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| owner_handoff_stub_present | true |
+| owner_handoff_sent | false |
+| owner_action_requested | false |
+| owner_action_accepted | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| owner_handoff_accepts_actual_data | false |
+| owner_handoff_executes_renderer | false |
+| owner_handoff_applies_cue | false |
+| owner_handoff_enables_trusted_loader | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |

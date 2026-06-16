@@ -150,6 +150,10 @@ import {
   LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_ITEMS,
   LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_REJECTIONS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_REVIEW_SECTIONS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_BLOCKERS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_REJECTIONS,
   LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA,
   LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS,
   LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA,
@@ -401,6 +405,7 @@ import {
   createLive2dMotionIdentityComfortPublicSummary,
   createLive2dMotionIdentityComfortAdminSummaryRedaction,
   createLive2dMotionIdentityComfortOperatorHandoffNoAction,
+  createLive2dMotionIdentityComfortOwnerHandoffStub,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -6352,6 +6357,7 @@ try {
   assertLive2dMotionIdentityComfortPublicSummary(provisionedRuntimeConfig.live2d_motion_identity_comfort_public_summary);
   assertLive2dMotionIdentityComfortAdminSummaryRedaction(provisionedRuntimeConfig.live2d_motion_identity_comfort_admin_summary_redaction);
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(provisionedRuntimeConfig.live2d_motion_identity_comfort_operator_handoff_no_action);
+  assertLive2dMotionIdentityComfortOwnerHandoffStub(provisionedRuntimeConfig.live2d_motion_identity_comfort_owner_handoff_stub);
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.renderer_ready, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary);
@@ -6703,6 +6709,7 @@ try {
   assertLive2dMotionIdentityComfortPublicSummary(provisionedStatus.live2d_motion_identity_comfort_public_summary);
   assertLive2dMotionIdentityComfortAdminSummaryRedaction(provisionedStatus.live2d_motion_identity_comfort_admin_summary_redaction);
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(provisionedStatus.live2d_motion_identity_comfort_operator_handoff_no_action);
+  assertLive2dMotionIdentityComfortOwnerHandoffStub(provisionedStatus.live2d_motion_identity_comfort_owner_handoff_stub);
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.browser_cue_delivery_ready, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedStatus.renderer_ready_false_positive_dependency_surface_summary);
@@ -6944,6 +6951,7 @@ try {
   assertLive2dMotionIdentityComfortPublicSummary(provisionedHealth.live2d_motion_identity_comfort_public_summary);
   assertLive2dMotionIdentityComfortAdminSummaryRedaction(provisionedHealth.live2d_motion_identity_comfort_admin_summary_redaction);
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(provisionedHealth.live2d_motion_identity_comfort_operator_handoff_no_action);
+  assertLive2dMotionIdentityComfortOwnerHandoffStub(provisionedHealth.live2d_motion_identity_comfort_owner_handoff_stub);
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.runtime_readiness_claimed, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedHealth.renderer_ready_false_positive_dependency_surface_summary);
@@ -7809,6 +7817,7 @@ try {
       "live2d_motion_identity_comfort_public_summary",
       "live2d_motion_identity_comfort_admin_summary_redaction",
       "live2d_motion_identity_comfort_operator_handoff_no_action",
+      "live2d_motion_identity_comfort_owner_handoff_stub",
       "owner_action_lane_freeze_status_surface",
       "owner_action_lane_freeze_contract_regression_guard",
       "owner_action_lane_freeze_cross_surface_consistency",
@@ -12039,6 +12048,70 @@ function assertLive2dMotionIdentityComfortOperatorHandoffNoAction(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertLive2dMotionIdentityComfortOwnerHandoffStub(summary) {
+  assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA);
+  assert.equal(summary.live2d_motion_identity_comfort_owner_handoff_stub_status, "draft_not_sent");
+  assert.equal(summary.planning_only_boundary, true);
+  assert.equal(summary.motion_identity_comfort_owner_handoff_stub_only_boundary, true);
+  assert.equal(summary.owner_handoff_draft_only_boundary, true);
+  assert.equal(summary.owner_handoff_not_sent_boundary, true);
+  assert.equal(summary.no_owner_action_requested_boundary, true);
+  assert.equal(summary.no_owner_confirmation_boundary, true);
+  assert.equal(summary.no_renderer_execution_boundary, true);
+  assert.equal(summary.no_cue_application_boundary, true);
+  assert.equal(summary.no_actual_data_boundary, true);
+  assert.equal(summary.no_readiness_claim_boundary, true);
+  assert.equal(summary.motion_identity_comfort_owner_handoff_stub_only, true);
+  assert.equal(summary.owner_handoff_stub_present, true);
+  assert.equal(summary.owner_handoff_sent, false);
+  assert.equal(summary.owner_action_requested, false);
+  assert.equal(summary.owner_action_accepted, false);
+  assert.equal(summary.owner_confirmation_created, false);
+  assert.equal(summary.owner_confirmation_confirmed, false);
+  assert.equal(summary.owner_handoff_accepts_actual_data, false);
+  assert.equal(summary.owner_handoff_executes_renderer, false);
+  assert.equal(summary.owner_handoff_applies_cue, false);
+  assert.equal(summary.owner_handoff_enables_trusted_loader, false);
+  assert.equal(summary.owner_handoff_claims_runtime_ready, false);
+  assert.equal(summary.owner_handoff_claims_production_ready, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.renderer_ready_claimed, false);
+  assert.equal(summary.renderer_ready_candidate, false);
+  assert.equal(summary.renderer_ready, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.owner_handoff_stub_review_sections, [...LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_REVIEW_SECTIONS]);
+  assert.deepEqual(summary.owner_handoff_stub_blockers, [...LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_BLOCKERS]);
+  assert.deepEqual(summary.owner_handoff_stub_rejections, [...LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_REJECTIONS]);
+  for (const blocker of [
+    "motion_identity_comfort_owner_handoff_stub_only",
+    "owner_handoff_not_sent",
+    "owner_action_not_requested",
+    "owner_confirmation_missing",
+    "real_renderer_evidence_missing",
+    "actual_cue_application_evidence_missing",
+    "priority1_blocked",
+    "checked_row_count_zero",
+    "motion_dataset_non_executable",
+    "readiness_claims_false",
+  ]) {
+    assert.equal(summary.blocked_reasons.includes(blocker), true, blocker);
+  }
+  assert.equal(summary.owner_handoff_stub_review_sections.includes("motion_identity_status_review"), true);
+  assert.equal(summary.owner_handoff_stub_rejections.includes("owner_handoff_sent"), true);
+  assert.equal(summary.owner_handoff_stub_rejections.includes("owner_confirmation_created"), true);
+  assert.equal(summary.safe_next_action, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assert.equal(summary.boundary_policy.no_motion_execution, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -12931,6 +13004,34 @@ function assertNoModelPathLeak(serialized) {
   });
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(summary);
   assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_operator_handoff_no_action_rejected_state_promotion"), true);
+}
+
+{
+  const summary = createLive2dMotionIdentityComfortOwnerHandoffStub({
+    owner_handoff_sent: true,
+    owner_action_requested: true,
+    owner_action_accepted: true,
+    owner_confirmation_created: true,
+    owner_confirmation_confirmed: true,
+    owner_handoff_accepts_actual_data: true,
+    owner_handoff_executes_renderer: true,
+    owner_handoff_applies_cue: true,
+    owner_handoff_enables_trusted_loader: true,
+    owner_handoff_claims_runtime_ready: true,
+    owner_handoff_claims_production_ready: true,
+    renderer_ready_claimed: true,
+    renderer_ready_candidate: true,
+    renderer_ready: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 99,
+    priority1_status: "RESOLVED",
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+  });
+  assertLive2dMotionIdentityComfortOwnerHandoffStub(summary);
+  assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_owner_handoff_stub_rejected_state_promotion"), true);
 }
 
 {

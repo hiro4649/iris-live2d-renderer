@@ -206,6 +206,14 @@ production_readiness_claimed: no
 - Boundary: operator handoff plan only, no motion execution, no renderer/browser probe, no cue application, no external connection, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-OWNER-HANDOFF-STUB1.
 
+## Inserted Stub: LIVE2D-MOTION-IDENTITY-COMFORT-OWNER-HANDOFF-STUB1
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-OPERATOR-HANDOFF-NO-ACTION1 and before role gate stub.
+- Scope: define future owner review sections and remaining blockers while keeping the owner handoff as draft-not-sent.
+- Rejections: owner handoff sent, owner action requested, owner confirmation created, owner confirmation confirmed, actual data accepted, renderer execution, cue application, trusted loader enablement, runtime readiness claim, and production readiness claim.
+- Boundary: owner handoff stub only, no owner action request, no owner confirmation, no motion execution, no renderer/browser probe, no cue application, no actual data, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-ROLE-GATE-STUB1.
+
 ## Reaction Latency Roadmap
 
 縺薙・ roadmap 縺ｯ phase-based schedule 縺ｧ縺ゅｊ縲…alendar date 縺ｯ謖√◆縺ｪ縺・ょ推 phase 縺ｯ蜑肴ｮｵ縺ｮ safety boundary 縺ｨ evidence requirement 繧貞｣翫＆縺壹↓騾ｲ繧√ｋ縲・atency target 縺ｯ local renderer 縺ｮ engineering target 縺ｧ縺ゅｊ縲・・菫｡繝励Λ繝・ヨ繝輔か繝ｼ繝荳翫・ viewer-visible latency 縺ｯ蛻･騾皮匱逕溘☆繧九・
