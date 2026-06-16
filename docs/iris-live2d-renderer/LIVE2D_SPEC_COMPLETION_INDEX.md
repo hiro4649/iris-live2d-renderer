@@ -107,6 +107,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort audit stub no-write | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit unsafe-field guard next. |
 | motion identity comfort audit unsafe-field guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping next. |
 | motion identity comfort repeated blocker grouping | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping contract next. |
+| motion identity comfort repeated blocker grouping contract | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -810,6 +811,35 @@ Rejected blocker grouping promotions include blocker_grouping_claims_resolution,
 | blocker_grouping_creates_owner_confirmation | false |
 | blocker_grouping_claims_runtime_ready | false |
 | blocker_grouping_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Repeated Blocker Grouping Contract
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-REPEATED-BLOCKER-GROUPING-CONTRACT1
+
+Status: repeated blocker grouping contract only. This surface fixes the repeated blocker grouping rules as label-only and non-resolving, preserving priority1 BLOCKED, checked_row_count 0, motion dataset non-executable, trusted loader disabled, owner confirmation absent, and readiness claims false.
+
+Contract rules: grouping_is_label_only, grouping_does_not_resolve_blockers, grouping_preserves_priority1_blocked, grouping_preserves_checked_row_count_zero, grouping_preserves_motion_non_executable, and grouping_preserves_readiness_false.
+
+Rejected grouping contract promotions include grouping_contract_claims_resolution, grouping_contract_omits_priority1_blocked, grouping_contract_omits_checked_row_count_zero, grouping_contract_omits_motion_dataset_non_executable, grouping_contract_enables_trusted_loader, grouping_contract_creates_owner_confirmation, grouping_contract_claims_runtime_ready, and grouping_contract_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| repeated_blocker_grouping_contract_present | true |
+| grouping_contract_claims_resolution | false |
+| grouping_contract_omits_priority1_blocked | false |
+| grouping_contract_omits_checked_row_count_zero | false |
+| grouping_contract_omits_motion_dataset_non_executable | false |
+| grouping_contract_enables_trusted_loader | false |
+| grouping_contract_creates_owner_confirmation | false |
+| grouping_contract_claims_runtime_ready | false |
+| grouping_contract_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
