@@ -88,6 +88,7 @@ export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_SCHEMA = "iris
 export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_UNSAFE_OUTPUT_REJECTION_SCHEMA = "iris_live2d_renderer_ready_evidence_collector_unsafe_output_rejection_v1";
 export const LIVE2D_RENDERER_READY_PUBLIC_SUMMARY_REDACTION_SCHEMA = "iris_live2d_renderer_ready_public_summary_redaction_v1";
 export const LIVE2D_RENDERER_READY_ADMIN_SUMMARY_REDACTION_SCHEMA = "iris_live2d_renderer_ready_admin_summary_redaction_v1";
+export const LIVE2D_RENDERER_READY_OPERATOR_HANDOFF_NO_ACTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_operator_handoff_no_action_guard_v1";
 export const LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA = "iris_live2d_renderer_ready_audit_reference_stub_v1";
 export const LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA = "iris_live2d_renderer_ready_audit_reference_missing_guard_v1";
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA = "iris_live2d_renderer_ready_safe_operator_checklist_stub_v1";
@@ -9435,6 +9436,65 @@ export function createRendererReadyAdminSummaryRedactionSummary() {
     },
   };
   assertSafePublicObject(summary, "renderer ready admin summary redaction summary");
+  return summary;
+}
+
+export function createRendererReadyOperatorHandoffNoActionGuardSummary() {
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_OPERATOR_HANDOFF_NO_ACTION_GUARD_SCHEMA,
+    safe_summary_only: true,
+    operatorHandoffNoActionGuardStatus: "plan_only_no_action",
+    operatorHandoffPlanPresent: true,
+    operatorHandoffSent: false,
+    operatorActionExecuted: false,
+    shellCommandExecuted: false,
+    externalConnectionStarted: false,
+    ownerConfirmationCreated: false,
+    ownerConfirmationConfirmed: false,
+    actualRendererProbeExecuted: false,
+    actualBrowserProbeExecuted: false,
+    live2dExecutionStarted: false,
+    collectorExecutionStarted: false,
+    collectorOutputGenerated: false,
+    collectorOutputAcceptedAsRealEvidence: false,
+    realEvidenceCollectionStarted: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    rendererReadyClaimed: false,
+    rendererReadyCandidate: false,
+    actual_data_task_started: false,
+    actual_ingestion_allowed: false,
+    priority1Status: "BLOCKED",
+    priority1_status: "BLOCKED",
+    checkedRowCount: 0,
+    checked_row_count: 0,
+    motionDatasetExecutable: false,
+    motion_dataset_executable: false,
+    trustedLoaderAllowlistEnabled: false,
+    trusted_loader_allowlist_enabled: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      operator_handoff_no_action_guard_only: true,
+      plan_only: true,
+      safe_status_only: true,
+      no_operator_handoff_sent: true,
+      no_operator_action_execution: true,
+      no_shell_execution: true,
+      no_external_connection_started: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_actual_live2d_execution: true,
+      no_collector_execution: true,
+      no_collector_output_generation: true,
+      no_collector_output_accepted_as_real_evidence: true,
+      no_real_evidence_collection_started: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready operator handoff no-action guard summary");
   return summary;
 }
 
