@@ -86,6 +86,7 @@ export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_REDACTION_GUARD_SCHEMA = "
 export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_NO_EXECUTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_evidence_collector_no_execution_guard_v1";
 export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_SCHEMA = "iris_live2d_renderer_ready_evidence_collector_safe_output_schema_v1";
 export const LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_UNSAFE_OUTPUT_REJECTION_SCHEMA = "iris_live2d_renderer_ready_evidence_collector_unsafe_output_rejection_v1";
+export const LIVE2D_RENDERER_READY_PUBLIC_SUMMARY_REDACTION_SCHEMA = "iris_live2d_renderer_ready_public_summary_redaction_v1";
 export const LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA = "iris_live2d_renderer_ready_audit_reference_stub_v1";
 export const LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA = "iris_live2d_renderer_ready_audit_reference_missing_guard_v1";
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA = "iris_live2d_renderer_ready_safe_operator_checklist_stub_v1";
@@ -9279,6 +9280,94 @@ export function createRendererReadyEvidenceCollectorUnsafeOutputRejectionSummary
     },
   };
   assertSafePublicObject(summary, "renderer ready evidence collector unsafe output rejection summary");
+  return summary;
+}
+
+export function createRendererReadyPublicSummaryRedactionSummary() {
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_PUBLIC_SUMMARY_REDACTION_SCHEMA,
+    safe_summary_only: true,
+    publicSummaryRedactionStatus: "safe_labels_counts_status_only",
+    publicSurface: true,
+    safeLabelsOnly: true,
+    safeCountsOnly: true,
+    safeStatusOnly: true,
+    publicDetailLevel: "minimal_status",
+    forbiddenMaterialPresent: false,
+    networkLocatorMaterialPresent: false,
+    authMaterialPresent: false,
+    confidentialMaterialPresent: false,
+    rendererMaterialPresent: false,
+    cueMaterialPresent: false,
+    modelReferenceMaterialPresent: false,
+    motionReferenceMaterialPresent: false,
+    operatorInstructionMaterialPresent: false,
+    processDiagnosticMaterialPresent: false,
+    ownerOnlyDetailPresent: false,
+    publicSummaryFieldCount: 12,
+    allowedPublicFields: Object.freeze([
+      "safe_summary_only",
+      "publicSummaryRedactionStatus",
+      "readinessStatus",
+      "priority1Status",
+      "checkedRowCount",
+      "motionDatasetBoundary",
+      "trustedLoaderBoundary",
+      "collectorBoundary",
+      "ownerConfirmationStatus",
+      "actualDataBoundary",
+      "safeNextAction",
+      "boundary_policy",
+    ]),
+    readinessStatus: "not_ready",
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    rendererReadyClaimed: false,
+    rendererReadyCandidate: false,
+    priority1Status: "BLOCKED",
+    priority1_status: "BLOCKED",
+    checkedRowCount: 0,
+    checked_row_count: 0,
+    motionDatasetBoundary: "non_executable",
+    motionDatasetExecutable: false,
+    motion_dataset_executable: false,
+    trustedLoaderBoundary: "disabled",
+    trustedLoaderAllowlistEnabled: false,
+    trusted_loader_allowlist_enabled: false,
+    collectorBoundary: "not_executed",
+    collectorExecutionStarted: false,
+    collectorOutputGenerated: false,
+    collectorOutputAcceptedAsRealEvidence: false,
+    realEvidenceCollectionStarted: false,
+    realRendererEvidencePresent: false,
+    ownerConfirmationStatus: "absent",
+    ownerConfirmationCreated: false,
+    ownerConfirmationConfirmed: false,
+    actualDataBoundary: "not_started",
+    actual_data_task_started: false,
+    actual_ingestion_allowed: false,
+    safeNextAction: "continue_safe_only_contract_work",
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      public_summary_redaction_only: true,
+      safe_status_only: true,
+      safe_labels_only: true,
+      safe_counts_only: true,
+      no_forbidden_material: true,
+      no_owner_only_detail: true,
+      no_collector_execution: true,
+      no_collector_output_generation: true,
+      no_collector_output_accepted_as_real_evidence: true,
+      no_real_evidence_collection_started: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready public summary redaction summary");
   return summary;
 }
 

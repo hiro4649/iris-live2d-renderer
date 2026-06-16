@@ -6173,6 +6173,49 @@ The evidence collector unsafe output rejection guard lists unsafe output categor
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Public Summary Redaction
+
+Task: LIVE2D-RENDERER-READY-PUBLIC-SUMMARY-REDACTION1
+
+The public summary redaction guard fixes the public renderer readiness summary to safe labels, counts, and status only. It does not expose unsafe material, owner-only detail, collector output, real evidence, renderer probe details, owner confirmation, or readiness claims.
+
+| field | value |
+| --- | --- |
+| renderer_ready_public_summary_redaction | added |
+| publicSummaryRedactionStatus | safe_labels_counts_status_only |
+| publicSurface | true |
+| safeLabelsOnly | true |
+| safeCountsOnly | true |
+| safeStatusOnly | true |
+| publicDetailLevel | minimal_status |
+| forbiddenMaterialPresent | false |
+| networkLocatorMaterialPresent | false |
+| authMaterialPresent | false |
+| confidentialMaterialPresent | false |
+| rendererMaterialPresent | false |
+| cueMaterialPresent | false |
+| modelReferenceMaterialPresent | false |
+| motionReferenceMaterialPresent | false |
+| operatorInstructionMaterialPresent | false |
+| processDiagnosticMaterialPresent | false |
+| ownerOnlyDetailPresent | false |
+| readinessStatus | not_ready |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| collectorExecutionStarted | false |
+| collectorOutputGenerated | false |
+| collectorOutputAcceptedAsRealEvidence | false |
+| realEvidenceCollectionStarted | false |
+| ownerConfirmationCreated | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
