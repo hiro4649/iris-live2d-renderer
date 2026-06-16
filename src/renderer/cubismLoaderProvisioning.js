@@ -84,6 +84,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_IMPLEMENTATION_GAP_REGISTER_SCHEMA =
 export const LIVE2D_MOTION_IDENTITY_COMFORT_FINAL_LONG_CONTINUATION_REVIEW2_SCHEMA = "iris_live2d_motion_identity_comfort_final_long_continuation_review2_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_SUMMARY_SCHEMA = "iris_live2d_motion_identity_comfort_public_summary_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ADMIN_SUMMARY_REDACTION_SCHEMA = "iris_live2d_motion_identity_comfort_admin_summary_redaction_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA = "iris_live2d_motion_identity_comfort_operator_handoff_no_action_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -948,6 +949,30 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_ADMIN_SUMMARY_REDACTION_REJECTIONS =
   "admin_summary_reflects_dependency_note_material",
   "admin_summary_claims_runtime_ready",
   "admin_summary_claims_production_ready",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_ITEMS = Object.freeze([
+  "operator_handoff_plan_present",
+  "operator_handoff_not_sent",
+  "operator_action_not_executed",
+  "renderer_execution_not_started",
+  "cue_application_not_started",
+  "external_connection_not_started",
+  "owner_confirmation_not_created",
+  "readiness_not_claimed",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_REJECTIONS = Object.freeze([
+  "operator_handoff_sent",
+  "operator_action_executed",
+  "renderer_execution_started",
+  "cue_application_started",
+  "external_connection_started",
+  "operator_handoff_claims_runtime_ready",
+  "operator_handoff_claims_production_ready",
+  "operator_handoff_creates_owner_confirmation",
+  "operator_handoff_enables_trusted_loader",
+  "operator_handoff_accepts_actual_data",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -9975,6 +10000,66 @@ export function createLive2dMotionIdentityComfortAdminSummaryRedaction(input = {
     ],
     safeNextAction: "add_motion_identity_comfort_operator_handoff_no_action",
     context: "live2d motion identity comfort admin summary redaction",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortOperatorHandoffNoAction(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_operator_handoff_no_action_status",
+    status: "operator_handoff_no_action_blocked",
+    boundaries: {
+      motion_identity_comfort_operator_handoff_no_action_only_boundary: true,
+      operator_handoff_plan_only_boundary: true,
+      no_operator_action_execution_boundary: true,
+      no_renderer_execution_boundary: true,
+      no_cue_application_boundary: true,
+      no_external_connection_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_operator_handoff_no_action_only: true,
+      operator_handoff_plan_present: true,
+      operator_handoff_sent: false,
+      operator_action_executed: false,
+      renderer_execution_started: false,
+      cue_application_started: false,
+      external_connection_started: false,
+      operator_handoff_claims_runtime_ready: false,
+      operator_handoff_claims_production_ready: false,
+      operator_handoff_creates_owner_confirmation: false,
+      operator_handoff_enables_trusted_loader: false,
+      operator_handoff_accepts_actual_data: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      operator_handoff_no_action_items: [...LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_ITEMS],
+      operator_handoff_no_action_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_operator_handoff_no_action_only",
+      "operator_handoff_not_sent",
+      "operator_action_not_executed",
+      "renderer_execution_not_started",
+      "cue_application_not_started",
+      "external_connection_not_started",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_owner_handoff_stub",
+    context: "live2d motion identity comfort operator handoff no action",
   }, input);
 }
 
