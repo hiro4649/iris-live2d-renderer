@@ -87,6 +87,14 @@ production_readiness_claimed: no
 - Boundary: adaptive bounds planning only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-FINAL-INTEGRATION-REVIEW1.
 
+## Inserted Schedule: LIVE2D-MOTION-IDENTITY-COMFORT-DEVELOPMENT-SCHEDULE1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1 and before any completion review or runtime motion work.
+- Scope: record the safe development order from spec through fixtures, validator, recovery, context, subtitle/gaze, persona pressure, voice sync hint, adaptive boundedness, status surfaces, consistency, redaction/no-sweetening, and future owner-gated evidence phases.
+- Future gates: real renderer evidence requires owner action; actual renderer probe requires owner confirmation; trusted loader phase requires owner confirmation and real evidence.
+- Boundary: schedule planning only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-COMPLETION-REVIEW1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

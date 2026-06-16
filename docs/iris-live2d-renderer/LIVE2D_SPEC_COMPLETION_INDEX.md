@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 88 percent |
+| spec_completion_estimate | about 89 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-FINAL-INTEGRATION-REVIEW1, final integration review next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-COMFORT-COMPLETION-REVIEW1, completion review next planning |
 
 ## Completion Matrix
 
@@ -87,6 +87,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort persona pressure guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add voice sync hint boundary next. |
 | motion identity and comfort voice sync hint boundary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add adaptive bounds next. |
 | motion identity and comfort adaptive bounds | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final integration review next. |
+| motion identity comfort development schedule | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add completion review next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -205,6 +206,34 @@ Required rejections include missing_subtitle_visibility_label, missing_subtitle_
 | gaze_pressure_risk_closeup_allowed | false |
 | camera_proximity_risk_strong_motion_allowed | false |
 | camera_proximity_risk_closeup_allowed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Development Schedule
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-DEVELOPMENT-SCHEDULE1
+
+Status: development schedule planning only. This surface records the safe order from specification through fixture, validator, recovery, context, subtitle/gaze, persona pressure, voice hint, adaptive boundedness, status surfaces, cross-surface consistency, redaction/no-sweetening, and future owner-gated evidence phases. It does not execute motion, probe the renderer, create owner confirmation, enable trusted loader, accept actual data, or claim readiness.
+
+### Schedule Phases
+
+Required phases: spec_phase, fixture_rejection_phase, dry_run_validator_phase, recovery_matrix_phase, context_gate_phase, subtitle_gaze_guard_phase, persona_pressure_guard_phase, voice_sync_hint_boundary_phase, adaptive_boundedness_phase, status_surface_phase, cross_surface_consistency_phase, redaction_no_sweetening_phase, future_real_renderer_evidence_phase_owner_action_only, future_actual_renderer_probe_phase_owner_confirmation_only, and future_trusted_loader_phase_owner_confirmation_and_real_evidence_only.
+
+### Preserved Schedule Facts
+
+| Fact | Value |
+| --- | --- |
+| schedule_executes_motion | false |
+| schedule_claims_runtime_ready | false |
+| schedule_claims_production_ready | false |
+| schedule_creates_owner_confirmation | false |
+| future_real_renderer_evidence_phase_started | false |
+| future_actual_renderer_probe_phase_started | false |
+| future_trusted_loader_phase_started | false |
 | renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
