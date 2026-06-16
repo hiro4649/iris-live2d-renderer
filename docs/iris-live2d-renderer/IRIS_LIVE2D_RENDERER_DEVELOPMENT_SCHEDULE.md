@@ -1,4 +1,4 @@
-# IRIS Live2D Renderer Development Schedule
+﻿# IRIS Live2D Renderer Development Schedule
 
 status: draft-roadmap
 risk: R3
@@ -141,46 +141,55 @@ production_readiness_claimed: no
 - Boundary: rejection guard only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-REDACTION-SWEEP1.
 
+## Inserted Sweep: LIVE2D-MOTION-IDENTITY-COMFORT-REDACTION-SWEEP1
+
+- Position: after LIVE2D-MOTION-STRONG-MOTION-UNSAFE-OVERRIDE-REJECTION1 and before no-sweetening sweep.
+- Scope: verify motion identity, comfort, freshness, strong-motion, and completion summaries remain safe summaries and do not reflect unsafe material labels.
+- Covered surfaces: identity profile status, comfort policy status, freshness policy consistency, strong motion override rejection, and completion review.
+- Rejections: unsafe network locator material, auth material, renderer material, cue material, model or motion locator material, runtime material, operator note material, scanner execution, readiness claims, and actual data acceptance.
+- Boundary: sweep summary only, no redaction scan execution, no file read, no renderer/browser probe, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-NO-SWEETENING-SWEEP1.
+
 ## Reaction Latency Roadmap
 
-この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。
+縺薙・ roadmap 縺ｯ phase-based schedule 縺ｧ縺ゅｊ縲…alendar date 縺ｯ謖√◆縺ｪ縺・ょ推 phase 縺ｯ蜑肴ｮｵ縺ｮ safety boundary 縺ｨ evidence requirement 繧貞｣翫＆縺壹↓騾ｲ繧√ｋ縲・atency target 縺ｯ local renderer 縺ｮ engineering target 縺ｧ縺ゅｊ縲・・菫｡繝励Λ繝・ヨ繝輔か繝ｼ繝荳翫・ viewer-visible latency 縺ｯ蛻･騾皮匱逕溘☆繧九・
 
 ## Phase 0: PR 27 dependency
 
-- Status: PR 27 must remain separate。
-- Scope: cue retention、readiness truthfulness、optional write auth、safe runtime config。
-- Readiness: no runtime readiness claim。
+- Status: PR 27 must remain separate縲・
+- Scope: cue retention縲〉eadiness truthfulness縲｛ptional write auth縲《afe runtime config縲・
+- Readiness: no runtime readiness claim縲・
 
 ## Phase 1: REACTION-LATENCY-SPEC1
 
-- Status: current docs-only PR。
-- Scope: reaction latency targets、two-stage response design、transport plan、preload plan、safety boundaries、implementation order。
-- Runtime: no runtime code。
+- Status: current docs-only PR縲・
+- Scope: reaction latency targets縲》wo-stage response design縲》ransport plan縲｝reload plan縲《afety boundaries縲（mplementation order縲・
+- Runtime: no runtime code縲・
 
 ## Phase 2: RENDERER-CUE-CONTRACT-SAFETY1
 
-- Scope: cue allowlist、unsupported cue safe reject、recovery-required strong motion validation。
-- Outputs: safe cue validator、raw command / model path / endpoint / candidate / world_command rejection tests。
-- Model loading: no real model loading。
+- Scope: cue allowlist縲「nsupported cue safe reject縲〉ecovery-required strong motion validation縲・
+- Outputs: safe cue validator縲〉aw command / model path / endpoint / candidate / world_command rejection tests縲・
+- Model loading: no real model loading縲・
 
 ## Phase 3: PUSH-CUE-DELIVERY2
 
-- Scope: cue contract safety merge 後に SSE または WebSocket delivery を design / implement する。
-- Goal: browser delivery latency を polling-scale から低減する。
-- Boundary: safe output と auth boundaries を維持する。
-- Readiness: real evidence がない限り readiness claim なし。
+- Scope: cue contract safety merge 蠕後↓ SSE 縺ｾ縺溘・ WebSocket delivery 繧・design / implement 縺吶ｋ縲・
+- Goal: browser delivery latency 繧・polling-scale 縺九ｉ菴取ｸ帙☆繧九・
+- Boundary: safe output 縺ｨ auth boundaries 繧堤ｶｭ謖√☆繧九・
+- Readiness: real evidence 縺後↑縺・剞繧・readiness claim 縺ｪ縺励・
 
 ## Phase 4: PRELOAD-AND-SAFE-ASSET-ROUTE3
 
-- Scope: safe model asset route、preloading strategy、no raw path exposure。
-- Route: unavailable route を advertise しない。
-- Tests: model path redaction を検証する。
+- Scope: safe model asset route縲｝reloading strategy縲］o raw path exposure縲・
+- Route: unavailable route 繧・advertise 縺励↑縺・・
+- Tests: model path redaction 繧呈､懆ｨｼ縺吶ｋ縲・
 
 ## Phase 5: REAL-MODEL-LOAD4
 
-- Scope: real Cubism/model3 load、scene binding、fresh heartbeat、real model evidence。
-- Goal: model_loaded と scene_loaded を truthfully に enable する。
-- Production: no production readiness claim。
+- Scope: real Cubism/model3 load縲《cene binding縲’resh heartbeat縲〉eal model evidence縲・
+- Goal: model_loaded 縺ｨ scene_loaded 繧・truthfully 縺ｫ enable 縺吶ｋ縲・
+- Production: no production readiness claim縲・
 
 ## Inserted Preflight: LIVE2D-LOADER-INTEGRATION-PREFLIGHT5
 
@@ -266,32 +275,32 @@ production_readiness_claimed: no
 
 ## Phase 6: MICRO-REACTION-PACK5
 
-- Scope: instant nonverbal cue pack。
-- Target: internal event arrival 後 50 to 300 ms local renderer target。
-- Examples: blink_attention、small_nod、soft_smile、surprise_micro、breathing_shift。
+- Scope: instant nonverbal cue pack縲・
+- Target: internal event arrival 蠕・50 to 300 ms local renderer target縲・
+- Examples: blink_attention縲《mall_nod縲《oft_smile縲《urprise_micro縲｜reathing_shift縲・
 
 ## Phase 7: COMMENT-REACTION-PIPELINE6
 
-- Scope: comment acknowledgement first、speech/TTS second。
-- Targets: visual ack は local comment event 後 300 to 800 ms。spoken response は feasible な場合に 1.5 to 4 seconds。
+- Scope: comment acknowledgement first縲《peech/TTS second縲・
+- Targets: visual ack 縺ｯ local comment event 蠕・300 to 800 ms縲Ｔpoken response 縺ｯ feasible 縺ｪ蝣ｴ蜷医↓ 1.5 to 4 seconds縲・
 
 ## Phase 8: GAME-REACTION-PIPELINE7
 
-- Scope: approved safe game-event reactions。
-- Target: approved local game event 後 50 to 300 ms。
-- Boundary: no game input or OS command。
+- Scope: approved safe game-event reactions縲・
+- Target: approved local game event 蠕・50 to 300 ms縲・
+- Boundary: no game input or OS command縲・
 
 ## Phase 9: STRONG-MOTION-RECOVERY8
 
-- Scope: laugh_big、surprise_scream、happy_dance、happy_loud_sing、closeup。
-- Recovery: required。
-- Guard: viewer comfort と visibility guard が必要。
+- Scope: laugh_big縲《urprise_scream縲”appy_dance縲”appy_loud_sing縲…loseup縲・
+- Recovery: required縲・
+- Guard: viewer comfort 縺ｨ visibility guard 縺悟ｿ・ｦ√・
 
 ## Phase 10: LIVE-READINESS-EVIDENCE9
 
-- Scope: fresh Live2D evidence collector、owner confirmation、go/no-go integration。
-- Boundary: no fixture-to-real promotion。
-- Production: owner confirmation と fresh evidence なしに production go しない。
+- Scope: fresh Live2D evidence collector縲｛wner confirmation縲“o/no-go integration縲・
+- Boundary: no fixture-to-real promotion縲・
+- Production: owner confirmation 縺ｨ fresh evidence 縺ｪ縺励↓ production go 縺励↑縺・・
 
 ### LIVE2D-FRESH-EVIDENCE-BUNDLE1
 

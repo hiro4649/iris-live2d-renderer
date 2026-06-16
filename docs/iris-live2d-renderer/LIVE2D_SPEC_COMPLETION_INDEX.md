@@ -1,4 +1,4 @@
-# Live2D Spec Completion Index
+﻿# Live2D Spec Completion Index
 
 Task: LIVE2D-SPEC-COMPLETION-INDEX1
 Harness: v1.1.8
@@ -93,6 +93,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion comfort policy status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add freshness policy cross-surface consistency next. |
 | motion freshness policy cross-surface consistency | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add strong motion unsafe override rejection next. |
 | motion strong motion unsafe override rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add identity comfort redaction sweep next. |
+| motion identity comfort redaction sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add no-sweetening sweep next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -375,6 +376,36 @@ Rejected override attempts include surprise_scream_executable_override, happy_da
 | happy_loud_sing_cooldown_required | true |
 | strong_motion_ready | false |
 | strong_motion_downgraded_or_rejected | true |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Redaction Sweep
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-REDACTION-SWEEP1
+
+Status: safe-summary redaction sweep only. This surface checks motion identity, comfort, freshness, strong-motion, and completion status summaries for unsafe material reflection without executing a redaction scan. It does not read files, inspect real payloads, execute a scanner, probe the renderer, accept actual data, create owner confirmation, enable trusted loader, or claim readiness.
+
+Covered surfaces: motion_identity_profile_status_surface, motion_comfort_policy_status_surface, motion_freshness_policy_cross_surface_consistency, motion_strong_motion_unsafe_override_rejection, and motion_identity_comfort_completion_review.
+
+Rejected unsafe material labels include unsafe_network_locator_material, unsafe_auth_material, unsafe_renderer_material, unsafe_cue_material, unsafe_model_locator_material, unsafe_motion_locator_material, unsafe_runtime_material, unsafe_operator_note_material, redaction_sweep_executes_scan, redaction_sweep_claims_runtime_ready, and redaction_sweep_accepts_actual_data.
+
+| Fact | Value |
+| --- | --- |
+| safe_summary_only | true |
+| redaction_sweep_executes_scan | false |
+| network_locator_value_leak | false |
+| auth_material_leak | false |
+| renderer_material_leak | false |
+| cue_material_leak | false |
+| model_locator_value_leak | false |
+| motion_locator_value_leak | false |
+| runtime_material_leak | false |
+| operator_note_material_leak | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
@@ -6166,7 +6197,7 @@ This runtime/status surface exposes the PR252 owner action lane freeze as a safe
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-SCHEMA-VIOLATION-GUARD1
 
-The renderer-ready evidence schema violation guard is a negative contract for synthetic status inputs only. It rejects unsafe source types, renderer/cue body material, model/motion locator material, network locator material, credential material, private locator material, shell material, and ready-promotion fields back to a safe false summary. It does not execute a renderer probe, browser probe, Cubism SDK, model load, scene load, cue application, heartbeat collection, owner action, owner confirmation, trusted loader enablement, actual data task, or readiness review.
+The renderer-ready evidence schema violation guard is a negative contract for synthetic status inputs only. It rejects unsafe source types, renderer/cue body material, model/motion locator material, network locator material, auth material, private locator material, shell material, and ready-promotion fields back to a safe false summary. It does not execute a renderer probe, browser probe, Cubism SDK, model load, scene load, cue application, heartbeat collection, owner action, owner confirmation, trusted loader enablement, actual data task, or readiness review.
 
 | field | value |
 | --- | --- |

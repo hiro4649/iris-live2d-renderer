@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createLive2dRendererServer, listen } from "../src/server.js";
@@ -261,6 +261,7 @@ import {
   LIVE2D_MOTION_COMFORT_POLICY_STATUS_SURFACE_SCHEMA,
   LIVE2D_MOTION_FRESHNESS_POLICY_CROSS_SURFACE_CONSISTENCY_SCHEMA,
   LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTION_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SCHEMA,
   LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SECTIONS,
   LIVE2D_MOTION_IDENTITY_PROFILE_REQUIRED_FIELDS,
   LIVE2D_STRONG_MOTION_LABELS,
@@ -294,6 +295,8 @@ import {
   LIVE2D_MOTION_FRESHNESS_POLICY_SURFACES,
   LIVE2D_MOTION_FRESHNESS_POLICY_REJECTIONS,
   LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTIONS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SURFACES,
+  LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_REJECTIONS,
   LIVE2D_MOTION_DATASET_UX_AUDIT_AXES,
   LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES,
   LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA,
@@ -366,6 +369,7 @@ import {
   createLive2dMotionComfortPolicyStatusSurfaceSummary,
   createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary,
   createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary,
+  createLive2dMotionIdentityComfortRedactionSweepSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -6309,6 +6313,7 @@ try {
   assertLive2dMotionComfortPolicyStatusSurface(provisionedRuntimeConfig.live2d_motion_comfort_policy_status_surface_summary);
   assertLive2dMotionFreshnessPolicyCrossSurfaceConsistency(provisionedRuntimeConfig.live2d_motion_freshness_policy_cross_surface_consistency_summary);
   assertLive2dMotionStrongMotionUnsafeOverrideRejection(provisionedRuntimeConfig.live2d_motion_strong_motion_unsafe_override_rejection_summary);
+  assertLive2dMotionIdentityComfortRedactionSweep(provisionedRuntimeConfig.live2d_motion_identity_comfort_redaction_sweep_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.renderer_ready, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary);
@@ -6652,6 +6657,7 @@ try {
   assertLive2dMotionComfortPolicyStatusSurface(provisionedStatus.live2d_motion_comfort_policy_status_surface_summary);
   assertLive2dMotionFreshnessPolicyCrossSurfaceConsistency(provisionedStatus.live2d_motion_freshness_policy_cross_surface_consistency_summary);
   assertLive2dMotionStrongMotionUnsafeOverrideRejection(provisionedStatus.live2d_motion_strong_motion_unsafe_override_rejection_summary);
+  assertLive2dMotionIdentityComfortRedactionSweep(provisionedStatus.live2d_motion_identity_comfort_redaction_sweep_summary);
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.browser_cue_delivery_ready, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedStatus.renderer_ready_false_positive_dependency_surface_summary);
@@ -6885,6 +6891,7 @@ try {
   assertLive2dMotionComfortPolicyStatusSurface(provisionedHealth.live2d_motion_comfort_policy_status_surface_summary);
   assertLive2dMotionFreshnessPolicyCrossSurfaceConsistency(provisionedHealth.live2d_motion_freshness_policy_cross_surface_consistency_summary);
   assertLive2dMotionStrongMotionUnsafeOverrideRejection(provisionedHealth.live2d_motion_strong_motion_unsafe_override_rejection_summary);
+  assertLive2dMotionIdentityComfortRedactionSweep(provisionedHealth.live2d_motion_identity_comfort_redaction_sweep_summary);
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.runtime_readiness_claimed, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedHealth.renderer_ready_false_positive_dependency_surface_summary);
@@ -7742,6 +7749,7 @@ try {
       "live2d_motion_comfort_policy_status_surface",
       "live2d_motion_freshness_policy_cross_surface_consistency",
       "live2d_motion_strong_motion_unsafe_override_rejection",
+      "live2d_motion_identity_comfort_redaction_sweep",
       "owner_action_lane_freeze_status_surface",
       "owner_action_lane_freeze_contract_regression_guard",
       "owner_action_lane_freeze_cross_surface_consistency",
@@ -11495,6 +11503,63 @@ function assertLive2dMotionStrongMotionUnsafeOverrideRejection(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertLive2dMotionIdentityComfortRedactionSweep(summary) {
+  assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SCHEMA);
+  assert.equal(summary.live2d_motion_identity_comfort_redaction_sweep_status, "redaction_sweep_safe_summary_blocked");
+  assert.equal(summary.planning_only_boundary, true);
+  assert.equal(summary.motion_identity_comfort_redaction_sweep_only_boundary, true);
+  assert.equal(summary.safe_summary_only_boundary, true);
+  assert.equal(summary.no_redaction_scan_execution_boundary, true);
+  assert.equal(summary.no_motion_execution_boundary, true);
+  assert.equal(summary.no_renderer_probe_boundary, true);
+  assert.equal(summary.no_actual_data_boundary, true);
+  assert.equal(summary.no_owner_confirmation_boundary, true);
+  assert.equal(summary.no_readiness_claim_boundary, true);
+  assert.equal(summary.motion_identity_comfort_redaction_sweep_only, true);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.redaction_sweep_executes_scan, false);
+  assert.equal(summary.network_locator_value_leak, false);
+  assert.equal(summary.auth_material_leak, false);
+  assert.equal(summary.renderer_material_leak, false);
+  assert.equal(summary.cue_material_leak, false);
+  assert.equal(summary.model_locator_value_leak, false);
+  assert.equal(summary.motion_locator_value_leak, false);
+  assert.equal(summary.runtime_material_leak, false);
+  assert.equal(summary.operator_note_material_leak, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.renderer_ready_claimed, false);
+  assert.equal(summary.renderer_ready_candidate, false);
+  assert.equal(summary.renderer_ready, false);
+  assert.equal(summary.owner_confirmation_confirmed, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.redaction_sweep_surfaces, [...LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SURFACES]);
+  assert.deepEqual(summary.redaction_sweep_rejections, [...LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_REJECTIONS]);
+  for (const blocker of [
+    "safe_summary_only",
+    "redaction_scan_not_executed",
+    "unsafe_material_not_reflected",
+    "redaction_sweep_is_not_readiness",
+    "priority1_blocked",
+    "checked_row_count_zero",
+    "motion_dataset_non_executable",
+    "trusted_loader_disabled",
+  ]) {
+    assert.equal(summary.blocked_reasons.includes(blocker), true, blocker);
+  }
+  assert.equal(summary.redaction_sweep_rejections.includes("unsafe_network_locator_material"), true);
+  assert.equal(summary.redaction_sweep_rejections.includes("unsafe_auth_material"), true);
+  assert.equal(summary.boundary_policy.no_motion_execution, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -12173,6 +12238,33 @@ function assertNoModelPathLeak(serialized) {
   });
   assertLive2dMotionStrongMotionUnsafeOverrideRejection(summary);
   assert.equal(summary.blocked_reasons.includes("live2d_motion_strong_motion_unsafe_override_rejection_rejected_state_promotion"), true);
+}
+
+{
+  const summary = createLive2dMotionIdentityComfortRedactionSweepSummary({
+    redaction_sweep_executes_scan: true,
+    network_locator_value_leak: true,
+    auth_material_leak: true,
+    renderer_material_leak: true,
+    cue_material_leak: true,
+    model_locator_value_leak: true,
+    motion_locator_value_leak: true,
+    runtime_material_leak: true,
+    operator_note_material_leak: true,
+    renderer_ready_claimed: true,
+    renderer_ready_candidate: true,
+    renderer_ready: true,
+    owner_confirmation_confirmed: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 99,
+    priority1_status: "RESOLVED",
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+  });
+  assertLive2dMotionIdentityComfortRedactionSweep(summary);
+  assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_redaction_sweep_rejected_state_promotion"), true);
 }
 
 {
