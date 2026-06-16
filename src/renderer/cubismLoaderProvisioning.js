@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+﻿import { existsSync } from "node:fs";
 import { assertSafePublicObject, createBoundaryPolicy, safeText } from "../contracts.js";
 
 export const CUBISM_LOADER_PROVISIONING_SCHEMA = "iris_live2d_cubism_loader_provisioning_v1";
@@ -77,6 +77,7 @@ export const LIVE2D_MOTION_IDENTITY_PROFILE_STATUS_SURFACE_SCHEMA = "iris_live2d
 export const LIVE2D_MOTION_COMFORT_POLICY_STATUS_SURFACE_SCHEMA = "iris_live2d_motion_comfort_policy_status_surface_v1";
 export const LIVE2D_MOTION_FRESHNESS_POLICY_CROSS_SURFACE_CONSISTENCY_SCHEMA = "iris_live2d_motion_freshness_policy_cross_surface_consistency_v1";
 export const LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTION_SCHEMA = "iris_live2d_motion_strong_motion_unsafe_override_rejection_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SCHEMA = "iris_live2d_motion_identity_comfort_redaction_sweep_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -717,6 +718,28 @@ export const LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTIONS = Object.fre
   "strong_motion_trusted_loader_enabled",
   "strong_motion_actual_data_accepted",
   "strong_motion_priority1_resolved",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SURFACES = Object.freeze([
+  "motion_identity_profile_status_surface",
+  "motion_comfort_policy_status_surface",
+  "motion_freshness_policy_cross_surface_consistency",
+  "motion_strong_motion_unsafe_override_rejection",
+  "motion_identity_comfort_completion_review",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_REJECTIONS = Object.freeze([
+  "unsafe_network_locator_material",
+  "unsafe_auth_material",
+  "unsafe_renderer_material",
+  "unsafe_cue_material",
+  "unsafe_model_locator_material",
+  "unsafe_motion_locator_material",
+  "unsafe_runtime_material",
+  "unsafe_operator_note_material",
+  "redaction_sweep_executes_scan",
+  "redaction_sweep_claims_runtime_ready",
+  "redaction_sweep_accepts_actual_data",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -9341,6 +9364,63 @@ export function createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary(inp
     ],
     safeNextAction: "add_motion_identity_comfort_redaction_sweep",
     context: "live2d motion strong motion unsafe override rejection summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortRedactionSweepSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_redaction_sweep_status",
+    status: "redaction_sweep_safe_summary_blocked",
+    boundaries: {
+      motion_identity_comfort_redaction_sweep_only_boundary: true,
+      safe_summary_only_boundary: true,
+      no_redaction_scan_execution_boundary: true,
+      no_motion_execution_boundary: true,
+      no_renderer_probe_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_redaction_sweep_only: true,
+      safe_summary_only: true,
+      redaction_sweep_executes_scan: false,
+      network_locator_value_leak: false,
+      auth_material_leak: false,
+      renderer_material_leak: false,
+      cue_material_leak: false,
+      model_locator_value_leak: false,
+      motion_locator_value_leak: false,
+      runtime_material_leak: false,
+      operator_note_material_leak: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      redaction_sweep_surfaces: [...LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SURFACES],
+      redaction_sweep_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_redaction_sweep_only",
+      "safe_summary_only",
+      "redaction_scan_not_executed",
+      "unsafe_material_not_reflected",
+      "redaction_sweep_is_not_readiness",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_comfort_no_sweetening_sweep",
+    context: "live2d motion identity comfort redaction sweep summary",
   }, input);
 }
 
