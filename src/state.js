@@ -75,6 +75,7 @@ import {
   createRendererReadyOwnerScopeMissingRejectionGuardSummary,
   createRendererReadyAuditLinkRequirementSurfaceSummary,
   createRendererReadyAuditLinkMissingRejectionGuardSummary,
+  createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -270,6 +271,7 @@ export function createRendererState({
       const rendererReadyOwnerScopeMissingRejectionGuard = createRendererReadyOwnerScopeMissingRejectionGuardSummary();
       const rendererReadyAuditLinkRequirementSurface = createRendererReadyAuditLinkRequirementSurfaceSummary();
       const rendererReadyAuditLinkMissingRejectionGuard = createRendererReadyAuditLinkMissingRejectionGuardSummary();
+      const rendererReadyTrustedLoaderPreauthBlockerSurface = createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -418,6 +420,7 @@ export function createRendererState({
           renderer_ready_owner_scope_missing_rejection_guard_summary: rendererReadyOwnerScopeMissingRejectionGuard,
           renderer_ready_audit_link_requirement_surface_summary: rendererReadyAuditLinkRequirementSurface,
           renderer_ready_audit_link_missing_rejection_guard_summary: rendererReadyAuditLinkMissingRejectionGuard,
+          renderer_ready_trusted_loader_preauth_blocker_surface_summary: rendererReadyTrustedLoaderPreauthBlockerSurface,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -515,6 +518,7 @@ export function createRendererState({
           renderer_ready_owner_scope_missing_rejection_guard_summary: rendererReadyOwnerScopeMissingRejectionGuard,
           renderer_ready_audit_link_requirement_surface_summary: rendererReadyAuditLinkRequirementSurface,
           renderer_ready_audit_link_missing_rejection_guard_summary: rendererReadyAuditLinkMissingRejectionGuard,
+          renderer_ready_trusted_loader_preauth_blocker_surface_summary: rendererReadyTrustedLoaderPreauthBlockerSurface,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -653,6 +657,7 @@ export function createRendererState({
         renderer_ready_owner_scope_missing_rejection_guard_summary: status.renderer_health.renderer_ready_owner_scope_missing_rejection_guard_summary,
         renderer_ready_audit_link_requirement_surface_summary: status.renderer_health.renderer_ready_audit_link_requirement_surface_summary,
         renderer_ready_audit_link_missing_rejection_guard_summary: status.renderer_health.renderer_ready_audit_link_missing_rejection_guard_summary,
+        renderer_ready_trusted_loader_preauth_blocker_surface_summary: status.renderer_health.renderer_ready_trusted_loader_preauth_blocker_surface_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -845,6 +850,7 @@ export function createRendererState({
       const rendererReadyOwnerScopeMissingRejectionGuard = createRendererReadyOwnerScopeMissingRejectionGuardSummary();
       const rendererReadyAuditLinkRequirementSurface = createRendererReadyAuditLinkRequirementSurfaceSummary();
       const rendererReadyAuditLinkMissingRejectionGuard = createRendererReadyAuditLinkMissingRejectionGuardSummary();
+      const rendererReadyTrustedLoaderPreauthBlockerSurface = createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -952,6 +958,7 @@ export function createRendererState({
       response.renderer_ready_owner_scope_missing_rejection_guard_summary = rendererReadyOwnerScopeMissingRejectionGuard;
       response.renderer_ready_audit_link_requirement_surface_summary = rendererReadyAuditLinkRequirementSurface;
       response.renderer_ready_audit_link_missing_rejection_guard_summary = rendererReadyAuditLinkMissingRejectionGuard;
+      response.renderer_ready_trusted_loader_preauth_blocker_surface_summary = rendererReadyTrustedLoaderPreauthBlockerSurface;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -1112,6 +1119,7 @@ export function createRendererState({
       const rendererReadyOwnerScopeMissingRejectionGuard = createRendererReadyOwnerScopeMissingRejectionGuardSummary();
       const rendererReadyAuditLinkRequirementSurface = createRendererReadyAuditLinkRequirementSurfaceSummary();
       const rendererReadyAuditLinkMissingRejectionGuard = createRendererReadyAuditLinkMissingRejectionGuardSummary();
+      const rendererReadyTrustedLoaderPreauthBlockerSurface = createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1243,6 +1251,7 @@ export function createRendererState({
           renderer_ready_owner_scope_missing_rejection_guard_summary: rendererReadyOwnerScopeMissingRejectionGuard,
           renderer_ready_audit_link_requirement_surface_summary: rendererReadyAuditLinkRequirementSurface,
           renderer_ready_audit_link_missing_rejection_guard_summary: rendererReadyAuditLinkMissingRejectionGuard,
+          renderer_ready_trusted_loader_preauth_blocker_surface_summary: rendererReadyTrustedLoaderPreauthBlockerSurface,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1340,6 +1349,7 @@ export function createRendererState({
           renderer_ready_owner_scope_missing_rejection_guard_summary: rendererReadyOwnerScopeMissingRejectionGuard,
           renderer_ready_audit_link_requirement_surface_summary: rendererReadyAuditLinkRequirementSurface,
           renderer_ready_audit_link_missing_rejection_guard_summary: rendererReadyAuditLinkMissingRejectionGuard,
+          renderer_ready_trusted_loader_preauth_blocker_surface_summary: rendererReadyTrustedLoaderPreauthBlockerSurface,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
