@@ -183,6 +183,7 @@ import {
   LIVE2D_RENDERER_READY_AUDIT_LINK_REQUIREMENT_SURFACE_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_LINK_MISSING_REJECTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_BLOCKER_SURFACE_SCHEMA,
+  LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_REJECTION_GUARD_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -312,6 +313,7 @@ import {
   createRendererReadyAuditLinkRequirementSurfaceSummary,
   createRendererReadyAuditLinkMissingRejectionGuardSummary,
   createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary,
+  createRendererReadyTrustedLoaderPreauthRejectionGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6227,6 +6229,7 @@ try {
   assertRendererReadyAuditLinkRequirementSurface(provisionedRuntimeConfig.renderer_ready_audit_link_requirement_surface_summary);
   assertRendererReadyAuditLinkMissingRejectionGuard(provisionedRuntimeConfig.renderer_ready_audit_link_missing_rejection_guard_summary);
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(provisionedRuntimeConfig.renderer_ready_trusted_loader_preauth_blocker_surface_summary);
+  assertRendererReadyTrustedLoaderPreauthRejectionGuard(provisionedRuntimeConfig.renderer_ready_trusted_loader_preauth_rejection_guard_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6539,6 +6542,7 @@ try {
   assertRendererReadyAuditLinkRequirementSurface(provisionedStatus.renderer_ready_audit_link_requirement_surface_summary);
   assertRendererReadyAuditLinkMissingRejectionGuard(provisionedStatus.renderer_ready_audit_link_missing_rejection_guard_summary);
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(provisionedStatus.renderer_ready_trusted_loader_preauth_blocker_surface_summary);
+  assertRendererReadyTrustedLoaderPreauthRejectionGuard(provisionedStatus.renderer_ready_trusted_loader_preauth_rejection_guard_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6741,6 +6745,7 @@ try {
   assertRendererReadyAuditLinkRequirementSurface(provisionedHealth.renderer_ready_audit_link_requirement_surface_summary);
   assertRendererReadyAuditLinkMissingRejectionGuard(provisionedHealth.renderer_ready_audit_link_missing_rejection_guard_summary);
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(provisionedHealth.renderer_ready_trusted_loader_preauth_blocker_surface_summary);
+  assertRendererReadyTrustedLoaderPreauthRejectionGuard(provisionedHealth.renderer_ready_trusted_loader_preauth_rejection_guard_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7541,6 +7546,7 @@ try {
       "renderer_ready_audit_link_requirement_surface",
       "renderer_ready_audit_link_missing_rejection_guard",
       "renderer_ready_trusted_loader_preauth_blocker_surface",
+      "renderer_ready_trusted_loader_preauth_rejection_guard",
     ],
   }));
 } finally {
@@ -9462,6 +9468,57 @@ function assertRendererReadyTrustedLoaderPreauthBlockerSurface(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyTrustedLoaderPreauthRejectionGuard(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_REJECTION_GUARD_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.rejectedAttemptType, "trusted_loader_preauth_missing");
+  assert.equal(summary.trustedLoaderEnablementRequested, true);
+  assert.equal(summary.trustedLoaderEnablementRejected, true);
+  assert.equal(summary.rejectionReason, "trusted_loader_preauth_missing");
+  assert.equal(summary.trustedLoaderPreauthGranted, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.trustedLoaderBoundary, "disabled");
+  assert.equal(summary.loaderTrusted, false);
+  assert.equal(summary.loaderAllowlistActive, false);
+  assert.equal(summary.allowlistPreauthBlocked, true);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.ownerScopeAccepted, false);
+  assert.equal(summary.auditLinkPresent, false);
+  assert.equal(summary.auditExecutionStarted, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.boundary_policy.trusted_loader_preauth_rejection_guard_only, true);
+  assert.equal(summary.boundary_policy.no_trusted_loader_enablement, true);
+  assert.equal(summary.boundary_policy.no_allowlist_enablement, true);
+  assert.equal(summary.boundary_policy.no_loader_trusted_status, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_audit_execution, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_browser_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_live2d_execution, true);
+  assert.equal(summary.boundary_policy.no_actual_model_load, true);
+  assert.equal(summary.boundary_policy.no_actual_scene_load, true);
+  assert.equal(summary.boundary_policy.no_actual_cue_application, true);
+  assert.equal(summary.boundary_policy.no_actual_heartbeat_collection, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -10266,5 +10323,12 @@ for (const fixture of [
   const summary = createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary();
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(summary);
   assert.equal(summary.trustedLoaderPreauthStatus, "blocked");
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+}
+
+{
+  const summary = createRendererReadyTrustedLoaderPreauthRejectionGuardSummary();
+  assertRendererReadyTrustedLoaderPreauthRejectionGuard(summary);
+  assert.equal(summary.trustedLoaderEnablementRejected, true);
   assert.equal(summary.trustedLoaderAllowlistEnabled, false);
 }
