@@ -6085,6 +6085,49 @@ The evidence collector no-execution guard records that collector labels and safe
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Evidence Collector Safe Output Schema
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-COLLECTOR-SAFE-OUTPUT-SCHEMA1
+
+The evidence collector safe output schema lists the only safe public output labels a future collector may use. This schema does not generate collector output, accept collector output as real evidence, start collection, echo raw values, run probes, create owner confirmation, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_collector_safe_output_schema | added |
+| collectorSafeOutputSchemaStatus | schema_only_not_output |
+| safeOutputFields | safe public labels only |
+| collector_name | allowed label |
+| collector_status | allowed label |
+| source_type_label | allowed label |
+| freshness_status_label | allowed label |
+| redaction_status_label | allowed label |
+| audit_reference_status_label | allowed label |
+| blocker_labels | allowed label |
+| safe_next_action_label | allowed label |
+| collectorOutputGenerated | false |
+| collectorOutputAcceptedAsRealEvidence | false |
+| realEvidenceCollectionStarted | false |
+| realRendererEvidencePresent | false |
+| unsafeMaterialAccepted | false |
+| endpointAllowed | false |
+| tokenAllowed | false |
+| secretAllowed | false |
+| rawRendererPayloadAllowed | false |
+| rawCuePayloadAllowed | false |
+| rawModelPathAllowed | false |
+| rawMotionPathAllowed | false |
+| collectorExecutionAllowed | false |
+| collectorsExecuted | false |
+| rendererProbeExecuted | false |
+| browserProbeExecuted | false |
+| ownerConfirmationCreated | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
