@@ -109,6 +109,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort repeated blocker grouping | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping contract next. |
 | motion identity comfort repeated blocker grouping contract | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger next. |
 | motion identity comfort continuation ledger | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger consistency next. |
+| motion identity comfort continuation ledger consistency | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final redaction sweep2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -877,6 +878,33 @@ Rejected continuation ledger promotions include continuation_ledger_claims_owner
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Continuation Ledger Consistency
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-CONTINUATION-LEDGER-CONSISTENCY1
+
+Status: continuation ledger consistency only. This surface checks the continuation ledger entries remain aligned with completed safe-only surfaces without creating owner action, resolving blockers, changing checked_row_count, making motion executable, enabling trusted loader, starting actual data, or claiming runtime or production readiness.
+
+Consistency checks include ledger_entries_match_completed_surfaces, ledger_preserves_owner_action_absent, ledger_preserves_blocker_resolution_absent, ledger_preserves_checked_row_count_zero, ledger_preserves_motion_non_executable, and ledger_preserves_readiness_false.
+
+Rejected continuation ledger consistency promotions include ledger_consistency_missing_role_gate_stub, ledger_consistency_missing_role_gate_redaction_guard, ledger_consistency_missing_audit_stub_no_write, ledger_consistency_missing_audit_unsafe_field_guard, ledger_consistency_missing_repeated_blocker_grouping, ledger_consistency_missing_repeated_blocker_grouping_contract, ledger_consistency_claims_owner_action, ledger_consistency_claims_blocker_resolution, ledger_consistency_claims_runtime_ready, and ledger_consistency_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| continuation_ledger_consistency_present | true |
+| ledger_entries_match_completed_surfaces | true |
+| ledger_consistency_claims_owner_action | false |
+| ledger_consistency_claims_blocker_resolution | false |
+| ledger_consistency_claims_runtime_ready | false |
+| ledger_consistency_claims_production_ready | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
 
 ## Motion Identity and Comfort Adaptive Bounds
 
