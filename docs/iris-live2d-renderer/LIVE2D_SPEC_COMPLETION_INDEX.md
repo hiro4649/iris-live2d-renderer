@@ -6423,6 +6423,51 @@ The implementation gap audit records the remaining renderer-ready gaps as safe l
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Pre-Owner Wait State2
+
+Task: LIVE2D-RENDERER-READY-PRE-OWNER-WAIT-STATE2
+
+The pre-owner wait state records the safe labels that remain before any future owner action can be considered. It does not request owner action, send owner handoff, create owner confirmation, run probes or collectors, execute audit, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_pre_owner_wait_state2 | added |
+| preOwnerWaitStateStatus | waiting_safe_labels_only |
+| waitStateOnly | true |
+| waitItems | safe labels only |
+| owner_action_not_requested_by_system | wait |
+| owner_confirmation_missing | wait |
+| renderer_probe_not_allowed | wait |
+| collector_execution_not_allowed | wait |
+| audit_execution_not_allowed | wait |
+| trusted_loader_disabled | wait |
+| runtime_readiness_not_claimed | wait |
+| production_readiness_not_claimed | wait |
+| priority1_blocked | wait |
+| checked_row_count_zero | wait |
+| motion_dataset_non_executable | wait |
+| nextSafeTask | owner_action_boundary_catalog2 |
+| ownerActionRequestedBySystem | false |
+| ownerHandoffSent | false |
+| ownerConfirmationCreated | false |
+| actualRendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| collectorExecutionStarted | false |
+| collectorOutputGenerated | false |
+| collectorOutputAcceptedAsRealEvidence | false |
+| auditExecutionStarted | false |
+| realEvidenceCollectionStarted | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
