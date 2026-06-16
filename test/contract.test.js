@@ -168,6 +168,8 @@ import {
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_REDACTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA,
+  LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA,
+  LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -287,6 +289,7 @@ import {
   createRendererReadyEvidenceCollectorRedactionGuardSummary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
+  createRendererReadySafeOperatorChecklistStubSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6192,6 +6195,7 @@ try {
   assertRendererReadyEvidenceCollectorRedactionGuard(provisionedRuntimeConfig.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyAuditReferenceStub(provisionedRuntimeConfig.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedRuntimeConfig.renderer_ready_audit_reference_missing_guard_summary);
+  assertRendererReadySafeOperatorChecklistStub(provisionedRuntimeConfig.renderer_ready_safe_operator_checklist_stub_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6494,6 +6498,7 @@ try {
   assertRendererReadyEvidenceCollectorRedactionGuard(provisionedStatus.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyAuditReferenceStub(provisionedStatus.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedStatus.renderer_ready_audit_reference_missing_guard_summary);
+  assertRendererReadySafeOperatorChecklistStub(provisionedStatus.renderer_ready_safe_operator_checklist_stub_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6686,6 +6691,7 @@ try {
   assertRendererReadyEvidenceCollectorRedactionGuard(provisionedHealth.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyAuditReferenceStub(provisionedHealth.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedHealth.renderer_ready_audit_reference_missing_guard_summary);
+  assertRendererReadySafeOperatorChecklistStub(provisionedHealth.renderer_ready_safe_operator_checklist_stub_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7468,6 +7474,7 @@ try {
       "renderer_ready_audit_reference_stub",
       "renderer_ready_audit_reference_missing_guard",
       "renderer_ready_pre_owner_action_completion_review",
+      "renderer_ready_safe_operator_checklist_stub",
     ],
   }));
 } finally {
@@ -9025,6 +9032,40 @@ function assertRendererReadyAuditReferenceMissingGuard(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadySafeOperatorChecklistStub(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.operatorChecklistStatus, "draft_safe_stub");
+  assert.equal(summary.operatorChecklistGenerated, true);
+  assert.equal(summary.operatorChecklistExecuted, false);
+  assert.equal(summary.operatorActionExecuted, false);
+  assert.deepEqual(summary.safeChecklistItems, LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS);
+  assert.equal(summary.safeChecklistItems.includes("confirm_owner_scope_later"), true);
+  assert.equal(summary.safeChecklistItems.includes("do_not_claim_readiness_now"), true);
+  assert.equal(summary.networkLocatorIncluded, false);
+  assert.equal(summary.authMaterialIncluded, false);
+  assert.equal(summary.locatorValueIncluded, false);
+  assert.equal(summary.shellMaterialIncluded, false);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.boundary_policy.operator_checklist_stub_only, true);
+  assert.equal(summary.boundary_policy.no_operator_action_execution, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -9760,4 +9801,11 @@ for (const fixture of [
   assertRendererReadyAuditReferenceMissingGuard(summary);
   assert.equal(summary.auditReferenceMissing, true);
   assert.equal(summary.rendererReadyCandidate, false);
+}
+
+{
+  const summary = createRendererReadySafeOperatorChecklistStubSummary();
+  assertRendererReadySafeOperatorChecklistStub(summary);
+  assert.equal(summary.operatorChecklistExecuted, false);
+  assert.equal(summary.safeChecklistItems.includes("keep_trusted_loader_disabled"), true);
 }
