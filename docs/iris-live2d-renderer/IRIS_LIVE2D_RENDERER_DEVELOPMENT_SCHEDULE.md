@@ -47,6 +47,14 @@ production_readiness_claimed: no
 - Boundary: matrix-only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-CONTEXT-GATE1.
 
+## Inserted Gate: LIVE2D-MOTION-IDENTITY-AND-COMFORT-CONTEXT-GATE1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1 and before any subtitle/gaze guard or runtime motion work.
+- Scope: define context freshness, confidence, viewer comfort, subtitle visibility, camera proximity, donation/relation/dependency, voice energy, safe motion candidate, safe downgrade, and safe recovery labels.
+- Rejections: missing context labels, stale context strong motion, low confidence strong motion, viewer comfort risk strong motion, subtitle visibility risk strong motion, camera proximity risk strong motion, donation/relation/dependency-only escalation, dependency pressure, unsupported motion candidate, runtime-ready context gate claims, renderer-ready candidate claims, actual data, checked row count increase, and priority1 resolution.
+- Boundary: context gate planning only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-SUBTITLE-GAZE-GUARD1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

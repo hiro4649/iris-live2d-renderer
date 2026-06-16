@@ -47,6 +47,7 @@ import {
   createLive2dMotionIdentityAndComfortRejectionFixturePackSummary,
   createLive2dMotionIdentityAndComfortDryRunValidatorSummary,
   createLive2dMotionIdentityAndComfortRecoveryMatrixSummary,
+  createLive2dMotionIdentityAndComfortContextGateSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -263,6 +264,7 @@ export function createRendererState({
       const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
       const live2dMotionIdentityAndComfortDryRunValidator = createLive2dMotionIdentityAndComfortDryRunValidatorSummary();
       const live2dMotionIdentityAndComfortRecoveryMatrix = createLive2dMotionIdentityAndComfortRecoveryMatrixSummary();
+      const live2dMotionIdentityAndComfortContextGate = createLive2dMotionIdentityAndComfortContextGateSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -432,6 +434,7 @@ export function createRendererState({
           live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
           live2d_motion_identity_and_comfort_dry_run_validator_summary: live2dMotionIdentityAndComfortDryRunValidator,
           live2d_motion_identity_and_comfort_recovery_matrix_summary: live2dMotionIdentityAndComfortRecoveryMatrix,
+          live2d_motion_identity_and_comfort_context_gate_summary: live2dMotionIdentityAndComfortContextGate,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -550,6 +553,7 @@ export function createRendererState({
           live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
           live2d_motion_identity_and_comfort_dry_run_validator_summary: live2dMotionIdentityAndComfortDryRunValidator,
           live2d_motion_identity_and_comfort_recovery_matrix_summary: live2dMotionIdentityAndComfortRecoveryMatrix,
+          live2d_motion_identity_and_comfort_context_gate_summary: live2dMotionIdentityAndComfortContextGate,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -709,6 +713,7 @@ export function createRendererState({
         live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: status.renderer_health.live2d_motion_identity_and_comfort_rejection_fixture_pack_summary,
         live2d_motion_identity_and_comfort_dry_run_validator_summary: status.renderer_health.live2d_motion_identity_and_comfort_dry_run_validator_summary,
         live2d_motion_identity_and_comfort_recovery_matrix_summary: status.renderer_health.live2d_motion_identity_and_comfort_recovery_matrix_summary,
+        live2d_motion_identity_and_comfort_context_gate_summary: status.renderer_health.live2d_motion_identity_and_comfort_context_gate_summary,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -922,6 +927,7 @@ export function createRendererState({
       const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
       const live2dMotionIdentityAndComfortDryRunValidator = createLive2dMotionIdentityAndComfortDryRunValidatorSummary();
       const live2dMotionIdentityAndComfortRecoveryMatrix = createLive2dMotionIdentityAndComfortRecoveryMatrixSummary();
+      const live2dMotionIdentityAndComfortContextGate = createLive2dMotionIdentityAndComfortContextGateSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1050,6 +1056,7 @@ export function createRendererState({
       response.live2d_motion_identity_and_comfort_rejection_fixture_pack_summary = live2dMotionIdentityAndComfortRejectionFixturePack;
       response.live2d_motion_identity_and_comfort_dry_run_validator_summary = live2dMotionIdentityAndComfortDryRunValidator;
       response.live2d_motion_identity_and_comfort_recovery_matrix_summary = live2dMotionIdentityAndComfortRecoveryMatrix;
+      response.live2d_motion_identity_and_comfort_context_gate_summary = live2dMotionIdentityAndComfortContextGate;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1231,6 +1238,7 @@ export function createRendererState({
       const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
       const live2dMotionIdentityAndComfortDryRunValidator = createLive2dMotionIdentityAndComfortDryRunValidatorSummary();
       const live2dMotionIdentityAndComfortRecoveryMatrix = createLive2dMotionIdentityAndComfortRecoveryMatrixSummary();
+      const live2dMotionIdentityAndComfortContextGate = createLive2dMotionIdentityAndComfortContextGateSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1383,6 +1391,7 @@ export function createRendererState({
           live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
           live2d_motion_identity_and_comfort_dry_run_validator_summary: live2dMotionIdentityAndComfortDryRunValidator,
           live2d_motion_identity_and_comfort_recovery_matrix_summary: live2dMotionIdentityAndComfortRecoveryMatrix,
+          live2d_motion_identity_and_comfort_context_gate_summary: live2dMotionIdentityAndComfortContextGate,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
