@@ -6653,6 +6653,50 @@ The real evidence request final wait state records that real renderer evidence i
 | checked_row_count | 0 |
 | motion_dataset_executable | false |
 
+## Renderer Ready Real Evidence Request Rejection Fixture Pack
+
+Task: LIVE2D-RENDERER-READY-REAL-EVIDENCE-REQUEST-REJECTION-FIXTURE-PACK1
+
+The real evidence request rejection fixture pack is synthetic-only. It records that unsafe real evidence request attempts are rejected using safe public labels only. It does not send a request, collect evidence, start a renderer probe, echo unsafe values, create owner confirmation, enable trusted loader, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_real_evidence_request_rejection_fixture_pack | added |
+| synthetic_only | true |
+| rejectionFixturePackOnly | true |
+| realEvidenceRequestRejected | true |
+| realEvidenceRequestSent | false |
+| realEvidenceCollectionStarted | false |
+| realRendererProbeStarted | false |
+| realRendererEvidencePresent | false |
+| rejectedRealEvidenceRequestCases | safe public labels only |
+| network_locator_material_rejected | listed |
+| credential_material_rejected | listed |
+| confidential_material_rejected | listed |
+| model_reference_material_rejected | listed |
+| motion_reference_material_rejected | listed |
+| renderer_material_rejected | listed |
+| cue_material_rejected | listed |
+| actual_probe_request_rejected | listed |
+| runtime_readiness_request_rejected | listed |
+| production_readiness_request_rejected | listed |
+| rawValueEchoed | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+| rendererProbeExecuted | false |
+| auditExecutionStarted | false |
+| trustedLoaderAllowlistEnabled | false |
+| trustedLoaderBoundary | disabled |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
