@@ -64,6 +64,7 @@ import {
   createRendererReadyRealProbePreflightBlockerMatrixSummary,
   createRendererReadyEvidenceCollectorManifestStubSummary,
   createRendererReadyEvidenceCollectorRedactionGuardSummary,
+  createRendererReadyEvidenceCollectorNoExecutionGuardSummary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -266,6 +267,7 @@ export function createRendererState({
       const rendererReadyRealProbePreflightBlockerMatrix = createRendererReadyRealProbePreflightBlockerMatrixSummary();
       const rendererReadyEvidenceCollectorManifestStub = createRendererReadyEvidenceCollectorManifestStubSummary();
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
+      const rendererReadyEvidenceCollectorNoExecutionGuard = createRendererReadyEvidenceCollectorNoExecutionGuardSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -421,6 +423,7 @@ export function createRendererState({
           renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
+          renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -525,6 +528,7 @@ export function createRendererState({
           renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
+          renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -670,6 +674,7 @@ export function createRendererState({
         renderer_ready_real_probe_preflight_blocker_matrix_summary: status.renderer_health.renderer_ready_real_probe_preflight_blocker_matrix_summary,
         renderer_ready_evidence_collector_manifest_stub_summary: status.renderer_health.renderer_ready_evidence_collector_manifest_stub_summary,
         renderer_ready_evidence_collector_redaction_guard_summary: status.renderer_health.renderer_ready_evidence_collector_redaction_guard_summary,
+        renderer_ready_evidence_collector_no_execution_guard_summary: status.renderer_health.renderer_ready_evidence_collector_no_execution_guard_summary,
         renderer_ready_audit_reference_stub_summary: status.renderer_health.renderer_ready_audit_reference_stub_summary,
         renderer_ready_audit_reference_missing_guard_summary: status.renderer_health.renderer_ready_audit_reference_missing_guard_summary,
         renderer_ready_safe_operator_checklist_stub_summary: status.renderer_health.renderer_ready_safe_operator_checklist_stub_summary,
@@ -869,6 +874,7 @@ export function createRendererState({
       const rendererReadyRealProbePreflightBlockerMatrix = createRendererReadyRealProbePreflightBlockerMatrixSummary();
       const rendererReadyEvidenceCollectorManifestStub = createRendererReadyEvidenceCollectorManifestStubSummary();
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
+      const rendererReadyEvidenceCollectorNoExecutionGuard = createRendererReadyEvidenceCollectorNoExecutionGuardSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -983,6 +989,7 @@ export function createRendererState({
       response.renderer_ready_real_probe_preflight_blocker_matrix_summary = rendererReadyRealProbePreflightBlockerMatrix;
       response.renderer_ready_evidence_collector_manifest_stub_summary = rendererReadyEvidenceCollectorManifestStub;
       response.renderer_ready_evidence_collector_redaction_guard_summary = rendererReadyEvidenceCollectorRedactionGuard;
+      response.renderer_ready_evidence_collector_no_execution_guard_summary = rendererReadyEvidenceCollectorNoExecutionGuard;
       response.renderer_ready_audit_reference_stub_summary = rendererReadyAuditReferenceStub;
       response.renderer_ready_audit_reference_missing_guard_summary = rendererReadyAuditReferenceMissingGuard;
       response.renderer_ready_safe_operator_checklist_stub_summary = rendererReadySafeOperatorChecklistStub;
@@ -1150,6 +1157,7 @@ export function createRendererState({
       const rendererReadyRealProbePreflightBlockerMatrix = createRendererReadyRealProbePreflightBlockerMatrixSummary();
       const rendererReadyEvidenceCollectorManifestStub = createRendererReadyEvidenceCollectorManifestStubSummary();
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
+      const rendererReadyEvidenceCollectorNoExecutionGuard = createRendererReadyEvidenceCollectorNoExecutionGuardSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -1288,6 +1296,7 @@ export function createRendererState({
           renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
+          renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -1392,6 +1401,7 @@ export function createRendererState({
           renderer_ready_real_probe_preflight_blocker_matrix_summary: rendererReadyRealProbePreflightBlockerMatrix,
           renderer_ready_evidence_collector_manifest_stub_summary: rendererReadyEvidenceCollectorManifestStub,
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
+          renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,

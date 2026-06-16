@@ -6045,6 +6045,46 @@ The evidence collector redaction guard keeps collector output as safe summary on
 | rendererReadyClaimed | false |
 | rendererReadyCandidate | false |
 
+## Renderer Ready Evidence Collector No-Execution Guard
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-COLLECTOR-NO-EXECUTION-GUARD1
+
+The evidence collector no-execution guard records that collector labels and safe summaries are still non-executing. It does not request collector execution, generate collector output, accept collector output as real evidence, start evidence collection, run a renderer/browser probe, create owner confirmation, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_collector_no_execution_guard | added |
+| collectorNoExecutionGuardStatus | blocked_no_execution |
+| collectorExecutionAllowed | false |
+| collectorExecutionRequested | false |
+| collectorExecutionStarted | false |
+| collectorsExecuted | false |
+| collectorOutputGenerated | false |
+| collectorOutputAcceptedAsRealEvidence | false |
+| realEvidenceCollectionStarted | false |
+| realRendererEvidencePresent | false |
+| rendererProbeRequested | false |
+| rendererProbeExecuted | false |
+| browserProbeExecuted | false |
+| live2dExecutionStarted | false |
+| modelLoadExecuted | false |
+| sceneLoadExecuted | false |
+| cueApplicationExecuted | false |
+| heartbeatCollectionExecuted | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
