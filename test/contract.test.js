@@ -167,6 +167,8 @@ import {
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_LABELS,
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_REDACTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_NO_EXECUTION_GUARD_SCHEMA,
+  LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_SCHEMA,
+  LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_FIELDS,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA,
@@ -310,6 +312,7 @@ import {
   createRendererReadyEvidenceCollectorManifestStubSummary,
   createRendererReadyEvidenceCollectorRedactionGuardSummary,
   createRendererReadyEvidenceCollectorNoExecutionGuardSummary,
+  createRendererReadyEvidenceCollectorSafeOutputSchemaSummary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -6232,6 +6235,7 @@ try {
   assertRendererReadyEvidenceCollectorManifestStub(provisionedRuntimeConfig.renderer_ready_evidence_collector_manifest_stub_summary);
   assertRendererReadyEvidenceCollectorRedactionGuard(provisionedRuntimeConfig.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyEvidenceCollectorNoExecutionGuard(provisionedRuntimeConfig.renderer_ready_evidence_collector_no_execution_guard_summary);
+  assertRendererReadyEvidenceCollectorSafeOutputSchema(provisionedRuntimeConfig.renderer_ready_evidence_collector_safe_output_schema_summary);
   assertRendererReadyAuditReferenceStub(provisionedRuntimeConfig.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedRuntimeConfig.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedRuntimeConfig.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6551,6 +6555,7 @@ try {
   assertRendererReadyEvidenceCollectorManifestStub(provisionedStatus.renderer_ready_evidence_collector_manifest_stub_summary);
   assertRendererReadyEvidenceCollectorRedactionGuard(provisionedStatus.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyEvidenceCollectorNoExecutionGuard(provisionedStatus.renderer_ready_evidence_collector_no_execution_guard_summary);
+  assertRendererReadyEvidenceCollectorSafeOutputSchema(provisionedStatus.renderer_ready_evidence_collector_safe_output_schema_summary);
   assertRendererReadyAuditReferenceStub(provisionedStatus.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedStatus.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedStatus.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6760,6 +6765,7 @@ try {
   assertRendererReadyEvidenceCollectorManifestStub(provisionedHealth.renderer_ready_evidence_collector_manifest_stub_summary);
   assertRendererReadyEvidenceCollectorRedactionGuard(provisionedHealth.renderer_ready_evidence_collector_redaction_guard_summary);
   assertRendererReadyEvidenceCollectorNoExecutionGuard(provisionedHealth.renderer_ready_evidence_collector_no_execution_guard_summary);
+  assertRendererReadyEvidenceCollectorSafeOutputSchema(provisionedHealth.renderer_ready_evidence_collector_safe_output_schema_summary);
   assertRendererReadyAuditReferenceStub(provisionedHealth.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedHealth.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedHealth.renderer_ready_safe_operator_checklist_stub_summary);
@@ -7565,6 +7571,7 @@ try {
       "renderer_ready_evidence_collector_manifest_stub",
       "renderer_ready_evidence_collector_redaction_guard",
       "renderer_ready_evidence_collector_no_execution_guard",
+      "renderer_ready_evidence_collector_safe_output_schema",
       "renderer_ready_audit_reference_stub",
       "renderer_ready_audit_reference_missing_guard",
       "renderer_ready_pre_owner_action_completion_review",
@@ -9137,6 +9144,63 @@ function assertRendererReadyEvidenceCollectorNoExecutionGuard(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyEvidenceCollectorSafeOutputSchema(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.collectorSafeOutputSchemaStatus, "schema_only_not_output");
+  assert.deepEqual(summary.safeOutputFields, [...LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_SAFE_OUTPUT_FIELDS]);
+  assert.equal(summary.safeOutputFields.includes("collector_name"), true);
+  assert.equal(summary.safeOutputFields.includes("safe_next_action_label"), true);
+  assert.equal(summary.collectorOutputGenerated, false);
+  assert.equal(summary.collectorOutputAcceptedAsRealEvidence, false);
+  assert.equal(summary.realEvidenceCollectionStarted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.rawValueEchoed, false);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.unsafeMaterialAccepted, false);
+  assert.equal(summary.endpointAllowed, false);
+  assert.equal(summary.tokenAllowed, false);
+  assert.equal(summary.secretAllowed, false);
+  assert.equal(summary.rawRendererPayloadAllowed, false);
+  assert.equal(summary.rawCuePayloadAllowed, false);
+  assert.equal(summary.rawModelPathAllowed, false);
+  assert.equal(summary.rawMotionPathAllowed, false);
+  assert.equal(summary.collectorExecutionAllowed, false);
+  assert.equal(summary.collectorExecutionStarted, false);
+  assert.equal(summary.collectorsExecuted, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.browserProbeExecuted, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.boundary_policy.safe_output_schema_only, true);
+  assert.equal(summary.boundary_policy.no_collector_output_generation, true);
+  assert.equal(summary.boundary_policy.no_collector_output_accepted_as_real_evidence, true);
+  assert.equal(summary.boundary_policy.no_unsafe_material_acceptance, true);
+  assert.equal(summary.boundary_policy.no_raw_value_echo, true);
+  assert.equal(summary.boundary_policy.no_source_value_echo, true);
+  assert.equal(summary.boundary_policy.no_collector_execution, true);
+  assert.equal(summary.boundary_policy.no_real_evidence_collection_started, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_browser_probe, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertRendererReadyAuditReferenceStub(summary) {
   assert.equal(summary.schema, LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA);
   assert.equal(summary.safe_summary_only, true);
@@ -10614,6 +10678,13 @@ for (const fixture of [
   assertRendererReadyEvidenceCollectorNoExecutionGuard(summary);
   assert.equal(summary.collectorExecutionAllowed, false);
   assert.equal(summary.collectorOutputGenerated, false);
+}
+
+{
+  const summary = createRendererReadyEvidenceCollectorSafeOutputSchemaSummary();
+  assertRendererReadyEvidenceCollectorSafeOutputSchema(summary);
+  assert.equal(summary.safeOutputFields.includes("redaction_status_label"), true);
+  assert.equal(summary.unsafeMaterialAccepted, false);
 }
 
 {
