@@ -97,6 +97,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort no-sweetening sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit next. |
 | motion identity comfort implementation gap audit | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap register next. |
 | motion identity comfort implementation gap register | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final long continuation review2 next. |
+| motion identity comfort final long continuation review2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe-only follow-up; do not claim readiness. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -492,6 +493,34 @@ Rejected promotions include gap_register_executes_renderer, gap_register_applies
 | gap_register_loads_scene | false |
 | gap_register_claims_runtime_ready | false |
 | gap_register_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Final Long Continuation Review2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-FINAL-LONG-CONTINUATION-REVIEW2
+
+Status: safe final long continuation review only. This surface summarizes completed safe motion identity and comfort surfaces and keeps open blockers visible without executing the renderer, applying cues, loading a model or scene, accepting actual data, creating owner confirmation, enabling trusted loader, resolving priority1, or claiming readiness.
+
+Completed safe items include identity/comfort spec, rejection fixture pack, dry-run validator, recovery matrix, context gate, subtitle/gaze guard, persona pressure guard, voice sync hint boundary, adaptive bounds, development schedule, completion review, status surfaces, freshness consistency, strong motion unsafe override rejection, redaction sweep, no-sweetening sweep, implementation gap audit, and implementation gap register.
+
+Open blockers remain real_renderer_evidence_missing, actual_cue_application_evidence_missing, real_model_scene_evidence_missing, owner_confirmation_missing, trusted_loader_disabled, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, runtime_readiness_not_claimed, and production_readiness_not_claimed.
+
+Rejected promotions include review2_executes_renderer, review2_applies_cue, review2_loads_model, review2_loads_scene, review2_creates_owner_confirmation, review2_enables_trusted_loader, review2_accepts_actual_data, review2_claims_runtime_ready, review2_claims_production_ready, and review2_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| review2_executes_renderer | false |
+| review2_applies_cue | false |
+| review2_loads_model | false |
+| review2_loads_scene | false |
+| review2_claims_runtime_ready | false |
+| review2_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
