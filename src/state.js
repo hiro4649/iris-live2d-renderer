@@ -71,6 +71,7 @@ import {
   createRendererReadyAdminSummaryRedactionSummary,
   createRendererReadyOperatorHandoffNoActionGuardSummary,
   createRendererReadyFinalPreOwnerBlockerSummary,
+  createRendererReadyLongContinuationCompletionReview2Summary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -280,6 +281,7 @@ export function createRendererState({
       const rendererReadyAdminSummaryRedaction = createRendererReadyAdminSummaryRedactionSummary();
       const rendererReadyOperatorHandoffNoActionGuard = createRendererReadyOperatorHandoffNoActionGuardSummary();
       const rendererReadyFinalPreOwnerBlocker = createRendererReadyFinalPreOwnerBlockerSummary();
+      const rendererReadyLongContinuationCompletionReview2 = createRendererReadyLongContinuationCompletionReview2Summary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -442,6 +444,7 @@ export function createRendererState({
           renderer_ready_admin_summary_redaction_summary: rendererReadyAdminSummaryRedaction,
           renderer_ready_operator_handoff_no_action_guard_summary: rendererReadyOperatorHandoffNoActionGuard,
           renderer_ready_final_pre_owner_blocker_summary: rendererReadyFinalPreOwnerBlocker,
+          renderer_ready_long_continuation_completion_review2_summary: rendererReadyLongContinuationCompletionReview2,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -553,6 +556,7 @@ export function createRendererState({
           renderer_ready_admin_summary_redaction_summary: rendererReadyAdminSummaryRedaction,
           renderer_ready_operator_handoff_no_action_guard_summary: rendererReadyOperatorHandoffNoActionGuard,
           renderer_ready_final_pre_owner_blocker_summary: rendererReadyFinalPreOwnerBlocker,
+          renderer_ready_long_continuation_completion_review2_summary: rendererReadyLongContinuationCompletionReview2,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -705,6 +709,7 @@ export function createRendererState({
         renderer_ready_admin_summary_redaction_summary: status.renderer_health.renderer_ready_admin_summary_redaction_summary,
         renderer_ready_operator_handoff_no_action_guard_summary: status.renderer_health.renderer_ready_operator_handoff_no_action_guard_summary,
         renderer_ready_final_pre_owner_blocker_summary: status.renderer_health.renderer_ready_final_pre_owner_blocker_summary,
+        renderer_ready_long_continuation_completion_review2_summary: status.renderer_health.renderer_ready_long_continuation_completion_review2_summary,
         renderer_ready_audit_reference_stub_summary: status.renderer_health.renderer_ready_audit_reference_stub_summary,
         renderer_ready_audit_reference_missing_guard_summary: status.renderer_health.renderer_ready_audit_reference_missing_guard_summary,
         renderer_ready_safe_operator_checklist_stub_summary: status.renderer_health.renderer_ready_safe_operator_checklist_stub_summary,
@@ -911,6 +916,7 @@ export function createRendererState({
       const rendererReadyAdminSummaryRedaction = createRendererReadyAdminSummaryRedactionSummary();
       const rendererReadyOperatorHandoffNoActionGuard = createRendererReadyOperatorHandoffNoActionGuardSummary();
       const rendererReadyFinalPreOwnerBlocker = createRendererReadyFinalPreOwnerBlockerSummary();
+      const rendererReadyLongContinuationCompletionReview2 = createRendererReadyLongContinuationCompletionReview2Summary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -1032,6 +1038,7 @@ export function createRendererState({
       response.renderer_ready_admin_summary_redaction_summary = rendererReadyAdminSummaryRedaction;
       response.renderer_ready_operator_handoff_no_action_guard_summary = rendererReadyOperatorHandoffNoActionGuard;
       response.renderer_ready_final_pre_owner_blocker_summary = rendererReadyFinalPreOwnerBlocker;
+      response.renderer_ready_long_continuation_completion_review2_summary = rendererReadyLongContinuationCompletionReview2;
       response.renderer_ready_audit_reference_stub_summary = rendererReadyAuditReferenceStub;
       response.renderer_ready_audit_reference_missing_guard_summary = rendererReadyAuditReferenceMissingGuard;
       response.renderer_ready_safe_operator_checklist_stub_summary = rendererReadySafeOperatorChecklistStub;
@@ -1206,6 +1213,7 @@ export function createRendererState({
       const rendererReadyAdminSummaryRedaction = createRendererReadyAdminSummaryRedactionSummary();
       const rendererReadyOperatorHandoffNoActionGuard = createRendererReadyOperatorHandoffNoActionGuardSummary();
       const rendererReadyFinalPreOwnerBlocker = createRendererReadyFinalPreOwnerBlockerSummary();
+      const rendererReadyLongContinuationCompletionReview2 = createRendererReadyLongContinuationCompletionReview2Summary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -1351,6 +1359,7 @@ export function createRendererState({
           renderer_ready_admin_summary_redaction_summary: rendererReadyAdminSummaryRedaction,
           renderer_ready_operator_handoff_no_action_guard_summary: rendererReadyOperatorHandoffNoActionGuard,
           renderer_ready_final_pre_owner_blocker_summary: rendererReadyFinalPreOwnerBlocker,
+          renderer_ready_long_continuation_completion_review2_summary: rendererReadyLongContinuationCompletionReview2,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
