@@ -94,6 +94,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion freshness policy cross-surface consistency | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add strong motion unsafe override rejection next. |
 | motion strong motion unsafe override rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add identity comfort redaction sweep next. |
 | motion identity comfort redaction sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add no-sweetening sweep next. |
+| motion identity comfort no-sweetening sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -406,6 +407,35 @@ Rejected unsafe material labels include unsafe_network_locator_material, unsafe_
 | motion_locator_value_leak | false |
 | runtime_material_leak | false |
 | operator_note_material_leak | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort No-Sweetening Sweep
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-NO-SWEETENING-SWEEP1
+
+Status: no-sweetening contract only. This surface ensures motion spec completion, fixture pass, dry-run pass, schedule update, completion review, and safe status surfaces do not become runtime readiness, production readiness, executable motion, owner confirmation, priority1 resolution, or checked row count increase.
+
+Inputs checked: motion_spec_completion, fixture_pass, dry_run_pass, schedule_update, completion_review, and status_surface_present.
+
+Rejected promotions include spec_completion_promoted_to_readiness, fixture_pass_promoted_to_readiness, dry_run_pass_promoted_to_readiness, schedule_update_promoted_to_readiness, completion_review_promoted_to_readiness, status_surface_promoted_to_execution, experimental_label_marked_executable, runtime_motion_marked_executable, strong_motion_marked_ready, priority1_marked_resolved, and checked_row_count_increased.
+
+| Fact | Value |
+| --- | --- |
+| spec_completion_is_runtime_readiness | false |
+| fixture_pass_is_runtime_readiness | false |
+| dry_run_pass_is_runtime_readiness | false |
+| schedule_update_is_runtime_readiness | false |
+| completion_review_is_runtime_readiness | false |
+| status_surface_executes_motion | false |
+| experimental_labels_executable | false |
+| runtime_motion_executable | false |
+| strong_motion_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
