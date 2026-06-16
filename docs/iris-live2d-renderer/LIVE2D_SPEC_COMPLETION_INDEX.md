@@ -6206,6 +6206,39 @@ The safe operator checklist redaction guard records that unsafe checklist materi
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Real Evidence Request Final No-Go
+
+Task: LIVE2D-RENDERER-READY-REAL-EVIDENCE-REQUEST-FINAL-NO-GO1
+
+The real renderer evidence request remains final no-go. This is not a request send, does not start evidence collection, does not start a real renderer probe, and does not claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_real_evidence_request_final_no_go | added |
+| realEvidenceRequestStatus | no_go |
+| realEvidenceRequestSent | false |
+| realEvidenceCollectionStarted | false |
+| realRendererProbeStarted | false |
+| ownerConfirmationRequired | true |
+| ownerConfirmationConfirmed | false |
+| owner_confirmation_missing | no_go_reason |
+| actual_probe_not_allowed_in_this_task | no_go_reason |
+| fresh_heartbeat_missing | no_go_reason |
+| real_model_load_missing | no_go_reason |
+| cue_capability_missing | no_go_reason |
+| audit_reference_missing | no_go_reason |
+| priority1_blocked | no_go_reason |
+| checked_row_count_zero | no_go_reason |
+| trusted_loader_disabled | no_go_reason |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
