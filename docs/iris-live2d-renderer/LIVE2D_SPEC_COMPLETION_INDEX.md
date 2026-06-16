@@ -6137,6 +6137,43 @@ This pre-owner action completion review records that DG through DO added safe gu
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Safe Operator Checklist Stub
+
+Task: LIVE2D-RENDERER-READY-SAFE-OPERATOR-CHECKLIST-STUB1
+
+The safe operator checklist stub records future operator checklist labels only. It is not an operational runbook, does not execute any operator action, does not include shell material, network locator, locator value, auth material, or raw values, and does not claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_safe_operator_checklist_stub | added |
+| operatorChecklistStatus | draft_safe_stub |
+| operatorChecklistGenerated | true |
+| operatorChecklistExecuted | false |
+| operatorActionExecuted | false |
+| confirm_owner_scope_later | checklist_label |
+| collect_real_renderer_evidence_later | checklist_label |
+| verify_fresh_heartbeat_later | checklist_label |
+| verify_model_load_later | checklist_label |
+| verify_scene_load_later | checklist_label |
+| verify_cue_capability_later | checklist_label |
+| verify_last_cue_applied_later | checklist_label |
+| verify_audit_reference_later | checklist_label |
+| keep_trusted_loader_disabled | checklist_label |
+| do_not_claim_readiness_now | checklist_label |
+| networkLocatorIncluded | false |
+| authMaterialIncluded | false |
+| locatorValueIncluded | false |
+| shellMaterialIncluded | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
