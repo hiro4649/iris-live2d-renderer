@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 78 percent |
+| spec_completion_estimate | about 80 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-PREFLIGHT-REVIEW1 or LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-GATE1, metadata-only next planning only |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1, synthetic fixture-only next planning |
 
 ## Completion Matrix
 
@@ -78,6 +78,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | owner submission form spec | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future metadata-only form. |
 | redaction policy matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Policy only; no scan execution. |
 | motion allowlist sync review | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Keep experimental labels non-executable. |
+| motion identity and comfort spec | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic rejection fixture pack next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -124,9 +125,55 @@ Experimental or review-only labels: blink_attention, small_nod, soft_smile, surp
 
 Experimental labels are not executable motion. Expression, gaze, breath, body, and camera labels must not be treated as runtime motion support unless a future implementation and test explicitly make them executable.
 
+## Motion Identity and Comfort Specification
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1
+
+Status: spec-only and blocked from execution. This adds IRIS-like motion identity, fatigue resistance, viewer comfort, and context-synchronized motion policy without enabling motion dataset execution, renderer readiness, trusted loader allowlist, actual data handling, or owner confirmation.
+
+### Required Spec Sections
+
+| Section | Boundary |
+| --- | --- |
+| motion_identity_profile | Label-level identity profile only. |
+| motion_cooldown_fatigue_guard | Strong and repeated motions require cooldown and recovery labels. |
+| viewer_comfort_motion_policy | Comfort risk can downgrade intensity or motion family. |
+| subtitle_overlay_safety_policy | Motions that obstruct subtitles must downgrade or recover. |
+| gaze_pressure_boundary | Close-up gaze pressure cannot escalate from donation, relation, or dependency signals alone. |
+| stale_cue_downgrade_policy | Stale cues cannot select strong motion; they must reject or downgrade. |
+| strong_motion_recovery_requirement | Strong motion requires safe recovery motion and cooldown. |
+| persona_motion_boundary | Persona fit must not become relationship pressure or dependency pressure. |
+| adaptive_reaction_policy_bounded | Adaptation is bounded by context, confidence, and safety. |
+| voice_motion_sync_safe_hint_boundary | Voice sync remains safe hints only, not executable readiness. |
+
+### Motion Identity Profile Fields
+
+Required fields: motionLabel, motionFamily, personaFit, identityRisk, comfortRisk, strongMotion, recoveryRequired, cooldownRequired, maxDurationMsLabel, staleCueAllowed, subtitleOverlayRisk, gazePressureRisk, cameraProximityRisk, donationRelationEscalationAllowed, dependencyPressureSuppressed, safeDowngradeMotion, safeRecoveryMotion.
+
+### Strong Motion Boundary
+
+Strong motion labels are laugh_big, surprise_scream, happy_dance, and happy_loud_sing. Strong motion requires recovery, cooldown, viewer comfort checks, subtitle overlay checks, and gaze pressure checks when close-up or camera proximity risk is present.
+
+Stale cues, comfort risk, subtitle overlay risk, or gaze pressure risk must reject or downgrade strong motion. Donation, relation, or dependency signals alone cannot escalate to close-up or strong motion. Adaptive reaction policy is bounded, and voice-motion sync remains a safe hint boundary.
+
+### Preserved Non-Readiness Facts
+
+| Fact | Value |
+| --- | --- |
+| motion_allowlist_alone_is_executable_readiness | false |
+| experimental_labels_are_executable_motion | false |
+| expression_gaze_breath_body_camera_labels_are_runtime_motion | false |
+| renderer_ready_candidate | false |
+| renderer_ready_claimed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## UX / Accessibility Missing Coverage
 
-Missing or incomplete coverage remains for viewer_comfort_motion, subtitle_overlay_safety, gaze_pressure_boundary, motion_cooldown_fatigue, accessibility_photosensitivity, camera_proximity_comfort, long_stream_fatigue, motion_intensity_downgrade, and UI obstruction risk.
+Missing or incomplete implementation coverage remains for accessibility_photosensitivity, camera_proximity_comfort, long_stream_fatigue, motion_intensity_downgrade, and UI obstruction risk. Viewer comfort, subtitle overlay safety, gaze pressure boundary, and motion cooldown fatigue now have spec-only coverage and still require fixture packs plus future implementation work before any runtime use.
 
 ## Real Runtime / Production Roadmap
 

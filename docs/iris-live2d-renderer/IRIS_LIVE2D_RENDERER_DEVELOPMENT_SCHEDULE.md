@@ -6,6 +6,19 @@ scope: docs-only product schedule
 runtime_readiness_claimed: no
 production_readiness_claimed: no
 
+## Inserted Spec: LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1
+
+- Position: after motion allowlist alignment and before any motion dataset executable work.
+- Scope: define IRIS-like motion identity, comfort, fatigue, stale-cue downgrade, persona boundary, bounded adaptation, and voice-motion safe hint policy.
+- Identity profile: motionLabel, motionFamily, personaFit, identityRisk, comfortRisk, strongMotion, recoveryRequired, cooldownRequired, maxDurationMsLabel, staleCueAllowed, subtitleOverlayRisk, gazePressureRisk, cameraProximityRisk, donationRelationEscalationAllowed, dependencyPressureSuppressed, safeDowngradeMotion, and safeRecoveryMotion.
+- Runtime labels: talk, focused_talk, laugh_big, idle_breath, surprise_scream, happy_humming, happy_dance, and happy_loud_sing remain the only supported runtime motion labels.
+- Review-only labels: blink_attention, small_nod, soft_smile, surprise_micro, breathing_shift, gaze_return, and neutral_breath remain non-executable.
+- Strong motion: laugh_big, surprise_scream, happy_dance, and happy_loud_sing require recovery, cooldown, comfort, subtitle overlay, and gaze-pressure checks.
+- Stale cues: stale cues must reject or downgrade strong motion.
+- Persona boundary: donation, relation, or dependency signals alone cannot escalate to close-up or strong motion.
+- Readiness: no renderer_ready, runtime readiness, production readiness, owner confirmation, trusted loader enablement, actual data handling, or priority1 resolution.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

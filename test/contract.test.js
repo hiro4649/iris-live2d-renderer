@@ -246,6 +246,11 @@ import {
   LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA,
   LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES,
   LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SECTIONS,
+  LIVE2D_MOTION_IDENTITY_PROFILE_REQUIRED_FIELDS,
+  LIVE2D_STRONG_MOTION_LABELS,
+  LIVE2D_MOTION_IDENTITY_AND_COMFORT_RULES,
   LIVE2D_MOTION_DATASET_UX_AUDIT_AXES,
   LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES,
   LIVE2D_OWNER_CONFIRMATION_BINDING_SCHEMA,
@@ -303,6 +308,7 @@ import {
   createMotionDatasetOwnerSubmissionFormSpecSummary,
   createMotionDatasetRealRowRedactionPolicyMatrixSummary,
   createMotionDatasetMotionAllowlistSyncReviewSummary,
+  createLive2dMotionIdentityAndComfortSpecSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -6231,6 +6237,7 @@ try {
   assert.equal(provisionedRuntimeConfig.motion_dataset_real_row_redaction_policy_matrix_summary.redaction_scan_executed, false);
   assert.equal(provisionedRuntimeConfig.motion_dataset_motion_allowlist_sync_review_summary.motion_dataset_motion_allowlist_sync_review_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_motion_allowlist_sync_review_summary.motion_dataset_executable, false);
+  assertLive2dMotionIdentityAndComfortSpec(provisionedRuntimeConfig.live2d_motion_identity_and_comfort_spec_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_renderer_ready_dependency_matrix_summary.renderer_ready, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary);
@@ -6559,6 +6566,7 @@ try {
   assert.equal(provisionedStatus.motion_dataset_real_row_redaction_policy_matrix_summary.actual_row_content_accepted, false);
   assert.equal(provisionedStatus.motion_dataset_motion_allowlist_sync_review_summary.motion_dataset_motion_allowlist_sync_review_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_motion_allowlist_sync_review_summary.motion_allowlist_sync_claims_runtime_enabled, false);
+  assertLive2dMotionIdentityAndComfortSpec(provisionedStatus.live2d_motion_identity_and_comfort_spec_summary);
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_renderer_ready_dependency_matrix_summary.browser_cue_delivery_ready, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedStatus.renderer_ready_false_positive_dependency_surface_summary);
@@ -6777,6 +6785,7 @@ try {
   assert.equal(provisionedHealth.motion_dataset_real_row_redaction_policy_matrix_summary.actual_ingestion_allowed, false);
   assert.equal(provisionedHealth.motion_dataset_motion_allowlist_sync_review_summary.motion_dataset_motion_allowlist_sync_review_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_motion_allowlist_sync_review_summary.actual_ingestion_allowed, false);
+  assertLive2dMotionIdentityAndComfortSpec(provisionedHealth.live2d_motion_identity_and_comfort_spec_summary);
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.motion_dataset_renderer_ready_dependency_matrix_status, "planning_only_blocked");
   assert.equal(provisionedHealth.motion_dataset_renderer_ready_dependency_matrix_summary.runtime_readiness_claimed, false);
   assertRendererReadyFalsePositiveDependencySurface(provisionedHealth.renderer_ready_false_positive_dependency_surface_summary);
@@ -7525,6 +7534,10 @@ try {
   assert.equal(completionIndex.includes("| ds_real_evidence_request_final_no_go | completed |"), true);
   assert.equal(completionIndex.includes("| next_safe_task | continue_to_preflight_route_manifest_stub |"), true);
   assert.equal(completionIndex.includes("| realEvidenceCollectionStarted | false |"), true);
+  assert.equal(completionIndex.includes("LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1"), true);
+  assert.equal(completionIndex.includes("| motion identity and comfort spec | complete |"), true);
+  assert.equal(completionIndex.includes("| renderer_ready_candidate | false |"), true);
+  assert.equal(completionIndex.includes("| trusted_loader_allowlist_enabled | false |"), true);
 
   console.log(JSON.stringify({
     ok: true,
@@ -7588,6 +7601,7 @@ try {
       "trusted_loader_owner_handoff_no_readiness_sweetening",
       "future_micro_label_not_runtime_executable",
       "motion_dataset_boundary_labels_not_runtime_executable",
+      "live2d_motion_identity_and_comfort_spec",
       "owner_action_lane_freeze_status_surface",
       "owner_action_lane_freeze_contract_regression_guard",
       "owner_action_lane_freeze_cross_surface_consistency",
@@ -10439,6 +10453,59 @@ function assertRendererReadyRealEvidenceRequestRejectionFixturePack(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertLive2dMotionIdentityAndComfortSpec(summary) {
+  assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SCHEMA);
+  assert.equal(summary.live2d_motion_identity_and_comfort_spec_status, "spec_only_blocked");
+  assert.equal(summary.planning_only_boundary, true);
+  assert.equal(summary.motion_identity_and_comfort_spec_only_boundary, true);
+  assert.equal(summary.no_motion_execution_boundary, true);
+  assert.equal(summary.no_runtime_allowlist_enablement_boundary, true);
+  assert.equal(summary.no_renderer_ready_claim_boundary, true);
+  assert.equal(summary.motion_allowlist_alone_not_executable, true);
+  assert.equal(summary.motion_identity_and_comfort_spec_only, true);
+  assert.equal(summary.motion_allowlist_alone_is_executable_readiness, false);
+  assert.equal(summary.experimental_labels_are_executable_motion, false);
+  assert.equal(summary.expression_gaze_breath_body_camera_labels_are_runtime_motion, false);
+  assert.equal(summary.fixture_pass_is_real_ready, false);
+  assert.equal(summary.manifest_only_is_real_ready, false);
+  assert.equal(summary.sse_connected_is_real_ready, false);
+  assert.equal(summary.cue_accepted_is_last_cue_applied, false);
+  assert.equal(summary.runtime_readiness_claimed, false);
+  assert.equal(summary.production_readiness_claimed, false);
+  assert.equal(summary.renderer_ready_claimed, false);
+  assert.equal(summary.renderer_ready_candidate, false);
+  assert.equal(summary.renderer_ready, false);
+  assert.equal(summary.model_loaded, false);
+  assert.equal(summary.scene_loaded, false);
+  assert.equal(summary.browser_cue_delivery_ready, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.spec_sections, [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SECTIONS]);
+  assert.deepEqual(summary.motion_identity_profile_required_fields, [...LIVE2D_MOTION_IDENTITY_PROFILE_REQUIRED_FIELDS]);
+  assert.deepEqual(summary.runtime_supported_motion_styles, [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES]);
+  assert.deepEqual(summary.experimental_review_only_motion_labels, [...LIVE2D_EXPERIMENTAL_MOTION_LABELS]);
+  assert.deepEqual(summary.strong_motion_labels, [...LIVE2D_STRONG_MOTION_LABELS]);
+  assert.deepEqual(summary.required_identity_comfort_rules, [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_RULES]);
+  assert.equal(summary.required_identity_comfort_rules.includes("strong_motion_requires_recovery"), true);
+  assert.equal(summary.required_identity_comfort_rules.includes("strong_motion_requires_cooldown"), true);
+  assert.equal(summary.required_identity_comfort_rules.includes("stale_cue_strong_motion_rejected_or_downgraded"), true);
+  assert.equal(summary.required_identity_comfort_rules.includes("donation_relation_dependency_signal_alone_cannot_escalate_closeup_or_strong_motion"), true);
+  assert.equal(summary.required_identity_comfort_rules.includes("adaptive_reaction_is_bounded_by_context_and_confidence"), true);
+  assert.equal(summary.blocked_reasons.includes("motion_allowlist_alone_not_executable"), true);
+  assert.equal(summary.blocked_reasons.includes("strong_motion_requires_recovery_and_cooldown"), true);
+  assert.equal(summary.blocked_reasons.includes("priority1_blocked"), true);
+  assert.equal(summary.blocked_reasons.includes("checked_row_count_zero"), true);
+  assert.equal(summary.blocked_reasons.includes("motion_dataset_non_executable"), true);
+  assert.equal(summary.blocked_reasons.includes("trusted_loader_disabled"), true);
+  assert.equal(summary.boundary_policy.no_motion_execution, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -10754,6 +10821,28 @@ function assertNoModelPathLeak(serialized) {
   assert.deepEqual(summary.runtime_supported_motion_styles, [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES]);
   assert.deepEqual(summary.experimental_review_only_motion_labels, [...LIVE2D_EXPERIMENTAL_MOTION_LABELS]);
   assert.deepEqual(summary.required_motion_label_rejection_reasons, [...LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REJECTION_REASONS]);
+}
+
+{
+  const summary = createLive2dMotionIdentityAndComfortSpecSummary({
+    motion_allowlist_alone_is_executable_readiness: true,
+    experimental_labels_are_executable_motion: true,
+    expression_gaze_breath_body_camera_labels_are_runtime_motion: true,
+    renderer_ready_candidate: true,
+    renderer_ready: true,
+    model_loaded: true,
+    scene_loaded: true,
+    browser_cue_delivery_ready: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 99,
+    priority1_status: "RESOLVED",
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+  });
+  assertLive2dMotionIdentityAndComfortSpec(summary);
+  assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_and_comfort_spec_rejected_state_promotion"), true);
 }
 
 {
