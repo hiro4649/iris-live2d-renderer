@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 81 percent |
+| spec_completion_estimate | about 82 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1, synthetic dry-run validator next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1, recovery/cooldown matrix next planning |
 
 ## Completion Matrix
 
@@ -80,6 +80,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion allowlist sync review | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Keep experimental labels non-executable. |
 | motion identity and comfort spec | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic rejection fixture pack next. |
 | motion identity and comfort rejection fixture pack | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic dry-run validator next. |
+| motion identity and comfort dry-run validator | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add recovery/cooldown matrix next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -166,6 +167,38 @@ Stale cues, comfort risk, subtitle overlay risk, or gaze pressure risk must reje
 | expression_gaze_breath_body_camera_labels_are_runtime_motion | false |
 | renderer_ready_candidate | false |
 | renderer_ready_claimed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Dry-Run Validator
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1
+
+Status: synthetic dry-run validator only. This validator defines required safe labels and rejection reasons for motion identity and comfort decisions. It does not execute motion, apply cues, validate actual row data, run a renderer/browser probe, create owner confirmation, enable a trusted loader, or claim readiness.
+
+### Required Dry-Run Labels
+
+Required labels: motion_request_id, motionLabel, motionFamily, personaFit, identityRisk, comfortRisk, strongMotion, recoveryRequired, cooldownRequired, maxDurationMsLabel, staleCueAllowed, subtitleOverlayRisk, gazePressureRisk, cameraProximityRisk, donationRelationEscalationAllowed, dependencyPressureSuppressed, safeDowngradeMotion, and safeRecoveryMotion.
+
+### Required Dry-Run Rejection Reasons
+
+Required rejection reasons include missing_motion_request_id, missing_motion_label, missing_motion_family, missing_persona_fit, missing_identity_risk, missing_comfort_risk, missing_strong_motion, missing_recovery_required, missing_cooldown_required, missing_max_duration_ms_label, missing_stale_cue_allowed, missing_subtitle_overlay_risk, missing_gaze_pressure_risk, missing_camera_proximity_risk, missing_donation_relation_escalation_allowed, missing_dependency_pressure_suppressed, missing_safe_downgrade_motion, missing_safe_recovery_motion, motion_allowlist_marked_executable_readiness, experimental_label_marked_executable, strong_motion_without_recovery, strong_motion_without_cooldown, stale_cue_strong_motion_selected, comfort_risk_strong_motion_selected, subtitle_overlay_risk_strong_motion_selected, gaze_pressure_risk_closeup_selected, donation_relation_dependency_escalates_strong_motion, dependency_pressure_not_suppressed, voice_motion_sync_executes_motion, adaptive_reaction_unbounded, renderer_ready_candidate_marked_true, runtime_readiness_requested, production_readiness_requested, trusted_loader_enablement_requested, motion_dataset_executable_requested, actual_ingestion_requested, checked_row_count_nonzero, and priority1_marked_resolved.
+
+### Preserved Dry-Run Facts
+
+| Fact | Value |
+| --- | --- |
+| synthetic_dry_run_only | true |
+| dry_run_validator_executes_motion | false |
+| dry_run_validator_accepts_actual_data | false |
+| strong_motion_without_recovery_allowed | false |
+| strong_motion_without_cooldown_allowed | false |
+| stale_cue_strong_motion_allowed | false |
+| risky_strong_motion_allowed | false |
+| renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | checked_row_count | 0 |

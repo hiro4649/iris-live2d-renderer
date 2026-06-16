@@ -28,6 +28,15 @@ production_readiness_claimed: no
 - Boundary: synthetic fixture-only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1.
 
+## Inserted Validator: LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1 and before any recovery matrix or runtime motion work.
+- Scope: define synthetic dry-run required labels and rejection reasons for motion identity, comfort, fatigue, stale-cue downgrade, persona pressure, and safe voice-motion hints.
+- Required labels: motion_request_id, motionLabel, motionFamily, personaFit, identityRisk, comfortRisk, strongMotion, recoveryRequired, cooldownRequired, maxDurationMsLabel, staleCueAllowed, subtitleOverlayRisk, gazePressureRisk, cameraProximityRisk, donationRelationEscalationAllowed, dependencyPressureSuppressed, safeDowngradeMotion, and safeRecoveryMotion.
+- Required rejections: missing labels, executable allowlist claims, executable experimental labels, strong motion without recovery or cooldown, stale/risky strong motion selection, donation/relation/dependency escalation, unbounded adaptation, renderer-ready candidate claims, readiness claims, trusted loader enablement, actual data, checked row count increase, and priority1 resolution.
+- Boundary: synthetic dry-run only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。
