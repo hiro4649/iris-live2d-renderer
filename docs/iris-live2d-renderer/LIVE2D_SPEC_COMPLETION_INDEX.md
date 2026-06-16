@@ -122,6 +122,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort blocker grouping contract2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger2 next. |
 | motion identity comfort continuation ledger2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger consistency2 next. |
 | motion identity comfort continuation ledger consistency2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add pre-owner final wait state next. |
+| motion identity comfort pre-owner final wait state | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1276,6 +1277,34 @@ Rejected continuation ledger consistency2 promotions include ledger2_consistency
 | trusted_loader_allowlist_enabled | false |
 | actual_ingestion_allowed | false |
 | owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Pre-Owner Final Wait State
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-PRE-OWNER-FINAL-WAIT-STATE1
+
+Status: pre-owner final wait state only. This surface records that motion identity/comfort safe-only work still waits on future owner action, real renderer evidence, actual data authorization, trusted loader enablement, and readiness review. It does not create owner confirmation, start actual data, enable trusted loader, resolve priority1, or claim runtime or production readiness.
+
+Pre-owner final wait state blockers include owner_action_required, owner_action_received_false, owner_confirmation_false, real_renderer_evidence_present_false, actual_data_task_started_false, trusted_loader_disabled, runtime_readiness_false, production_readiness_false, priority1_blocked, and checked_row_count_zero.
+
+Rejected pre-owner wait state promotions include pre_owner_wait_state_claims_owner_action_received, pre_owner_wait_state_creates_owner_confirmation, pre_owner_wait_state_claims_real_renderer_evidence, pre_owner_wait_state_starts_actual_data, pre_owner_wait_state_enables_trusted_loader, pre_owner_wait_state_claims_runtime_ready, pre_owner_wait_state_claims_production_ready, and pre_owner_wait_state_resolves_priority1.
+
+| Fact | Value |
+| --- | --- |
+| pre_owner_final_wait_state_present | true |
+| owner_action_required | true |
+| owner_action_received | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| real_renderer_evidence_present | false |
+| actual_data_task_started | false |
+| trusted_loader_enabled | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 
