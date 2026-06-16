@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 86 percent |
+| spec_completion_estimate | about 87 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-VOICE-SYNC-HINT-BOUNDARY1, voice sync hint boundary next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1, adaptive bounds next planning |
 
 ## Completion Matrix
 
@@ -85,6 +85,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort context gate | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add subtitle/gaze guard next. |
 | motion identity and comfort subtitle/gaze guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add persona pressure guard next. |
 | motion identity and comfort persona pressure guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add voice sync hint boundary next. |
+| motion identity and comfort voice sync hint boundary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add adaptive bounds next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -203,6 +204,37 @@ Required rejections include missing_subtitle_visibility_label, missing_subtitle_
 | gaze_pressure_risk_closeup_allowed | false |
 | camera_proximity_risk_strong_motion_allowed | false |
 | camera_proximity_risk_closeup_allowed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Voice Sync Hint Boundary
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-VOICE-SYNC-HINT-BOUNDARY1
+
+Status: voice sync hint boundary planning only. This boundary defines voice energy, speech pace, voice sync hint, motion timing hint, emotion intensity, safe motion candidate, safe downgrade, safe recovery, and duration labels. It does not execute motion, apply cues, run audio or TTS, call external services, load a model or scene, create owner confirmation, enable a trusted loader, accept actual data, or claim readiness.
+
+### Required Voice Sync Hint Labels
+
+Required labels: voiceEnergyLabel, speechPaceLabel, voiceSyncHintLabel, motionTimingHintLabel, emotionIntensityLabel, safeMotionCandidate, safeDowngradeMotion, safeRecoveryMotion, and maxDurationMsLabel.
+
+### Required Voice Sync Hint Rejections
+
+Required rejections include missing_voice_energy_label, missing_speech_pace_label, missing_voice_sync_hint_label, missing_motion_timing_hint_label, missing_emotion_intensity_label, missing_safe_motion_candidate, missing_safe_downgrade_motion, missing_safe_recovery_motion, missing_max_duration_label, voice_sync_hint_executes_motion, voice_timing_hint_applies_cue, voice_sync_hint_claims_runtime_ready, audio_runtime_execution_requested, tts_runtime_execution_requested, external_service_requested, renderer_ready_candidate_marked_true, actual_ingestion_requested, checked_row_count_nonzero, and priority1_marked_resolved.
+
+### Preserved Voice Sync Hint Facts
+
+| Fact | Value |
+| --- | --- |
+| voice_sync_hint_executes_motion | false |
+| voice_timing_hint_applies_cue | false |
+| voice_sync_hint_claims_runtime_ready | false |
+| audio_runtime_execution_allowed | false |
+| tts_runtime_execution_allowed | false |
+| external_service_allowed | false |
 | renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |

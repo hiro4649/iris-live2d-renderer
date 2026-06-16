@@ -69,6 +69,7 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_RECOVERY_MATRIX_SCHEMA = "iris_l
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_SCHEMA = "iris_live2d_motion_identity_and_comfort_context_gate_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_SUBTITLE_GAZE_GUARD_SCHEMA = "iris_live2d_motion_identity_and_comfort_subtitle_gaze_guard_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_PERSONA_PRESSURE_GUARD_SCHEMA = "iris_live2d_motion_identity_and_comfort_persona_pressure_guard_v1";
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_BOUNDARY_SCHEMA = "iris_live2d_motion_identity_and_comfort_voice_sync_hint_boundary_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -449,6 +450,40 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_PERSONA_PRESSURE_REJECTIONS = Ob
   "dependency_pressure_not_suppressed",
   "persona_fit_claims_relationship_commitment",
   "persona_pressure_claims_runtime_ready",
+  "renderer_ready_candidate_marked_true",
+  "actual_ingestion_requested",
+  "checked_row_count_nonzero",
+  "priority1_marked_resolved",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_REQUIRED_LABELS = Object.freeze([
+  "voiceEnergyLabel",
+  "speechPaceLabel",
+  "voiceSyncHintLabel",
+  "motionTimingHintLabel",
+  "emotionIntensityLabel",
+  "safeMotionCandidate",
+  "safeDowngradeMotion",
+  "safeRecoveryMotion",
+  "maxDurationMsLabel",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_REJECTIONS = Object.freeze([
+  "missing_voice_energy_label",
+  "missing_speech_pace_label",
+  "missing_voice_sync_hint_label",
+  "missing_motion_timing_hint_label",
+  "missing_emotion_intensity_label",
+  "missing_safe_motion_candidate",
+  "missing_safe_downgrade_motion",
+  "missing_safe_recovery_motion",
+  "missing_max_duration_label",
+  "voice_sync_hint_executes_motion",
+  "voice_timing_hint_applies_cue",
+  "voice_sync_hint_claims_runtime_ready",
+  "audio_runtime_execution_requested",
+  "tts_runtime_execution_requested",
+  "external_service_requested",
   "renderer_ready_candidate_marked_true",
   "actual_ingestion_requested",
   "checked_row_count_nonzero",
@@ -8623,6 +8658,63 @@ export function createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary(
     ],
     safeNextAction: "add_motion_identity_and_comfort_voice_sync_hint_boundary",
     context: "live2d motion identity and comfort persona pressure guard summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_BOUNDARY_SCHEMA,
+    statusKey: "live2d_motion_identity_and_comfort_voice_sync_hint_boundary_status",
+    status: "voice_sync_hint_boundary_blocked",
+    boundaries: {
+      motion_identity_and_comfort_voice_sync_hint_boundary_only_boundary: true,
+      voice_sync_hint_planning_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_cue_application_boundary: true,
+      no_audio_runtime_execution_boundary: true,
+      no_tts_runtime_execution_boundary: true,
+      no_external_service_boundary: true,
+      no_runtime_allowlist_enablement_boundary: true,
+      no_renderer_ready_claim_boundary: true,
+      no_actual_data_boundary: true,
+    },
+    flags: {
+      motion_identity_and_comfort_voice_sync_hint_boundary_only: true,
+      voice_sync_hint_executes_motion: false,
+      voice_timing_hint_applies_cue: false,
+      voice_sync_hint_claims_runtime_ready: false,
+      audio_runtime_execution_allowed: false,
+      tts_runtime_execution_allowed: false,
+      external_service_allowed: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      motion_dataset_executable: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+    },
+    arrays: {
+      required_voice_sync_hint_labels: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_REQUIRED_LABELS],
+      required_voice_sync_hint_rejections: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_VOICE_SYNC_HINT_REJECTIONS],
+      strong_motion_labels: [...LIVE2D_STRONG_MOTION_LABELS],
+      runtime_supported_motion_styles: [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES],
+    },
+    blockedReasons: [
+      "motion_identity_and_comfort_voice_sync_hint_boundary_only",
+      "voice_sync_hint_not_executable",
+      "voice_timing_hint_no_cue_application",
+      "audio_runtime_execution_blocked",
+      "tts_runtime_execution_blocked",
+      "external_service_blocked",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_and_comfort_adaptive_bounds",
+    context: "live2d motion identity and comfort voice sync hint boundary summary",
   }, input);
 }
 
