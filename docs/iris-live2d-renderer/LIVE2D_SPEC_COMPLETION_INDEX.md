@@ -6330,6 +6330,33 @@ The preflight route unsafe field guard rejects unsafe route manifest material in
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Owner Scope Requirement Surface
+
+Task: LIVE2D-RENDERER-READY-OWNER-SCOPE-REQUIREMENT-SURFACE1
+
+The owner scope requirement surface records that explicit owner scope is required before real renderer evidence or readiness can be considered. Owner scope remains missing and no owner confirmation is created.
+
+| field | value |
+| --- | --- |
+| renderer_ready_owner_scope_requirement_surface | added |
+| ownerScopeRequired | true |
+| ownerScopeConfirmed | false |
+| ownerScopeStatus | missing |
+| ownerScopeMissingBlocksRendererEvidence | true |
+| ownerScopeMissingBlocksReadiness | true |
+| probeAllowed | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
