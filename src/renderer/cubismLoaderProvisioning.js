@@ -62,6 +62,7 @@ export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA = "i
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_live2d_motion_dataset_owner_submission_form_spec_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SCHEMA = "iris_live2d_motion_identity_and_comfort_spec_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -136,6 +137,64 @@ export const LIVE2D_EXPERIMENTAL_MOTION_LABELS = Object.freeze([
   "breathing_shift",
   "gaze_return",
   "neutral_breath",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SECTIONS = Object.freeze([
+  "motion_identity_profile",
+  "motion_cooldown_fatigue_guard",
+  "viewer_comfort_motion_policy",
+  "subtitle_overlay_safety_policy",
+  "gaze_pressure_boundary",
+  "stale_cue_downgrade_policy",
+  "strong_motion_recovery_requirement",
+  "persona_motion_boundary",
+  "adaptive_reaction_policy_bounded",
+  "voice_motion_sync_safe_hint_boundary",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_PROFILE_REQUIRED_FIELDS = Object.freeze([
+  "motionLabel",
+  "motionFamily",
+  "personaFit",
+  "identityRisk",
+  "comfortRisk",
+  "strongMotion",
+  "recoveryRequired",
+  "cooldownRequired",
+  "maxDurationMsLabel",
+  "staleCueAllowed",
+  "subtitleOverlayRisk",
+  "gazePressureRisk",
+  "cameraProximityRisk",
+  "donationRelationEscalationAllowed",
+  "dependencyPressureSuppressed",
+  "safeDowngradeMotion",
+  "safeRecoveryMotion",
+]);
+
+export const LIVE2D_STRONG_MOTION_LABELS = Object.freeze([
+  "laugh_big",
+  "surprise_scream",
+  "happy_dance",
+  "happy_loud_sing",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_RULES = Object.freeze([
+  "motion_allowlist_alone_is_not_executable_readiness",
+  "experimental_labels_are_not_executable_motion",
+  "expression_gaze_breath_body_camera_labels_are_not_runtime_motion_without_future_verified_support",
+  "strong_motion_requires_recovery",
+  "strong_motion_requires_cooldown",
+  "strong_motion_requires_viewer_comfort_check",
+  "strong_motion_requires_subtitle_overlay_check",
+  "strong_motion_requires_gaze_pressure_check_when_closeup_or_camera_proximity",
+  "stale_cue_strong_motion_rejected_or_downgraded",
+  "viewer_comfort_risk_downgrades_strong_motion",
+  "subtitle_overlay_risk_downgrades_strong_motion",
+  "gaze_pressure_risk_downgrades_strong_motion",
+  "donation_relation_dependency_signal_alone_cannot_escalate_closeup_or_strong_motion",
+  "voice_motion_sync_uses_safe_hints_only",
+  "adaptive_reaction_is_bounded_by_context_and_confidence",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -7923,6 +7982,60 @@ export function createMotionDatasetMotionAllowlistSyncReviewSummary(input = {}) 
     ],
     safeNextAction: "keep_experimental_motion_labels_review_only_until_renderer_support_exists",
     context: "motion dataset motion allowlist sync review summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityAndComfortSpecSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SCHEMA,
+    statusKey: "live2d_motion_identity_and_comfort_spec_status",
+    status: "spec_only_blocked",
+    boundaries: {
+      motion_identity_and_comfort_spec_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_runtime_allowlist_enablement_boundary: true,
+      no_renderer_ready_claim_boundary: true,
+      motion_allowlist_alone_not_executable: true,
+    },
+    flags: {
+      motion_identity_and_comfort_spec_only: true,
+      motion_allowlist_alone_is_executable_readiness: false,
+      experimental_labels_are_executable_motion: false,
+      expression_gaze_breath_body_camera_labels_are_runtime_motion: false,
+      fixture_pass_is_real_ready: false,
+      manifest_only_is_real_ready: false,
+      sse_connected_is_real_ready: false,
+      cue_accepted_is_last_cue_applied: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      motion_dataset_executable: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+    },
+    arrays: {
+      spec_sections: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SECTIONS],
+      motion_identity_profile_required_fields: [...LIVE2D_MOTION_IDENTITY_PROFILE_REQUIRED_FIELDS],
+      runtime_supported_motion_styles: [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES],
+      experimental_review_only_motion_labels: [...LIVE2D_EXPERIMENTAL_MOTION_LABELS],
+      strong_motion_labels: [...LIVE2D_STRONG_MOTION_LABELS],
+      required_identity_comfort_rules: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_RULES],
+    },
+    blockedReasons: [
+      "motion_identity_and_comfort_spec_only",
+      "motion_allowlist_alone_not_executable",
+      "experimental_labels_review_only",
+      "strong_motion_requires_recovery_and_cooldown",
+      "comfort_visibility_gaze_persona_checks_required",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_synthetic_rejection_fixture_pack_for_motion_identity_and_comfort",
+    context: "live2d motion identity and comfort spec summary",
   }, input);
 }
 
