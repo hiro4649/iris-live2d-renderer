@@ -90,6 +90,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort development schedule | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add completion review next. |
 | motion identity comfort completion review | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe blocker review; do not claim readiness. |
 | motion identity profile status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add comfort policy status surface next. |
+| motion comfort policy status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add freshness policy cross-surface consistency next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -294,6 +295,34 @@ Rejected promotions include identity_profile_executes_motion, identity_profile_c
 | identity_profile_claims_runtime_ready | false |
 | identity_profile_claims_production_ready | false |
 | experimental_labels_executable | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Comfort Policy Status Surface
+
+Task: LIVE2D-MOTION-COMFORT-POLICY-STATUS-SURFACE1
+
+Status: safe status surface only. This surface exposes viewer comfort, cooldown, fatigue, photosensitivity, subtitle, gaze, and camera risk policy labels without making strong motion executable or ready. It does not execute motion, probe the renderer, apply cues, load a model or scene, accept actual data, create owner confirmation, enable trusted loader, or claim readiness.
+
+Policy labels: viewerComfortMode, cooldownBucketLabel, fatigueRiskLabel, photosensitivityRiskLabel, subtitleOverlayRisk, gazePressureRisk, cameraProximityRisk, safeDowngradeMotion, safeRecoveryMotion, and strongMotionPolicy.
+
+Rejected promotions include comfort_policy_executes_motion, comfort_policy_marks_strong_motion_ready, comfort_policy_viewer_risk_escalates_motion, comfort_policy_ignores_cooldown, comfort_policy_ignores_fatigue, comfort_policy_ignores_photosensitivity, comfort_policy_ignores_subtitle_risk, comfort_policy_ignores_gaze_risk, comfort_policy_ignores_camera_risk, comfort_policy_claims_runtime_ready, comfort_policy_claims_production_ready, comfort_policy_enables_trusted_loader, comfort_policy_accepts_actual_data, and comfort_policy_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| comfort_policy_present | true |
+| comfort_policy_executes_motion | false |
+| comfort_policy_marks_strong_motion_ready | false |
+| viewer_comfort_mode_downgrades_strong_motion | true |
+| cooldown_required_for_strong_motion | true |
+| fatigue_risk_downgrades_strong_motion | true |
+| photosensitivity_risk_downgrades_strong_motion | true |
+| subtitle_gaze_camera_risk_downgrades_strong_motion | true |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |

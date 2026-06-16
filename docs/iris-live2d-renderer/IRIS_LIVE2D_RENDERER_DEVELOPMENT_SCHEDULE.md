@@ -114,6 +114,15 @@ production_readiness_claimed: no
 - Boundary: status surface only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-COMFORT-POLICY-STATUS-SURFACE1.
 
+## Inserted Status Surface: LIVE2D-MOTION-COMFORT-POLICY-STATUS-SURFACE1
+
+- Position: after LIVE2D-MOTION-IDENTITY-PROFILE-STATUS-SURFACE1 and before freshness policy cross-surface consistency.
+- Scope: expose viewer comfort, cooldown, fatigue, photosensitivity, subtitle/gaze, and camera risk policy labels as safe status only.
+- Policy labels: viewerComfortMode, cooldownBucketLabel, fatigueRiskLabel, photosensitivityRiskLabel, subtitleOverlayRisk, gazePressureRisk, cameraProximityRisk, safeDowngradeMotion, safeRecoveryMotion, and strongMotionPolicy.
+- Rejections: motion execution, strong motion ready by policy alone, viewer risk escalation, cooldown/fatigue/photosensitivity/subtitle/gaze/camera risk ignored, readiness claims, trusted loader enablement, actual data, and priority1 resolution.
+- Boundary: status surface only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-FRESHNESS-POLICY-CROSS-SURFACE-CONSISTENCY1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。
