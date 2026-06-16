@@ -173,6 +173,7 @@ import {
   LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_UNSAFE_OUTPUT_REJECTION_LABELS,
   LIVE2D_RENDERER_READY_PUBLIC_SUMMARY_REDACTION_SCHEMA,
   LIVE2D_RENDERER_READY_ADMIN_SUMMARY_REDACTION_SCHEMA,
+  LIVE2D_RENDERER_READY_OPERATOR_HANDOFF_NO_ACTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA,
@@ -320,6 +321,7 @@ import {
   createRendererReadyEvidenceCollectorUnsafeOutputRejectionSummary,
   createRendererReadyPublicSummaryRedactionSummary,
   createRendererReadyAdminSummaryRedactionSummary,
+  createRendererReadyOperatorHandoffNoActionGuardSummary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -6246,6 +6248,7 @@ try {
   assertRendererReadyEvidenceCollectorUnsafeOutputRejection(provisionedRuntimeConfig.renderer_ready_evidence_collector_unsafe_output_rejection_summary);
   assertRendererReadyPublicSummaryRedaction(provisionedRuntimeConfig.renderer_ready_public_summary_redaction_summary);
   assertRendererReadyAdminSummaryRedaction(provisionedRuntimeConfig.renderer_ready_admin_summary_redaction_summary);
+  assertRendererReadyOperatorHandoffNoActionGuard(provisionedRuntimeConfig.renderer_ready_operator_handoff_no_action_guard_summary);
   assertRendererReadyAuditReferenceStub(provisionedRuntimeConfig.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedRuntimeConfig.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedRuntimeConfig.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6569,6 +6572,7 @@ try {
   assertRendererReadyEvidenceCollectorUnsafeOutputRejection(provisionedStatus.renderer_ready_evidence_collector_unsafe_output_rejection_summary);
   assertRendererReadyPublicSummaryRedaction(provisionedStatus.renderer_ready_public_summary_redaction_summary);
   assertRendererReadyAdminSummaryRedaction(provisionedStatus.renderer_ready_admin_summary_redaction_summary);
+  assertRendererReadyOperatorHandoffNoActionGuard(provisionedStatus.renderer_ready_operator_handoff_no_action_guard_summary);
   assertRendererReadyAuditReferenceStub(provisionedStatus.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedStatus.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedStatus.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6782,6 +6786,7 @@ try {
   assertRendererReadyEvidenceCollectorUnsafeOutputRejection(provisionedHealth.renderer_ready_evidence_collector_unsafe_output_rejection_summary);
   assertRendererReadyPublicSummaryRedaction(provisionedHealth.renderer_ready_public_summary_redaction_summary);
   assertRendererReadyAdminSummaryRedaction(provisionedHealth.renderer_ready_admin_summary_redaction_summary);
+  assertRendererReadyOperatorHandoffNoActionGuard(provisionedHealth.renderer_ready_operator_handoff_no_action_guard_summary);
   assertRendererReadyAuditReferenceStub(provisionedHealth.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedHealth.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedHealth.renderer_ready_safe_operator_checklist_stub_summary);
@@ -7591,6 +7596,7 @@ try {
       "renderer_ready_evidence_collector_unsafe_output_rejection",
       "renderer_ready_public_summary_redaction",
       "renderer_ready_admin_summary_redaction",
+      "renderer_ready_operator_handoff_no_action_guard",
       "renderer_ready_audit_reference_stub",
       "renderer_ready_audit_reference_missing_guard",
       "renderer_ready_pre_owner_action_completion_review",
@@ -9404,6 +9410,58 @@ function assertRendererReadyAdminSummaryRedaction(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyOperatorHandoffNoActionGuard(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_OPERATOR_HANDOFF_NO_ACTION_GUARD_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.operatorHandoffNoActionGuardStatus, "plan_only_no_action");
+  assert.equal(summary.operatorHandoffPlanPresent, true);
+  assert.equal(summary.operatorHandoffSent, false);
+  assert.equal(summary.operatorActionExecuted, false);
+  assert.equal(summary.shellCommandExecuted, false);
+  assert.equal(summary.externalConnectionStarted, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.actualRendererProbeExecuted, false);
+  assert.equal(summary.actualBrowserProbeExecuted, false);
+  assert.equal(summary.live2dExecutionStarted, false);
+  assert.equal(summary.collectorExecutionStarted, false);
+  assert.equal(summary.collectorOutputGenerated, false);
+  assert.equal(summary.collectorOutputAcceptedAsRealEvidence, false);
+  assert.equal(summary.realEvidenceCollectionStarted, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.boundary_policy.operator_handoff_no_action_guard_only, true);
+  assert.equal(summary.boundary_policy.plan_only, true);
+  assert.equal(summary.boundary_policy.no_operator_handoff_sent, true);
+  assert.equal(summary.boundary_policy.no_operator_action_execution, true);
+  assert.equal(summary.boundary_policy.no_shell_execution, true);
+  assert.equal(summary.boundary_policy.no_external_connection_started, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_browser_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_live2d_execution, true);
+  assert.equal(summary.boundary_policy.no_collector_execution, true);
+  assert.equal(summary.boundary_policy.no_collector_output_generation, true);
+  assert.equal(summary.boundary_policy.no_collector_output_accepted_as_real_evidence, true);
+  assert.equal(summary.boundary_policy.no_real_evidence_collection_started, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_trusted_loader_enablement, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertRendererReadyAuditReferenceStub(summary) {
   assert.equal(summary.schema, LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA);
   assert.equal(summary.safe_summary_only, true);
@@ -10909,6 +10967,13 @@ for (const fixture of [
   assertRendererReadyAdminSummaryRedaction(summary);
   assert.equal(summary.adminSummaryRedactionStatus, "ordinary_admin_safe_summary_only");
   assert.equal(summary.ownerOnlyDetailRoleGated, true);
+}
+
+{
+  const summary = createRendererReadyOperatorHandoffNoActionGuardSummary();
+  assertRendererReadyOperatorHandoffNoActionGuard(summary);
+  assert.equal(summary.operatorHandoffPlanPresent, true);
+  assert.equal(summary.operatorActionExecuted, false);
 }
 
 {
