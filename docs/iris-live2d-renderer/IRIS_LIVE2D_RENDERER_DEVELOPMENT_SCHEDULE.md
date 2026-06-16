@@ -334,6 +334,14 @@ production_readiness_claimed: no
 - Boundary: audit event stub no-write2 label only, no audit execution, no audit write, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-EVENT-UNSAFE-FIELD-GUARD2.
 
+## Inserted Guard: LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-EVENT-UNSAFE-FIELD-GUARD2
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-EVENT-STUB-NO-WRITE2 and before blocker grouping status surface.
+- Scope: reject unsafe audit-event materials while keeping the audit event surface label-only and no-write.
+- Rejections: renderer material, cue material, model locator material, motion locator material, network locator material, access material, private relation signal, private support signal, operator instruction material, audit body material, runtime readiness claim, and production readiness claim.
+- Boundary: audit event unsafe-field guard2 label only, no audit execution, no audit write, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-BLOCKER-GROUPING-STATUS-SURFACE1.
+
 ## Reaction Latency Roadmap
 
 邵ｺ阮吶・ roadmap 邵ｺ・ｯ phase-based schedule 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ窶ｦalendar date 邵ｺ・ｯ隰問・笳・ｸｺ・ｪ邵ｺ繝ｻﾂ繧・耳 phase 邵ｺ・ｯ陷題ざ・ｮ・ｵ邵ｺ・ｮ safety boundary 邵ｺ・ｨ evidence requirement 郢ｧ雋橸ｽ｣鄙ｫ・・ｸｺ螢ｹ竊馴ｨｾ・ｲ郢ｧ竏夲ｽ狗ｸｲ繝ｻatency target 邵ｺ・ｯ local renderer 邵ｺ・ｮ engineering target 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ繝ｻ繝ｻ闖ｫ・｡郢晏干ﾎ帷ｹ昴・繝ｨ郢晁ｼ斐°郢晢ｽｼ郢晢｣ｰ闕ｳ鄙ｫ繝ｻ viewer-visible latency 邵ｺ・ｯ陋ｻ・･鬨ｾ逧ｮ蛹ｱ騾墓ｺ倪・郢ｧ荵敖繝ｻ
@@ -652,7 +660,7 @@ Runtime readiness is not claimed. Production readiness is not claimed. go/no-go 
 
 - Scope: add synthetic-only fixture labels and validator coverage for the motion dataset row schema without adding real rows.
 - Accepted synthetic fixture cases: safe talk, idle breath, recovery, subtitle visibility, low intensity, accessibility, eval split, and renderer-ready-false rows.
-- Rejected synthetic fixture cases: missing required row or audit fields, duplicate row IDs, unsupported or experimental executable motion labels, expression/gaze/breath/camera labels used as motion styles, raw/private/command material, readiness shortcuts, missing renderer-ready dependencies, missing UX guards, and missing eval contamination guard.
+- Rejected synthetic fixture cases: missing required row or audit fields, duplicate row IDs, unsupported or experimental executable motion labels, expression/gaze/breath/camera labels used as motion styles, raw/private/operator instruction material, readiness shortcuts, missing renderer-ready dependencies, missing UX guards, and missing eval contamination guard.
 - Boundary: no real row ingestion, no motion execution, no real collection, no live probe, no owner confirmation creation, no owner confirmation confirmation, no trusted loader enablement, no runtime readiness claim, no production readiness claim, no priority1 resolution, and no go decision.
 - Evidence policy: synthetic fixture success, manifest existence, asset route success, SSE connection, cue acceptance, and browser cue delivery remain rejected as renderer-ready or real evidence.
 - Current status: real_row_data_present remains false, checked_row_count remains 0, motion dataset remains non-executable, motion_dataset_ready_candidate remains false, go/no-go remains no_go, and priority1 remains BLOCKED until real resident fresh evidence and a separate owner-confirmed task exist.
