@@ -6266,6 +6266,39 @@ This long-continuation completion review records that PR274 through the current 
 | checked_row_count | 0 |
 | motion_dataset_executable | false |
 
+## Renderer Ready Preflight Route Manifest Stub
+
+Task: LIVE2D-RENDERER-READY-PREFLIGHT-ROUTE-MANIFEST-STUB1
+
+The renderer-ready preflight route manifest stub records future preflight sections only. It does not add or execute a real route, does not start preflight, does not expose locator or auth material, and does not claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_preflight_route_manifest_stub | added |
+| preflightRouteManifestStatus | draft |
+| preflightRouteExecuted | false |
+| realPreflightStarted | false |
+| renderer | required_section |
+| evidence | required_section |
+| owner_confirmation | required_section |
+| audit_reference | required_section |
+| trusted_loader_boundary | required_section |
+| priority1 | required_section |
+| checked_rows | required_section |
+| motion_dataset | required_section |
+| networkLocatorIncluded | false |
+| authMaterialIncluded | false |
+| locatorValueIncluded | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
