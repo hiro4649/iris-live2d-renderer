@@ -97,6 +97,7 @@ export const LIVE2D_RENDERER_READY_AUDIT_LINK_MISSING_REJECTION_GUARD_SCHEMA = "
 export const LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_BLOCKER_SURFACE_SCHEMA = "iris_live2d_renderer_ready_trusted_loader_preauth_blocker_surface_v1";
 export const LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_REJECTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_trusted_loader_preauth_rejection_guard_v1";
 export const LIVE2D_RENDERER_READY_RUNTIME_READINESS_FINAL_NO_GO_SCHEMA = "iris_live2d_renderer_ready_runtime_readiness_final_no_go_v1";
+export const LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA = "iris_live2d_renderer_ready_production_readiness_final_no_go_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
@@ -9798,6 +9799,72 @@ export function createRendererReadyRuntimeReadinessFinalNoGoSummary() {
     },
   };
   assertSafePublicObject(summary, "renderer ready runtime readiness final no-go summary");
+  return summary;
+}
+
+export function createRendererReadyProductionReadinessFinalNoGoSummary() {
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA,
+    safe_summary_only: true,
+    productionReadinessFinalNoGo: true,
+    productionReadinessClaimed: false,
+    productionReadinessStatus: "no_go",
+    productionReadinessApproved: false,
+    goApproved: false,
+    productionReadinessNoGoReasons: [
+      "runtime_readiness_not_claimed",
+      "owner_confirmation_missing",
+      "actual_data_task_not_started",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "trusted_loader_disabled",
+      "motion_dataset_non_executable",
+    ],
+    runtimeReadinessClaimed: false,
+    runtimeReadinessApproved: false,
+    ownerConfirmationCreated: false,
+    ownerConfirmationConfirmed: false,
+    actual_data_task_started: false,
+    actual_data_preauthorized: false,
+    actual_ingestion_allowed: false,
+    real_row_data_present: false,
+    row_body_read: false,
+    trustedLoaderAllowlistEnabled: false,
+    trusted_loader_allowlist_enabled: false,
+    trustedLoaderBoundary: "disabled",
+    rendererProbeExecuted: false,
+    realRendererEvidencePresent: false,
+    rendererReadyClaimed: false,
+    rendererReadyCandidate: false,
+    priority1Status: "BLOCKED",
+    priority1_status: "BLOCKED",
+    checkedRowCount: 0,
+    checked_row_count: 0,
+    motionDatasetExecutable: false,
+    motion_dataset_executable: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      production_readiness_final_no_go_only: true,
+      no_runtime_readiness_claim: true,
+      no_production_readiness_claim: true,
+      no_owner_confirmation_creation: true,
+      no_actual_data_task_started: true,
+      no_real_row_ingestion: true,
+      no_row_body_read: true,
+      no_audit_execution: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_actual_live2d_execution: true,
+      no_actual_model_load: true,
+      no_actual_scene_load: true,
+      no_actual_cue_application: true,
+      no_actual_heartbeat_collection: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready production readiness final no-go summary");
   return summary;
 }
 
