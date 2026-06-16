@@ -74,6 +74,7 @@ import {
   createLive2dMotionIdentityComfortRoleGateStub,
   createLive2dMotionIdentityComfortRoleGateRedactionGuard,
   createLive2dMotionIdentityComfortAuditStubNoWrite,
+  createLive2dMotionIdentityComfortAuditEventStubNoWrite2,
   createLive2dMotionIdentityComfortAuditUnsafeFieldGuard,
   createLive2dMotionIdentityComfortRepeatedBlockerGrouping,
   createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract,
@@ -324,6 +325,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
       const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
       const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
+      const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
       const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
@@ -527,6 +529,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
           live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
           live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
+          live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
           live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
@@ -679,6 +682,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
           live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
           live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
+          live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
           live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
@@ -872,6 +876,7 @@ export function createRendererState({
         live2d_motion_identity_comfort_role_gate_stub: status.renderer_health.live2d_motion_identity_comfort_role_gate_stub,
         live2d_motion_identity_comfort_role_gate_redaction_guard: status.renderer_health.live2d_motion_identity_comfort_role_gate_redaction_guard,
         live2d_motion_identity_comfort_audit_stub_no_write: status.renderer_health.live2d_motion_identity_comfort_audit_stub_no_write,
+        live2d_motion_identity_comfort_audit_event_stub_no_write2: status.renderer_health.live2d_motion_identity_comfort_audit_event_stub_no_write2,
         live2d_motion_identity_comfort_audit_unsafe_field_guard: status.renderer_health.live2d_motion_identity_comfort_audit_unsafe_field_guard,
         live2d_motion_identity_comfort_repeated_blocker_grouping: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping,
         live2d_motion_identity_comfort_repeated_blocker_grouping_contract: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping_contract,
@@ -1119,6 +1124,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
       const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
       const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
+      const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
       const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
@@ -1281,6 +1287,7 @@ export function createRendererState({
       response.live2d_motion_identity_comfort_role_gate_stub = live2dMotionIdentityComfortRoleGateStub;
       response.live2d_motion_identity_comfort_role_gate_redaction_guard = live2dMotionIdentityComfortRoleGateRedactionGuard;
       response.live2d_motion_identity_comfort_audit_stub_no_write = live2dMotionIdentityComfortAuditStubNoWrite;
+      response.live2d_motion_identity_comfort_audit_event_stub_no_write2 = live2dMotionIdentityComfortAuditEventStubNoWrite2;
       response.live2d_motion_identity_comfort_audit_unsafe_field_guard = live2dMotionIdentityComfortAuditUnsafeFieldGuard;
       response.live2d_motion_identity_comfort_repeated_blocker_grouping = live2dMotionIdentityComfortRepeatedBlockerGrouping;
       response.live2d_motion_identity_comfort_repeated_blocker_grouping_contract = live2dMotionIdentityComfortRepeatedBlockerGroupingContract;
@@ -1496,6 +1503,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
       const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
       const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
+      const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
       const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
@@ -1682,6 +1690,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
           live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
           live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
+          live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
           live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,

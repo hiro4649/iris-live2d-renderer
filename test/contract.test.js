@@ -177,6 +177,9 @@ import {
   LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_FIELDS,
   LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_REJECTIONS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_FIELDS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_REJECTIONS,
   LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_LABELS,
   LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_REJECTIONS,
@@ -458,6 +461,7 @@ import {
   createLive2dMotionIdentityComfortRoleGateStub,
   createLive2dMotionIdentityComfortRoleGateRedactionGuard,
   createLive2dMotionIdentityComfortAuditStubNoWrite,
+  createLive2dMotionIdentityComfortAuditEventStubNoWrite2,
   createLive2dMotionIdentityComfortAuditUnsafeFieldGuard,
   createLive2dMotionIdentityComfortRepeatedBlockerGrouping,
   createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract,
@@ -6424,6 +6428,7 @@ try {
   assertLive2dMotionIdentityComfortRoleGateStub(provisionedRuntimeConfig.live2d_motion_identity_comfort_role_gate_stub);
   assertLive2dMotionIdentityComfortRoleGateRedactionGuard(provisionedRuntimeConfig.live2d_motion_identity_comfort_role_gate_redaction_guard);
   assertLive2dMotionIdentityComfortAuditStubNoWrite(provisionedRuntimeConfig.live2d_motion_identity_comfort_audit_stub_no_write);
+  assertLive2dMotionIdentityComfortAuditEventStubNoWrite2(provisionedRuntimeConfig.live2d_motion_identity_comfort_audit_event_stub_no_write2);
   assertLive2dMotionIdentityComfortAuditUnsafeFieldGuard(provisionedRuntimeConfig.live2d_motion_identity_comfort_audit_unsafe_field_guard);
   assertLive2dMotionIdentityComfortRepeatedBlockerGrouping(provisionedRuntimeConfig.live2d_motion_identity_comfort_repeated_blocker_grouping);
   assertLive2dMotionIdentityComfortRepeatedBlockerGroupingContract(provisionedRuntimeConfig.live2d_motion_identity_comfort_repeated_blocker_grouping_contract);
@@ -6790,6 +6795,7 @@ try {
   assertLive2dMotionIdentityComfortRoleGateStub(provisionedStatus.live2d_motion_identity_comfort_role_gate_stub);
   assertLive2dMotionIdentityComfortRoleGateRedactionGuard(provisionedStatus.live2d_motion_identity_comfort_role_gate_redaction_guard);
   assertLive2dMotionIdentityComfortAuditStubNoWrite(provisionedStatus.live2d_motion_identity_comfort_audit_stub_no_write);
+  assertLive2dMotionIdentityComfortAuditEventStubNoWrite2(provisionedStatus.live2d_motion_identity_comfort_audit_event_stub_no_write2);
   assertLive2dMotionIdentityComfortAuditUnsafeFieldGuard(provisionedStatus.live2d_motion_identity_comfort_audit_unsafe_field_guard);
   assertLive2dMotionIdentityComfortRepeatedBlockerGrouping(provisionedStatus.live2d_motion_identity_comfort_repeated_blocker_grouping);
   assertLive2dMotionIdentityComfortRepeatedBlockerGroupingContract(provisionedStatus.live2d_motion_identity_comfort_repeated_blocker_grouping_contract);
@@ -7046,6 +7052,7 @@ try {
   assertLive2dMotionIdentityComfortRoleGateStub(provisionedHealth.live2d_motion_identity_comfort_role_gate_stub);
   assertLive2dMotionIdentityComfortRoleGateRedactionGuard(provisionedHealth.live2d_motion_identity_comfort_role_gate_redaction_guard);
   assertLive2dMotionIdentityComfortAuditStubNoWrite(provisionedHealth.live2d_motion_identity_comfort_audit_stub_no_write);
+  assertLive2dMotionIdentityComfortAuditEventStubNoWrite2(provisionedHealth.live2d_motion_identity_comfort_audit_event_stub_no_write2);
   assertLive2dMotionIdentityComfortAuditUnsafeFieldGuard(provisionedHealth.live2d_motion_identity_comfort_audit_unsafe_field_guard);
   assertLive2dMotionIdentityComfortRepeatedBlockerGrouping(provisionedHealth.live2d_motion_identity_comfort_repeated_blocker_grouping);
   assertLive2dMotionIdentityComfortRepeatedBlockerGroupingContract(provisionedHealth.live2d_motion_identity_comfort_repeated_blocker_grouping_contract);
@@ -7926,6 +7933,7 @@ try {
       "live2d_motion_identity_comfort_role_gate_stub",
       "live2d_motion_identity_comfort_role_gate_redaction_guard",
       "live2d_motion_identity_comfort_audit_stub_no_write",
+      "live2d_motion_identity_comfort_audit_event_stub_no_write2",
       "live2d_motion_identity_comfort_audit_unsafe_field_guard",
       "live2d_motion_identity_comfort_repeated_blocker_grouping",
       "live2d_motion_identity_comfort_repeated_blocker_grouping_contract",
@@ -12624,6 +12632,72 @@ function assertLive2dMotionIdentityComfortAuditStubNoWrite(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertLive2dMotionIdentityComfortAuditEventStubNoWrite2(summary) {
+  assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_SCHEMA);
+  assert.equal(summary.live2d_motion_identity_comfort_audit_event_stub_no_write2_status, "audit_event_stub_no_write2_blocked");
+  assert.equal(summary.planning_only_boundary, true);
+  assert.equal(summary.motion_identity_comfort_audit_event_stub_no_write2_only_boundary, true);
+  assert.equal(summary.audit_event_stub_no_write2_label_only_boundary, true);
+  assert.equal(summary.no_audit_execution_boundary, true);
+  assert.equal(summary.no_audit_write_boundary, true);
+  assert.equal(summary.no_actual_data_boundary, true);
+  assert.equal(summary.no_owner_confirmation_boundary, true);
+  assert.equal(summary.no_readiness_claim_boundary, true);
+  assert.equal(summary.motion_identity_comfort_audit_event_stub_no_write2_only, true);
+  assert.equal(summary.audit_event_stub_no_write2_present, true);
+  for (const flag of [
+    "audit_event_write_attempted",
+    "audit_entry_created",
+    "audit_execution_started",
+    "audit_event_stub2_writes_audit_event",
+    "audit_event_stub2_creates_audit_entry",
+    "audit_event_stub2_executes_audit",
+    "audit_event_stub2_accepts_actual_data",
+    "audit_event_stub2_exposes_owner_only_detail",
+    "audit_event_stub2_claims_runtime_ready",
+    "audit_event_stub2_claims_production_ready",
+    "audit_event_stub2_resolves_priority1",
+    "runtime_readiness_claimed",
+    "production_readiness_claimed",
+    "renderer_ready_claimed",
+    "renderer_ready_candidate",
+    "renderer_ready",
+    "owner_confirmation_confirmed",
+    "trusted_loader_allowlist_enabled",
+    "actual_ingestion_allowed",
+    "motion_dataset_executable",
+  ]) {
+    assert.equal(summary[flag], false, flag);
+  }
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.audit_event_stub_no_write2_fields, [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_FIELDS]);
+  assert.deepEqual(summary.audit_event_stub_no_write2_rejections, [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_REJECTIONS]);
+  for (const blocker of [
+    "motion_identity_comfort_audit_event_stub_no_write2_only",
+    "audit_event_stub_no_write2_label_only",
+    "audit_execution_not_started",
+    "audit_write_not_attempted",
+    "audit_entry_not_created",
+    "priority1_blocked",
+    "checked_row_count_zero",
+    "motion_dataset_non_executable",
+    "trusted_loader_disabled",
+    "readiness_claims_false",
+  ]) {
+    assert.equal(summary.blocked_reasons.includes(blocker), true, blocker);
+  }
+  assert.equal(summary.audit_event_stub_no_write2_fields.includes("audit_event_write_not_attempted"), true);
+  assert.equal(summary.audit_event_stub_no_write2_rejections.includes("audit_event_stub2_writes_audit_event"), true);
+  assert.equal(summary.audit_event_stub_no_write2_rejections.includes("audit_event_stub2_resolves_priority1"), true);
+  assert.equal(summary.safe_next_action, "add_motion_identity_comfort_audit_event_unsafe_field_guard2");
+  assert.equal(summary.boundary_policy.no_motion_execution, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertLive2dMotionIdentityComfortAuditUnsafeFieldGuard(summary) {
   assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_SCHEMA);
   assert.equal(summary.live2d_motion_identity_comfort_audit_unsafe_field_guard_status, "audit_unsafe_field_guard_blocked");
@@ -14080,6 +14154,35 @@ function assertNoModelPathLeak(serialized) {
   });
   assertLive2dMotionIdentityComfortAuditStubNoWrite(summary);
   assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_audit_stub_no_write_rejected_state_promotion"), true);
+}
+
+{
+  const summary = createLive2dMotionIdentityComfortAuditEventStubNoWrite2({
+    audit_event_write_attempted: true,
+    audit_entry_created: true,
+    audit_execution_started: true,
+    audit_event_stub2_writes_audit_event: true,
+    audit_event_stub2_creates_audit_entry: true,
+    audit_event_stub2_executes_audit: true,
+    audit_event_stub2_accepts_actual_data: true,
+    audit_event_stub2_exposes_owner_only_detail: true,
+    audit_event_stub2_claims_runtime_ready: true,
+    audit_event_stub2_claims_production_ready: true,
+    audit_event_stub2_resolves_priority1: true,
+    renderer_ready_claimed: true,
+    renderer_ready_candidate: true,
+    renderer_ready: true,
+    owner_confirmation_confirmed: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 99,
+    priority1_status: "RESOLVED",
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+  });
+  assertLive2dMotionIdentityComfortAuditEventStubNoWrite2(summary);
+  assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_audit_event_stub_no_write2_rejected_state_promotion"), true);
 }
 
 {
