@@ -78,6 +78,7 @@ export const LIVE2D_MOTION_COMFORT_POLICY_STATUS_SURFACE_SCHEMA = "iris_live2d_m
 export const LIVE2D_MOTION_FRESHNESS_POLICY_CROSS_SURFACE_CONSISTENCY_SCHEMA = "iris_live2d_motion_freshness_policy_cross_surface_consistency_v1";
 export const LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTION_SCHEMA = "iris_live2d_motion_strong_motion_unsafe_override_rejection_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SCHEMA = "iris_live2d_motion_identity_comfort_redaction_sweep_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_SCHEMA = "iris_live2d_motion_identity_comfort_no_sweetening_sweep_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -740,6 +741,29 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_REJECTIONS = Object.
   "redaction_sweep_executes_scan",
   "redaction_sweep_claims_runtime_ready",
   "redaction_sweep_accepts_actual_data",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_INPUTS = Object.freeze([
+  "motion_spec_completion",
+  "fixture_pass",
+  "dry_run_pass",
+  "schedule_update",
+  "completion_review",
+  "status_surface_present",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_REJECTIONS = Object.freeze([
+  "spec_completion_promoted_to_readiness",
+  "fixture_pass_promoted_to_readiness",
+  "dry_run_pass_promoted_to_readiness",
+  "schedule_update_promoted_to_readiness",
+  "completion_review_promoted_to_readiness",
+  "status_surface_promoted_to_execution",
+  "experimental_label_marked_executable",
+  "runtime_motion_marked_executable",
+  "strong_motion_marked_ready",
+  "priority1_marked_resolved",
+  "checked_row_count_increased",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -9421,6 +9445,63 @@ export function createLive2dMotionIdentityComfortRedactionSweepSummary(input = {
     ],
     safeNextAction: "add_motion_identity_comfort_no_sweetening_sweep",
     context: "live2d motion identity comfort redaction sweep summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortNoSweeteningSweepSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_no_sweetening_sweep_status",
+    status: "no_sweetening_sweep_blocked",
+    boundaries: {
+      motion_identity_comfort_no_sweetening_sweep_only_boundary: true,
+      no_readiness_sweetening_boundary: true,
+      no_motion_execution_boundary: true,
+      no_runtime_motion_executable_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_actual_data_boundary: true,
+      no_trusted_loader_enablement_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_no_sweetening_sweep_only: true,
+      spec_completion_is_runtime_readiness: false,
+      fixture_pass_is_runtime_readiness: false,
+      dry_run_pass_is_runtime_readiness: false,
+      schedule_update_is_runtime_readiness: false,
+      completion_review_is_runtime_readiness: false,
+      status_surface_executes_motion: false,
+      experimental_labels_executable: false,
+      runtime_motion_executable: false,
+      strong_motion_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      no_sweetening_inputs: [...LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_INPUTS],
+      no_sweetening_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_no_sweetening_sweep_only",
+      "spec_completion_is_not_readiness",
+      "fixture_pass_is_not_readiness",
+      "dry_run_pass_is_not_readiness",
+      "schedule_update_is_not_readiness",
+      "status_surface_is_not_execution",
+      "experimental_labels_non_executable",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_comfort_implementation_gap_audit",
+    context: "live2d motion identity comfort no sweetening sweep summary",
   }, input);
 }
 

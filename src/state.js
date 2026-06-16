@@ -59,6 +59,7 @@ import {
   createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary,
   createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary,
   createLive2dMotionIdentityComfortRedactionSweepSummary,
+  createLive2dMotionIdentityComfortNoSweeteningSweepSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -287,6 +288,7 @@ export function createRendererState({
       const live2dMotionFreshnessPolicyCrossSurfaceConsistency = createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary();
       const live2dMotionStrongMotionUnsafeOverrideRejection = createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary();
       const live2dMotionIdentityComfortRedactionSweep = createLive2dMotionIdentityComfortRedactionSweepSummary();
+      const live2dMotionIdentityComfortNoSweeteningSweep = createLive2dMotionIdentityComfortNoSweeteningSweepSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -468,6 +470,7 @@ export function createRendererState({
           live2d_motion_freshness_policy_cross_surface_consistency_summary: live2dMotionFreshnessPolicyCrossSurfaceConsistency,
           live2d_motion_strong_motion_unsafe_override_rejection_summary: live2dMotionStrongMotionUnsafeOverrideRejection,
           live2d_motion_identity_comfort_redaction_sweep_summary: live2dMotionIdentityComfortRedactionSweep,
+          live2d_motion_identity_comfort_no_sweetening_sweep_summary: live2dMotionIdentityComfortNoSweeteningSweep,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -598,6 +601,7 @@ export function createRendererState({
           live2d_motion_freshness_policy_cross_surface_consistency_summary: live2dMotionFreshnessPolicyCrossSurfaceConsistency,
           live2d_motion_strong_motion_unsafe_override_rejection_summary: live2dMotionStrongMotionUnsafeOverrideRejection,
           live2d_motion_identity_comfort_redaction_sweep_summary: live2dMotionIdentityComfortRedactionSweep,
+          live2d_motion_identity_comfort_no_sweetening_sweep_summary: live2dMotionIdentityComfortNoSweeteningSweep,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -769,6 +773,7 @@ export function createRendererState({
         live2d_motion_freshness_policy_cross_surface_consistency_summary: status.renderer_health.live2d_motion_freshness_policy_cross_surface_consistency_summary,
         live2d_motion_strong_motion_unsafe_override_rejection_summary: status.renderer_health.live2d_motion_strong_motion_unsafe_override_rejection_summary,
         live2d_motion_identity_comfort_redaction_sweep_summary: status.renderer_health.live2d_motion_identity_comfort_redaction_sweep_summary,
+        live2d_motion_identity_comfort_no_sweetening_sweep_summary: status.renderer_health.live2d_motion_identity_comfort_no_sweetening_sweep_summary,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -994,6 +999,7 @@ export function createRendererState({
       const live2dMotionFreshnessPolicyCrossSurfaceConsistency = createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary();
       const live2dMotionStrongMotionUnsafeOverrideRejection = createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary();
       const live2dMotionIdentityComfortRedactionSweep = createLive2dMotionIdentityComfortRedactionSweepSummary();
+      const live2dMotionIdentityComfortNoSweeteningSweep = createLive2dMotionIdentityComfortNoSweeteningSweepSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1134,6 +1140,7 @@ export function createRendererState({
       response.live2d_motion_freshness_policy_cross_surface_consistency_summary = live2dMotionFreshnessPolicyCrossSurfaceConsistency;
       response.live2d_motion_strong_motion_unsafe_override_rejection_summary = live2dMotionStrongMotionUnsafeOverrideRejection;
       response.live2d_motion_identity_comfort_redaction_sweep_summary = live2dMotionIdentityComfortRedactionSweep;
+      response.live2d_motion_identity_comfort_no_sweetening_sweep_summary = live2dMotionIdentityComfortNoSweeteningSweep;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1327,6 +1334,7 @@ export function createRendererState({
       const live2dMotionFreshnessPolicyCrossSurfaceConsistency = createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary();
       const live2dMotionStrongMotionUnsafeOverrideRejection = createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary();
       const live2dMotionIdentityComfortRedactionSweep = createLive2dMotionIdentityComfortRedactionSweepSummary();
+      const live2dMotionIdentityComfortNoSweeteningSweep = createLive2dMotionIdentityComfortNoSweeteningSweepSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1491,6 +1499,7 @@ export function createRendererState({
           live2d_motion_freshness_policy_cross_surface_consistency_summary: live2dMotionFreshnessPolicyCrossSurfaceConsistency,
           live2d_motion_strong_motion_unsafe_override_rejection_summary: live2dMotionStrongMotionUnsafeOverrideRejection,
           live2d_motion_identity_comfort_redaction_sweep_summary: live2dMotionIdentityComfortRedactionSweep,
+          live2d_motion_identity_comfort_no_sweetening_sweep_summary: live2dMotionIdentityComfortNoSweeteningSweep,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
