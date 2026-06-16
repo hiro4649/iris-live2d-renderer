@@ -180,6 +180,8 @@ import {
   LIVE2D_RENDERER_READY_LONG_CONTINUATION_REVIEW2_COMPLETED_ARTIFACTS,
   LIVE2D_RENDERER_READY_IMPLEMENTATION_GAP_AUDIT2_SCHEMA,
   LIVE2D_RENDERER_READY_IMPLEMENTATION_GAP_AUDIT2_GAPS,
+  LIVE2D_RENDERER_READY_PRE_OWNER_WAIT_STATE2_SCHEMA,
+  LIVE2D_RENDERER_READY_PRE_OWNER_WAIT_STATE2_ITEMS,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA,
@@ -331,6 +333,7 @@ import {
   createRendererReadyFinalPreOwnerBlockerSummary,
   createRendererReadyLongContinuationCompletionReview2Summary,
   createRendererReadyImplementationGapAudit2Summary,
+  createRendererReadyPreOwnerWaitState2Summary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -6261,6 +6264,7 @@ try {
   assertRendererReadyFinalPreOwnerBlockerSummary(provisionedRuntimeConfig.renderer_ready_final_pre_owner_blocker_summary);
   assertRendererReadyLongContinuationCompletionReview2(provisionedRuntimeConfig.renderer_ready_long_continuation_completion_review2_summary);
   assertRendererReadyImplementationGapAudit2(provisionedRuntimeConfig.renderer_ready_implementation_gap_audit2_summary);
+  assertRendererReadyPreOwnerWaitState2(provisionedRuntimeConfig.renderer_ready_pre_owner_wait_state2_summary);
   assertRendererReadyAuditReferenceStub(provisionedRuntimeConfig.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedRuntimeConfig.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedRuntimeConfig.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6588,6 +6592,7 @@ try {
   assertRendererReadyFinalPreOwnerBlockerSummary(provisionedStatus.renderer_ready_final_pre_owner_blocker_summary);
   assertRendererReadyLongContinuationCompletionReview2(provisionedStatus.renderer_ready_long_continuation_completion_review2_summary);
   assertRendererReadyImplementationGapAudit2(provisionedStatus.renderer_ready_implementation_gap_audit2_summary);
+  assertRendererReadyPreOwnerWaitState2(provisionedStatus.renderer_ready_pre_owner_wait_state2_summary);
   assertRendererReadyAuditReferenceStub(provisionedStatus.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedStatus.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedStatus.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6805,6 +6810,7 @@ try {
   assertRendererReadyFinalPreOwnerBlockerSummary(provisionedHealth.renderer_ready_final_pre_owner_blocker_summary);
   assertRendererReadyLongContinuationCompletionReview2(provisionedHealth.renderer_ready_long_continuation_completion_review2_summary);
   assertRendererReadyImplementationGapAudit2(provisionedHealth.renderer_ready_implementation_gap_audit2_summary);
+  assertRendererReadyPreOwnerWaitState2(provisionedHealth.renderer_ready_pre_owner_wait_state2_summary);
   assertRendererReadyAuditReferenceStub(provisionedHealth.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedHealth.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedHealth.renderer_ready_safe_operator_checklist_stub_summary);
@@ -7618,6 +7624,7 @@ try {
       "renderer_ready_final_pre_owner_blocker_summary",
       "renderer_ready_long_continuation_completion_review2",
       "renderer_ready_implementation_gap_audit2",
+      "renderer_ready_pre_owner_wait_state2",
       "renderer_ready_audit_reference_stub",
       "renderer_ready_audit_reference_missing_guard",
       "renderer_ready_pre_owner_action_completion_review",
@@ -9634,6 +9641,55 @@ function assertRendererReadyImplementationGapAudit2(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyPreOwnerWaitState2(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_PRE_OWNER_WAIT_STATE2_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.preOwnerWaitStateStatus, "waiting_safe_labels_only");
+  assert.equal(summary.waitStateOnly, true);
+  assert.deepEqual(summary.waitItems, [...LIVE2D_RENDERER_READY_PRE_OWNER_WAIT_STATE2_ITEMS]);
+  assert.equal(summary.waitItemCount, LIVE2D_RENDERER_READY_PRE_OWNER_WAIT_STATE2_ITEMS.length);
+  assert.equal(summary.waitItems.includes("owner_confirmation_missing"), true);
+  assert.equal(summary.waitItems.includes("trusted_loader_disabled"), true);
+  assert.equal(summary.nextSafeTask, "owner_action_boundary_catalog2");
+  assert.equal(summary.ownerActionRequestedBySystem, false);
+  assert.equal(summary.ownerHandoffSent, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.actualRendererProbeExecuted, false);
+  assert.equal(summary.actualBrowserProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.collectorExecutionStarted, false);
+  assert.equal(summary.collectorOutputGenerated, false);
+  assert.equal(summary.collectorOutputAcceptedAsRealEvidence, false);
+  assert.equal(summary.auditExecutionStarted, false);
+  assert.equal(summary.realEvidenceCollectionStarted, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.boundary_policy.pre_owner_wait_state2_only, true);
+  assert.equal(summary.boundary_policy.wait_state_is_not_owner_confirmation, true);
+  assert.equal(summary.boundary_policy.no_owner_handoff_sent, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_collector_execution, true);
+  assert.equal(summary.boundary_policy.no_audit_execution, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_trusted_loader_enablement, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertRendererReadyAuditReferenceStub(summary) {
   assert.equal(summary.schema, LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA);
   assert.equal(summary.safe_summary_only, true);
@@ -11167,6 +11223,13 @@ for (const fixture of [
   assertRendererReadyImplementationGapAudit2(summary);
   assert.equal(summary.gapLabels.includes("trusted_loader_disabled"), true);
   assert.equal(summary.runtimeReadinessClaimed, false);
+}
+
+{
+  const summary = createRendererReadyPreOwnerWaitState2Summary();
+  assertRendererReadyPreOwnerWaitState2(summary);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerHandoffSent, false);
 }
 
 {
