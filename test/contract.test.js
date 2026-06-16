@@ -185,6 +185,7 @@ import {
   LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_BLOCKER_SURFACE_SCHEMA,
   LIVE2D_RENDERER_READY_TRUSTED_LOADER_PREAUTH_REJECTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_RUNTIME_READINESS_FINAL_NO_GO_SCHEMA,
+  LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -316,6 +317,7 @@ import {
   createRendererReadyTrustedLoaderPreauthBlockerSurfaceSummary,
   createRendererReadyTrustedLoaderPreauthRejectionGuardSummary,
   createRendererReadyRuntimeReadinessFinalNoGoSummary,
+  createRendererReadyProductionReadinessFinalNoGoSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6233,6 +6235,7 @@ try {
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(provisionedRuntimeConfig.renderer_ready_trusted_loader_preauth_blocker_surface_summary);
   assertRendererReadyTrustedLoaderPreauthRejectionGuard(provisionedRuntimeConfig.renderer_ready_trusted_loader_preauth_rejection_guard_summary);
   assertRendererReadyRuntimeReadinessFinalNoGo(provisionedRuntimeConfig.renderer_ready_runtime_readiness_final_no_go_summary);
+  assertRendererReadyProductionReadinessFinalNoGo(provisionedRuntimeConfig.renderer_ready_production_readiness_final_no_go_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6547,6 +6550,7 @@ try {
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(provisionedStatus.renderer_ready_trusted_loader_preauth_blocker_surface_summary);
   assertRendererReadyTrustedLoaderPreauthRejectionGuard(provisionedStatus.renderer_ready_trusted_loader_preauth_rejection_guard_summary);
   assertRendererReadyRuntimeReadinessFinalNoGo(provisionedStatus.renderer_ready_runtime_readiness_final_no_go_summary);
+  assertRendererReadyProductionReadinessFinalNoGo(provisionedStatus.renderer_ready_production_readiness_final_no_go_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6751,6 +6755,7 @@ try {
   assertRendererReadyTrustedLoaderPreauthBlockerSurface(provisionedHealth.renderer_ready_trusted_loader_preauth_blocker_surface_summary);
   assertRendererReadyTrustedLoaderPreauthRejectionGuard(provisionedHealth.renderer_ready_trusted_loader_preauth_rejection_guard_summary);
   assertRendererReadyRuntimeReadinessFinalNoGo(provisionedHealth.renderer_ready_runtime_readiness_final_no_go_summary);
+  assertRendererReadyProductionReadinessFinalNoGo(provisionedHealth.renderer_ready_production_readiness_final_no_go_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7553,6 +7558,7 @@ try {
       "renderer_ready_trusted_loader_preauth_blocker_surface",
       "renderer_ready_trusted_loader_preauth_rejection_guard",
       "renderer_ready_runtime_readiness_final_no_go",
+      "renderer_ready_production_readiness_final_no_go",
     ],
   }));
 } finally {
@@ -9581,6 +9587,65 @@ function assertRendererReadyRuntimeReadinessFinalNoGo(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyProductionReadinessFinalNoGo(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.productionReadinessFinalNoGo, true);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.productionReadinessStatus, "no_go");
+  assert.equal(summary.productionReadinessApproved, false);
+  assert.equal(summary.goApproved, false);
+  assert.deepEqual(summary.productionReadinessNoGoReasons, [
+    "runtime_readiness_not_claimed",
+    "owner_confirmation_missing",
+    "actual_data_task_not_started",
+    "priority1_blocked",
+    "checked_row_count_zero",
+    "trusted_loader_disabled",
+    "motion_dataset_non_executable",
+  ]);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.runtimeReadinessApproved, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.real_row_data_present, false);
+  assert.equal(summary.row_body_read, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.trustedLoaderBoundary, "disabled");
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.boundary_policy.production_readiness_final_no_go_only, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_row_body_read, true);
+  assert.equal(summary.boundary_policy.no_audit_execution, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_browser_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_live2d_execution, true);
+  assert.equal(summary.boundary_policy.no_actual_model_load, true);
+  assert.equal(summary.boundary_policy.no_actual_scene_load, true);
+  assert.equal(summary.boundary_policy.no_actual_cue_application, true);
+  assert.equal(summary.boundary_policy.no_actual_heartbeat_collection, true);
+  assert.equal(summary.boundary_policy.no_trusted_loader_enablement, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -10400,4 +10465,11 @@ for (const fixture of [
   assertRendererReadyRuntimeReadinessFinalNoGo(summary);
   assert.equal(summary.runtimeReadinessFinalNoGo, true);
   assert.equal(summary.runtimeReadinessClaimed, false);
+}
+
+{
+  const summary = createRendererReadyProductionReadinessFinalNoGoSummary();
+  assertRendererReadyProductionReadinessFinalNoGo(summary);
+  assert.equal(summary.productionReadinessFinalNoGo, true);
+  assert.equal(summary.productionReadinessClaimed, false);
 }
