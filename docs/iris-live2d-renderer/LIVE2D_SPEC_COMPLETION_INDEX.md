@@ -98,6 +98,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort implementation gap audit | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap register next. |
 | motion identity comfort implementation gap register | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final long continuation review2 next. |
 | motion identity comfort final long continuation review2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe-only follow-up; do not claim readiness. |
+| motion identity comfort public summary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add admin summary redaction next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -521,6 +522,38 @@ Rejected promotions include review2_executes_renderer, review2_applies_cue, revi
 | review2_loads_scene | false |
 | review2_claims_runtime_ready | false |
 | review2_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Public Summary
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-PUBLIC-SUMMARY1
+
+Status: public safe summary only. This surface exposes motion identity, comfort, freshness, strong motion, adaptive bounds, and implementation gap status as safe labels and counts only. It does not expose owner-only detail, network locator material, auth material, renderer material, cue material, model or motion locator material, private relation signal, private support signal, or dependency note material.
+
+Public sections: identity_profile_status, comfort_policy_status, freshness_policy_status, strong_motion_policy_status, adaptive_bounds_status, implementation_gap_status, and public_boundary_status.
+
+Allowed public labels include safe_summary_only, public_safe_labels_only, identity_profile_blocked, comfort_policy_blocked, freshness_policy_blocked, strong_motion_policy_blocked, adaptive_bounds_blocked, implementation_gaps_open, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, trusted_loader_disabled, and readiness_not_claimed.
+
+Rejected public summary promotions include public_summary_reflects_network_locator_material, public_summary_reflects_auth_material, public_summary_reflects_renderer_material, public_summary_reflects_cue_material, public_summary_reflects_model_locator_material, public_summary_reflects_motion_locator_material, public_summary_reflects_owner_only_detail, public_summary_reflects_private_relation_signal, public_summary_reflects_private_support_signal, public_summary_reflects_dependency_note_material, public_summary_claims_runtime_ready, and public_summary_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| public_safe_labels_only | true |
+| public_summary_reflects_network_locator_material | false |
+| public_summary_reflects_auth_material | false |
+| public_summary_reflects_renderer_material | false |
+| public_summary_reflects_cue_material | false |
+| public_summary_reflects_owner_only_detail | false |
+| public_summary_reflects_private_relation_signal | false |
+| public_summary_reflects_private_support_signal | false |
+| public_summary_claims_runtime_ready | false |
+| public_summary_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
