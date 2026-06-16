@@ -14,7 +14,7 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-COMFORT-COMPLETION-REVIEW1, completion review next planning |
+| safe_next_action | Continue safe motion identity comfort blocker review or wait for owner-gated real renderer evidence. |
 
 ## Completion Matrix
 
@@ -88,6 +88,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort voice sync hint boundary | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add adaptive bounds next. |
 | motion identity and comfort adaptive bounds | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final integration review next. |
 | motion identity comfort development schedule | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add completion review next. |
+| motion identity comfort completion review | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe blocker review; do not claim readiness. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -238,6 +239,39 @@ Required phases: spec_phase, fixture_rejection_phase, dry_run_validator_phase, r
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Completion Review
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-COMPLETION-REVIEW1
+
+Status: completion review planning only. This surface summarizes completed safe-only motion identity and comfort artifacts while keeping all real renderer, model, scene, cue application, owner confirmation, trusted loader, actual data, and readiness blockers active. It does not execute motion, probe the renderer, apply cues, load a model or scene, accept actual data, create owner confirmation, enable trusted loader, resolve priority1, or claim runtime or production readiness.
+
+### Completed Safe Items
+
+Completed safe items: motion_identity_comfort_spec, motion_identity_comfort_rejection_fixture_pack, motion_identity_comfort_dry_run_validator, motion_identity_comfort_recovery_matrix, motion_identity_comfort_context_gate, motion_identity_comfort_subtitle_gaze_guard, motion_identity_comfort_persona_pressure_guard, motion_identity_comfort_voice_sync_hint_boundary, motion_identity_comfort_adaptive_boundedness, and motion_identity_comfort_development_schedule.
+
+### Open Completion Blockers
+
+Open blockers: actual_renderer_evidence_missing, actual_cue_application_evidence_missing, actual_model_load_evidence_missing, actual_scene_load_evidence_missing, owner_confirmation_missing, trusted_loader_disabled, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, runtime_readiness_not_claimed, and production_readiness_not_claimed.
+
+Rejected promotions include completion_review_claims_runtime_ready, completion_review_claims_production_ready, completion_review_marks_priority1_resolved, completion_review_sets_checked_row_count_nonzero, completion_review_makes_motion_dataset_executable, completion_review_enables_trusted_loader, completion_review_creates_owner_confirmation, completion_review_starts_actual_renderer_probe, and completion_review_accepts_actual_data.
+
+### Preserved Completion Review Facts
+
+| Fact | Value |
+| --- | --- |
+| completion_review_claims_runtime_ready | false |
+| completion_review_claims_production_ready | false |
+| completion_review_creates_owner_confirmation | false |
+| completion_review_starts_actual_renderer_probe | false |
+| completion_review_accepts_actual_data | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
