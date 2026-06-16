@@ -6357,6 +6357,33 @@ The owner scope requirement surface records that explicit owner scope is require
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Owner Scope Missing Rejection Guard
+
+Task: LIVE2D-RENDERER-READY-OWNER-SCOPE-MISSING-REJECTION-GUARD1
+
+The owner scope missing rejection guard records that probe or readiness requests are rejected while owner scope is missing. No owner confirmation is created and no probe or readiness work starts.
+
+| field | value |
+| --- | --- |
+| renderer_ready_owner_scope_missing_rejection_guard | added |
+| ownerScopeConfirmed | false |
+| ownerScopeStatus | missing |
+| probeRequestRejected | true |
+| readinessRequestRejected | true |
+| rejectionReason | owner_scope_missing |
+| probeAllowed | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
