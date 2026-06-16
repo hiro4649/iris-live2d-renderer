@@ -102,6 +102,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort admin summary redaction | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add operator handoff no-action next. |
 | motion identity comfort operator handoff no-action | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add owner handoff stub next. |
 | motion identity comfort owner handoff stub | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add role gate stub next. |
+| motion identity comfort role gate stub | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add role gate redaction guard next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -648,6 +649,38 @@ Rejected owner handoff promotions include owner_handoff_sent, owner_action_reque
 | owner_handoff_executes_renderer | false |
 | owner_handoff_applies_cue | false |
 | owner_handoff_enables_trusted_loader | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Role Gate Stub
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-ROLE-GATE-STUB1
+
+Status: role gate definition stub only. This surface defines public, admin ordinary, operator, and owner-only summary boundaries while keeping owner-only detail unexposed, actual data absent, owner confirmation uncreated, and readiness unclaimed.
+
+Role views: public_safe_summary, admin_ordinary_summary, operator_safe_handoff_plan, and owner_only_detail_stub.
+
+Role gate rules: public_view_safe_labels_only, admin_ordinary_safe_labels_only, operator_view_safe_labels_only, owner_only_detail_not_exposed, raw_material_not_reflected, and readiness_not_claimed.
+
+Rejected role gate promotions include role_gate_exposes_owner_only_detail_public, role_gate_exposes_owner_only_detail_admin, role_gate_reflects_network_locator_material, role_gate_reflects_auth_material, role_gate_reflects_renderer_material, role_gate_reflects_cue_material, role_gate_reflects_private_relation_signal, role_gate_reflects_private_support_signal, role_gate_claims_runtime_ready, and role_gate_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| role_gate_stub_present | true |
+| public_view_safe_labels_only | true |
+| admin_ordinary_safe_labels_only | true |
+| operator_view_safe_labels_only | true |
+| owner_only_detail_exposed_public | false |
+| owner_only_detail_exposed_admin | false |
+| role_gate_reflects_renderer_material | false |
+| role_gate_reflects_cue_material | false |
+| role_gate_claims_runtime_ready | false |
+| role_gate_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |

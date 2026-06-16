@@ -67,6 +67,7 @@ import {
   createLive2dMotionIdentityComfortAdminSummaryRedaction,
   createLive2dMotionIdentityComfortOperatorHandoffNoAction,
   createLive2dMotionIdentityComfortOwnerHandoffStub,
+  createLive2dMotionIdentityComfortRoleGateStub,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -303,6 +304,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
       const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
       const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
+      const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -492,6 +494,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
           live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
           live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
+          live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -630,6 +633,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
           live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
           live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
+          live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -809,6 +813,7 @@ export function createRendererState({
         live2d_motion_identity_comfort_admin_summary_redaction: status.renderer_health.live2d_motion_identity_comfort_admin_summary_redaction,
         live2d_motion_identity_comfort_operator_handoff_no_action: status.renderer_health.live2d_motion_identity_comfort_operator_handoff_no_action,
         live2d_motion_identity_comfort_owner_handoff_stub: status.renderer_health.live2d_motion_identity_comfort_owner_handoff_stub,
+        live2d_motion_identity_comfort_role_gate_stub: status.renderer_health.live2d_motion_identity_comfort_role_gate_stub,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -1042,6 +1047,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
       const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
       const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
+      const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1190,6 +1196,7 @@ export function createRendererState({
       response.live2d_motion_identity_comfort_admin_summary_redaction = live2dMotionIdentityComfortAdminSummaryRedaction;
       response.live2d_motion_identity_comfort_operator_handoff_no_action = live2dMotionIdentityComfortOperatorHandoffNoAction;
       response.live2d_motion_identity_comfort_owner_handoff_stub = live2dMotionIdentityComfortOwnerHandoffStub;
+      response.live2d_motion_identity_comfort_role_gate_stub = live2dMotionIdentityComfortRoleGateStub;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1391,6 +1398,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
       const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
       const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
+      const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1563,6 +1571,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
           live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
           live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
+          live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
