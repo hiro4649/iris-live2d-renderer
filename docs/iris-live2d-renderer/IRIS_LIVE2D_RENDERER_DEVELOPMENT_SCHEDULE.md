@@ -63,6 +63,14 @@ production_readiness_claimed: no
 - Boundary: subtitle/gaze guard planning only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-PERSONA-PRESSURE-GUARD1.
 
+## Inserted Guard: LIVE2D-MOTION-IDENTITY-AND-COMFORT-PERSONA-PRESSURE-GUARD1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-SUBTITLE-GAZE-GUARD1 and before any voice sync hint boundary or runtime motion work.
+- Scope: define persona fit, donation signal, relation signal, dependency signal, dependency-pressure suppression, emotional intensity, safe motion candidate, safe downgrade, and safe recovery labels.
+- Rejections: missing persona pressure labels, donation signal strong-motion escalation, relation signal strong-motion escalation, dependency signal strong-motion escalation, unsuppressed dependency pressure, relationship commitment claims, runtime-ready guard claims, renderer-ready candidate claims, actual data, checked row count increase, and priority1 resolution.
+- Boundary: persona pressure guard planning only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-VOICE-SYNC-HINT-BOUNDARY1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。
