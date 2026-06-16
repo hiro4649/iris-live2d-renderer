@@ -76,6 +76,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_COMPLETION_REVIEW_SCHEMA = "iris_liv
 export const LIVE2D_MOTION_IDENTITY_PROFILE_STATUS_SURFACE_SCHEMA = "iris_live2d_motion_identity_profile_status_surface_v1";
 export const LIVE2D_MOTION_COMFORT_POLICY_STATUS_SURFACE_SCHEMA = "iris_live2d_motion_comfort_policy_status_surface_v1";
 export const LIVE2D_MOTION_FRESHNESS_POLICY_CROSS_SURFACE_CONSISTENCY_SCHEMA = "iris_live2d_motion_freshness_policy_cross_surface_consistency_v1";
+export const LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTION_SCHEMA = "iris_live2d_motion_strong_motion_unsafe_override_rejection_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -701,6 +702,21 @@ export const LIVE2D_MOTION_FRESHNESS_POLICY_REJECTIONS = Object.freeze([
   "freshness_policy_claims_production_ready",
   "freshness_policy_accepts_actual_data",
   "freshness_policy_marks_priority1_resolved",
+]);
+
+export const LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTIONS = Object.freeze([
+  "surprise_scream_executable_override",
+  "happy_dance_executable_override",
+  "laugh_big_without_recovery",
+  "happy_loud_sing_without_cooldown",
+  "strong_motion_ready_true",
+  "renderer_ready_claimed_true",
+  "strong_motion_runtime_ready_claim",
+  "strong_motion_production_ready_claim",
+  "strong_motion_owner_confirmation_created",
+  "strong_motion_trusted_loader_enabled",
+  "strong_motion_actual_data_accepted",
+  "strong_motion_priority1_resolved",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -9272,6 +9288,59 @@ export function createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary(
     ],
     safeNextAction: "add_strong_motion_unsafe_override_rejection",
     context: "live2d motion freshness policy cross surface consistency summary",
+  }, input);
+}
+
+export function createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTION_SCHEMA,
+    statusKey: "live2d_motion_strong_motion_unsafe_override_rejection_status",
+    status: "strong_motion_unsafe_override_rejected",
+    boundaries: {
+      strong_motion_unsafe_override_rejection_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_cue_application_boundary: true,
+      no_renderer_probe_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_trusted_loader_enablement_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      strong_motion_unsafe_override_rejection_only: true,
+      surprise_scream_executable: false,
+      happy_dance_executable: false,
+      laugh_big_recovery_required: true,
+      happy_loud_sing_cooldown_required: true,
+      strong_motion_ready: false,
+      strong_motion_downgraded_or_rejected: true,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      strong_motion_labels: [...LIVE2D_STRONG_MOTION_LABELS],
+      strong_motion_unsafe_override_rejections: [...LIVE2D_MOTION_STRONG_MOTION_UNSAFE_OVERRIDE_REJECTIONS],
+    },
+    blockedReasons: [
+      "strong_motion_unsafe_override_rejection_only",
+      "strong_motion_override_rejected",
+      "strong_motion_requires_recovery_and_cooldown",
+      "strong_motion_is_not_readiness",
+      "renderer_ready_claim_rejected",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_comfort_redaction_sweep",
+    context: "live2d motion strong motion unsafe override rejection summary",
   }, input);
 }
 

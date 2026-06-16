@@ -92,6 +92,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity profile status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add comfort policy status surface next. |
 | motion comfort policy status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add freshness policy cross-surface consistency next. |
 | motion freshness policy cross-surface consistency | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add strong motion unsafe override rejection next. |
+| motion strong motion unsafe override rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add identity comfort redaction sweep next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -350,6 +351,30 @@ Rejected promotions include stale_cue_strong_motion_selected, stale_cue_runtime_
 | freshness_policy_applies_cue | false |
 | freshness_policy_claims_runtime_ready | false |
 | freshness_policy_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Strong Motion Unsafe Override Rejection
+
+Task: LIVE2D-MOTION-STRONG-MOTION-UNSAFE-OVERRIDE-REJECTION1
+
+Status: negative fixture and contract guard only. This surface ensures strong motion labels cannot become executable or readiness evidence through unsafe override flags. It does not execute motion, apply cues, probe the renderer, accept actual data, create owner confirmation, enable trusted loader, or claim readiness.
+
+Rejected override attempts include surprise_scream_executable_override, happy_dance_executable_override, laugh_big_without_recovery, happy_loud_sing_without_cooldown, strong_motion_ready_true, renderer_ready_claimed_true, strong_motion_runtime_ready_claim, strong_motion_production_ready_claim, strong_motion_owner_confirmation_created, strong_motion_trusted_loader_enabled, strong_motion_actual_data_accepted, and strong_motion_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| surprise_scream_executable | false |
+| happy_dance_executable | false |
+| laugh_big_recovery_required | true |
+| happy_loud_sing_cooldown_required | true |
+| strong_motion_ready | false |
+| strong_motion_downgraded_or_rejected | true |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
