@@ -6216,6 +6216,46 @@ The public summary redaction guard fixes the public renderer readiness summary t
 | actual_data_task_started | false |
 | actual_ingestion_allowed | false |
 
+## Renderer Ready Admin Summary Redaction
+
+Task: LIVE2D-RENDERER-READY-ADMIN-SUMMARY-REDACTION1
+
+The admin ordinary summary redaction guard keeps admin-facing ordinary summaries safe-only. Owner-only detail remains role-gated or absent, unsafe material is absent, collector output is not generated or accepted as real evidence, and readiness remains false.
+
+| field | value |
+| --- | --- |
+| renderer_ready_admin_summary_redaction | added |
+| adminSummaryRedactionStatus | ordinary_admin_safe_summary_only |
+| adminOrdinarySummary | true |
+| diagnosticDetailLevel | safe_status_no_values |
+| ownerOnlyDetailRoleGated | true |
+| ownerOnlyDetailPresent | false |
+| forbiddenMaterialPresent | false |
+| networkLocatorMaterialPresent | false |
+| authMaterialPresent | false |
+| confidentialMaterialPresent | false |
+| rendererMaterialPresent | false |
+| cueMaterialPresent | false |
+| processDiagnosticMaterialPresent | false |
+| modelReferenceMaterialPresent | false |
+| motionReferenceMaterialPresent | false |
+| readinessStatus | not_ready |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| collectorExecutionStarted | false |
+| collectorOutputGenerated | false |
+| collectorOutputAcceptedAsRealEvidence | false |
+| realEvidenceCollectionStarted | false |
+| ownerConfirmationCreated | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
