@@ -180,6 +180,7 @@ import {
   LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_SAFE_REJECTION_LABELS,
   LIVE2D_RENDERER_READY_OWNER_SCOPE_REQUIREMENT_SURFACE_SCHEMA,
   LIVE2D_RENDERER_READY_OWNER_SCOPE_MISSING_REJECTION_GUARD_SCHEMA,
+  LIVE2D_RENDERER_READY_AUDIT_LINK_REQUIREMENT_SURFACE_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -306,6 +307,7 @@ import {
   createRendererReadyPreflightRouteUnsafeFieldGuardSummary,
   createRendererReadyOwnerScopeRequirementSurfaceSummary,
   createRendererReadyOwnerScopeMissingRejectionGuardSummary,
+  createRendererReadyAuditLinkRequirementSurfaceSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6218,6 +6220,7 @@ try {
   assertRendererReadyPreflightRouteUnsafeFieldGuard(provisionedRuntimeConfig.renderer_ready_preflight_route_unsafe_field_guard_summary);
   assertRendererReadyOwnerScopeRequirementSurface(provisionedRuntimeConfig.renderer_ready_owner_scope_requirement_surface_summary);
   assertRendererReadyOwnerScopeMissingRejectionGuard(provisionedRuntimeConfig.renderer_ready_owner_scope_missing_rejection_guard_summary);
+  assertRendererReadyAuditLinkRequirementSurface(provisionedRuntimeConfig.renderer_ready_audit_link_requirement_surface_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6527,6 +6530,7 @@ try {
   assertRendererReadyPreflightRouteUnsafeFieldGuard(provisionedStatus.renderer_ready_preflight_route_unsafe_field_guard_summary);
   assertRendererReadyOwnerScopeRequirementSurface(provisionedStatus.renderer_ready_owner_scope_requirement_surface_summary);
   assertRendererReadyOwnerScopeMissingRejectionGuard(provisionedStatus.renderer_ready_owner_scope_missing_rejection_guard_summary);
+  assertRendererReadyAuditLinkRequirementSurface(provisionedStatus.renderer_ready_audit_link_requirement_surface_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6726,6 +6730,7 @@ try {
   assertRendererReadyPreflightRouteUnsafeFieldGuard(provisionedHealth.renderer_ready_preflight_route_unsafe_field_guard_summary);
   assertRendererReadyOwnerScopeRequirementSurface(provisionedHealth.renderer_ready_owner_scope_requirement_surface_summary);
   assertRendererReadyOwnerScopeMissingRejectionGuard(provisionedHealth.renderer_ready_owner_scope_missing_rejection_guard_summary);
+  assertRendererReadyAuditLinkRequirementSurface(provisionedHealth.renderer_ready_audit_link_requirement_surface_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7523,6 +7528,7 @@ try {
       "renderer_ready_preflight_route_unsafe_field_guard",
       "renderer_ready_owner_scope_requirement_surface",
       "renderer_ready_owner_scope_missing_rejection_guard",
+      "renderer_ready_audit_link_requirement_surface",
     ],
   }));
 } finally {
@@ -9311,6 +9317,35 @@ function assertRendererReadyOwnerScopeMissingRejectionGuard(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyAuditLinkRequirementSurface(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_AUDIT_LINK_REQUIREMENT_SURFACE_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.auditLinkRequired, true);
+  assert.equal(summary.auditLinkPresent, false);
+  assert.equal(summary.auditLinkStatus, "missing");
+  assert.equal(summary.auditLinkMissingBlocksReadiness, true);
+  assert.equal(summary.auditExecutionStarted, false);
+  assert.equal(summary.auditBodyPresent, false);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.boundary_policy.audit_link_requirement_surface_only, true);
+  assert.equal(summary.boundary_policy.no_audit_execution, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -10095,4 +10130,11 @@ for (const fixture of [
   assertRendererReadyOwnerScopeMissingRejectionGuard(summary);
   assert.equal(summary.probeRequestRejected, true);
   assert.equal(summary.readinessRequestRejected, true);
+}
+
+{
+  const summary = createRendererReadyAuditLinkRequirementSurfaceSummary();
+  assertRendererReadyAuditLinkRequirementSurface(summary);
+  assert.equal(summary.auditLinkPresent, false);
+  assert.equal(summary.auditLinkMissingBlocksReadiness, true);
 }
