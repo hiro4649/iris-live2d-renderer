@@ -66,6 +66,7 @@ import {
   createRendererReadyEvidenceCollectorRedactionGuardSummary,
   createRendererReadyEvidenceCollectorNoExecutionGuardSummary,
   createRendererReadyEvidenceCollectorSafeOutputSchemaSummary,
+  createRendererReadyEvidenceCollectorUnsafeOutputRejectionSummary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -270,6 +271,7 @@ export function createRendererState({
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
       const rendererReadyEvidenceCollectorNoExecutionGuard = createRendererReadyEvidenceCollectorNoExecutionGuardSummary();
       const rendererReadyEvidenceCollectorSafeOutputSchema = createRendererReadyEvidenceCollectorSafeOutputSchemaSummary();
+      const rendererReadyEvidenceCollectorUnsafeOutputRejection = createRendererReadyEvidenceCollectorUnsafeOutputRejectionSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -427,6 +429,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_evidence_collector_safe_output_schema_summary: rendererReadyEvidenceCollectorSafeOutputSchema,
+          renderer_ready_evidence_collector_unsafe_output_rejection_summary: rendererReadyEvidenceCollectorUnsafeOutputRejection,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -533,6 +536,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_evidence_collector_safe_output_schema_summary: rendererReadyEvidenceCollectorSafeOutputSchema,
+          renderer_ready_evidence_collector_unsafe_output_rejection_summary: rendererReadyEvidenceCollectorUnsafeOutputRejection,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -680,6 +684,7 @@ export function createRendererState({
         renderer_ready_evidence_collector_redaction_guard_summary: status.renderer_health.renderer_ready_evidence_collector_redaction_guard_summary,
         renderer_ready_evidence_collector_no_execution_guard_summary: status.renderer_health.renderer_ready_evidence_collector_no_execution_guard_summary,
         renderer_ready_evidence_collector_safe_output_schema_summary: status.renderer_health.renderer_ready_evidence_collector_safe_output_schema_summary,
+        renderer_ready_evidence_collector_unsafe_output_rejection_summary: status.renderer_health.renderer_ready_evidence_collector_unsafe_output_rejection_summary,
         renderer_ready_audit_reference_stub_summary: status.renderer_health.renderer_ready_audit_reference_stub_summary,
         renderer_ready_audit_reference_missing_guard_summary: status.renderer_health.renderer_ready_audit_reference_missing_guard_summary,
         renderer_ready_safe_operator_checklist_stub_summary: status.renderer_health.renderer_ready_safe_operator_checklist_stub_summary,
@@ -881,6 +886,7 @@ export function createRendererState({
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
       const rendererReadyEvidenceCollectorNoExecutionGuard = createRendererReadyEvidenceCollectorNoExecutionGuardSummary();
       const rendererReadyEvidenceCollectorSafeOutputSchema = createRendererReadyEvidenceCollectorSafeOutputSchemaSummary();
+      const rendererReadyEvidenceCollectorUnsafeOutputRejection = createRendererReadyEvidenceCollectorUnsafeOutputRejectionSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -997,6 +1003,7 @@ export function createRendererState({
       response.renderer_ready_evidence_collector_redaction_guard_summary = rendererReadyEvidenceCollectorRedactionGuard;
       response.renderer_ready_evidence_collector_no_execution_guard_summary = rendererReadyEvidenceCollectorNoExecutionGuard;
       response.renderer_ready_evidence_collector_safe_output_schema_summary = rendererReadyEvidenceCollectorSafeOutputSchema;
+      response.renderer_ready_evidence_collector_unsafe_output_rejection_summary = rendererReadyEvidenceCollectorUnsafeOutputRejection;
       response.renderer_ready_audit_reference_stub_summary = rendererReadyAuditReferenceStub;
       response.renderer_ready_audit_reference_missing_guard_summary = rendererReadyAuditReferenceMissingGuard;
       response.renderer_ready_safe_operator_checklist_stub_summary = rendererReadySafeOperatorChecklistStub;
@@ -1166,6 +1173,7 @@ export function createRendererState({
       const rendererReadyEvidenceCollectorRedactionGuard = createRendererReadyEvidenceCollectorRedactionGuardSummary();
       const rendererReadyEvidenceCollectorNoExecutionGuard = createRendererReadyEvidenceCollectorNoExecutionGuardSummary();
       const rendererReadyEvidenceCollectorSafeOutputSchema = createRendererReadyEvidenceCollectorSafeOutputSchemaSummary();
+      const rendererReadyEvidenceCollectorUnsafeOutputRejection = createRendererReadyEvidenceCollectorUnsafeOutputRejectionSummary();
       const rendererReadyAuditReferenceStub = createRendererReadyAuditReferenceStubSummary();
       const rendererReadyAuditReferenceMissingGuard = createRendererReadyAuditReferenceMissingGuardSummary();
       const rendererReadySafeOperatorChecklistStub = createRendererReadySafeOperatorChecklistStubSummary();
@@ -1306,6 +1314,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_evidence_collector_safe_output_schema_summary: rendererReadyEvidenceCollectorSafeOutputSchema,
+          renderer_ready_evidence_collector_unsafe_output_rejection_summary: rendererReadyEvidenceCollectorUnsafeOutputRejection,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,
@@ -1412,6 +1421,7 @@ export function createRendererState({
           renderer_ready_evidence_collector_redaction_guard_summary: rendererReadyEvidenceCollectorRedactionGuard,
           renderer_ready_evidence_collector_no_execution_guard_summary: rendererReadyEvidenceCollectorNoExecutionGuard,
           renderer_ready_evidence_collector_safe_output_schema_summary: rendererReadyEvidenceCollectorSafeOutputSchema,
+          renderer_ready_evidence_collector_unsafe_output_rejection_summary: rendererReadyEvidenceCollectorUnsafeOutputRejection,
           renderer_ready_audit_reference_stub_summary: rendererReadyAuditReferenceStub,
           renderer_ready_audit_reference_missing_guard_summary: rendererReadyAuditReferenceMissingGuard,
           renderer_ready_safe_operator_checklist_stub_summary: rendererReadySafeOperatorChecklistStub,

@@ -6128,6 +6128,51 @@ The evidence collector safe output schema lists the only safe public output labe
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Evidence Collector Unsafe Output Rejection
+
+Task: LIVE2D-RENDERER-READY-EVIDENCE-COLLECTOR-UNSAFE-OUTPUT-REJECTION1
+
+The evidence collector unsafe output rejection guard lists unsafe output categories as rejected safe public labels only. It does not echo unsafe values, generate collector output, accept output as real evidence, run probes, create owner confirmation, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_evidence_collector_unsafe_output_rejection | added |
+| collectorUnsafeOutputRejectionStatus | reject_unsafe_output_labels_only |
+| rejectedUnsafeOutputLabels | safe public labels only |
+| network_locator_material_rejected | listed |
+| credential_material_rejected | listed |
+| confidential_material_rejected | listed |
+| private_locator_material_rejected | listed |
+| renderer_material_rejected | listed |
+| cue_material_rejected | listed |
+| model_reference_material_rejected | listed |
+| motion_reference_material_rejected | listed |
+| process_material_rejected | listed |
+| diagnostic_trace_material_rejected | listed |
+| owner_private_material_rejected | listed |
+| file_content_material_rejected | listed |
+| file_locator_material_rejected | listed |
+| readiness_claim_rejected | listed |
+| owner_confirmation_claim_rejected | listed |
+| unsafeOutputAccepted | false |
+| unsafeMaterialAccepted | false |
+| rawValueEchoed | false |
+| sourceValueEchoed | false |
+| collectorOutputGenerated | false |
+| collectorOutputAcceptedAsRealEvidence | false |
+| realEvidenceCollectionStarted | false |
+| realRendererEvidencePresent | false |
+| collectorsExecuted | false |
+| rendererProbeExecuted | false |
+| browserProbeExecuted | false |
+| ownerConfirmationCreated | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
