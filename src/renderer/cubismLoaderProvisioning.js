@@ -93,6 +93,7 @@ export const LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_UNSAFE_FIELD_GUARD_SCHEMA = "
 export const LIVE2D_RENDERER_READY_OWNER_SCOPE_REQUIREMENT_SURFACE_SCHEMA = "iris_live2d_renderer_ready_owner_scope_requirement_surface_v1";
 export const LIVE2D_RENDERER_READY_OWNER_SCOPE_MISSING_REJECTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_owner_scope_missing_rejection_guard_v1";
 export const LIVE2D_RENDERER_READY_AUDIT_LINK_REQUIREMENT_SURFACE_SCHEMA = "iris_live2d_renderer_ready_audit_link_requirement_surface_v1";
+export const LIVE2D_RENDERER_READY_AUDIT_LINK_MISSING_REJECTION_GUARD_SCHEMA = "iris_live2d_renderer_ready_audit_link_missing_rejection_guard_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA = "iris_live2d_motion_dataset_real_row_split_policy_packet_v1";
 export const LIVE2D_MOTION_DATASET_SOURCE_HASH_OWNER_CHECKLIST_SCHEMA = "iris_live2d_motion_dataset_source_hash_owner_checklist_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA = "iris_live2d_motion_dataset_final_owner_wait_for_data_gate_v1";
@@ -9555,6 +9556,59 @@ export function createRendererReadyAuditLinkRequirementSurfaceSummary() {
     },
   };
   assertSafePublicObject(summary, "renderer ready audit link requirement surface summary");
+  return summary;
+}
+
+export function createRendererReadyAuditLinkMissingRejectionGuardSummary() {
+  const summary = {
+    schema: LIVE2D_RENDERER_READY_AUDIT_LINK_MISSING_REJECTION_GUARD_SCHEMA,
+    safe_summary_only: true,
+    auditLinkPresent: false,
+    auditLinkStatus: "missing",
+    readinessRequestRejected: true,
+    goNoGoApprovalRejected: true,
+    rejectionReason: "audit_link_missing",
+    goApproved: false,
+    auditExecutionStarted: false,
+    sourceValueEchoed: false,
+    ownerConfirmationCreated: false,
+    ownerConfirmationConfirmed: false,
+    rendererProbeExecuted: false,
+    realRendererEvidencePresent: false,
+    runtimeReadinessClaimed: false,
+    productionReadinessClaimed: false,
+    rendererReadyClaimed: false,
+    rendererReadyCandidate: false,
+    actual_data_task_started: false,
+    actual_data_preauthorized: false,
+    priority1Status: "BLOCKED",
+    priority1_status: "BLOCKED",
+    checkedRowCount: 0,
+    checked_row_count: 0,
+    motionDatasetExecutable: false,
+    motion_dataset_executable: false,
+    trustedLoaderAllowlistEnabled: false,
+    trusted_loader_allowlist_enabled: false,
+    boundary_policy: {
+      ...createBoundaryPolicy(),
+      safe_status_only: true,
+      audit_link_missing_rejection_guard_only: true,
+      no_audit_execution: true,
+      no_source_value_echo: true,
+      no_owner_confirmation_creation: true,
+      no_actual_renderer_probe: true,
+      no_actual_browser_probe: true,
+      no_actual_live2d_execution: true,
+      no_actual_model_load: true,
+      no_actual_scene_load: true,
+      no_actual_cue_application: true,
+      no_actual_heartbeat_collection: true,
+      no_actual_data_task_started: true,
+      no_trusted_loader_enablement: true,
+      no_readiness_claim: true,
+    },
+  };
+  assertSafePublicObject(summary, "renderer ready audit link missing rejection guard summary");
   return summary;
 }
 

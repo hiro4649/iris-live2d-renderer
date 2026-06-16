@@ -6411,6 +6411,36 @@ The audit link requirement surface records that a readiness audit link or refere
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Audit Link Missing Rejection Guard
+
+Task: LIVE2D-RENDERER-READY-AUDIT-LINK-MISSING-REJECTION-GUARD1
+
+The audit link missing rejection guard records that readiness and go/no-go approval requests remain rejected while the required audit link is missing. No audit execution starts, no owner confirmation is created, and no readiness is claimed.
+
+| field | value |
+| --- | --- |
+| renderer_ready_audit_link_missing_rejection_guard | added |
+| auditLinkPresent | false |
+| auditLinkStatus | missing |
+| readinessRequestRejected | true |
+| goNoGoApprovalRejected | true |
+| rejectionReason | audit_link_missing |
+| goApproved | false |
+| auditExecutionStarted | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
