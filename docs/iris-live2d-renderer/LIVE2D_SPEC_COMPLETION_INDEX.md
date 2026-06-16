@@ -106,6 +106,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort role gate redaction guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit stub no-write next. |
 | motion identity comfort audit stub no-write | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit unsafe-field guard next. |
 | motion identity comfort audit unsafe-field guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping next. |
+| motion identity comfort repeated blocker grouping | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping contract next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -778,6 +779,37 @@ Rejected audit guard promotions include audit_guard_unsafe_source_material_prese
 | audit_guard_identity_value_present | false |
 | audit_guard_claims_runtime_ready | false |
 | audit_guard_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Repeated Blocker Grouping
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-REPEATED-BLOCKER-GROUPING1
+
+Status: repeated blocker grouping only. This surface groups recurring owner action, real evidence, dataset, execution, and readiness blockers without resolving them, changing priority1, increasing checked row count, enabling trusted loader, creating owner confirmation, or claiming readiness.
+
+Repeated blocker groups: owner_action_blockers, real_evidence_blockers, dataset_blockers, execution_blockers, and readiness_blockers.
+
+Repeated blocker labels: owner_confirmation_missing, real_renderer_evidence_missing, actual_cue_application_evidence_missing, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, trusted_loader_disabled, and readiness_claims_false.
+
+Rejected blocker grouping promotions include blocker_grouping_claims_resolution, blocker_grouping_changes_priority1, blocker_grouping_sets_checked_count, blocker_grouping_makes_motion_executable, blocker_grouping_enables_trusted_loader, blocker_grouping_creates_owner_confirmation, blocker_grouping_claims_runtime_ready, and blocker_grouping_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| repeated_blocker_grouping_present | true |
+| blocker_grouping_claims_resolution | false |
+| blocker_grouping_changes_priority1 | false |
+| blocker_grouping_sets_checked_count | false |
+| blocker_grouping_makes_motion_executable | false |
+| blocker_grouping_enables_trusted_loader | false |
+| blocker_grouping_creates_owner_confirmation | false |
+| blocker_grouping_claims_runtime_ready | false |
+| blocker_grouping_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
