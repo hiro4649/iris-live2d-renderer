@@ -70,6 +70,7 @@ import {
   createRendererReadySafeOperatorChecklistRedactionGuardSummary,
   createRendererReadyRealEvidenceRequestFinalNoGoSummary,
   createRendererReadyPreflightRouteManifestStubSummary,
+  createRendererReadyPreflightRouteUnsafeFieldGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -260,6 +261,7 @@ export function createRendererState({
       const rendererReadySafeOperatorChecklistRedactionGuard = createRendererReadySafeOperatorChecklistRedactionGuardSummary();
       const rendererReadyRealEvidenceRequestFinalNoGo = createRendererReadyRealEvidenceRequestFinalNoGoSummary();
       const rendererReadyPreflightRouteManifestStub = createRendererReadyPreflightRouteManifestStubSummary();
+      const rendererReadyPreflightRouteUnsafeFieldGuard = createRendererReadyPreflightRouteUnsafeFieldGuardSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -403,6 +405,7 @@ export function createRendererState({
           renderer_ready_safe_operator_checklist_redaction_guard_summary: rendererReadySafeOperatorChecklistRedactionGuard,
           renderer_ready_real_evidence_request_final_no_go_summary: rendererReadyRealEvidenceRequestFinalNoGo,
           renderer_ready_preflight_route_manifest_stub_summary: rendererReadyPreflightRouteManifestStub,
+          renderer_ready_preflight_route_unsafe_field_guard_summary: rendererReadyPreflightRouteUnsafeFieldGuard,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -495,6 +498,7 @@ export function createRendererState({
           renderer_ready_safe_operator_checklist_redaction_guard_summary: rendererReadySafeOperatorChecklistRedactionGuard,
           renderer_ready_real_evidence_request_final_no_go_summary: rendererReadyRealEvidenceRequestFinalNoGo,
           renderer_ready_preflight_route_manifest_stub_summary: rendererReadyPreflightRouteManifestStub,
+          renderer_ready_preflight_route_unsafe_field_guard_summary: rendererReadyPreflightRouteUnsafeFieldGuard,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
           motion_dataset_row_file_checksum_preflight_manifest_summary: motionDatasetRowFileChecksumPreflightManifest,
@@ -628,6 +632,7 @@ export function createRendererState({
         renderer_ready_safe_operator_checklist_redaction_guard_summary: status.renderer_health.renderer_ready_safe_operator_checklist_redaction_guard_summary,
         renderer_ready_real_evidence_request_final_no_go_summary: status.renderer_health.renderer_ready_real_evidence_request_final_no_go_summary,
         renderer_ready_preflight_route_manifest_stub_summary: status.renderer_health.renderer_ready_preflight_route_manifest_stub_summary,
+        renderer_ready_preflight_route_unsafe_field_guard_summary: status.renderer_health.renderer_ready_preflight_route_unsafe_field_guard_summary,
         motion_dataset_row_file_checksum_preflight_manifest_summary: status.renderer_health.motion_dataset_row_file_checksum_preflight_manifest_summary,
         owner_action_lane_freeze_status_summary: status.renderer_health.owner_action_lane_freeze_status_summary,
         motion_dataset_synthetic_row_fixture_pack_summary: status.renderer_health.motion_dataset_synthetic_row_fixture_pack_summary,
@@ -815,6 +820,7 @@ export function createRendererState({
       const rendererReadySafeOperatorChecklistRedactionGuard = createRendererReadySafeOperatorChecklistRedactionGuardSummary();
       const rendererReadyRealEvidenceRequestFinalNoGo = createRendererReadyRealEvidenceRequestFinalNoGoSummary();
       const rendererReadyPreflightRouteManifestStub = createRendererReadyPreflightRouteManifestStubSummary();
+      const rendererReadyPreflightRouteUnsafeFieldGuard = createRendererReadyPreflightRouteUnsafeFieldGuardSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -917,6 +923,7 @@ export function createRendererState({
       response.renderer_ready_safe_operator_checklist_redaction_guard_summary = rendererReadySafeOperatorChecklistRedactionGuard;
       response.renderer_ready_real_evidence_request_final_no_go_summary = rendererReadyRealEvidenceRequestFinalNoGo;
       response.renderer_ready_preflight_route_manifest_stub_summary = rendererReadyPreflightRouteManifestStub;
+      response.renderer_ready_preflight_route_unsafe_field_guard_summary = rendererReadyPreflightRouteUnsafeFieldGuard;
       response.motion_dataset_real_row_split_policy_packet_summary = motionDatasetRealRowSplitPolicyPacket;
       response.motion_dataset_source_hash_owner_checklist_summary = motionDatasetSourceHashOwnerChecklist;
       response.motion_dataset_final_owner_wait_for_data_gate_summary = motionDatasetFinalOwnerWaitForDataGate;
@@ -1072,6 +1079,7 @@ export function createRendererState({
       const rendererReadySafeOperatorChecklistRedactionGuard = createRendererReadySafeOperatorChecklistRedactionGuardSummary();
       const rendererReadyRealEvidenceRequestFinalNoGo = createRendererReadyRealEvidenceRequestFinalNoGoSummary();
       const rendererReadyPreflightRouteManifestStub = createRendererReadyPreflightRouteManifestStubSummary();
+      const rendererReadyPreflightRouteUnsafeFieldGuard = createRendererReadyPreflightRouteUnsafeFieldGuardSummary();
       const motionDatasetRealRowSplitPolicyPacket = createMotionDatasetRealRowSplitPolicyPacketSummary();
       const motionDatasetSourceHashOwnerChecklist = createMotionDatasetSourceHashOwnerChecklistSummary();
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
@@ -1198,6 +1206,7 @@ export function createRendererState({
           renderer_ready_safe_operator_checklist_redaction_guard_summary: rendererReadySafeOperatorChecklistRedactionGuard,
           renderer_ready_real_evidence_request_final_no_go_summary: rendererReadyRealEvidenceRequestFinalNoGo,
           renderer_ready_preflight_route_manifest_stub_summary: rendererReadyPreflightRouteManifestStub,
+          renderer_ready_preflight_route_unsafe_field_guard_summary: rendererReadyPreflightRouteUnsafeFieldGuard,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,
@@ -1290,6 +1299,7 @@ export function createRendererState({
           renderer_ready_safe_operator_checklist_redaction_guard_summary: rendererReadySafeOperatorChecklistRedactionGuard,
           renderer_ready_real_evidence_request_final_no_go_summary: rendererReadyRealEvidenceRequestFinalNoGo,
           renderer_ready_preflight_route_manifest_stub_summary: rendererReadyPreflightRouteManifestStub,
+          renderer_ready_preflight_route_unsafe_field_guard_summary: rendererReadyPreflightRouteUnsafeFieldGuard,
           motion_dataset_real_row_split_policy_packet_summary: motionDatasetRealRowSplitPolicyPacket,
           motion_dataset_source_hash_owner_checklist_summary: motionDatasetSourceHashOwnerChecklist,
           motion_dataset_final_owner_wait_for_data_gate_summary: motionDatasetFinalOwnerWaitForDataGate,

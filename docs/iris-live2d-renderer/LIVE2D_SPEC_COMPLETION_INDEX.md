@@ -6299,6 +6299,37 @@ The renderer-ready preflight route manifest stub records future preflight sectio
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Preflight Route Unsafe Field Guard
+
+Task: LIVE2D-RENDERER-READY-PREFLIGHT-ROUTE-UNSAFE-FIELD-GUARD1
+
+The preflight route unsafe field guard rejects unsafe route manifest material into safe labels only. It does not echo source values, execute preflight, start a real route, create owner confirmation, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_preflight_route_unsafe_field_guard | added |
+| preflightRouteUnsafeFieldGuardStatus | safe_summary_only |
+| unsafeFieldRejected | true |
+| network_locator_material_rejected | safe_label |
+| auth_material_rejected | safe_label |
+| private_locator_material_rejected | safe_label |
+| model_locator_material_rejected | safe_label |
+| motion_locator_material_rejected | safe_label |
+| renderer_material_rejected | safe_label |
+| cue_material_rejected | safe_label |
+| evidence_body_material_rejected | safe_label |
+| shell_material_rejected | safe_label |
+| sourceValueEchoed | false |
+| preflightRouteExecuted | false |
+| realPreflightStarted | false |
+| ownerConfirmationCreated | false |
+| rendererProbeExecuted | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
