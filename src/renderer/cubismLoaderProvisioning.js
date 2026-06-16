@@ -87,6 +87,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_ADMIN_SUMMARY_REDACTION_SCHEMA = "ir
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA = "iris_live2d_motion_identity_comfort_operator_handoff_no_action_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_owner_handoff_stub_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_stub_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_redaction_guard_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -1039,6 +1040,29 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_REJECTIONS = Object.f
   "role_gate_reflects_private_support_signal",
   "role_gate_claims_runtime_ready",
   "role_gate_claims_production_ready",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_FIELDS = Object.freeze([
+  "public_safe_summary",
+  "admin_ordinary_summary",
+  "operator_safe_handoff_plan",
+  "owner_only_detail_stub",
+  "safe_role_label",
+  "safe_blocker_label",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_REJECTIONS = Object.freeze([
+  "role_gate_redaction_exposes_owner_only_detail_public",
+  "role_gate_redaction_exposes_owner_only_detail_admin",
+  "role_gate_redaction_exposes_owner_only_detail_operator",
+  "role_gate_redaction_reflects_network_locator_material",
+  "role_gate_redaction_reflects_auth_material",
+  "role_gate_redaction_reflects_renderer_material",
+  "role_gate_redaction_reflects_cue_material",
+  "role_gate_redaction_reflects_private_relation_signal",
+  "role_gate_redaction_reflects_private_support_signal",
+  "role_gate_redaction_claims_runtime_ready",
+  "role_gate_redaction_claims_production_ready",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -10249,6 +10273,68 @@ export function createLive2dMotionIdentityComfortRoleGateStub(input = {}) {
     ],
     safeNextAction: "add_motion_identity_comfort_role_gate_redaction_guard",
     context: "live2d motion identity comfort role gate stub",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortRoleGateRedactionGuard(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_role_gate_redaction_guard_status",
+    status: "role_gate_redaction_guard_blocked",
+    boundaries: {
+      motion_identity_comfort_role_gate_redaction_guard_only_boundary: true,
+      role_gate_redaction_guard_only_boundary: true,
+      public_safe_labels_only_boundary: true,
+      admin_ordinary_safe_labels_only_boundary: true,
+      operator_safe_labels_only_boundary: true,
+      owner_only_detail_not_exposed_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_role_gate_redaction_guard_only: true,
+      role_gate_redaction_guard_present: true,
+      public_role_gate_redacted: true,
+      admin_role_gate_redacted: true,
+      operator_role_gate_redacted: true,
+      owner_only_detail_exposed_public: false,
+      owner_only_detail_exposed_admin: false,
+      owner_only_detail_exposed_operator: false,
+      role_gate_redaction_reflects_network_locator_material: false,
+      role_gate_redaction_reflects_auth_material: false,
+      role_gate_redaction_reflects_renderer_material: false,
+      role_gate_redaction_reflects_cue_material: false,
+      role_gate_redaction_reflects_private_relation_signal: false,
+      role_gate_redaction_reflects_private_support_signal: false,
+      role_gate_redaction_claims_runtime_ready: false,
+      role_gate_redaction_claims_production_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      role_gate_redaction_guard_fields: [...LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_FIELDS],
+      role_gate_redaction_guard_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_role_gate_redaction_guard_only",
+      "role_gate_redaction_guard_only",
+      "owner_only_detail_not_exposed",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_audit_stub_no_write",
+    context: "live2d motion identity comfort role gate redaction guard",
   }, input);
 }
 
