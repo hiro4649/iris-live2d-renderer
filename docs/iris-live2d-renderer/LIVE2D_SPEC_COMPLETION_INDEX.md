@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 85 percent |
+| spec_completion_estimate | about 86 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-PERSONA-PRESSURE-GUARD1, persona pressure guard next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-VOICE-SYNC-HINT-BOUNDARY1, voice sync hint boundary next planning |
 
 ## Completion Matrix
 
@@ -84,6 +84,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort recovery matrix | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add context gate next. |
 | motion identity and comfort context gate | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add subtitle/gaze guard next. |
 | motion identity and comfort subtitle/gaze guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add persona pressure guard next. |
+| motion identity and comfort persona pressure guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add voice sync hint boundary next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -202,6 +203,38 @@ Required rejections include missing_subtitle_visibility_label, missing_subtitle_
 | gaze_pressure_risk_closeup_allowed | false |
 | camera_proximity_risk_strong_motion_allowed | false |
 | camera_proximity_risk_closeup_allowed | false |
+| renderer_ready_candidate | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Persona Pressure Guard
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-PERSONA-PRESSURE-GUARD1
+
+Status: persona pressure guard planning only. This guard defines persona fit, donation signal, relation signal, dependency signal, dependency-pressure suppression, emotional intensity, safe motion candidate, safe downgrade, and safe recovery labels. It does not execute motion, apply cues, load a model or scene, create owner confirmation, enable a trusted loader, accept actual data, or claim readiness.
+
+### Required Persona Pressure Labels
+
+Required labels: personaFit, donationSignalLabel, relationSignalLabel, dependencySignalLabel, dependencyPressureSuppressed, emotionalIntensityLabel, safeMotionCandidate, safeDowngradeMotion, and safeRecoveryMotion.
+
+### Required Persona Pressure Rejections
+
+Required rejections include missing_persona_fit, missing_donation_signal_label, missing_relation_signal_label, missing_dependency_signal_label, missing_dependency_pressure_suppressed, missing_emotional_intensity_label, missing_safe_motion_candidate, missing_safe_downgrade_motion, missing_safe_recovery_motion, donation_signal_escalates_strong_motion, relation_signal_escalates_strong_motion, dependency_signal_escalates_strong_motion, dependency_pressure_not_suppressed, persona_fit_claims_relationship_commitment, persona_pressure_claims_runtime_ready, renderer_ready_candidate_marked_true, actual_ingestion_requested, checked_row_count_nonzero, and priority1_marked_resolved.
+
+### Preserved Persona Pressure Facts
+
+| Fact | Value |
+| --- | --- |
+| persona_pressure_guard_executes_motion | false |
+| persona_pressure_guard_claims_runtime_ready | false |
+| donation_signal_escalates_strong_motion_allowed | false |
+| relation_signal_escalates_strong_motion_allowed | false |
+| dependency_signal_escalates_strong_motion_allowed | false |
+| dependency_pressure_allowed | false |
+| persona_fit_claims_relationship_commitment_allowed | false |
 | renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
