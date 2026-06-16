@@ -6474,6 +6474,40 @@ The trusted loader preauth blocker surface records that trusted loader enablemen
 | checked_row_count | 0 |
 | motion_dataset_executable | false |
 
+## Renderer Ready Trusted Loader Preauth Rejection Guard
+
+Task: LIVE2D-RENDERER-READY-TRUSTED-LOADER-PREAUTH-REJECTION-GUARD1
+
+The trusted loader preauth rejection guard records that a trusted loader enablement request is rejected while preauthorization is missing. The allowlist remains disabled, the loader is not trusted, no owner confirmation is created, no audit or renderer probe runs, and no readiness is claimed.
+
+| field | value |
+| --- | --- |
+| renderer_ready_trusted_loader_preauth_rejection_guard | added |
+| rejectedAttemptType | trusted_loader_preauth_missing |
+| trustedLoaderEnablementRequested | true |
+| trustedLoaderEnablementRejected | true |
+| rejectionReason | trusted_loader_preauth_missing |
+| trustedLoaderPreauthGranted | false |
+| trustedLoaderAllowlistEnabled | false |
+| trustedLoaderBoundary | disabled |
+| loaderTrusted | false |
+| loaderAllowlistActive | false |
+| allowlistPreauthBlocked | true |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| ownerScopeAccepted | false |
+| auditLinkPresent | false |
+| auditExecutionStarted | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
