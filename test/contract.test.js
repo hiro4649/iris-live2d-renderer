@@ -200,6 +200,10 @@ import {
   LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_CONTRACT_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_CONTRACT_RULES,
   LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_CONTRACT_REJECTIONS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_ENTRIES,
+  LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_REMAINING_BLOCKERS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_REJECTIONS,
   LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_ENTRIES,
   LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_REJECTIONS,
@@ -478,6 +482,7 @@ import {
   createLive2dMotionIdentityComfortBlockerGroupingContract2,
   createLive2dMotionIdentityComfortRepeatedBlockerGrouping,
   createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract,
+  createLive2dMotionIdentityComfortContinuationLedger2,
   createLive2dMotionIdentityComfortContinuationLedger,
   createLive2dMotionIdentityComfortContinuationLedgerConsistency,
   createLive2dMotionIdentityComfortFinalRedactionSweep2,
@@ -6448,6 +6453,7 @@ try {
   assertLive2dMotionIdentityComfortBlockerGroupingContract2(provisionedRuntimeConfig.live2d_motion_identity_comfort_blocker_grouping_contract2);
   assertLive2dMotionIdentityComfortRepeatedBlockerGrouping(provisionedRuntimeConfig.live2d_motion_identity_comfort_repeated_blocker_grouping);
   assertLive2dMotionIdentityComfortRepeatedBlockerGroupingContract(provisionedRuntimeConfig.live2d_motion_identity_comfort_repeated_blocker_grouping_contract);
+  assertLive2dMotionIdentityComfortContinuationLedger2(provisionedRuntimeConfig.live2d_motion_identity_comfort_continuation_ledger2);
   assertLive2dMotionIdentityComfortContinuationLedger(provisionedRuntimeConfig.live2d_motion_identity_comfort_continuation_ledger);
   assertLive2dMotionIdentityComfortContinuationLedgerConsistency(provisionedRuntimeConfig.live2d_motion_identity_comfort_continuation_ledger_consistency);
   assertLive2dMotionIdentityComfortFinalRedactionSweep2(provisionedRuntimeConfig.live2d_motion_identity_comfort_final_redaction_sweep2);
@@ -6818,6 +6824,7 @@ try {
   assertLive2dMotionIdentityComfortBlockerGroupingContract2(provisionedStatus.live2d_motion_identity_comfort_blocker_grouping_contract2);
   assertLive2dMotionIdentityComfortRepeatedBlockerGrouping(provisionedStatus.live2d_motion_identity_comfort_repeated_blocker_grouping);
   assertLive2dMotionIdentityComfortRepeatedBlockerGroupingContract(provisionedStatus.live2d_motion_identity_comfort_repeated_blocker_grouping_contract);
+  assertLive2dMotionIdentityComfortContinuationLedger2(provisionedStatus.live2d_motion_identity_comfort_continuation_ledger2);
   assertLive2dMotionIdentityComfortContinuationLedger(provisionedStatus.live2d_motion_identity_comfort_continuation_ledger);
   assertLive2dMotionIdentityComfortContinuationLedgerConsistency(provisionedStatus.live2d_motion_identity_comfort_continuation_ledger_consistency);
   assertLive2dMotionIdentityComfortFinalRedactionSweep2(provisionedStatus.live2d_motion_identity_comfort_final_redaction_sweep2);
@@ -7078,6 +7085,7 @@ try {
   assertLive2dMotionIdentityComfortBlockerGroupingContract2(provisionedHealth.live2d_motion_identity_comfort_blocker_grouping_contract2);
   assertLive2dMotionIdentityComfortRepeatedBlockerGrouping(provisionedHealth.live2d_motion_identity_comfort_repeated_blocker_grouping);
   assertLive2dMotionIdentityComfortRepeatedBlockerGroupingContract(provisionedHealth.live2d_motion_identity_comfort_repeated_blocker_grouping_contract);
+  assertLive2dMotionIdentityComfortContinuationLedger2(provisionedHealth.live2d_motion_identity_comfort_continuation_ledger2);
   assertLive2dMotionIdentityComfortContinuationLedger(provisionedHealth.live2d_motion_identity_comfort_continuation_ledger);
   assertLive2dMotionIdentityComfortContinuationLedgerConsistency(provisionedHealth.live2d_motion_identity_comfort_continuation_ledger_consistency);
   assertLive2dMotionIdentityComfortFinalRedactionSweep2(provisionedHealth.live2d_motion_identity_comfort_final_redaction_sweep2);
@@ -7962,6 +7970,7 @@ try {
       "live2d_motion_identity_comfort_blocker_grouping_contract2",
       "live2d_motion_identity_comfort_repeated_blocker_grouping",
       "live2d_motion_identity_comfort_repeated_blocker_grouping_contract",
+      "live2d_motion_identity_comfort_continuation_ledger2",
       "live2d_motion_identity_comfort_continuation_ledger",
       "live2d_motion_identity_comfort_continuation_ledger_consistency",
       "live2d_motion_identity_comfort_final_redaction_sweep2",
@@ -13112,6 +13121,60 @@ function assertLive2dMotionIdentityComfortContinuationLedger(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertLive2dMotionIdentityComfortContinuationLedger2(summary) {
+  assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_SCHEMA);
+  assert.equal(summary.live2d_motion_identity_comfort_continuation_ledger2_status, "continuation_ledger2_blocked");
+  assert.equal(summary.planning_only_boundary, true);
+  assert.equal(summary.motion_identity_comfort_continuation_ledger2_only_boundary, true);
+  assert.equal(summary.continuation_ledger2_label_only_boundary, true);
+  assert.equal(summary.no_owner_action_boundary, true);
+  assert.equal(summary.no_blocker_resolution_boundary, true);
+  assert.equal(summary.no_actual_data_boundary, true);
+  assert.equal(summary.no_owner_confirmation_boundary, true);
+  assert.equal(summary.no_readiness_claim_boundary, true);
+  assert.equal(summary.no_work_authorizing_boundary, true);
+  assert.equal(summary.motion_identity_comfort_continuation_ledger2_only, true);
+  assert.equal(summary.continuation_ledger2_present, true);
+  for (const flag of [
+    "continuation_ledger2_claims_owner_action",
+    "continuation_ledger2_claims_blocker_resolution",
+    "continuation_ledger2_claims_runtime_ready",
+    "continuation_ledger2_claims_production_ready",
+    "continuation_ledger2_changes_checked_count",
+    "continuation_ledger2_makes_motion_executable",
+    "continuation_ledger2_enables_trusted_loader",
+    "continuation_ledger2_starts_actual_data",
+    "continuation_ledger2_creates_owner_confirmation",
+    "continuation_ledger2_authorizes_work",
+    "runtime_readiness_claimed",
+    "production_readiness_claimed",
+    "renderer_ready_claimed",
+    "renderer_ready_candidate",
+    "renderer_ready",
+    "owner_confirmation_confirmed",
+    "trusted_loader_allowlist_enabled",
+    "actual_ingestion_allowed",
+    "motion_dataset_executable",
+  ]) {
+    assert.equal(summary[flag], false, flag);
+  }
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.continuation_ledger2_entries, [...LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_ENTRIES]);
+  assert.deepEqual(summary.continuation_ledger2_remaining_blockers, [...LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_REMAINING_BLOCKERS]);
+  assert.deepEqual(summary.continuation_ledger2_rejections, [...LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER2_REJECTIONS]);
+  assert.equal(summary.continuation_ledger2_entries.includes("blocker_grouping_contract2_completed"), true);
+  assert.equal(summary.continuation_ledger2_remaining_blockers.includes("priority1_blocked"), true);
+  assert.equal(summary.continuation_ledger2_rejections.includes("continuation_ledger2_authorizes_work"), true);
+  assert.equal(summary.blocked_reasons.includes("work_not_authorized"), true);
+  assert.equal(summary.safe_next_action, "add_motion_identity_comfort_continuation_ledger_consistency2");
+  assert.equal(summary.boundary_policy.no_motion_execution, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertLive2dMotionIdentityComfortContinuationLedgerConsistency(summary) {
   assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_CONSISTENCY_SCHEMA);
   assert.equal(summary.live2d_motion_identity_comfort_continuation_ledger_consistency_status, "continuation_ledger_consistency_blocked");
@@ -14592,6 +14655,34 @@ function assertNoModelPathLeak(serialized) {
   });
   assertLive2dMotionIdentityComfortContinuationLedger(summary);
   assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_continuation_ledger_rejected_state_promotion"), true);
+}
+
+{
+  const summary = createLive2dMotionIdentityComfortContinuationLedger2({
+    continuation_ledger2_claims_owner_action: true,
+    continuation_ledger2_claims_blocker_resolution: true,
+    continuation_ledger2_claims_runtime_ready: true,
+    continuation_ledger2_claims_production_ready: true,
+    continuation_ledger2_changes_checked_count: true,
+    continuation_ledger2_makes_motion_executable: true,
+    continuation_ledger2_enables_trusted_loader: true,
+    continuation_ledger2_starts_actual_data: true,
+    continuation_ledger2_creates_owner_confirmation: true,
+    continuation_ledger2_authorizes_work: true,
+    renderer_ready_claimed: true,
+    renderer_ready_candidate: true,
+    renderer_ready: true,
+    owner_confirmation_confirmed: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 99,
+    priority1_status: "RESOLVED",
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+  });
+  assertLive2dMotionIdentityComfortContinuationLedger2(summary);
+  assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_continuation_ledger2_rejected_state_promotion"), true);
 }
 
 {
