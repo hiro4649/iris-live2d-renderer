@@ -123,6 +123,15 @@ production_readiness_claimed: no
 - Boundary: status surface only, no motion execution, no renderer/browser probe, no cue application, no model or scene load, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-FRESHNESS-POLICY-CROSS-SURFACE-CONSISTENCY1.
 
+## Inserted Consistency Guard: LIVE2D-MOTION-FRESHNESS-POLICY-CROSS-SURFACE-CONSISTENCY1
+
+- Position: after LIVE2D-MOTION-COMFORT-POLICY-STATUS-SURFACE1 and before strong motion unsafe override rejection.
+- Scope: keep cue freshness, stale cue rejection, and safe downgrade policy consistent across `/status`, `/health`, and `/renderer/runtime-config`.
+- Required consistency: stale cue strong motion is rejected across surfaces; safe downgrade has the same meaning across surfaces.
+- Rejections: stale cue strong motion selection, stale cue readiness claims, cross-surface freshness mismatch, safe downgrade mismatch, motion execution, cue application, readiness claims, actual data, and priority1 resolution.
+- Boundary: consistency guard only, no motion execution, no renderer/browser probe, no cue application, no heartbeat collection, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-STRONG-MOTION-UNSAFE-OVERRIDE-REJECTION1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

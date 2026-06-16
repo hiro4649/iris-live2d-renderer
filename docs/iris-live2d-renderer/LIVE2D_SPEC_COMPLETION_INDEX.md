@@ -91,6 +91,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort completion review | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Continue safe blocker review; do not claim readiness. |
 | motion identity profile status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add comfort policy status surface next. |
 | motion comfort policy status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add freshness policy cross-surface consistency next. |
+| motion freshness policy cross-surface consistency | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add strong motion unsafe override rejection next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -323,6 +324,32 @@ Rejected promotions include comfort_policy_executes_motion, comfort_policy_marks
 | fatigue_risk_downgrades_strong_motion | true |
 | photosensitivity_risk_downgrades_strong_motion | true |
 | subtitle_gaze_camera_risk_downgrades_strong_motion | true |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Freshness Policy Cross-Surface Consistency
+
+Task: LIVE2D-MOTION-FRESHNESS-POLICY-CROSS-SURFACE-CONSISTENCY1
+
+Status: cross-surface contract only. This surface keeps cue freshness, stale cue rejection, and safe downgrade policy consistent across status, health, and runtime config summaries. It does not execute motion, apply cues, probe a renderer, collect heartbeat, accept actual data, create owner confirmation, enable trusted loader, or claim readiness.
+
+Surfaces: status, health, and runtime_config.
+
+Rejected promotions include stale_cue_strong_motion_selected, stale_cue_runtime_ready_claim, freshness_policy_mismatch_between_surfaces, safe_downgrade_mismatch_between_surfaces, freshness_policy_executes_motion, freshness_policy_applies_cue, freshness_policy_claims_runtime_ready, freshness_policy_claims_production_ready, freshness_policy_accepts_actual_data, and freshness_policy_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| stale_cue_strong_motion_rejected_across_surfaces | true |
+| safe_downgrade_same_meaning_across_surfaces | true |
+| freshness_policy_executes_motion | false |
+| freshness_policy_applies_cue | false |
+| freshness_policy_claims_runtime_ready | false |
+| freshness_policy_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
