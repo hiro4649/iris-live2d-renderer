@@ -66,6 +66,7 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SCHEMA = "iris_live2d_motio
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_identity_and_comfort_rejection_fixture_pack_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_DRY_RUN_VALIDATOR_SCHEMA = "iris_live2d_motion_identity_and_comfort_dry_run_validator_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_RECOVERY_MATRIX_SCHEMA = "iris_live2d_motion_identity_and_comfort_recovery_matrix_v1";
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_SCHEMA = "iris_live2d_motion_identity_and_comfort_context_gate_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -337,6 +338,50 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_RECOVERY_MATRIX_BLOCKERS = Objec
   "gaze_pressure_risk_missing_downgrade_motion",
   "recovery_motion_marked_executable_readiness",
   "matrix_claims_runtime_ready",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_REQUIRED_LABELS = Object.freeze([
+  "contextSourceLabel",
+  "contextFreshnessLabel",
+  "cueAgeBucketLabel",
+  "confidenceLabel",
+  "viewerComfortStateLabel",
+  "sceneVisibilityLabel",
+  "subtitleVisibilityLabel",
+  "cameraProximityLabel",
+  "donationSignalLabel",
+  "relationSignalLabel",
+  "dependencySignalLabel",
+  "voiceEnergyLabel",
+  "safeMotionCandidate",
+  "safeDowngradeMotion",
+  "safeRecoveryMotion",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_REJECTIONS = Object.freeze([
+  "missing_context_source_label",
+  "missing_context_freshness_label",
+  "missing_cue_age_bucket_label",
+  "missing_confidence_label",
+  "missing_viewer_comfort_state_label",
+  "missing_scene_visibility_label",
+  "missing_subtitle_visibility_label",
+  "missing_camera_proximity_label",
+  "missing_safe_downgrade_motion",
+  "missing_safe_recovery_motion",
+  "stale_context_strong_motion_selected",
+  "low_confidence_strong_motion_selected",
+  "viewer_comfort_risk_strong_motion_selected",
+  "subtitle_visibility_risk_strong_motion_selected",
+  "camera_proximity_risk_strong_motion_selected",
+  "donation_relation_dependency_only_escalation",
+  "dependency_pressure_not_suppressed",
+  "unsupported_motion_candidate",
+  "context_gate_claims_runtime_ready",
+  "renderer_ready_candidate_marked_true",
+  "actual_ingestion_requested",
+  "checked_row_count_nonzero",
+  "priority1_marked_resolved",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -8348,6 +8393,60 @@ export function createLive2dMotionIdentityAndComfortRecoveryMatrixSummary(input 
     ],
     safeNextAction: "add_motion_identity_and_comfort_context_gate",
     context: "live2d motion identity and comfort recovery matrix summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityAndComfortContextGateSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_SCHEMA,
+    statusKey: "live2d_motion_identity_and_comfort_context_gate_status",
+    status: "context_gate_blocked",
+    boundaries: {
+      motion_identity_and_comfort_context_gate_only_boundary: true,
+      context_gate_planning_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_runtime_allowlist_enablement_boundary: true,
+      no_renderer_ready_claim_boundary: true,
+      no_actual_data_boundary: true,
+    },
+    flags: {
+      motion_identity_and_comfort_context_gate_only: true,
+      context_gate_executes_motion: false,
+      context_gate_claims_runtime_ready: false,
+      stale_context_strong_motion_allowed: false,
+      low_confidence_strong_motion_allowed: false,
+      viewer_comfort_risk_strong_motion_allowed: false,
+      subtitle_visibility_risk_strong_motion_allowed: false,
+      camera_proximity_risk_strong_motion_allowed: false,
+      donation_relation_dependency_only_escalation_allowed: false,
+      dependency_pressure_allowed: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      motion_dataset_executable: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+    },
+    arrays: {
+      required_context_gate_labels: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_REQUIRED_LABELS],
+      required_context_gate_rejections: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_CONTEXT_GATE_REJECTIONS],
+      strong_motion_labels: [...LIVE2D_STRONG_MOTION_LABELS],
+      runtime_supported_motion_styles: [...LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES],
+    },
+    blockedReasons: [
+      "motion_identity_and_comfort_context_gate_only",
+      "context_freshness_required",
+      "confidence_required",
+      "risk_downgrade_motion_required",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_and_comfort_subtitle_gaze_guard",
+    context: "live2d motion identity and comfort context gate summary",
   }, input);
 }
 

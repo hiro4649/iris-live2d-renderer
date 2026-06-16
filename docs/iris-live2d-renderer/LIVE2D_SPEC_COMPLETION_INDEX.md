@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 83 percent |
+| spec_completion_estimate | about 84 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-CONTEXT-GATE1, context gate next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-SUBTITLE-GAZE-GUARD1, subtitle/gaze guard next planning |
 
 ## Completion Matrix
 
@@ -82,6 +82,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort rejection fixture pack | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic dry-run validator next. |
 | motion identity and comfort dry-run validator | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add recovery/cooldown matrix next. |
 | motion identity and comfort recovery matrix | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add context gate next. |
+| motion identity and comfort context gate | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add subtitle/gaze guard next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -168,6 +169,39 @@ Stale cues, comfort risk, subtitle overlay risk, or gaze pressure risk must reje
 | expression_gaze_breath_body_camera_labels_are_runtime_motion | false |
 | renderer_ready_candidate | false |
 | renderer_ready_claimed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Context Gate
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-CONTEXT-GATE1
+
+Status: context gate planning only. This gate defines context freshness, confidence, viewer comfort, subtitle visibility, camera proximity, donation/relation/dependency, and safe downgrade labels before any motion selection can be considered. It does not execute motion, apply cues, load a model or scene, create owner confirmation, enable a trusted loader, or claim readiness.
+
+### Required Context Gate Labels
+
+Required labels: contextSourceLabel, contextFreshnessLabel, cueAgeBucketLabel, confidenceLabel, viewerComfortStateLabel, sceneVisibilityLabel, subtitleVisibilityLabel, cameraProximityLabel, donationSignalLabel, relationSignalLabel, dependencySignalLabel, voiceEnergyLabel, safeMotionCandidate, safeDowngradeMotion, and safeRecoveryMotion.
+
+### Required Context Gate Rejections
+
+Required rejections include missing_context_source_label, missing_context_freshness_label, missing_cue_age_bucket_label, missing_confidence_label, missing_viewer_comfort_state_label, missing_scene_visibility_label, missing_subtitle_visibility_label, missing_camera_proximity_label, missing_safe_downgrade_motion, missing_safe_recovery_motion, stale_context_strong_motion_selected, low_confidence_strong_motion_selected, viewer_comfort_risk_strong_motion_selected, subtitle_visibility_risk_strong_motion_selected, camera_proximity_risk_strong_motion_selected, donation_relation_dependency_only_escalation, dependency_pressure_not_suppressed, unsupported_motion_candidate, context_gate_claims_runtime_ready, renderer_ready_candidate_marked_true, actual_ingestion_requested, checked_row_count_nonzero, and priority1_marked_resolved.
+
+### Preserved Context Gate Facts
+
+| Fact | Value |
+| --- | --- |
+| context_gate_executes_motion | false |
+| context_gate_claims_runtime_ready | false |
+| stale_context_strong_motion_allowed | false |
+| low_confidence_strong_motion_allowed | false |
+| viewer_comfort_risk_strong_motion_allowed | false |
+| subtitle_visibility_risk_strong_motion_allowed | false |
+| camera_proximity_risk_strong_motion_allowed | false |
+| donation_relation_dependency_only_escalation_allowed | false |
+| renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | checked_row_count | 0 |
