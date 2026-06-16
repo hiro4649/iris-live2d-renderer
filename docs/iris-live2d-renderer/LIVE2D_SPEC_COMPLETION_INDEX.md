@@ -6384,6 +6384,33 @@ The owner scope missing rejection guard records that probe or readiness requests
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Audit Link Requirement Surface
+
+Task: LIVE2D-RENDERER-READY-AUDIT-LINK-REQUIREMENT-SURFACE1
+
+The audit link requirement surface records that a readiness audit link or reference is required before readiness can be considered. The audit link remains missing, no audit execution starts, and no readiness is claimed.
+
+| field | value |
+| --- | --- |
+| renderer_ready_audit_link_requirement_surface | added |
+| auditLinkRequired | true |
+| auditLinkPresent | false |
+| auditLinkStatus | missing |
+| auditLinkMissingBlocksReadiness | true |
+| auditExecutionStarted | false |
+| auditBodyPresent | false |
+| sourceValueEchoed | false |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| rendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
