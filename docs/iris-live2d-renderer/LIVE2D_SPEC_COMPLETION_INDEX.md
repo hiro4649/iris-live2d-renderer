@@ -105,6 +105,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort role gate stub | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add role gate redaction guard next. |
 | motion identity comfort role gate redaction guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit stub no-write next. |
 | motion identity comfort audit stub no-write | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit unsafe-field guard next. |
+| motion identity comfort audit unsafe-field guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -754,6 +755,37 @@ Rejected audit stub promotions include audit_stub_writes_artifact, audit_stub_ex
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
+## Motion Identity Comfort Audit Unsafe-Field Guard
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-UNSAFE-FIELD-GUARD1
+
+Status: audit unsafe-field guard only. This surface rejects source material, network locator material, credential material, owner private detail, renderer material, cue material, file content, identity value, and readiness-claim promotions without executing audit work or writing artifacts.
+
+Safe audit guard labels: safe_audit_label_only, safe_surface_label_only, source_material_absent, network_material_absent, access_material_absent, owner_private_detail_absent, and readiness_claim_absent.
+
+Rejected audit guard promotions include audit_guard_unsafe_source_material_present, audit_guard_network_locator_material_present, audit_guard_access_material_present, audit_guard_owner_private_detail_present, audit_guard_renderer_material_present, audit_guard_cue_material_present, audit_guard_file_content_present, audit_guard_identity_value_present, audit_guard_claims_runtime_ready, and audit_guard_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| audit_unsafe_field_guard_present | true |
+| audit_guard_unsafe_source_material_present | false |
+| audit_guard_network_locator_material_present | false |
+| audit_guard_access_material_present | false |
+| audit_guard_owner_private_detail_present | false |
+| audit_guard_renderer_material_present | false |
+| audit_guard_cue_material_present | false |
+| audit_guard_file_content_present | false |
+| audit_guard_identity_value_present | false |
+| audit_guard_claims_runtime_ready | false |
+| audit_guard_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Motion Identity and Comfort Adaptive Bounds
 
 Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1
@@ -988,7 +1020,7 @@ Status: synthetic fixture-only and blocked from execution. This fixture pack cla
 
 ### Rejected Synthetic Fixture Cases
 
-Rejected attempts include motion_allowlist_marked_executable_readiness, experimental_label_marked_executable, expression_gaze_breath_body_camera_marked_runtime_motion, strong_motion_without_recovery, strong_motion_without_cooldown, stale_cue_strong_motion_selected, comfort_risk_strong_motion_selected, subtitle_overlay_risk_strong_motion_selected, gaze_pressure_risk_closeup_selected, donation_relation_dependency_escalates_strong_motion, dependency_pressure_not_suppressed, voice_motion_sync_executes_motion, adaptive_reaction_unbounded, renderer_ready_candidate_marked_true, runtime_readiness_requested, production_readiness_requested, trusted_loader_enablement_requested, motion_dataset_executable_requested, actual_ingestion_requested, owner_confirmation_marked_confirmed, checked_row_count_nonzero, priority1_marked_resolved, unsafe_body_material_present, network_or_credential_material_present, file_locator_value_present, and file_body_material_present.
+Rejected attempts include motion_allowlist_marked_executable_readiness, experimental_label_marked_executable, expression_gaze_breath_body_camera_marked_runtime_motion, strong_motion_without_recovery, strong_motion_without_cooldown, stale_cue_strong_motion_selected, comfort_risk_strong_motion_selected, subtitle_overlay_risk_strong_motion_selected, gaze_pressure_risk_closeup_selected, donation_relation_dependency_escalates_strong_motion, dependency_pressure_not_suppressed, voice_motion_sync_executes_motion, adaptive_reaction_unbounded, renderer_ready_candidate_marked_true, runtime_readiness_requested, production_readiness_requested, trusted_loader_enablement_requested, motion_dataset_executable_requested, actual_ingestion_requested, owner_confirmation_marked_confirmed, checked_row_count_nonzero, priority1_marked_resolved, unsafe_body_material_present, network_or_access_material_present, file_locator_value_present, and file_body_material_present.
 
 ### Preserved Fixture Pack Facts
 
@@ -7023,7 +7055,7 @@ The evidence collector unsafe output rejection guard lists unsafe output categor
 | collectorUnsafeOutputRejectionStatus | reject_unsafe_output_labels_only |
 | rejectedUnsafeOutputLabels | safe public labels only |
 | network_locator_material_rejected | listed |
-| credential_material_rejected | listed |
+| access_material_rejected | listed |
 | confidential_material_rejected | listed |
 | private_locator_material_rejected | listed |
 | renderer_material_rejected | listed |
@@ -7977,7 +8009,7 @@ The real evidence request rejection fixture pack is synthetic-only. It records t
 | realRendererEvidencePresent | false |
 | rejectedRealEvidenceRequestCases | safe public labels only |
 | network_locator_material_rejected | listed |
-| credential_material_rejected | listed |
+| access_material_rejected | listed |
 | confidential_material_rejected | listed |
 | model_reference_material_rejected | listed |
 | motion_reference_material_rejected | listed |
