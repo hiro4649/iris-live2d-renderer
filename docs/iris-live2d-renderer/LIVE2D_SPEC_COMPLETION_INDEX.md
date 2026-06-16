@@ -6174,6 +6174,38 @@ The safe operator checklist stub records future operator checklist labels only. 
 | priority1_status | BLOCKED |
 | checked_row_count | 0 |
 
+## Renderer Ready Safe Operator Checklist Redaction Guard
+
+Task: LIVE2D-RENDERER-READY-SAFE-OPERATOR-CHECKLIST-REDACTION-GUARD1
+
+The safe operator checklist redaction guard records that unsafe checklist material is rejected into safe labels only. It does not echo source values, execute the checklist, execute an operator action, create owner confirmation, or claim readiness.
+
+| field | value |
+| --- | --- |
+| renderer_ready_safe_operator_checklist_redaction_guard | added |
+| operatorChecklistRedactionStatus | safe_summary_only |
+| unsafeChecklistMaterialRejected | true |
+| shell_material_rejected | safe_label |
+| operator_material_rejected | safe_label |
+| network_locator_material_rejected | safe_label |
+| auth_material_rejected | safe_label |
+| model_locator_material_rejected | safe_label |
+| motion_locator_material_rejected | safe_label |
+| renderer_material_rejected | safe_label |
+| evidence_body_material_rejected | safe_label |
+| owner_note_material_rejected | safe_label |
+| sourceValueEchoed | false |
+| operatorChecklistExecuted | false |
+| operatorActionExecuted | false |
+| ownerConfirmationCreated | false |
+| rendererProbeExecuted | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
