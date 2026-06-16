@@ -117,6 +117,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort owner-only detail role gate stub2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add public role gate leak rejection next. |
 | motion identity comfort public role gate leak rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit event stub no-write2 next. |
 | motion identity comfort audit event stub no-write2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit event unsafe-field guard2 next. |
+| motion identity comfort audit event unsafe-field guard2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add blocker grouping status surface next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1118,6 +1119,41 @@ Rejected audit event stub no-write2 promotions include audit_event_stub2_writes_
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 
+## Motion Identity Comfort Audit Event Unsafe-Field Guard2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-EVENT-UNSAFE-FIELD-GUARD2
+
+Status: audit event unsafe-field guard2 only. This surface rejects unsafe audit-event materials while keeping the audit event as safe labels only. It does not echo renderer, cue, model locator, motion locator, network locator, access, relation, support, command, or audit body material, and it does not write an audit event, create an audit entry, start audit execution, create owner confirmation, or claim runtime or production readiness.
+
+Audit event unsafe-field guard2 labels include audit_event_safe_label_only, renderer_material_absent, cue_material_absent, model_locator_material_absent, motion_locator_material_absent, network_locator_material_absent, access_material_absent, private_relation_signal_absent, private_support_signal_absent, and operator_instruction_material_absent.
+
+Rejected audit event unsafe-field guard2 promotions include audit_event_guard2_renderer_material_present, audit_event_guard2_cue_material_present, audit_event_guard2_model_locator_material_present, audit_event_guard2_motion_locator_material_present, audit_event_guard2_network_locator_material_present, audit_event_guard2_access_material_present, audit_event_guard2_private_relation_signal_present, audit_event_guard2_private_support_signal_present, audit_event_guard2_operator_instruction_material_present, audit_event_guard2_audit_body_material_present, audit_event_guard2_claims_runtime_ready, and audit_event_guard2_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| audit_event_unsafe_field_guard2_present | true |
+| audit_event_guard2_renderer_material_present | false |
+| audit_event_guard2_cue_material_present | false |
+| audit_event_guard2_model_locator_material_present | false |
+| audit_event_guard2_motion_locator_material_present | false |
+| audit_event_guard2_network_locator_material_present | false |
+| audit_event_guard2_access_material_present | false |
+| audit_event_guard2_private_relation_signal_present | false |
+| audit_event_guard2_private_support_signal_present | false |
+| audit_event_guard2_operator_instruction_material_present | false |
+| audit_event_guard2_audit_body_material_present | false |
+| audit_event_write_attempted | false |
+| audit_entry_created | false |
+| audit_execution_started | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
 ## Motion Identity and Comfort Adaptive Bounds
 
 Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-ADAPTIVE-BOUNDS1
@@ -1762,7 +1798,7 @@ This owner handoff packet is metadata-only and planning-only. It tells the owner
 | --- | --- |
 | purpose | State that this is metadata-only owner handoff planning. |
 | safe_metadata_labels_to_prepare_later | List only label names the owner may prepare later. |
-| materials_not_to_send_in_this_task | Block raw data, file paths, row bodies, secrets, endpoints, and command material. |
+| materials_not_to_send_in_this_task | Block raw data, file paths, row bodies, secrets, endpoints, and operator instruction material. |
 | owner_confirmation_scope_future | Reserve owner confirmation for a future scoped task. |
 | source_hash_label_future | Treat source_hash_label as a future label only, not a verified hash. |
 | declared_row_count_label_future | Treat declared_row_count_label as a future label only, not checked_row_count. |
@@ -2350,7 +2386,7 @@ This owner submission form final checklist is metadata-only and planning-only. I
 | schema_metadata_labels | Safe labels only; no parser execution. |
 | split_plan_labels | Safe labels only; no motion dataset execution. |
 | owner_confirmation_scope_labels | Safe labels only; no owner confirmation created or confirmed. |
-| prohibited_materials_notice | Must reject raw data, paths, secrets, endpoints, and command material. |
+| prohibited_materials_notice | Must reject raw data, paths, secrets, endpoints, and operator instruction material. |
 | not_yet_submission_notice | Must state that this checklist is not an owner submission. |
 | blocked_until_future_task_notice | Must preserve future-task blocking. |
 | safe_next_action | Must point to owner submission wait state planning. |
@@ -2587,7 +2623,7 @@ This owner submission request packet dry-run is metadata-only and planning-only.
 | request_packet_purpose | State that this is a future metadata-only request packet dry-run. |
 | metadata_labels_requested_later | Request labels only in a future task. |
 | safe_fields_allowed_later | Limit future content to safe labels. |
-| materials_not_to_include | Reject raw data, paths, secrets, endpoints, and command material. |
+| materials_not_to_include | Reject raw data, paths, secrets, endpoints, and operator instruction material. |
 | future_owner_confirmation_scope | Future-only reference; no owner confirmation created. |
 | future_actual_data_task_boundary | Future-only reference; no actual data task started. |
 | future_audit_link_boundary | Future-only reference; no audit execution. |
@@ -4495,7 +4531,7 @@ This owner packet request rejection fixture is metadata-only, planning-only, and
 | reject_reason_label | Safe reason label only. |
 | blocked_boundary_label | Safe boundary label only. |
 | safe_next_action_label | Future planning label only. |
-| no_raw_value_echo | Required; do not echo raw payload, path, token, endpoint, row body, memo, or command material. |
+| no_raw_value_echo | Required; do not echo raw payload, path, token, endpoint, row body, memo, or operator instruction material. |
 | no_packet_request_sent | Required; packet_request_sent remains false. |
 | no_owner_instruction_acceptance | Required; owner_instruction_accepted remains false. |
 | no_owner_submission_receipt | Required; owner_submission_received remains false. |
@@ -4707,7 +4743,7 @@ This actual owner instruction request packet stub is metadata-only and planning-
 | packet_request_not_sent_notice | State that packet_request_sent remains false. |
 | actual_data_task_not_started_notice | State that actual data task remains unstarted. |
 | safe_metadata_labels_to_prepare_later | Labels only; no raw data values. |
-| materials_not_to_send_yet | Reject raw data, paths, endpoints, tokens, and command material. |
+| materials_not_to_send_yet | Reject raw data, paths, endpoints, tokens, and operator instruction material. |
 | future_owner_instruction_scope | Future-only scope label. |
 | future_packet_request_scope | Future-only scope label. |
 | future_actual_data_task_boundary | Future-only boundary label. |
@@ -4900,7 +4936,7 @@ This owner instruction request rejection gate is metadata-only and planning-only
 | reject_reason_label | Safe reason label only. |
 | blocked_boundary_label | Safe boundary label only. |
 | safe_next_action_label | Future planning label only. |
-| no_raw_value_echo | Required; do not echo raw payload, path, token, endpoint, row body, memo, or command material. |
+| no_raw_value_echo | Required; do not echo raw payload, path, token, endpoint, row body, memo, or operator instruction material. |
 | no_owner_instruction_request_sent | Required; owner_instruction_requested remains false. |
 | no_owner_instruction_acceptance | Required; owner_instruction_accepted remains false. |
 | no_packet_request_sent | Required; packet_request_sent remains false. |

@@ -94,6 +94,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_SCHEMA = "iris_live2d
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_redaction_guard_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA = "iris_live2d_motion_identity_comfort_audit_stub_no_write_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_SCHEMA = "iris_live2d_motion_identity_comfort_audit_event_stub_no_write2_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_SCHEMA = "iris_live2d_motion_identity_comfort_audit_event_unsafe_field_guard2_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_audit_unsafe_field_guard_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_SCHEMA = "iris_live2d_motion_identity_comfort_repeated_blocker_grouping_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_CONTRACT_SCHEMA = "iris_live2d_motion_identity_comfort_repeated_blocker_grouping_contract_v1";
@@ -1223,6 +1224,34 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_REJECTION
   "audit_event_stub2_claims_runtime_ready",
   "audit_event_stub2_claims_production_ready",
   "audit_event_stub2_resolves_priority1",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_LABELS = Object.freeze([
+  "audit_event_safe_label_only",
+  "renderer_material_absent",
+  "cue_material_absent",
+  "model_locator_material_absent",
+  "motion_locator_material_absent",
+  "network_locator_material_absent",
+  "access_material_absent",
+  "private_relation_signal_absent",
+  "private_support_signal_absent",
+  "operator_instruction_material_absent",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_REJECTIONS = Object.freeze([
+  "audit_event_guard2_renderer_material_present",
+  "audit_event_guard2_cue_material_present",
+  "audit_event_guard2_model_locator_material_present",
+  "audit_event_guard2_motion_locator_material_present",
+  "audit_event_guard2_network_locator_material_present",
+  "audit_event_guard2_access_material_present",
+  "audit_event_guard2_private_relation_signal_present",
+  "audit_event_guard2_private_support_signal_present",
+  "audit_event_guard2_operator_instruction_material_present",
+  "audit_event_guard2_audit_body_material_present",
+  "audit_event_guard2_claims_runtime_ready",
+  "audit_event_guard2_claims_production_ready",
 ]);
 
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_LABELS = Object.freeze([
@@ -11007,6 +11036,70 @@ export function createLive2dMotionIdentityComfortAuditEventStubNoWrite2(input = 
     ],
     safeNextAction: "add_motion_identity_comfort_audit_event_unsafe_field_guard2",
     context: "live2d motion identity comfort audit event stub no-write2",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_audit_event_unsafe_field_guard2_status",
+    status: "audit_event_unsafe_field_guard2_blocked",
+    boundaries: {
+      motion_identity_comfort_audit_event_unsafe_field_guard2_only_boundary: true,
+      audit_event_unsafe_field_guard2_label_only_boundary: true,
+      unsafe_material_rejection_boundary: true,
+      no_audit_execution_boundary: true,
+      no_audit_write_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_audit_event_unsafe_field_guard2_only: true,
+      audit_event_unsafe_field_guard2_present: true,
+      audit_event_guard2_renderer_material_present: false,
+      audit_event_guard2_cue_material_present: false,
+      audit_event_guard2_model_locator_material_present: false,
+      audit_event_guard2_motion_locator_material_present: false,
+      audit_event_guard2_network_locator_material_present: false,
+      audit_event_guard2_access_material_present: false,
+      audit_event_guard2_private_relation_signal_present: false,
+      audit_event_guard2_private_support_signal_present: false,
+      audit_event_guard2_operator_instruction_material_present: false,
+      audit_event_guard2_audit_body_material_present: false,
+      audit_event_guard2_claims_runtime_ready: false,
+      audit_event_guard2_claims_production_ready: false,
+      audit_event_write_attempted: false,
+      audit_entry_created: false,
+      audit_execution_started: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      audit_event_unsafe_field_guard2_labels: [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_LABELS],
+      audit_event_unsafe_field_guard2_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_audit_event_unsafe_field_guard2_only",
+      "audit_event_unsafe_field_guard2_label_only",
+      "unsafe_material_absent",
+      "audit_execution_not_started",
+      "audit_write_not_attempted",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_blocker_grouping_status_surface",
+    context: "live2d motion identity comfort audit event unsafe-field guard2",
   }, input);
 }
 
