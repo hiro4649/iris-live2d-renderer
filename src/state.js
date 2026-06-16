@@ -71,6 +71,7 @@ import {
   createLive2dMotionIdentityComfortRoleGateRedactionGuard,
   createLive2dMotionIdentityComfortAuditStubNoWrite,
   createLive2dMotionIdentityComfortAuditUnsafeFieldGuard,
+  createLive2dMotionIdentityComfortRepeatedBlockerGrouping,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -311,6 +312,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
       const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
+      const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -504,6 +506,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
           live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
+          live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -646,6 +649,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
           live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
+          live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -829,6 +833,7 @@ export function createRendererState({
         live2d_motion_identity_comfort_role_gate_redaction_guard: status.renderer_health.live2d_motion_identity_comfort_role_gate_redaction_guard,
         live2d_motion_identity_comfort_audit_stub_no_write: status.renderer_health.live2d_motion_identity_comfort_audit_stub_no_write,
         live2d_motion_identity_comfort_audit_unsafe_field_guard: status.renderer_health.live2d_motion_identity_comfort_audit_unsafe_field_guard,
+        live2d_motion_identity_comfort_repeated_blocker_grouping: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -1066,6 +1071,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
       const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
+      const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1218,6 +1224,7 @@ export function createRendererState({
       response.live2d_motion_identity_comfort_role_gate_redaction_guard = live2dMotionIdentityComfortRoleGateRedactionGuard;
       response.live2d_motion_identity_comfort_audit_stub_no_write = live2dMotionIdentityComfortAuditStubNoWrite;
       response.live2d_motion_identity_comfort_audit_unsafe_field_guard = live2dMotionIdentityComfortAuditUnsafeFieldGuard;
+      response.live2d_motion_identity_comfort_repeated_blocker_grouping = live2dMotionIdentityComfortRepeatedBlockerGrouping;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1423,6 +1430,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
       const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
+      const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1599,6 +1607,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
           live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
+          live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
