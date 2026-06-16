@@ -119,6 +119,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort audit event stub no-write2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit event unsafe-field guard2 next. |
 | motion identity comfort audit event unsafe-field guard2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add blocker grouping status surface next. |
 | motion identity comfort blocker grouping status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add blocker grouping contract2 next. |
+| motion identity comfort blocker grouping contract2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1176,6 +1177,36 @@ Rejected blocker grouping status surface promotions include blocker_grouping_sta
 | blocker_grouping_status_surface_makes_motion_executable | false |
 | blocker_grouping_status_surface_enables_trusted_loader | false |
 | blocker_grouping_status_surface_creates_owner_confirmation | false |
+| grouped_blocker_count | 10 |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Blocker Grouping Contract2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-BLOCKER-GROUPING-CONTRACT2
+
+Status: blocker grouping contract2 only. This surface fixes cross-surface consistency rules for blocker grouping labels across status, health, and runtime config. It does not resolve blockers, grant work permission, change checked row count, make the motion dataset executable, enable the trusted loader, create owner confirmation, or claim runtime or production readiness.
+
+Blocker grouping contract2 rules include grouped_blockers_match_status_surface, grouped_blockers_match_health_surface, grouped_blockers_match_runtime_config_surface, grouped_blockers_do_not_resolve_blockers, grouped_blockers_do_not_grant_work_permission, grouped_blockers_preserve_priority1_blocked, and grouped_blockers_preserve_checked_row_count_zero.
+
+Rejected blocker grouping contract2 promotions include blocker_grouping_contract2_status_mismatch, blocker_grouping_contract2_health_mismatch, blocker_grouping_contract2_runtime_config_mismatch, blocker_grouping_contract2_claims_resolution, blocker_grouping_contract2_grants_work_permission, blocker_grouping_contract2_sets_checked_count, blocker_grouping_contract2_makes_motion_executable, blocker_grouping_contract2_claims_runtime_ready, and blocker_grouping_contract2_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| blocker_grouping_contract2_present | true |
+| blocker_grouping_contract2_status_mismatch | false |
+| blocker_grouping_contract2_health_mismatch | false |
+| blocker_grouping_contract2_runtime_config_mismatch | false |
+| blocker_grouping_contract2_claims_resolution | false |
+| blocker_grouping_contract2_grants_work_permission | false |
+| blocker_grouping_contract2_sets_checked_count | false |
+| blocker_grouping_contract2_makes_motion_executable | false |
 | grouped_blocker_count | 10 |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
