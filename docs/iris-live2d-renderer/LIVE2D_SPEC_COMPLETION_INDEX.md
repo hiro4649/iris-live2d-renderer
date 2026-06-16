@@ -1,4 +1,4 @@
-﻿# Live2D Spec Completion Index
+# Live2D Spec Completion Index
 
 Task: LIVE2D-SPEC-COMPLETION-INDEX1
 Harness: v1.1.8
@@ -104,6 +104,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort owner handoff stub | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add role gate stub next. |
 | motion identity comfort role gate stub | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add role gate redaction guard next. |
 | motion identity comfort role gate redaction guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit stub no-write next. |
+| motion identity comfort audit stub no-write | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit unsafe-field guard next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -666,7 +667,7 @@ Status: role gate definition stub only. This surface defines public, admin ordin
 
 Role views: public_safe_summary, admin_ordinary_summary, operator_safe_handoff_plan, and owner_only_detail_stub.
 
-Role gate rules: public_view_safe_labels_only, admin_ordinary_safe_labels_only, operator_view_safe_labels_only, owner_only_detail_not_exposed, raw_material_not_reflected, and readiness_not_claimed.
+Role gate rules: public_view_safe_labels_only, admin_ordinary_safe_labels_only, operator_view_safe_labels_only, owner_only_detail_not_exposed, source_material_not_reflected, and readiness_not_claimed.
 
 Rejected role gate promotions include role_gate_exposes_owner_only_detail_public, role_gate_exposes_owner_only_detail_admin, role_gate_reflects_network_locator_material, role_gate_reflects_auth_material, role_gate_reflects_renderer_material, role_gate_reflects_cue_material, role_gate_reflects_private_relation_signal, role_gate_reflects_private_support_signal, role_gate_claims_runtime_ready, and role_gate_claims_production_ready.
 
@@ -713,6 +714,38 @@ Rejected role gate redaction promotions include role_gate_redaction_exposes_owne
 | role_gate_redaction_reflects_cue_material | false |
 | role_gate_redaction_claims_runtime_ready | false |
 | role_gate_redaction_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Audit Stub No-Write
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-STUB-NO-WRITE1
+
+Status: audit stub no-write only. This surface records safe future audit labels without starting audit execution, writing an audit artifact, reading source material, accepting file identity values, creating owner confirmation, or claiming runtime or production readiness.
+
+Safe audit stub fields: audit_stub_id_label, audit_scope_label, audit_status_label, safe_surface_label, blocked_reason_label, and no_write_boundary_label.
+
+Rejected audit stub promotions include audit_stub_writes_artifact, audit_stub_executes_audit, audit_stub_reads_source_material, audit_stub_reads_file_content, audit_stub_accepts_file_identity_value, audit_stub_reflects_network_locator_material, audit_stub_reflects_auth_material, audit_stub_reflects_owner_private_detail, audit_stub_claims_runtime_ready, and audit_stub_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| audit_stub_no_write_present | true |
+| audit_execution_started | false |
+| audit_write_enabled | false |
+| audit_artifact_written | false |
+| audit_source_material_read | false |
+| audit_file_content_read | false |
+| audit_file_identity_value_accepted | false |
+| audit_stub_reflects_network_locator_material | false |
+| audit_stub_reflects_auth_material | false |
+| audit_stub_reflects_owner_private_detail | false |
+| audit_stub_claims_runtime_ready | false |
+| audit_stub_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
@@ -1222,7 +1255,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INTAKE-DRY-RUN-VALIDATOR1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INTAKE_DRY_RUN_VALIDATOR_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_intake_dry_run_validator_status
 
-This validator is metadata-only and dry-run-only. It validates the presence and rejection labels for future owner metadata intake without receiving actual owner submission, accepting real data, reading row bodies, accepting file path values, calculating or verifying hashes, checking declared row counts against actual rows, executing parsers, executing redaction scans, executing audits, creating owner confirmation, or claiming readiness.
+This validator is metadata-only and dry-run-only. It validates the presence and rejection labels for future owner metadata intake without receiving actual owner submission, accepting real data, reading row bodies, accepting file identity values, calculating or verifying hashes, checking declared row counts against actual rows, executing parsers, executing redaction scans, executing audits, creating owner confirmation, or claiming readiness.
 
 ### Dry-Run Validator Status Projection
 
@@ -1430,7 +1463,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-INTAKE-AUDIT-LINK1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_INTAKE_AUDIT_LINK_SCHEMA
 Status label: live2d_real_row_metadata_only_intake_audit_link_status
 
-This audit link is metadata-only and planning-only. It links metadata-only owner intake artifacts to future audit references without executing an audit, creating a real ingestion audit event, receiving owner submission, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, creating owner confirmation, or claiming readiness.
+This audit link is metadata-only and planning-only. It links metadata-only owner intake artifacts to future audit references without executing an audit, creating a real ingestion audit event, receiving owner submission, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, creating owner confirmation, or claiming readiness.
 
 ### Audit Link Status Projection
 
@@ -1893,7 +1926,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-FORM-FINAL-CHECKLIST1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_FORM_FINAL_CHECKLIST_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_submission_form_final_checklist_status
 
-This owner submission form final checklist is metadata-only and planning-only. It defines the final safe labels, rejected fields, and blockers for a future owner submission form without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+This owner submission form final checklist is metadata-only and planning-only. It defines the final safe labels, rejected fields, and blockers for a future owner submission form without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
 
 ### Owner Submission Form Final Checklist Status Projection
 
@@ -2133,7 +2166,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REQUEST-PACKET-DRY-RUN1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_REQUEST_PACKET_DRY_RUN_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_submission_request_packet_dry_run_status
 
-This owner submission request packet dry-run is metadata-only and planning-only. It defines the future request packet shape and safe labels without sending a real packet, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+This owner submission request packet dry-run is metadata-only and planning-only. It defines the future request packet shape and safe labels without sending a real packet, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
 
 ### Request Packet Dry-Run Status Projection
 
@@ -2271,7 +2304,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-REJECTION-GATE1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_REJECTION_GATE_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_submission_rejection_gate_status
 
-This owner submission rejection gate is metadata-only and planning-only. It defines future rejection conditions and safe outputs for an owner submission boundary without receiving owner submission, accepting owner submission, judging an actual submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+This owner submission rejection gate is metadata-only and planning-only. It defines future rejection conditions and safe outputs for an owner submission boundary without receiving owner submission, accepting owner submission, judging an actual submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
 
 ### Owner Submission Rejection Gate Status Projection
 
@@ -2383,7 +2416,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-PACKET-OWNER-HANDOFF1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_PACKET_OWNER_HANDOFF_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_submission_packet_owner_handoff_status
 
-This owner submission packet owner handoff is metadata-only and planning-only. It defines the safe handoff shape for a future owner-facing packet without sending a real packet, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+This owner submission packet owner handoff is metadata-only and planning-only. It defines the safe handoff shape for a future owner-facing packet without sending a real packet, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
 
 ### Owner Packet Handoff Status Projection
 
@@ -2522,7 +2555,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-SUBMISSION-STATUS-LEDGER1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_SUBMISSION_STATUS_LEDGER_SCHEMA
 Status label: live2d_real_row_metadata_only_submission_status_ledger_status
 
-This submission status ledger is metadata-only and planning-only. It records safe status fields and future transition labels without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+This submission status ledger is metadata-only and planning-only. It records safe status fields and future transition labels without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
 
 ### Submission Status Ledger Projection
 
@@ -2643,7 +2676,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-SUBMISSION-LEDGER-REJECTION-FIXTURE1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_SUBMISSION_LEDGER_REJECTION_FIXTURE_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_submission_ledger_rejection_fixture_status
 
-This ledger rejection fixture is metadata-only, planning-only, and synthetic-only. It describes rejection cases for unsafe status ledger transitions without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
+This ledger rejection fixture is metadata-only, planning-only, and synthetic-only. It describes rejection cases for unsafe status ledger transitions without receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, or claiming readiness.
 
 ### Ledger Rejection Fixture Projection
 
@@ -4087,7 +4120,7 @@ This owner packet request rejection fixture is metadata-only, planning-only, and
 | trusted_loader_disabled | Trusted loader remains disabled. |
 | runtime_readiness_not_claimed | Runtime readiness remains unclaimed. |
 | production_readiness_not_claimed | Production readiness remains unclaimed. |
-| raw_material_forbidden | Raw material must not be accepted or echoed. |
+| source_material_forbidden | source material must not be accepted or echoed. |
 | fixture_is_not_real_evidence | Synthetic fixture is not real evidence. |
 | dry_run_is_not_owner_confirmation | Dry-run or fixture status is not owner confirmation. |
 
@@ -5298,7 +5331,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-SAFE-HANDOFF-PACKE
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INSTRUCTION_REQUEST_SAFE_HANDOFF_PACKET_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_instruction_request_safe_handoff_packet_status
 
-This safe handoff packet is metadata-only and planning-only. It defines the future packet shape and safety notices for the owner instruction request lane without sending any handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
+This safe handoff packet is metadata-only and planning-only. It defines the future packet shape and safety notices for the owner instruction request lane without sending any handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
 
 ### Safe Handoff Packet Default State
 
@@ -5450,7 +5483,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-INSTRUCTION-REQUEST-HANDOFF-REJECTION-
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_INSTRUCTION_REQUEST_HANDOFF_REJECTION_GATE_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_instruction_request_handoff_rejection_gate_status
 
-This handoff rejection gate is metadata-only and planning-only. It fixes the rejected state transitions for the owner instruction request safe handoff packet lane without sending an owner handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
+This handoff rejection gate is metadata-only and planning-only. It fixes the rejected state transitions for the owner instruction request safe handoff packet lane without sending an owner handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
 
 ### Handoff Rejection Gate Default State
 
@@ -5725,7 +5758,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-WAIT-SUMMARY1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_ACTION_WAIT_SUMMARY_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_action_wait_summary_status
 
-This owner action wait summary is metadata-only and planning-only. It records that the owner action lane is still waiting for explicit owner action without sending an owner action request, accepting owner action, sending an owner handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
+This owner action wait summary is metadata-only and planning-only. It records that the owner action lane is still waiting for explicit owner action without sending an owner action request, accepting owner action, sending an owner handoff, sending an owner instruction request, requesting owner instruction, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
 
 ### Owner Action Wait Summary Default State
 
@@ -6176,7 +6209,7 @@ Task: LIVE2D-REAL-ROW-METADATA-ONLY-OWNER-ACTION-REQUEST-COMPLETION-REVIEW1
 Schema label: LIVE2D_REAL_ROW_METADATA_ONLY_OWNER_ACTION_REQUEST_COMPLETION_REVIEW_SCHEMA
 Status label: live2d_real_row_metadata_only_owner_action_request_completion_review_status
 
-This owner action request completion review is metadata-only and planning-only. It summarizes completed planning artifacts and unresolved blockers for the owner action request lane without sending an owner action request, requesting owner action, accepting owner action, sending an owner handoff, sending an owner instruction request, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file path values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
+This owner action request completion review is metadata-only and planning-only. It summarizes completed planning artifacts and unresolved blockers for the owner action request lane without sending an owner action request, requesting owner action, accepting owner action, sending an owner handoff, sending an owner instruction request, accepting owner instruction, sending a packet request, receiving owner submission, accepting owner submission, creating owner confirmation, confirming owner confirmation, starting an actual data task, preauthorizing actual data, accepting real data, reading row bodies, accepting file identity values, reading actual files, calculating hashes, executing parser dry-runs, executing redaction scans, executing audits, creating real ingestion audit events, approving go/no-go, resolving priority1, enabling trusted loader, or claiming readiness.
 
 ### Owner Action Request Completion Review Default State
 
@@ -8313,7 +8346,7 @@ The owner action freeze status must preserve the same safe meaning on `/status`,
 
 Task: LIVE2D-POST-PR254-OWNER-ACTION-FREEZE-STATUS-REDACTION-SWEEP1
 
-The owner action freeze status surface must remain a safe public summary when unsafe status input attempts include private values or raw material labels. This is contract coverage only and does not execute parser, redaction scan, audit work, renderer work, SDK work, external service calls, owner handoff, owner confirmation, trusted loader enablement, actual data work, or readiness review.
+The owner action freeze status surface must remain a safe public summary when unsafe status input attempts include private values or source material labels. This is contract coverage only and does not execute parser, redaction scan, audit work, renderer work, SDK work, external service calls, owner handoff, owner confirmation, trusted loader enablement, actual data work, or readiness review.
 
 | field | value |
 | --- | --- |
