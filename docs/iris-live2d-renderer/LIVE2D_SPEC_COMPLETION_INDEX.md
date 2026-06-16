@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 82 percent |
+| spec_completion_estimate | about 83 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1, recovery/cooldown matrix next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-CONTEXT-GATE1, context gate next planning |
 
 ## Completion Matrix
 
@@ -81,6 +81,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity and comfort spec | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic rejection fixture pack next. |
 | motion identity and comfort rejection fixture pack | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic dry-run validator next. |
 | motion identity and comfort dry-run validator | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add recovery/cooldown matrix next. |
+| motion identity and comfort recovery matrix | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add context gate next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -167,6 +168,49 @@ Stale cues, comfort risk, subtitle overlay risk, or gaze pressure risk must reje
 | expression_gaze_breath_body_camera_labels_are_runtime_motion | false |
 | renderer_ready_candidate | false |
 | renderer_ready_claimed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Recovery Matrix
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1
+
+Status: matrix-only and blocked from execution. This matrix defines recovery, cooldown, duration label, and risk downgrade expectations for supported motion labels. It does not execute motion, apply cues, load a model or scene, create owner confirmation, enable a trusted loader, or claim readiness.
+
+### Required Recovery Matrix Fields
+
+Required fields: sourceMotionLabel, strongMotion, recoveryRequired, cooldownRequired, safeRecoveryMotion, safeDowngradeMotion, staleCueDowngradeMotion, comfortRiskDowngradeMotion, subtitleOverlayDowngradeMotion, gazePressureDowngradeMotion, and maxDurationMsLabel.
+
+### Recovery Matrix Rows
+
+| Row | Boundary |
+| --- | --- |
+| talk_to_idle_breath_recovery_optional | Regular talk can recover to idle_breath when needed. |
+| focused_talk_to_idle_breath_recovery_optional | Focused talk can recover to idle_breath when needed. |
+| laugh_big_to_idle_breath_recovery_required | Strong motion requires recovery and cooldown. |
+| surprise_scream_to_idle_breath_recovery_required | Strong motion requires recovery and cooldown. |
+| happy_humming_to_idle_breath_recovery_optional | Non-strong singing can recover to idle_breath when needed. |
+| happy_dance_to_idle_breath_recovery_required | Strong motion requires recovery and cooldown. |
+| happy_loud_sing_to_idle_breath_recovery_required | Strong motion requires recovery and cooldown. |
+
+### Required Matrix Blockers
+
+Required blockers: strong_motion_missing_safe_recovery_motion, strong_motion_missing_cooldown, strong_motion_missing_max_duration_label, stale_cue_missing_downgrade_motion, comfort_risk_missing_downgrade_motion, subtitle_overlay_risk_missing_downgrade_motion, gaze_pressure_risk_missing_downgrade_motion, recovery_motion_marked_executable_readiness, and matrix_claims_runtime_ready.
+
+### Preserved Matrix Facts
+
+| Fact | Value |
+| --- | --- |
+| recovery_matrix_executes_motion | false |
+| recovery_matrix_claims_runtime_ready | false |
+| strong_motion_without_recovery_allowed | false |
+| strong_motion_without_cooldown_allowed | false |
+| stale_cue_strong_motion_allowed | false |
+| risky_strong_motion_allowed | false |
+| renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | checked_row_count | 0 |
