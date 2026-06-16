@@ -176,6 +176,8 @@ import {
   LIVE2D_RENDERER_READY_OPERATOR_HANDOFF_NO_ACTION_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_FINAL_PRE_OWNER_BLOCKER_SUMMARY_SCHEMA,
   LIVE2D_RENDERER_READY_FINAL_PRE_OWNER_BLOCKERS,
+  LIVE2D_RENDERER_READY_LONG_CONTINUATION_COMPLETION_REVIEW2_SCHEMA,
+  LIVE2D_RENDERER_READY_LONG_CONTINUATION_REVIEW2_COMPLETED_ARTIFACTS,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_AUDIT_REFERENCE_MISSING_GUARD_SCHEMA,
   LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_STUB_SCHEMA,
@@ -325,6 +327,7 @@ import {
   createRendererReadyAdminSummaryRedactionSummary,
   createRendererReadyOperatorHandoffNoActionGuardSummary,
   createRendererReadyFinalPreOwnerBlockerSummary,
+  createRendererReadyLongContinuationCompletionReview2Summary,
   createRendererReadyAuditReferenceStubSummary,
   createRendererReadyAuditReferenceMissingGuardSummary,
   createRendererReadySafeOperatorChecklistStubSummary,
@@ -6253,6 +6256,7 @@ try {
   assertRendererReadyAdminSummaryRedaction(provisionedRuntimeConfig.renderer_ready_admin_summary_redaction_summary);
   assertRendererReadyOperatorHandoffNoActionGuard(provisionedRuntimeConfig.renderer_ready_operator_handoff_no_action_guard_summary);
   assertRendererReadyFinalPreOwnerBlockerSummary(provisionedRuntimeConfig.renderer_ready_final_pre_owner_blocker_summary);
+  assertRendererReadyLongContinuationCompletionReview2(provisionedRuntimeConfig.renderer_ready_long_continuation_completion_review2_summary);
   assertRendererReadyAuditReferenceStub(provisionedRuntimeConfig.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedRuntimeConfig.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedRuntimeConfig.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6578,6 +6582,7 @@ try {
   assertRendererReadyAdminSummaryRedaction(provisionedStatus.renderer_ready_admin_summary_redaction_summary);
   assertRendererReadyOperatorHandoffNoActionGuard(provisionedStatus.renderer_ready_operator_handoff_no_action_guard_summary);
   assertRendererReadyFinalPreOwnerBlockerSummary(provisionedStatus.renderer_ready_final_pre_owner_blocker_summary);
+  assertRendererReadyLongContinuationCompletionReview2(provisionedStatus.renderer_ready_long_continuation_completion_review2_summary);
   assertRendererReadyAuditReferenceStub(provisionedStatus.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedStatus.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedStatus.renderer_ready_safe_operator_checklist_stub_summary);
@@ -6793,6 +6798,7 @@ try {
   assertRendererReadyAdminSummaryRedaction(provisionedHealth.renderer_ready_admin_summary_redaction_summary);
   assertRendererReadyOperatorHandoffNoActionGuard(provisionedHealth.renderer_ready_operator_handoff_no_action_guard_summary);
   assertRendererReadyFinalPreOwnerBlockerSummary(provisionedHealth.renderer_ready_final_pre_owner_blocker_summary);
+  assertRendererReadyLongContinuationCompletionReview2(provisionedHealth.renderer_ready_long_continuation_completion_review2_summary);
   assertRendererReadyAuditReferenceStub(provisionedHealth.renderer_ready_audit_reference_stub_summary);
   assertRendererReadyAuditReferenceMissingGuard(provisionedHealth.renderer_ready_audit_reference_missing_guard_summary);
   assertRendererReadySafeOperatorChecklistStub(provisionedHealth.renderer_ready_safe_operator_checklist_stub_summary);
@@ -7604,6 +7610,7 @@ try {
       "renderer_ready_admin_summary_redaction",
       "renderer_ready_operator_handoff_no_action_guard",
       "renderer_ready_final_pre_owner_blocker_summary",
+      "renderer_ready_long_continuation_completion_review2",
       "renderer_ready_audit_reference_stub",
       "renderer_ready_audit_reference_missing_guard",
       "renderer_ready_pre_owner_action_completion_review",
@@ -9519,6 +9526,56 @@ function assertRendererReadyFinalPreOwnerBlockerSummary(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyLongContinuationCompletionReview2(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_LONG_CONTINUATION_COMPLETION_REVIEW2_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.longContinuationCompletionReviewStatus, "review_only_continue");
+  assert.equal(summary.completionReviewOnly, true);
+  assert.equal(summary.stopCondition, false);
+  assert.deepEqual(summary.completedArtifacts, [...LIVE2D_RENDERER_READY_LONG_CONTINUATION_REVIEW2_COMPLETED_ARTIFACTS]);
+  assert.equal(summary.completedArtifactCount, LIVE2D_RENDERER_READY_LONG_CONTINUATION_REVIEW2_COMPLETED_ARTIFACTS.length);
+  assert.equal(summary.completedArtifacts.includes("public_summary_redaction"), true);
+  assert.equal(summary.completedArtifacts.includes("final_pre_owner_blocker_summary"), true);
+  assert.equal(summary.nextSafeTask, "implementation_gap_audit2");
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.actualRendererProbeExecuted, false);
+  assert.equal(summary.actualBrowserProbeExecuted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.collectorExecutionStarted, false);
+  assert.equal(summary.collectorOutputGenerated, false);
+  assert.equal(summary.collectorOutputAcceptedAsRealEvidence, false);
+  assert.equal(summary.realEvidenceCollectionStarted, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.boundary_policy.long_continuation_completion_review2_only, true);
+  assert.equal(summary.boundary_policy.completion_review_is_not_stop_condition, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_browser_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_live2d_execution, true);
+  assert.equal(summary.boundary_policy.no_collector_execution, true);
+  assert.equal(summary.boundary_policy.no_collector_output_generation, true);
+  assert.equal(summary.boundary_policy.no_collector_output_accepted_as_real_evidence, true);
+  assert.equal(summary.boundary_policy.no_real_evidence_collection_started, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_trusted_loader_enablement, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertRendererReadyAuditReferenceStub(summary) {
   assert.equal(summary.schema, LIVE2D_RENDERER_READY_AUDIT_REFERENCE_STUB_SCHEMA);
   assert.equal(summary.safe_summary_only, true);
@@ -11038,6 +11095,13 @@ for (const fixture of [
   assertRendererReadyFinalPreOwnerBlockerSummary(summary);
   assert.equal(summary.remainingBlockers.includes("owner_confirmation_missing"), true);
   assert.equal(summary.runtimeReadinessClaimed, false);
+}
+
+{
+  const summary = createRendererReadyLongContinuationCompletionReview2Summary();
+  assertRendererReadyLongContinuationCompletionReview2(summary);
+  assert.equal(summary.stopCondition, false);
+  assert.equal(summary.nextSafeTask, "implementation_gap_audit2");
 }
 
 {
