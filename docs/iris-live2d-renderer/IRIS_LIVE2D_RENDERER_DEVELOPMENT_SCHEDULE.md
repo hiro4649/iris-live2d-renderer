@@ -366,6 +366,14 @@ production_readiness_claimed: no
 - Boundary: continuation ledger2 label only, no owner action, no blocker resolution, no actual data, no owner confirmation, no trusted loader enablement, no work authorization, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-CONTINUATION-LEDGER-CONSISTENCY2.
 
+## Inserted Consistency: LIVE2D-MOTION-IDENTITY-COMFORT-CONTINUATION-LEDGER-CONSISTENCY2
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-CONTINUATION-LEDGER2 and before pre-owner final wait state.
+- Scope: require ledger2 blockers to remain consistent across status, health, and runtime config.
+- Rejections: status mismatch, health mismatch, runtime config mismatch, owner action claim, blocker resolution claim, work authorization claim, runtime readiness claim, and production readiness claim.
+- Boundary: continuation ledger consistency2 label only, cross-surface consistency only, no owner action, no blocker resolution, no actual data, no owner confirmation, no trusted loader enablement, no work authorization, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-PRE-OWNER-FINAL-WAIT-STATE1.
+
 ## Reaction Latency Roadmap
 
 邵ｺ阮吶・ roadmap 邵ｺ・ｯ phase-based schedule 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ窶ｦalendar date 邵ｺ・ｯ隰問・笳・ｸｺ・ｪ邵ｺ繝ｻﾂ繧・耳 phase 邵ｺ・ｯ陷題ざ・ｮ・ｵ邵ｺ・ｮ safety boundary 邵ｺ・ｨ evidence requirement 郢ｧ雋橸ｽ｣鄙ｫ・・ｸｺ螢ｹ竊馴ｨｾ・ｲ郢ｧ竏夲ｽ狗ｸｲ繝ｻatency target 邵ｺ・ｯ local renderer 邵ｺ・ｮ engineering target 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ繝ｻ繝ｻ闖ｫ・｡郢晏干ﾎ帷ｹ昴・繝ｨ郢晁ｼ斐°郢晢ｽｼ郢晢｣ｰ闕ｳ鄙ｫ繝ｻ viewer-visible latency 邵ｺ・ｯ陋ｻ・･鬨ｾ逧ｮ蛹ｱ騾墓ｺ倪・郢ｧ荵敖繝ｻ

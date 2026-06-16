@@ -121,6 +121,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort blocker grouping status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add blocker grouping contract2 next. |
 | motion identity comfort blocker grouping contract2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger2 next. |
 | motion identity comfort continuation ledger2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger consistency2 next. |
+| motion identity comfort continuation ledger consistency2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add pre-owner final wait state next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1241,6 +1242,34 @@ Rejected continuation ledger2 promotions include continuation_ledger2_claims_own
 | continuation_ledger2_changes_checked_count | false |
 | continuation_ledger2_makes_motion_executable | false |
 | continuation_ledger2_enables_trusted_loader | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Continuation Ledger Consistency2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-CONTINUATION-LEDGER-CONSISTENCY2
+
+Status: continuation ledger consistency2 only. This surface records label-only consistency checks between ledger2 blockers and the status, health, and runtime config surfaces. It does not authorize work, resolve blockers, create owner confirmation, start actual data, enable trusted loader, or claim runtime or production readiness.
+
+Continuation ledger consistency2 checks include ledger2_blockers_match_status_surface, ledger2_blockers_match_health_surface, ledger2_blockers_match_runtime_config_surface, ledger2_completed_entries_do_not_resolve_blockers, ledger2_safe_next_action_does_not_authorize_work, ledger2_preserves_priority1_blocked, and ledger2_preserves_checked_row_count_zero.
+
+Rejected continuation ledger consistency2 promotions include ledger2_consistency_status_mismatch, ledger2_consistency_health_mismatch, ledger2_consistency_runtime_config_mismatch, ledger2_consistency_claims_owner_action, ledger2_consistency_claims_blocker_resolution, ledger2_consistency_authorizes_work, ledger2_consistency_claims_runtime_ready, and ledger2_consistency_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| continuation_ledger_consistency2_present | true |
+| ledger2_consistency_status_mismatch | false |
+| ledger2_consistency_health_mismatch | false |
+| ledger2_consistency_runtime_config_mismatch | false |
+| ledger2_consistency_claims_owner_action | false |
+| ledger2_consistency_claims_blocker_resolution | false |
+| ledger2_consistency_authorizes_work | false |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
