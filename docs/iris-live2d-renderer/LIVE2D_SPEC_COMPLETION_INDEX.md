@@ -96,6 +96,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort redaction sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add no-sweetening sweep next. |
 | motion identity comfort no-sweetening sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit next. |
 | motion identity comfort implementation gap audit | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap register next. |
+| motion identity comfort implementation gap register | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final long continuation review2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -463,6 +464,34 @@ Rejected promotions include gap_audit_executes_renderer, gap_audit_applies_cue, 
 | gap_audit_loads_scene | false |
 | gap_audit_claims_runtime_ready | false |
 | gap_audit_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Implementation Gap Register
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-REGISTER1
+
+Status: safe implementation gap register only. This surface groups the open motion identity and comfort implementation gaps after the audit, without executing the renderer, applying cues, loading a model or scene, accepting actual data, creating owner confirmation, enabling trusted loader, resolving priority1, or claiming readiness.
+
+Register categories: renderer_evidence_gap, cue_application_gap, model_scene_evidence_gap, owner_confirmation_gap, trusted_loader_gap, priority1_blocker_gap, row_count_gap, motion_dataset_execution_gap, and readiness_claim_gap.
+
+Safe actions: keep_renderer_execution_blocked, keep_cue_application_blocked, keep_model_scene_load_blocked, keep_owner_confirmation_missing, keep_trusted_loader_disabled, keep_priority1_blocked, keep_checked_row_count_zero, keep_motion_dataset_non_executable, keep_readiness_claims_false, and prepare_safe_gap_review2.
+
+Rejected promotions include gap_register_executes_renderer, gap_register_applies_cue, gap_register_loads_model, gap_register_loads_scene, gap_register_creates_owner_confirmation, gap_register_enables_trusted_loader, gap_register_accepts_actual_data, gap_register_claims_runtime_ready, gap_register_claims_production_ready, and gap_register_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| gap_register_executes_renderer | false |
+| gap_register_applies_cue | false |
+| gap_register_loads_model | false |
+| gap_register_loads_scene | false |
+| gap_register_claims_runtime_ready | false |
+| gap_register_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
