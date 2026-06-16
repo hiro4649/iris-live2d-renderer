@@ -19,6 +19,15 @@ production_readiness_claimed: no
 - Readiness: no renderer_ready, runtime readiness, production readiness, owner confirmation, trusted loader enablement, actual data handling, or priority1 resolution.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1.
 
+## Inserted Fixture Pack: LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1 and before any dry-run validator or runtime motion work.
+- Scope: add synthetic accepted/rejected fixture labels for motion identity, comfort, fatigue, stale-cue downgrade, persona pressure, and voice-motion hint boundaries.
+- Accepted cases: safe identity profile labels, cooldown labels, recovery labels, comfort risk labels, subtitle overlay risk labels, gaze pressure labels, stale cue downgrade labels, persona fit labels, and voice-motion safe hint labels.
+- Rejected cases: executable allowlist claims, executable experimental labels, runtime expression/gaze/breath/body/camera claims, strong motion without recovery or cooldown, stale strong motion selection, comfort/subtitle/gaze risky strong motion, donation/relation/dependency escalation, unbounded adaptation, renderer-ready candidate claims, readiness claims, trusted loader enablement, actual data, checked row count increase, priority1 resolution, raw payloads, endpoints, secrets, file path values, and file content.
+- Boundary: synthetic fixture-only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。

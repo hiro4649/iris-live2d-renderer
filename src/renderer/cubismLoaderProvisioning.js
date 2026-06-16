@@ -63,6 +63,7 @@ export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_liv
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
 export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_SPEC_SCHEMA = "iris_live2d_motion_identity_and_comfort_spec_v1";
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_REJECTION_FIXTURE_PACK_SCHEMA = "iris_live2d_motion_identity_and_comfort_rejection_fixture_pack_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -195,6 +196,47 @@ export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_RULES = Object.freeze([
   "donation_relation_dependency_signal_alone_cannot_escalate_closeup_or_strong_motion",
   "voice_motion_sync_uses_safe_hints_only",
   "adaptive_reaction_is_bounded_by_context_and_confidence",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_ACCEPTED_FIXTURE_CASES = Object.freeze([
+  "safe_identity_profile_labels_only",
+  "safe_cooldown_required_label_only",
+  "safe_recovery_required_label_only",
+  "safe_comfort_risk_label_only",
+  "safe_subtitle_overlay_risk_label_only",
+  "safe_gaze_pressure_label_only",
+  "safe_stale_cue_downgrade_label_only",
+  "safe_persona_fit_label_only",
+  "safe_voice_motion_sync_hint_label_only",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_AND_COMFORT_REJECTED_FIXTURE_CASES = Object.freeze([
+  "motion_allowlist_marked_executable_readiness",
+  "experimental_label_marked_executable",
+  "expression_gaze_breath_body_camera_marked_runtime_motion",
+  "strong_motion_without_recovery",
+  "strong_motion_without_cooldown",
+  "stale_cue_strong_motion_selected",
+  "comfort_risk_strong_motion_selected",
+  "subtitle_overlay_risk_strong_motion_selected",
+  "gaze_pressure_risk_closeup_selected",
+  "donation_relation_dependency_escalates_strong_motion",
+  "dependency_pressure_not_suppressed",
+  "voice_motion_sync_executes_motion",
+  "adaptive_reaction_unbounded",
+  "renderer_ready_candidate_marked_true",
+  "runtime_readiness_requested",
+  "production_readiness_requested",
+  "trusted_loader_enablement_requested",
+  "motion_dataset_executable_requested",
+  "actual_ingestion_requested",
+  "owner_confirmation_marked_confirmed",
+  "checked_row_count_nonzero",
+  "priority1_marked_resolved",
+  "unsafe_body_material_present",
+  "network_or_credential_material_present",
+  "file_locator_value_present",
+  "file_body_material_present",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -8036,6 +8078,68 @@ export function createLive2dMotionIdentityAndComfortSpecSummary(input = {}) {
     ],
     safeNextAction: "add_synthetic_rejection_fixture_pack_for_motion_identity_and_comfort",
     context: "live2d motion identity and comfort spec summary",
+  }, input);
+}
+
+export function createLive2dMotionIdentityAndComfortRejectionFixturePackSummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_AND_COMFORT_REJECTION_FIXTURE_PACK_SCHEMA,
+    statusKey: "live2d_motion_identity_and_comfort_rejection_fixture_pack_status",
+    status: "fixture_only_blocked",
+    boundaries: {
+      motion_identity_and_comfort_rejection_fixture_pack_only_boundary: true,
+      synthetic_fixture_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_runtime_allowlist_enablement_boundary: true,
+      no_renderer_ready_claim_boundary: true,
+      no_actual_data_boundary: true,
+    },
+    flags: {
+      motion_identity_and_comfort_rejection_fixture_pack_only: true,
+      synthetic_fixture_only: true,
+      rejected_fixture_attempts_only: true,
+      motion_allowlist_alone_is_executable_readiness: false,
+      experimental_labels_are_executable_motion: false,
+      expression_gaze_breath_body_camera_labels_are_runtime_motion: false,
+      strong_motion_without_recovery_allowed: false,
+      strong_motion_without_cooldown_allowed: false,
+      stale_cue_strong_motion_allowed: false,
+      comfort_risk_strong_motion_allowed: false,
+      subtitle_overlay_risk_strong_motion_allowed: false,
+      gaze_pressure_closeup_escalation_allowed: false,
+      donation_relation_dependency_escalation_allowed: false,
+      dependency_pressure_allowed: false,
+      voice_motion_sync_executes_motion: false,
+      adaptive_reaction_unbounded: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      motion_dataset_executable: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+    },
+    arrays: {
+      accepted_fixture_cases: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_ACCEPTED_FIXTURE_CASES],
+      rejected_fixture_cases: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_REJECTED_FIXTURE_CASES],
+      strong_motion_labels: [...LIVE2D_STRONG_MOTION_LABELS],
+      required_identity_comfort_rules: [...LIVE2D_MOTION_IDENTITY_AND_COMFORT_RULES],
+    },
+    blockedReasons: [
+      "motion_identity_and_comfort_fixture_only",
+      "synthetic_fixture_only",
+      "motion_allowlist_alone_not_executable",
+      "experimental_labels_review_only",
+      "strong_motion_requires_recovery_and_cooldown",
+      "stale_or_risky_strong_motion_rejected",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_motion_identity_and_comfort_dry_run_validator",
+    context: "live2d motion identity and comfort rejection fixture pack summary",
   }, input);
 }
 

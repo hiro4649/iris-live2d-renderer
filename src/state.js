@@ -44,6 +44,7 @@ import {
   createMotionDatasetRealRowRedactionPolicyMatrixSummary,
   createMotionDatasetMotionAllowlistSyncReviewSummary,
   createLive2dMotionIdentityAndComfortSpecSummary,
+  createLive2dMotionIdentityAndComfortRejectionFixturePackSummary,
   createMotionDatasetRendererReadyDependencyMatrixSummary,
   createRendererReadyFalsePositiveDependencySurfaceSummary,
   createRendererReadyFixtureVsRealSeparationContractSummary,
@@ -257,6 +258,7 @@ export function createRendererState({
       const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
       const live2dMotionIdentityAndComfortSpec = createLive2dMotionIdentityAndComfortSpecSummary();
+      const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -423,6 +425,7 @@ export function createRendererState({
           motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           live2d_motion_identity_and_comfort_spec_summary: live2dMotionIdentityAndComfortSpec,
+          live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -538,6 +541,7 @@ export function createRendererState({
           motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           live2d_motion_identity_and_comfort_spec_summary: live2dMotionIdentityAndComfortSpec,
+          live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -694,6 +698,7 @@ export function createRendererState({
         motion_dataset_real_row_redaction_policy_matrix_summary: status.renderer_health.motion_dataset_real_row_redaction_policy_matrix_summary,
         motion_dataset_motion_allowlist_sync_review_summary: status.renderer_health.motion_dataset_motion_allowlist_sync_review_summary,
         live2d_motion_identity_and_comfort_spec_summary: status.renderer_health.live2d_motion_identity_and_comfort_spec_summary,
+        live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: status.renderer_health.live2d_motion_identity_and_comfort_rejection_fixture_pack_summary,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -904,6 +909,7 @@ export function createRendererState({
       const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
       const live2dMotionIdentityAndComfortSpec = createLive2dMotionIdentityAndComfortSpecSummary();
+      const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1029,6 +1035,7 @@ export function createRendererState({
       response.motion_dataset_real_row_redaction_policy_matrix_summary = motionDatasetRealRowRedactionPolicyMatrix;
       response.motion_dataset_motion_allowlist_sync_review_summary = motionDatasetMotionAllowlistSyncReview;
       response.live2d_motion_identity_and_comfort_spec_summary = live2dMotionIdentityAndComfortSpec;
+      response.live2d_motion_identity_and_comfort_rejection_fixture_pack_summary = live2dMotionIdentityAndComfortRejectionFixturePack;
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1207,6 +1214,7 @@ export function createRendererState({
       const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
       const live2dMotionIdentityAndComfortSpec = createLive2dMotionIdentityAndComfortSpecSummary();
+      const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1356,6 +1364,7 @@ export function createRendererState({
           motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
           live2d_motion_identity_and_comfort_spec_summary: live2dMotionIdentityAndComfortSpec,
+          live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,

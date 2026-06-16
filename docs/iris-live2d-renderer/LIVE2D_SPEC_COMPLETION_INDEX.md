@@ -10,11 +10,11 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 80 percent |
+| spec_completion_estimate | about 81 percent |
 | implementation_completion_estimate | about 38 percent |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
-| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1, synthetic fixture-only next planning |
+| safe_next_action | LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1, synthetic dry-run validator next planning |
 
 ## Completion Matrix
 
@@ -79,6 +79,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | redaction policy matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Policy only; no scan execution. |
 | motion allowlist sync review | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Keep experimental labels non-executable. |
 | motion identity and comfort spec | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic rejection fixture pack next. |
+| motion identity and comfort rejection fixture pack | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add synthetic dry-run validator next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -165,6 +166,47 @@ Stale cues, comfort risk, subtitle overlay risk, or gaze pressure risk must reje
 | expression_gaze_breath_body_camera_labels_are_runtime_motion | false |
 | renderer_ready_candidate | false |
 | renderer_ready_claimed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity and Comfort Rejection Fixture Pack
+
+Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-REJECTION-FIXTURE-PACK1
+
+Status: synthetic fixture-only and blocked from execution. This fixture pack classifies safe label-only examples and rejected state-promotion attempts. It does not execute motion, apply cues, read row data, run a renderer/browser probe, create owner confirmation, enable a trusted loader, or claim readiness.
+
+### Accepted Synthetic Fixture Cases
+
+| Case | Boundary |
+| --- | --- |
+| safe_identity_profile_labels_only | Label names only; no runtime execution. |
+| safe_cooldown_required_label_only | Declares cooldown requirement only. |
+| safe_recovery_required_label_only | Declares recovery requirement only. |
+| safe_comfort_risk_label_only | Declares comfort risk only. |
+| safe_subtitle_overlay_risk_label_only | Declares subtitle overlay risk only. |
+| safe_gaze_pressure_label_only | Declares gaze pressure risk only. |
+| safe_stale_cue_downgrade_label_only | Declares stale cue downgrade only. |
+| safe_persona_fit_label_only | Declares persona fit only. |
+| safe_voice_motion_sync_hint_label_only | Declares safe voice-motion hint only. |
+
+### Rejected Synthetic Fixture Cases
+
+Rejected attempts include motion_allowlist_marked_executable_readiness, experimental_label_marked_executable, expression_gaze_breath_body_camera_marked_runtime_motion, strong_motion_without_recovery, strong_motion_without_cooldown, stale_cue_strong_motion_selected, comfort_risk_strong_motion_selected, subtitle_overlay_risk_strong_motion_selected, gaze_pressure_risk_closeup_selected, donation_relation_dependency_escalates_strong_motion, dependency_pressure_not_suppressed, voice_motion_sync_executes_motion, adaptive_reaction_unbounded, renderer_ready_candidate_marked_true, runtime_readiness_requested, production_readiness_requested, trusted_loader_enablement_requested, motion_dataset_executable_requested, actual_ingestion_requested, owner_confirmation_marked_confirmed, checked_row_count_nonzero, priority1_marked_resolved, unsafe_body_material_present, network_or_credential_material_present, file_locator_value_present, and file_body_material_present.
+
+### Preserved Fixture Pack Facts
+
+| Fact | Value |
+| --- | --- |
+| synthetic_fixture_only | true |
+| rejected_fixture_attempts_only | true |
+| strong_motion_without_recovery_allowed | false |
+| strong_motion_without_cooldown_allowed | false |
+| stale_cue_strong_motion_allowed | false |
+| donation_relation_dependency_escalation_allowed | false |
+| renderer_ready_candidate | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | checked_row_count | 0 |
