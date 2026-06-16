@@ -176,6 +176,8 @@ import {
   LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_NO_GO_REASONS,
   LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_MANIFEST_STUB_SCHEMA,
   LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_REQUIRED_SECTIONS,
+  LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_UNSAFE_FIELD_GUARD_SCHEMA,
+  LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_SAFE_REJECTION_LABELS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -299,6 +301,7 @@ import {
   createRendererReadySafeOperatorChecklistRedactionGuardSummary,
   createRendererReadyRealEvidenceRequestFinalNoGoSummary,
   createRendererReadyPreflightRouteManifestStubSummary,
+  createRendererReadyPreflightRouteUnsafeFieldGuardSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6208,6 +6211,7 @@ try {
   assertRendererReadySafeOperatorChecklistRedactionGuard(provisionedRuntimeConfig.renderer_ready_safe_operator_checklist_redaction_guard_summary);
   assertRendererReadyRealEvidenceRequestFinalNoGo(provisionedRuntimeConfig.renderer_ready_real_evidence_request_final_no_go_summary);
   assertRendererReadyPreflightRouteManifestStub(provisionedRuntimeConfig.renderer_ready_preflight_route_manifest_stub_summary);
+  assertRendererReadyPreflightRouteUnsafeFieldGuard(provisionedRuntimeConfig.renderer_ready_preflight_route_unsafe_field_guard_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6514,6 +6518,7 @@ try {
   assertRendererReadySafeOperatorChecklistRedactionGuard(provisionedStatus.renderer_ready_safe_operator_checklist_redaction_guard_summary);
   assertRendererReadyRealEvidenceRequestFinalNoGo(provisionedStatus.renderer_ready_real_evidence_request_final_no_go_summary);
   assertRendererReadyPreflightRouteManifestStub(provisionedStatus.renderer_ready_preflight_route_manifest_stub_summary);
+  assertRendererReadyPreflightRouteUnsafeFieldGuard(provisionedStatus.renderer_ready_preflight_route_unsafe_field_guard_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6710,6 +6715,7 @@ try {
   assertRendererReadySafeOperatorChecklistRedactionGuard(provisionedHealth.renderer_ready_safe_operator_checklist_redaction_guard_summary);
   assertRendererReadyRealEvidenceRequestFinalNoGo(provisionedHealth.renderer_ready_real_evidence_request_final_no_go_summary);
   assertRendererReadyPreflightRouteManifestStub(provisionedHealth.renderer_ready_preflight_route_manifest_stub_summary);
+  assertRendererReadyPreflightRouteUnsafeFieldGuard(provisionedHealth.renderer_ready_preflight_route_unsafe_field_guard_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7504,6 +7510,7 @@ try {
       "renderer_ready_real_evidence_request_final_no_go",
       "renderer_ready_long_continuation_completion_review",
       "renderer_ready_preflight_route_manifest_stub",
+      "renderer_ready_preflight_route_unsafe_field_guard",
     ],
   }));
 } finally {
@@ -9197,6 +9204,42 @@ function assertRendererReadyPreflightRouteManifestStub(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyPreflightRouteUnsafeFieldGuard(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_UNSAFE_FIELD_GUARD_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.preflightRouteUnsafeFieldGuardStatus, "safe_summary_only");
+  assert.equal(summary.unsafeFieldRejected, true);
+  assert.deepEqual(summary.safeRejectionLabels, LIVE2D_RENDERER_READY_PREFLIGHT_ROUTE_SAFE_REJECTION_LABELS);
+  assert.equal(summary.safeRejectionLabels.includes("network_locator_material_rejected"), true);
+  assert.equal(summary.safeRejectionLabels.includes("auth_material_rejected"), true);
+  assert.equal(summary.networkLocatorMaterialRejected, true);
+  assert.equal(summary.authMaterialRejected, true);
+  assert.equal(summary.privateLocatorMaterialRejected, true);
+  assert.equal(summary.modelLocatorMaterialRejected, true);
+  assert.equal(summary.motionLocatorMaterialRejected, true);
+  assert.equal(summary.rendererMaterialRejected, true);
+  assert.equal(summary.cueMaterialRejected, true);
+  assert.equal(summary.evidenceBodyMaterialRejected, true);
+  assert.equal(summary.shellMaterialRejected, true);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.preflightRouteExecuted, false);
+  assert.equal(summary.realPreflightStarted, false);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.boundary_policy.preflight_route_unsafe_field_guard_only, true);
+  assert.equal(summary.boundary_policy.no_source_value_echo, true);
+  assert.equal(summary.boundary_policy.no_preflight_route_execution, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -9960,4 +10003,11 @@ for (const fixture of [
   assertRendererReadyPreflightRouteManifestStub(summary);
   assert.equal(summary.preflightRouteExecuted, false);
   assert.equal(summary.realPreflightStarted, false);
+}
+
+{
+  const summary = createRendererReadyPreflightRouteUnsafeFieldGuardSummary();
+  assertRendererReadyPreflightRouteUnsafeFieldGuard(summary);
+  assert.equal(summary.sourceValueEchoed, false);
+  assert.equal(summary.preflightRouteExecuted, false);
 }
