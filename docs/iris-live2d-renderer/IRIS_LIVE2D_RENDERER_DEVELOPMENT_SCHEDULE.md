@@ -342,6 +342,14 @@ production_readiness_claimed: no
 - Boundary: audit event unsafe-field guard2 label only, no audit execution, no audit write, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-BLOCKER-GROUPING-STATUS-SURFACE1.
 
+## Inserted Surface: LIVE2D-MOTION-IDENTITY-COMFORT-BLOCKER-GROUPING-STATUS-SURFACE1
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-AUDIT-EVENT-UNSAFE-FIELD-GUARD2 and before blocker grouping contract2.
+- Scope: expose safe blocker groups and labels through status, health, and runtime config without raw diagnostics.
+- Rejections: blocker resolution claim, work permission, checked row count change, motion dataset executable conversion, trusted loader enablement, owner confirmation creation, runtime readiness claim, and production readiness claim.
+- Boundary: blocker grouping status surface label only, no blocker resolution, no work permission, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-BLOCKER-GROUPING-CONTRACT2.
+
 ## Reaction Latency Roadmap
 
 邵ｺ阮吶・ roadmap 邵ｺ・ｯ phase-based schedule 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ窶ｦalendar date 邵ｺ・ｯ隰問・笳・ｸｺ・ｪ邵ｺ繝ｻﾂ繧・耳 phase 邵ｺ・ｯ陷題ざ・ｮ・ｵ邵ｺ・ｮ safety boundary 邵ｺ・ｨ evidence requirement 郢ｧ雋橸ｽ｣鄙ｫ・・ｸｺ螢ｹ竊馴ｨｾ・ｲ郢ｧ竏夲ｽ狗ｸｲ繝ｻatency target 邵ｺ・ｯ local renderer 邵ｺ・ｮ engineering target 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ繝ｻ繝ｻ闖ｫ・｡郢晏干ﾎ帷ｹ昴・繝ｨ郢晁ｼ斐°郢晢ｽｼ郢晢｣ｰ闕ｳ鄙ｫ繝ｻ viewer-visible latency 邵ｺ・ｯ陋ｻ・･鬨ｾ逧ｮ蛹ｱ騾墓ｺ倪・郢ｧ荵敖繝ｻ

@@ -77,6 +77,7 @@ import {
   createLive2dMotionIdentityComfortAuditEventStubNoWrite2,
   createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
   createLive2dMotionIdentityComfortAuditUnsafeFieldGuard,
+  createLive2dMotionIdentityComfortBlockerGroupingStatusSurface,
   createLive2dMotionIdentityComfortRepeatedBlockerGrouping,
   createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract,
   createLive2dMotionIdentityComfortContinuationLedger,
@@ -329,6 +330,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
       const live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2 = createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
+      const live2dMotionIdentityComfortBlockerGroupingStatusSurface = createLive2dMotionIdentityComfortBlockerGroupingStatusSurface();
       const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
       const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
@@ -534,6 +536,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
           live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
+          live2d_motion_identity_comfort_blocker_grouping_status_surface: live2dMotionIdentityComfortBlockerGroupingStatusSurface,
           live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
           live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
@@ -688,6 +691,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
           live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
+          live2d_motion_identity_comfort_blocker_grouping_status_surface: live2dMotionIdentityComfortBlockerGroupingStatusSurface,
           live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
           live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
@@ -883,6 +887,7 @@ export function createRendererState({
         live2d_motion_identity_comfort_audit_event_stub_no_write2: status.renderer_health.live2d_motion_identity_comfort_audit_event_stub_no_write2,
         live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: status.renderer_health.live2d_motion_identity_comfort_audit_event_unsafe_field_guard2,
         live2d_motion_identity_comfort_audit_unsafe_field_guard: status.renderer_health.live2d_motion_identity_comfort_audit_unsafe_field_guard,
+        live2d_motion_identity_comfort_blocker_grouping_status_surface: status.renderer_health.live2d_motion_identity_comfort_blocker_grouping_status_surface,
         live2d_motion_identity_comfort_repeated_blocker_grouping: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping,
         live2d_motion_identity_comfort_repeated_blocker_grouping_contract: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping_contract,
         live2d_motion_identity_comfort_continuation_ledger: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger,
@@ -1132,6 +1137,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
       const live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2 = createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
+      const live2dMotionIdentityComfortBlockerGroupingStatusSurface = createLive2dMotionIdentityComfortBlockerGroupingStatusSurface();
       const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
       const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
@@ -1296,6 +1302,7 @@ export function createRendererState({
       response.live2d_motion_identity_comfort_audit_event_stub_no_write2 = live2dMotionIdentityComfortAuditEventStubNoWrite2;
       response.live2d_motion_identity_comfort_audit_event_unsafe_field_guard2 = live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2;
       response.live2d_motion_identity_comfort_audit_unsafe_field_guard = live2dMotionIdentityComfortAuditUnsafeFieldGuard;
+      response.live2d_motion_identity_comfort_blocker_grouping_status_surface = live2dMotionIdentityComfortBlockerGroupingStatusSurface;
       response.live2d_motion_identity_comfort_repeated_blocker_grouping = live2dMotionIdentityComfortRepeatedBlockerGrouping;
       response.live2d_motion_identity_comfort_repeated_blocker_grouping_contract = live2dMotionIdentityComfortRepeatedBlockerGroupingContract;
       response.live2d_motion_identity_comfort_continuation_ledger = live2dMotionIdentityComfortContinuationLedger;
@@ -1513,6 +1520,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
       const live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2 = createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2();
       const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
+      const live2dMotionIdentityComfortBlockerGroupingStatusSurface = createLive2dMotionIdentityComfortBlockerGroupingStatusSurface();
       const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
       const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
       const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
@@ -1701,6 +1709,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
           live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
           live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
+          live2d_motion_identity_comfort_blocker_grouping_status_surface: live2dMotionIdentityComfortBlockerGroupingStatusSurface,
           live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
           live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
           live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,

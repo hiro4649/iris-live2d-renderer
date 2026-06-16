@@ -96,6 +96,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA = "iris_l
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_STUB_NO_WRITE2_SCHEMA = "iris_live2d_motion_identity_comfort_audit_event_stub_no_write2_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_EVENT_UNSAFE_FIELD_GUARD2_SCHEMA = "iris_live2d_motion_identity_comfort_audit_event_unsafe_field_guard2_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_SCHEMA = "iris_live2d_motion_identity_comfort_audit_unsafe_field_guard_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_SCHEMA = "iris_live2d_motion_identity_comfort_blocker_grouping_status_surface_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_SCHEMA = "iris_live2d_motion_identity_comfort_repeated_blocker_grouping_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPING_CONTRACT_SCHEMA = "iris_live2d_motion_identity_comfort_repeated_blocker_grouping_contract_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_SCHEMA = "iris_live2d_motion_identity_comfort_continuation_ledger_v1";
@@ -1275,6 +1276,38 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_UNSAFE_FIELD_GUARD_REJECTIONS 
   "audit_guard_identity_value_present",
   "audit_guard_claims_runtime_ready",
   "audit_guard_claims_production_ready",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_GROUPS = Object.freeze([
+  "owner_action_blockers",
+  "real_evidence_blockers",
+  "dataset_blockers",
+  "execution_blockers",
+  "readiness_blockers",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_LABELS = Object.freeze([
+  "owner_confirmation_missing",
+  "owner_action_not_requested",
+  "real_renderer_evidence_missing",
+  "actual_cue_application_evidence_missing",
+  "audit_execution_not_started",
+  "priority1_blocked",
+  "checked_row_count_zero",
+  "motion_dataset_non_executable",
+  "trusted_loader_disabled",
+  "readiness_claims_false",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_REJECTIONS = Object.freeze([
+  "blocker_grouping_status_surface_claims_resolution",
+  "blocker_grouping_status_surface_authorizes_work",
+  "blocker_grouping_status_surface_sets_checked_count",
+  "blocker_grouping_status_surface_makes_motion_executable",
+  "blocker_grouping_status_surface_enables_trusted_loader",
+  "blocker_grouping_status_surface_creates_owner_confirmation",
+  "blocker_grouping_status_surface_claims_runtime_ready",
+  "blocker_grouping_status_surface_claims_production_ready",
 ]);
 
 export const LIVE2D_MOTION_IDENTITY_COMFORT_REPEATED_BLOCKER_GROUPS = Object.freeze([
@@ -11156,6 +11189,63 @@ export function createLive2dMotionIdentityComfortAuditUnsafeFieldGuard(input = {
     ],
     safeNextAction: "add_motion_identity_comfort_repeated_blocker_grouping",
     context: "live2d motion identity comfort audit unsafe-field guard",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortBlockerGroupingStatusSurface(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_blocker_grouping_status_surface_status",
+    status: "blocker_grouping_status_surface_blocked",
+    boundaries: {
+      motion_identity_comfort_blocker_grouping_status_surface_only_boundary: true,
+      blocker_grouping_status_surface_label_only_boundary: true,
+      no_blocker_resolution_boundary: true,
+      no_work_permission_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_blocker_grouping_status_surface_only: true,
+      blocker_grouping_status_surface_present: true,
+      blocker_grouping_status_surface_claims_resolution: false,
+      blocker_grouping_status_surface_authorizes_work: false,
+      blocker_grouping_status_surface_sets_checked_count: false,
+      blocker_grouping_status_surface_makes_motion_executable: false,
+      blocker_grouping_status_surface_enables_trusted_loader: false,
+      blocker_grouping_status_surface_creates_owner_confirmation: false,
+      blocker_grouping_status_surface_claims_runtime_ready: false,
+      blocker_grouping_status_surface_claims_production_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+      grouped_blocker_count: LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_LABELS.length,
+    },
+    arrays: {
+      blocker_grouping_status_surface_groups: [...LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_GROUPS],
+      blocker_grouping_status_surface_labels: [...LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_LABELS],
+      blocker_grouping_status_surface_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_BLOCKER_GROUPING_STATUS_SURFACE_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_blocker_grouping_status_surface_only",
+      "blocker_grouping_status_surface_label_only",
+      "blocker_resolution_not_claimed",
+      "work_permission_not_granted",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_blocker_grouping_contract2",
+    context: "live2d motion identity comfort blocker grouping status surface",
   }, input);
 }
 
