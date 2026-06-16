@@ -6291,6 +6291,53 @@ The operator handoff no-action guard allows a safe plan artifact to exist while 
 | motion_dataset_executable | false |
 | trusted_loader_allowlist_enabled | false |
 
+## Renderer Ready Final Pre-Owner Blocker Summary
+
+Task: LIVE2D-RENDERER-READY-FINAL-PRE-OWNER-BLOCKER-SUMMARY1
+
+The final pre-owner blocker summary lists the remaining safe blocker labels before any future owner action can matter. It is not readiness evidence, does not run probes, does not create owner confirmation, and does not start actual data work.
+
+| field | value |
+| --- | --- |
+| renderer_ready_final_pre_owner_blocker_summary | added |
+| finalPreOwnerBlockerSummaryStatus | blocked_safe_labels_only |
+| blockerSummaryOnly | true |
+| remainingBlockers | safe labels only |
+| explicit_owner_action_missing | blocker |
+| owner_confirmation_missing | blocker |
+| real_renderer_probe_missing | blocker |
+| fresh_heartbeat_missing | blocker |
+| real_model_load_missing | blocker |
+| scene_load_missing | blocker |
+| cue_capability_missing | blocker |
+| last_cue_applied_missing | blocker |
+| audit_link_missing | blocker |
+| priority1_blocked | blocker |
+| checked_row_count_zero | blocker |
+| motion_dataset_non_executable | blocker |
+| trusted_loader_disabled | blocker |
+| explicitOwnerActionReceived | false |
+| ownerConfirmationCreated | false |
+| actualRendererProbeExecuted | false |
+| realRendererEvidencePresent | false |
+| freshHeartbeatPresent | false |
+| realModelLoadSupported | false |
+| modelLoaded | false |
+| sceneLoaded | false |
+| cueCapabilityConfirmed | false |
+| lastCueApplied | false |
+| auditLinkPresent | false |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
 ## Renderer Ready Audit Reference Stub
 
 Task: LIVE2D-RENDERER-READY-AUDIT-REFERENCE-STUB1
