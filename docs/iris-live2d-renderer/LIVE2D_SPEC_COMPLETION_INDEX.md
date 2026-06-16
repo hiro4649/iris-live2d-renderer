@@ -6621,6 +6621,38 @@ The extended guard completion review records that the safe-only guard set from D
 | checked_row_count | 0 |
 | motion_dataset_executable | false |
 
+## Renderer Ready Real Evidence Request Final Wait State
+
+Task: LIVE2D-RENDERER-READY-REAL-EVIDENCE-REQUEST-FINAL-WAIT-STATE1
+
+The real evidence request final wait state records that real renderer evidence is still waiting for explicit owner action. No request is sent, no collection starts, no renderer probe starts, no owner confirmation is created, and no readiness is claimed.
+
+| field | value |
+| --- | --- |
+| renderer_ready_real_evidence_request_final_wait_state | added |
+| realEvidenceRequestStatus | waiting_for_explicit_owner_action |
+| realEvidenceRequestSent | false |
+| realEvidenceCollectionStarted | false |
+| realRendererProbeStarted | false |
+| realRendererEvidencePresent | false |
+| ownerConfirmationRequired | true |
+| ownerConfirmationCreated | false |
+| ownerConfirmationConfirmed | false |
+| safeNextAction | wait_for_explicit_owner_action_and_real_renderer_evidence |
+| runtimeReadinessClaimed | false |
+| productionReadinessClaimed | false |
+| rendererReadyClaimed | false |
+| rendererReadyCandidate | false |
+| actual_data_task_started | false |
+| actual_ingestion_allowed | false |
+| rendererProbeExecuted | false |
+| auditExecutionStarted | false |
+| trustedLoaderAllowlistEnabled | false |
+| trustedLoaderBoundary | disabled |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_executable | false |
+
 ## Renderer Ready Evidence Completeness Blocker Matrix
 
 Task: LIVE2D-RENDERER-READY-EVIDENCE-COMPLETENESS-BLOCKER-MATRIX1
