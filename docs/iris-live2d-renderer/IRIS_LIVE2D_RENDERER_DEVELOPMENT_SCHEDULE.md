@@ -37,6 +37,16 @@ production_readiness_claimed: no
 - Boundary: synthetic dry-run only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1.
 
+## Inserted Matrix: LIVE2D-MOTION-IDENTITY-AND-COMFORT-RECOVERY-MATRIX1
+
+- Position: after LIVE2D-MOTION-IDENTITY-AND-COMFORT-DRY-RUN-VALIDATOR1 and before any context gate or runtime motion work.
+- Scope: define recovery, cooldown, maximum-duration label, and risk downgrade matrix rows for supported motion labels.
+- Strong rows: laugh_big, surprise_scream, happy_dance, and happy_loud_sing require idle_breath recovery, cooldown, and safe downgrade labels.
+- Non-strong rows: talk, focused_talk, and happy_humming can recover to idle_breath when needed, but do not become executable readiness.
+- Blockers: missing safe recovery, missing cooldown, missing duration label, missing stale cue downgrade, missing comfort/subtitle/gaze downgrade, readiness claims, and runtime-ready matrix claims.
+- Boundary: matrix-only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-CONTEXT-GATE1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。
