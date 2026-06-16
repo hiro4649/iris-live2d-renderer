@@ -75,6 +75,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_SCHEMA = "iris_
 export const LIVE2D_MOTION_IDENTITY_COMFORT_COMPLETION_REVIEW_SCHEMA = "iris_live2d_motion_identity_comfort_completion_review_v1";
 export const LIVE2D_MOTION_IDENTITY_PROFILE_STATUS_SURFACE_SCHEMA = "iris_live2d_motion_identity_profile_status_surface_v1";
 export const LIVE2D_MOTION_COMFORT_POLICY_STATUS_SURFACE_SCHEMA = "iris_live2d_motion_comfort_policy_status_surface_v1";
+export const LIVE2D_MOTION_FRESHNESS_POLICY_CROSS_SURFACE_CONSISTENCY_SCHEMA = "iris_live2d_motion_freshness_policy_cross_surface_consistency_v1";
 export const LIVE2D_MOTION_DATASET_RENDERER_READY_DEPENDENCY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_renderer_ready_dependency_matrix_v1";
 export const LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA = "iris_live2d_renderer_ready_false_positive_dependency_surface_v1";
 export const LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA = "iris_live2d_renderer_ready_fixture_vs_real_separation_contract_v1";
@@ -681,6 +682,25 @@ export const LIVE2D_MOTION_COMFORT_POLICY_STATUS_REJECTIONS = Object.freeze([
   "comfort_policy_enables_trusted_loader",
   "comfort_policy_accepts_actual_data",
   "comfort_policy_marks_priority1_resolved",
+]);
+
+export const LIVE2D_MOTION_FRESHNESS_POLICY_SURFACES = Object.freeze([
+  "status",
+  "health",
+  "runtime_config",
+]);
+
+export const LIVE2D_MOTION_FRESHNESS_POLICY_REJECTIONS = Object.freeze([
+  "stale_cue_strong_motion_selected",
+  "stale_cue_runtime_ready_claim",
+  "freshness_policy_mismatch_between_surfaces",
+  "safe_downgrade_mismatch_between_surfaces",
+  "freshness_policy_executes_motion",
+  "freshness_policy_applies_cue",
+  "freshness_policy_claims_runtime_ready",
+  "freshness_policy_claims_production_ready",
+  "freshness_policy_accepts_actual_data",
+  "freshness_policy_marks_priority1_resolved",
 ]);
 
 export const LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS = Object.freeze([
@@ -9199,6 +9219,59 @@ export function createLive2dMotionComfortPolicyStatusSurfaceSummary(input = {}) 
     ],
     safeNextAction: "add_motion_freshness_policy_cross_surface_consistency",
     context: "live2d motion comfort policy status surface summary",
+  }, input);
+}
+
+export function createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_FRESHNESS_POLICY_CROSS_SURFACE_CONSISTENCY_SCHEMA,
+    statusKey: "live2d_motion_freshness_policy_cross_surface_consistency_status",
+    status: "freshness_policy_cross_surface_consistency_blocked",
+    boundaries: {
+      motion_freshness_policy_cross_surface_consistency_only_boundary: true,
+      cross_surface_consistency_only_boundary: true,
+      no_motion_execution_boundary: true,
+      no_cue_application_boundary: true,
+      no_renderer_probe_boundary: true,
+      no_actual_data_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_freshness_policy_cross_surface_consistency_only: true,
+      stale_cue_strong_motion_rejected_across_surfaces: true,
+      safe_downgrade_same_meaning_across_surfaces: true,
+      freshness_policy_executes_motion: false,
+      freshness_policy_applies_cue: false,
+      freshness_policy_claims_runtime_ready: false,
+      freshness_policy_claims_production_ready: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      freshness_policy_surfaces: [...LIVE2D_MOTION_FRESHNESS_POLICY_SURFACES],
+      freshness_policy_rejections: [...LIVE2D_MOTION_FRESHNESS_POLICY_REJECTIONS],
+      strong_motion_labels: [...LIVE2D_STRONG_MOTION_LABELS],
+    },
+    blockedReasons: [
+      "motion_freshness_policy_cross_surface_consistency_only",
+      "stale_cue_strong_motion_rejected_across_surfaces",
+      "safe_downgrade_same_meaning_required",
+      "freshness_policy_is_not_execution",
+      "freshness_policy_is_not_readiness",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+    ],
+    safeNextAction: "add_strong_motion_unsafe_override_rejection",
+    context: "live2d motion freshness policy cross surface consistency summary",
   }, input);
 }
 
