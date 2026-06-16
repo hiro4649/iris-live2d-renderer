@@ -157,6 +157,9 @@ import {
   LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_ONLY_DETAIL_ROLE_GATE_STUB2_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_ONLY_DETAIL_ROLE_GATE_STUB2_RULES,
   LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_ONLY_DETAIL_ROLE_GATE_STUB2_REJECTIONS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_SCHEMA,
+  LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_LABELS,
+  LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_REJECTIONS,
   LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA,
   LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_ITEMS,
   LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_REJECTIONS,
@@ -449,6 +452,7 @@ import {
   createLive2dMotionIdentityComfortAdminSummaryRedaction,
   createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment,
   createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
+  createLive2dMotionIdentityComfortPublicRoleGateLeakRejection,
   createLive2dMotionIdentityComfortOperatorHandoffNoAction,
   createLive2dMotionIdentityComfortOwnerHandoffStub,
   createLive2dMotionIdentityComfortRoleGateStub,
@@ -6414,6 +6418,7 @@ try {
   assertLive2dMotionIdentityComfortAdminSummaryRedaction(provisionedRuntimeConfig.live2d_motion_identity_comfort_admin_summary_redaction);
   assertLive2dMotionIdentityComfortPublicAdminSurfaceAlignment(provisionedRuntimeConfig.live2d_motion_identity_comfort_public_admin_surface_alignment);
   assertLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2(provisionedRuntimeConfig.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2);
+  assertLive2dMotionIdentityComfortPublicRoleGateLeakRejection(provisionedRuntimeConfig.live2d_motion_identity_comfort_public_role_gate_leak_rejection);
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(provisionedRuntimeConfig.live2d_motion_identity_comfort_operator_handoff_no_action);
   assertLive2dMotionIdentityComfortOwnerHandoffStub(provisionedRuntimeConfig.live2d_motion_identity_comfort_owner_handoff_stub);
   assertLive2dMotionIdentityComfortRoleGateStub(provisionedRuntimeConfig.live2d_motion_identity_comfort_role_gate_stub);
@@ -6779,6 +6784,7 @@ try {
   assertLive2dMotionIdentityComfortAdminSummaryRedaction(provisionedStatus.live2d_motion_identity_comfort_admin_summary_redaction);
   assertLive2dMotionIdentityComfortPublicAdminSurfaceAlignment(provisionedStatus.live2d_motion_identity_comfort_public_admin_surface_alignment);
   assertLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2(provisionedStatus.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2);
+  assertLive2dMotionIdentityComfortPublicRoleGateLeakRejection(provisionedStatus.live2d_motion_identity_comfort_public_role_gate_leak_rejection);
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(provisionedStatus.live2d_motion_identity_comfort_operator_handoff_no_action);
   assertLive2dMotionIdentityComfortOwnerHandoffStub(provisionedStatus.live2d_motion_identity_comfort_owner_handoff_stub);
   assertLive2dMotionIdentityComfortRoleGateStub(provisionedStatus.live2d_motion_identity_comfort_role_gate_stub);
@@ -7034,6 +7040,7 @@ try {
   assertLive2dMotionIdentityComfortAdminSummaryRedaction(provisionedHealth.live2d_motion_identity_comfort_admin_summary_redaction);
   assertLive2dMotionIdentityComfortPublicAdminSurfaceAlignment(provisionedHealth.live2d_motion_identity_comfort_public_admin_surface_alignment);
   assertLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2(provisionedHealth.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2);
+  assertLive2dMotionIdentityComfortPublicRoleGateLeakRejection(provisionedHealth.live2d_motion_identity_comfort_public_role_gate_leak_rejection);
   assertLive2dMotionIdentityComfortOperatorHandoffNoAction(provisionedHealth.live2d_motion_identity_comfort_operator_handoff_no_action);
   assertLive2dMotionIdentityComfortOwnerHandoffStub(provisionedHealth.live2d_motion_identity_comfort_owner_handoff_stub);
   assertLive2dMotionIdentityComfortRoleGateStub(provisionedHealth.live2d_motion_identity_comfort_role_gate_stub);
@@ -7913,6 +7920,7 @@ try {
       "live2d_motion_identity_comfort_admin_summary_redaction",
       "live2d_motion_identity_comfort_public_admin_surface_alignment",
       "live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2",
+      "live2d_motion_identity_comfort_public_role_gate_leak_rejection",
       "live2d_motion_identity_comfort_operator_handoff_no_action",
       "live2d_motion_identity_comfort_owner_handoff_stub",
       "live2d_motion_identity_comfort_role_gate_stub",
@@ -12250,6 +12258,54 @@ function assertLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2(summary) 
   assertSafe(JSON.stringify(summary));
 }
 
+function assertLive2dMotionIdentityComfortPublicRoleGateLeakRejection(summary) {
+  assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_SCHEMA);
+  assert.equal(summary.live2d_motion_identity_comfort_public_role_gate_leak_rejection_status, "public_role_gate_leak_rejection_blocked");
+  assert.equal(summary.planning_only_boundary, true);
+  assert.equal(summary.motion_identity_comfort_public_role_gate_leak_rejection_only_boundary, true);
+  assert.equal(summary.public_role_gate_rejection_only_boundary, true);
+  assert.equal(summary.owner_only_detail_not_public_boundary, true);
+  assert.equal(summary.private_material_not_public_boundary, true);
+  assert.equal(summary.no_actual_data_boundary, true);
+  assert.equal(summary.no_owner_confirmation_boundary, true);
+  assert.equal(summary.no_readiness_claim_boundary, true);
+  assert.equal(summary.motion_identity_comfort_public_role_gate_leak_rejection_only, true);
+  assert.equal(summary.public_role_gate_leak_rejection_present, true);
+  for (const flag of [
+    "public_role_gate_leak_allows_owner_only_detail",
+    "public_role_gate_leak_allows_private_relation_signal",
+    "public_role_gate_leak_allows_private_support_signal",
+    "public_role_gate_leak_allows_locator_material",
+    "public_role_gate_leak_allows_auth_material",
+    "public_role_gate_leak_allows_runtime_ready",
+    "public_role_gate_leak_allows_production_ready",
+    "public_role_gate_leak_accepts_actual_data",
+    "runtime_readiness_claimed",
+    "production_readiness_claimed",
+    "renderer_ready_claimed",
+    "renderer_ready_candidate",
+    "renderer_ready",
+    "owner_confirmation_confirmed",
+    "trusted_loader_allowlist_enabled",
+    "actual_ingestion_allowed",
+    "motion_dataset_executable",
+  ]) {
+    assert.equal(summary[flag], false, flag);
+  }
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.deepEqual(summary.public_role_gate_leak_rejection_labels, [...LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_LABELS]);
+  assert.deepEqual(summary.public_role_gate_leak_rejection_rejections, [...LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_REJECTIONS]);
+  assert.equal(summary.public_role_gate_leak_rejection_labels.includes("public_role_gate_owner_only_detail_leak"), true);
+  assert.equal(summary.public_role_gate_leak_rejection_rejections.includes("public_role_gate_leak_allows_owner_only_detail"), true);
+  assert.equal(summary.safe_next_action, "add_motion_identity_comfort_audit_event_stub_no_write2");
+  assert.equal(summary.boundary_policy.no_motion_execution, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
+  assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertLive2dMotionIdentityComfortOperatorHandoffNoAction(summary) {
   assert.equal(summary.schema, LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA);
   assert.equal(summary.live2d_motion_identity_comfort_operator_handoff_no_action_status, "operator_handoff_no_action_blocked");
@@ -13856,6 +13912,32 @@ function assertNoModelPathLeak(serialized) {
   });
   assertLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2(summary);
   assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2_rejected_state_promotion"), true);
+}
+
+{
+  const summary = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection({
+    public_role_gate_leak_allows_owner_only_detail: true,
+    public_role_gate_leak_allows_private_relation_signal: true,
+    public_role_gate_leak_allows_private_support_signal: true,
+    public_role_gate_leak_allows_locator_material: true,
+    public_role_gate_leak_allows_auth_material: true,
+    public_role_gate_leak_allows_runtime_ready: true,
+    public_role_gate_leak_allows_production_ready: true,
+    public_role_gate_leak_accepts_actual_data: true,
+    renderer_ready_claimed: true,
+    renderer_ready_candidate: true,
+    renderer_ready: true,
+    owner_confirmation_confirmed: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    actual_ingestion_allowed: true,
+    checked_row_count: 99,
+    priority1_status: "RESOLVED",
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+  });
+  assertLive2dMotionIdentityComfortPublicRoleGateLeakRejection(summary);
+  assert.equal(summary.blocked_reasons.includes("live2d_motion_identity_comfort_public_role_gate_leak_rejection_rejected_state_promotion"), true);
 }
 
 {

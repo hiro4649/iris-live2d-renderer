@@ -68,6 +68,7 @@ import {
   createLive2dMotionIdentityComfortAdminSummaryRedaction,
   createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment,
   createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
+  createLive2dMotionIdentityComfortPublicRoleGateLeakRejection,
   createLive2dMotionIdentityComfortOperatorHandoffNoAction,
   createLive2dMotionIdentityComfortOwnerHandoffStub,
   createLive2dMotionIdentityComfortRoleGateStub,
@@ -317,6 +318,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
       const live2dMotionIdentityComfortPublicAdminSurfaceAlignment = createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment();
       const live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2 = createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2();
+      const live2dMotionIdentityComfortPublicRoleGateLeakRejection = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection();
       const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
       const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
       const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
@@ -519,6 +521,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
           live2d_motion_identity_comfort_public_admin_surface_alignment: live2dMotionIdentityComfortPublicAdminSurfaceAlignment,
           live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
+          live2d_motion_identity_comfort_public_role_gate_leak_rejection: live2dMotionIdentityComfortPublicRoleGateLeakRejection,
           live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
           live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
           live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
@@ -670,6 +673,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
           live2d_motion_identity_comfort_public_admin_surface_alignment: live2dMotionIdentityComfortPublicAdminSurfaceAlignment,
           live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
+          live2d_motion_identity_comfort_public_role_gate_leak_rejection: live2dMotionIdentityComfortPublicRoleGateLeakRejection,
           live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
           live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
           live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
@@ -862,6 +866,7 @@ export function createRendererState({
         live2d_motion_identity_comfort_admin_summary_redaction: status.renderer_health.live2d_motion_identity_comfort_admin_summary_redaction,
         live2d_motion_identity_comfort_public_admin_surface_alignment: status.renderer_health.live2d_motion_identity_comfort_public_admin_surface_alignment,
         live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: status.renderer_health.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2,
+        live2d_motion_identity_comfort_public_role_gate_leak_rejection: status.renderer_health.live2d_motion_identity_comfort_public_role_gate_leak_rejection,
         live2d_motion_identity_comfort_operator_handoff_no_action: status.renderer_health.live2d_motion_identity_comfort_operator_handoff_no_action,
         live2d_motion_identity_comfort_owner_handoff_stub: status.renderer_health.live2d_motion_identity_comfort_owner_handoff_stub,
         live2d_motion_identity_comfort_role_gate_stub: status.renderer_health.live2d_motion_identity_comfort_role_gate_stub,
@@ -1108,6 +1113,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
       const live2dMotionIdentityComfortPublicAdminSurfaceAlignment = createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment();
       const live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2 = createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2();
+      const live2dMotionIdentityComfortPublicRoleGateLeakRejection = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection();
       const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
       const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
       const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
@@ -1269,6 +1275,7 @@ export function createRendererState({
       response.live2d_motion_identity_comfort_admin_summary_redaction = live2dMotionIdentityComfortAdminSummaryRedaction;
       response.live2d_motion_identity_comfort_public_admin_surface_alignment = live2dMotionIdentityComfortPublicAdminSurfaceAlignment;
       response.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2 = live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2;
+      response.live2d_motion_identity_comfort_public_role_gate_leak_rejection = live2dMotionIdentityComfortPublicRoleGateLeakRejection;
       response.live2d_motion_identity_comfort_operator_handoff_no_action = live2dMotionIdentityComfortOperatorHandoffNoAction;
       response.live2d_motion_identity_comfort_owner_handoff_stub = live2dMotionIdentityComfortOwnerHandoffStub;
       response.live2d_motion_identity_comfort_role_gate_stub = live2dMotionIdentityComfortRoleGateStub;
@@ -1483,6 +1490,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
       const live2dMotionIdentityComfortPublicAdminSurfaceAlignment = createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment();
       const live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2 = createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2();
+      const live2dMotionIdentityComfortPublicRoleGateLeakRejection = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection();
       const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
       const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
       const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
@@ -1668,6 +1676,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
           live2d_motion_identity_comfort_public_admin_surface_alignment: live2dMotionIdentityComfortPublicAdminSurfaceAlignment,
           live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
+          live2d_motion_identity_comfort_public_role_gate_leak_rejection: live2dMotionIdentityComfortPublicRoleGateLeakRejection,
           live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
           live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
           live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,

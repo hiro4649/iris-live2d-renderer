@@ -87,6 +87,7 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_SUMMARY_SCHEMA = "iris_live2d
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ADMIN_SUMMARY_REDACTION_SCHEMA = "iris_live2d_motion_identity_comfort_admin_summary_redaction_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ADMIN_SURFACE_ALIGNMENT_SCHEMA = "iris_live2d_motion_identity_comfort_public_admin_surface_alignment_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_ONLY_DETAIL_ROLE_GATE_STUB2_SCHEMA = "iris_live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2_v1";
+export const LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_SCHEMA = "iris_live2d_motion_identity_comfort_public_role_gate_leak_rejection_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_SCHEMA = "iris_live2d_motion_identity_comfort_operator_handoff_no_action_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_owner_handoff_stub_v1";
 export const LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_SCHEMA = "iris_live2d_motion_identity_comfort_role_gate_stub_v1";
@@ -1048,6 +1049,26 @@ export const LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_ONLY_DETAIL_ROLE_GATE_STUB2_RE
   "owner_only_detail_stub2_accepts_actual_data",
   "owner_only_detail_stub2_claims_runtime_ready",
   "owner_only_detail_stub2_claims_production_ready",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_LABELS = Object.freeze([
+  "public_role_gate_owner_only_detail_leak",
+  "public_role_gate_private_relation_signal_leak",
+  "public_role_gate_private_support_signal_leak",
+  "public_role_gate_locator_material_leak",
+  "public_role_gate_auth_material_leak",
+  "public_role_gate_readiness_claim_leak",
+]);
+
+export const LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_REJECTIONS = Object.freeze([
+  "public_role_gate_leak_allows_owner_only_detail",
+  "public_role_gate_leak_allows_private_relation_signal",
+  "public_role_gate_leak_allows_private_support_signal",
+  "public_role_gate_leak_allows_locator_material",
+  "public_role_gate_leak_allows_auth_material",
+  "public_role_gate_leak_allows_runtime_ready",
+  "public_role_gate_leak_allows_production_ready",
+  "public_role_gate_leak_accepts_actual_data",
 ]);
 
 export const LIVE2D_MOTION_IDENTITY_COMFORT_OPERATOR_HANDOFF_NO_ACTION_ITEMS = Object.freeze([
@@ -10548,6 +10569,60 @@ export function createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2(in
     ],
     safeNextAction: "add_motion_identity_comfort_public_role_gate_leak_rejection",
     context: "live2d motion identity comfort owner-only detail role gate stub2",
+  }, input);
+}
+
+export function createLive2dMotionIdentityComfortPublicRoleGateLeakRejection(input = {}) {
+  return createMotionDatasetPlanningOnlyGateSummary({
+    schema: LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_SCHEMA,
+    statusKey: "live2d_motion_identity_comfort_public_role_gate_leak_rejection_status",
+    status: "public_role_gate_leak_rejection_blocked",
+    boundaries: {
+      motion_identity_comfort_public_role_gate_leak_rejection_only_boundary: true,
+      public_role_gate_rejection_only_boundary: true,
+      owner_only_detail_not_public_boundary: true,
+      private_material_not_public_boundary: true,
+      no_actual_data_boundary: true,
+      no_owner_confirmation_boundary: true,
+      no_readiness_claim_boundary: true,
+    },
+    flags: {
+      motion_identity_comfort_public_role_gate_leak_rejection_only: true,
+      public_role_gate_leak_rejection_present: true,
+      public_role_gate_leak_allows_owner_only_detail: false,
+      public_role_gate_leak_allows_private_relation_signal: false,
+      public_role_gate_leak_allows_private_support_signal: false,
+      public_role_gate_leak_allows_locator_material: false,
+      public_role_gate_leak_allows_auth_material: false,
+      public_role_gate_leak_allows_runtime_ready: false,
+      public_role_gate_leak_allows_production_ready: false,
+      public_role_gate_leak_accepts_actual_data: false,
+      runtime_readiness_claimed: false,
+      production_readiness_claimed: false,
+      renderer_ready_claimed: false,
+      renderer_ready_candidate: false,
+      owner_confirmation_confirmed: false,
+      trusted_loader_allowlist_enabled: false,
+      actual_ingestion_allowed: false,
+      checked_row_count: 0,
+      motion_dataset_executable: false,
+    },
+    arrays: {
+      public_role_gate_leak_rejection_labels: [...LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_LABELS],
+      public_role_gate_leak_rejection_rejections: [...LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_ROLE_GATE_LEAK_REJECTION_REJECTIONS],
+    },
+    blockedReasons: [
+      "motion_identity_comfort_public_role_gate_leak_rejection_only",
+      "owner_only_detail_not_public",
+      "private_material_not_public",
+      "priority1_blocked",
+      "checked_row_count_zero",
+      "motion_dataset_non_executable",
+      "trusted_loader_disabled",
+      "readiness_claims_false",
+    ],
+    safeNextAction: "add_motion_identity_comfort_audit_event_stub_no_write2",
+    context: "live2d motion identity comfort public role gate leak rejection",
   }, input);
 }
 

@@ -115,6 +115,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort long continuation completion review3 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add public/admin surface alignment next. |
 | motion identity comfort public/admin surface alignment | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add owner-only detail role gate stub2 next. |
 | motion identity comfort owner-only detail role gate stub2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add public role gate leak rejection next. |
+| motion identity comfort public role gate leak rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit event stub no-write2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1047,6 +1048,36 @@ Rejected owner-only detail role gate stub2 promotions include owner_only_detail_
 | owner_only_detail_stub2_requests_owner_action | false |
 | owner_only_detail_stub2_creates_owner_confirmation | false |
 | owner_only_detail_stub2_accepts_actual_data | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Public Role Gate Leak Rejection
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-PUBLIC-ROLE-GATE-LEAK-REJECTION1
+
+Status: public role gate leak rejection only. This surface rejects any attempt to allow owner-only detail, private relation/support signal, locator material, auth material, readiness claims, or actual data through the public role gate.
+
+Public role gate leak rejection labels include public_role_gate_owner_only_detail_leak, public_role_gate_private_relation_signal_leak, public_role_gate_private_support_signal_leak, public_role_gate_locator_material_leak, public_role_gate_auth_material_leak, and public_role_gate_readiness_claim_leak.
+
+Rejected public role gate leak promotions include public_role_gate_leak_allows_owner_only_detail, public_role_gate_leak_allows_private_relation_signal, public_role_gate_leak_allows_private_support_signal, public_role_gate_leak_allows_locator_material, public_role_gate_leak_allows_auth_material, public_role_gate_leak_allows_runtime_ready, public_role_gate_leak_allows_production_ready, and public_role_gate_leak_accepts_actual_data.
+
+| Fact | Value |
+| --- | --- |
+| public_role_gate_leak_rejection_present | true |
+| public_role_gate_leak_allows_owner_only_detail | false |
+| public_role_gate_leak_allows_private_relation_signal | false |
+| public_role_gate_leak_allows_private_support_signal | false |
+| public_role_gate_leak_allows_locator_material | false |
+| public_role_gate_leak_allows_auth_material | false |
+| public_role_gate_leak_allows_runtime_ready | false |
+| public_role_gate_leak_allows_production_ready | false |
+| public_role_gate_leak_accepts_actual_data | false |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
