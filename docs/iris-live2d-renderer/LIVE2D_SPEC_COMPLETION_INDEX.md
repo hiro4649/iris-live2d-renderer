@@ -95,6 +95,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion strong motion unsafe override rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add identity comfort redaction sweep next. |
 | motion identity comfort redaction sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add no-sweetening sweep next. |
 | motion identity comfort no-sweetening sweep | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit next. |
+| motion identity comfort implementation gap audit | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap register next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -436,6 +437,32 @@ Rejected promotions include spec_completion_promoted_to_readiness, fixture_pass_
 | experimental_labels_executable | false |
 | runtime_motion_executable | false |
 | strong_motion_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Implementation Gap Audit
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-AUDIT1
+
+Status: safe implementation gap audit only. This surface records missing implementation evidence labels for motion identity and comfort without executing the renderer, applying cues, loading a model or scene, accepting actual data, creating owner confirmation, enabling trusted loader, or claiming readiness.
+
+Gap audit items: real_renderer_evidence_missing, actual_cue_application_evidence_missing, real_model_load_evidence_missing, real_scene_load_evidence_missing, owner_confirmation_missing, trusted_loader_disabled, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, runtime_readiness_not_claimed, and production_readiness_not_claimed.
+
+Rejected promotions include gap_audit_executes_renderer, gap_audit_applies_cue, gap_audit_loads_model, gap_audit_loads_scene, gap_audit_creates_owner_confirmation, gap_audit_enables_trusted_loader, gap_audit_accepts_actual_data, gap_audit_claims_runtime_ready, gap_audit_claims_production_ready, and gap_audit_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| gap_audit_executes_renderer | false |
+| gap_audit_applies_cue | false |
+| gap_audit_loads_model | false |
+| gap_audit_loads_scene | false |
+| gap_audit_claims_runtime_ready | false |
+| gap_audit_claims_production_ready | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
