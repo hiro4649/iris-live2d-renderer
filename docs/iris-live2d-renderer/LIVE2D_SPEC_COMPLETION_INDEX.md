@@ -113,6 +113,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort final redaction sweep2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add final no-sweetening sweep2 next. |
 | motion identity comfort final no-sweetening sweep2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add long continuation completion review3 next. |
 | motion identity comfort long continuation completion review3 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add public/admin surface alignment next. |
+| motion identity comfort public/admin surface alignment | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add owner-only detail role gate stub2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -990,6 +991,32 @@ Rejected review3 promotions include review3_executes_renderer, review3_applies_c
 | review3_loads_model | false |
 | review3_loads_scene | false |
 | review3_executes_audit | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Public/Admin Surface Alignment
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-PUBLIC-ADMIN-SURFACE-ALIGNMENT1
+
+Status: public/admin safe alignment only. This surface aligns public summary and admin ordinary summary redaction labels while keeping owner-only detail, private relation/support signals, locator material, renderer/cue material, actual data, owner confirmation, and readiness claims out of both public and admin ordinary surfaces.
+
+Alignment checks include public_summary_stays_public_safe, admin_ordinary_summary_stays_redacted, owner_only_detail_absent_from_public, owner_only_detail_absent_from_admin_ordinary, readiness_claims_absent, and actual_data_absent.
+
+Rejected alignment promotions include alignment_reflects_network_locator_material, alignment_reflects_auth_material, alignment_reflects_renderer_material, alignment_reflects_cue_material, alignment_reflects_model_locator_material, alignment_reflects_motion_locator_material, alignment_reflects_owner_only_detail, alignment_reflects_private_relation_signal, alignment_reflects_private_support_signal, alignment_claims_runtime_ready, alignment_claims_production_ready, and alignment_accepts_actual_data.
+
+| Fact | Value |
+| --- | --- |
+| public_admin_safe_alignment_only | true |
+| owner_only_detail_absent_from_public | true |
+| owner_only_detail_absent_from_admin_ordinary | true |
+| alignment_claims_runtime_ready | false |
+| alignment_claims_production_ready | false |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
