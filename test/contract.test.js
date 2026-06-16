@@ -7393,6 +7393,13 @@ try {
   assert.equal(completionIndex.includes("| trusted_loader_disabled | blocker |"), true);
   assert.equal(completionIndex.includes("| ownerHandoffSent | false |"), true);
   assert.equal(completionIndex.includes("| actualRendererProbeExecuted | false |"), true);
+  assert.equal(completionIndex.includes("LIVE2D-RENDERER-READY-LONG-CONTINUATION-COMPLETION-REVIEW1"), true);
+  assert.equal(completionIndex.includes("| renderer_ready_long_continuation_completion_review | added |"), true);
+  assert.equal(completionIndex.includes("| dq_safe_operator_checklist_stub | completed |"), true);
+  assert.equal(completionIndex.includes("| dr_safe_operator_checklist_redaction_guard | completed |"), true);
+  assert.equal(completionIndex.includes("| ds_real_evidence_request_final_no_go | completed |"), true);
+  assert.equal(completionIndex.includes("| next_safe_task | continue_to_preflight_route_manifest_stub |"), true);
+  assert.equal(completionIndex.includes("| realEvidenceCollectionStarted | false |"), true);
 
   console.log(JSON.stringify({
     ok: true,
@@ -7489,6 +7496,7 @@ try {
       "renderer_ready_safe_operator_checklist_stub",
       "renderer_ready_safe_operator_checklist_redaction_guard",
       "renderer_ready_real_evidence_request_final_no_go",
+      "renderer_ready_long_continuation_completion_review",
     ],
   }));
 } finally {
