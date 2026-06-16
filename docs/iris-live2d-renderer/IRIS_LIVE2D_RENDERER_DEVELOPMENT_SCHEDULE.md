@@ -214,6 +214,14 @@ production_readiness_claimed: no
 - Boundary: owner handoff stub only, no owner action request, no owner confirmation, no motion execution, no renderer/browser probe, no cue application, no actual data, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-ROLE-GATE-STUB1.
 
+## Inserted Stub: LIVE2D-MOTION-IDENTITY-COMFORT-ROLE-GATE-STUB1
+
+- Position: after LIVE2D-MOTION-IDENTITY-COMFORT-OWNER-HANDOFF-STUB1 and before role gate redaction guard.
+- Scope: define public, admin ordinary, operator, and owner-only summary boundaries without exposing owner-only detail or raw material.
+- Rejections: owner-only detail exposed to public or admin ordinary views, network locator material, auth material, renderer material, cue material, private relation signal, private support signal, runtime readiness claim, and production readiness claim.
+- Boundary: role gate definition only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-ROLE-GATE-REDACTION-GUARD1.
+
 ## Reaction Latency Roadmap
 
 縺薙・ roadmap 縺ｯ phase-based schedule 縺ｧ縺ゅｊ縲…alendar date 縺ｯ謖√◆縺ｪ縺・ょ推 phase 縺ｯ蜑肴ｮｵ縺ｮ safety boundary 縺ｨ evidence requirement 繧貞｣翫＆縺壹↓騾ｲ繧√ｋ縲・atency target 縺ｯ local renderer 縺ｮ engineering target 縺ｧ縺ゅｊ縲・・菫｡繝励Λ繝・ヨ繝輔か繝ｼ繝荳翫・ viewer-visible latency 縺ｯ蛻･騾皮匱逕溘☆繧九・
