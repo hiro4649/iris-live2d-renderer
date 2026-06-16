@@ -114,6 +114,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort final no-sweetening sweep2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add long continuation completion review3 next. |
 | motion identity comfort long continuation completion review3 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add public/admin surface alignment next. |
 | motion identity comfort public/admin surface alignment | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add owner-only detail role gate stub2 next. |
+| motion identity comfort owner-only detail role gate stub2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add public role gate leak rejection next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1017,6 +1018,35 @@ Rejected alignment promotions include alignment_reflects_network_locator_materia
 | owner_only_detail_absent_from_admin_ordinary | true |
 | alignment_claims_runtime_ready | false |
 | alignment_claims_production_ready | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Owner-Only Detail Role Gate Stub2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-OWNER-ONLY-DETAIL-ROLE-GATE-STUB2
+
+Status: owner-only detail role gate stub2 definition only. This surface records that owner-only detail remains unmaterialized, not public, not admin ordinary, not operator visible, not owner-action requested, and not owner-confirmed.
+
+Owner-only detail role gate stub2 rules include owner_only_detail_stub2_not_materialized, owner_only_detail_stub2_not_public, owner_only_detail_stub2_not_admin_ordinary, owner_only_detail_stub2_not_operator_visible, owner_only_detail_stub2_requires_future_explicit_owner_action, and readiness_claims_absent.
+
+Rejected owner-only detail role gate stub2 promotions include owner_only_detail_stub2_materialized, owner_only_detail_stub2_public_visible, owner_only_detail_stub2_admin_ordinary_visible, owner_only_detail_stub2_operator_visible, owner_only_detail_stub2_requests_owner_action, owner_only_detail_stub2_creates_owner_confirmation, owner_only_detail_stub2_accepts_actual_data, owner_only_detail_stub2_claims_runtime_ready, and owner_only_detail_stub2_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| owner_only_detail_stub2_present | true |
+| owner_only_detail_stub2_materialized | false |
+| owner_only_detail_stub2_public_visible | false |
+| owner_only_detail_stub2_admin_ordinary_visible | false |
+| owner_only_detail_stub2_operator_visible | false |
+| owner_only_detail_stub2_requests_owner_action | false |
+| owner_only_detail_stub2_creates_owner_confirmation | false |
+| owner_only_detail_stub2_accepts_actual_data | false |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
