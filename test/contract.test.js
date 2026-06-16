@@ -187,6 +187,7 @@ import {
   LIVE2D_RENDERER_READY_RUNTIME_READINESS_FINAL_NO_GO_SCHEMA,
   LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA,
   LIVE2D_RENDERER_READY_EXTENDED_GUARD_COMPLETION_REVIEW_SCHEMA,
+  LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_FINAL_WAIT_STATE_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_CONTAMINATION_BLOCKERS,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_PACKET_SCHEMA,
   LIVE2D_MOTION_DATASET_REAL_ROW_SPLIT_POLICY_REQUIRED_LABELS,
@@ -320,6 +321,7 @@ import {
   createRendererReadyRuntimeReadinessFinalNoGoSummary,
   createRendererReadyProductionReadinessFinalNoGoSummary,
   createRendererReadyExtendedGuardCompletionReviewSummary,
+  createRendererReadyRealEvidenceRequestFinalWaitStateSummary,
   createMotionDatasetRealRowSplitPolicyPacketSummary,
   createMotionDatasetSourceHashOwnerChecklistSummary,
   createMotionDatasetFinalOwnerWaitForDataGateSummary,
@@ -6239,6 +6241,7 @@ try {
   assertRendererReadyRuntimeReadinessFinalNoGo(provisionedRuntimeConfig.renderer_ready_runtime_readiness_final_no_go_summary);
   assertRendererReadyProductionReadinessFinalNoGo(provisionedRuntimeConfig.renderer_ready_production_readiness_final_no_go_summary);
   assertRendererReadyExtendedGuardCompletionReview(provisionedRuntimeConfig.renderer_ready_extended_guard_completion_review_summary);
+  assertRendererReadyRealEvidenceRequestFinalWaitState(provisionedRuntimeConfig.renderer_ready_real_evidence_request_final_wait_state_summary);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.checksum_manifest_only_boundary, true);
   assert.equal(provisionedRuntimeConfig.motion_dataset_row_file_checksum_preflight_manifest_summary.actual_file_read, false);
@@ -6555,6 +6558,7 @@ try {
   assertRendererReadyRuntimeReadinessFinalNoGo(provisionedStatus.renderer_ready_runtime_readiness_final_no_go_summary);
   assertRendererReadyProductionReadinessFinalNoGo(provisionedStatus.renderer_ready_production_readiness_final_no_go_summary);
   assertRendererReadyExtendedGuardCompletionReview(provisionedStatus.renderer_ready_extended_guard_completion_review_summary);
+  assertRendererReadyRealEvidenceRequestFinalWaitState(provisionedStatus.renderer_ready_real_evidence_request_final_wait_state_summary);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.motion_dataset_row_file_checksum_preflight_manifest_status, "planning_only_blocked");
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_file_read_boundary, true);
   assert.equal(provisionedStatus.motion_dataset_row_file_checksum_preflight_manifest_summary.no_actual_hash_calculation_boundary, true);
@@ -6761,6 +6765,7 @@ try {
   assertRendererReadyRuntimeReadinessFinalNoGo(provisionedHealth.renderer_ready_runtime_readiness_final_no_go_summary);
   assertRendererReadyProductionReadinessFinalNoGo(provisionedHealth.renderer_ready_production_readiness_final_no_go_summary);
   assertRendererReadyExtendedGuardCompletionReview(provisionedHealth.renderer_ready_extended_guard_completion_review_summary);
+  assertRendererReadyRealEvidenceRequestFinalWaitState(provisionedHealth.renderer_ready_real_evidence_request_final_wait_state_summary);
   assertRendererReadyFalsePositiveDependencySurfaceConsistency({
     runtimeConfig: provisionedRuntimeConfig.renderer_ready_false_positive_dependency_surface_summary,
     status: provisionedStatus.renderer_ready_false_positive_dependency_surface_summary,
@@ -7565,6 +7570,7 @@ try {
       "renderer_ready_runtime_readiness_final_no_go",
       "renderer_ready_production_readiness_final_no_go",
       "renderer_ready_extended_guard_completion_review",
+      "renderer_ready_real_evidence_request_final_wait_state",
     ],
   }));
 } finally {
@@ -9706,6 +9712,54 @@ function assertRendererReadyExtendedGuardCompletionReview(summary) {
   assertSafe(JSON.stringify(summary));
 }
 
+function assertRendererReadyRealEvidenceRequestFinalWaitState(summary) {
+  assert.equal(summary.schema, LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_FINAL_WAIT_STATE_SCHEMA);
+  assert.equal(summary.safe_summary_only, true);
+  assert.equal(summary.realEvidenceRequestStatus, "waiting_for_explicit_owner_action");
+  assert.equal(summary.realEvidenceRequestSent, false);
+  assert.equal(summary.realEvidenceCollectionStarted, false);
+  assert.equal(summary.realRendererProbeStarted, false);
+  assert.equal(summary.realRendererEvidencePresent, false);
+  assert.equal(summary.ownerConfirmationRequired, true);
+  assert.equal(summary.ownerConfirmationCreated, false);
+  assert.equal(summary.ownerConfirmationConfirmed, false);
+  assert.equal(summary.safeNextAction, "wait_for_explicit_owner_action_and_real_renderer_evidence");
+  assert.equal(summary.runtimeReadinessClaimed, false);
+  assert.equal(summary.productionReadinessClaimed, false);
+  assert.equal(summary.rendererReadyClaimed, false);
+  assert.equal(summary.rendererReadyCandidate, false);
+  assert.equal(summary.actual_data_task_started, false);
+  assert.equal(summary.actual_data_preauthorized, false);
+  assert.equal(summary.actual_ingestion_allowed, false);
+  assert.equal(summary.real_row_data_present, false);
+  assert.equal(summary.row_body_read, false);
+  assert.equal(summary.rendererProbeExecuted, false);
+  assert.equal(summary.auditExecutionStarted, false);
+  assert.equal(summary.trustedLoaderAllowlistEnabled, false);
+  assert.equal(summary.trusted_loader_allowlist_enabled, false);
+  assert.equal(summary.trustedLoaderBoundary, "disabled");
+  assert.equal(summary.priority1Status, "BLOCKED");
+  assert.equal(summary.priority1_status, "BLOCKED");
+  assert.equal(summary.checkedRowCount, 0);
+  assert.equal(summary.checked_row_count, 0);
+  assert.equal(summary.motionDatasetExecutable, false);
+  assert.equal(summary.motion_dataset_executable, false);
+  assert.equal(summary.boundary_policy.real_evidence_request_final_wait_state_only, true);
+  assert.equal(summary.boundary_policy.no_real_evidence_request_sent, true);
+  assert.equal(summary.boundary_policy.no_real_evidence_collection_started, true);
+  assert.equal(summary.boundary_policy.no_actual_renderer_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_browser_probe, true);
+  assert.equal(summary.boundary_policy.no_actual_live2d_execution, true);
+  assert.equal(summary.boundary_policy.no_owner_confirmation_creation, true);
+  assert.equal(summary.boundary_policy.no_actual_data_task_started, true);
+  assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
+  assert.equal(summary.boundary_policy.no_row_body_read, true);
+  assert.equal(summary.boundary_policy.no_audit_execution, true);
+  assert.equal(summary.boundary_policy.no_trusted_loader_enablement, true);
+  assert.equal(summary.boundary_policy.no_readiness_claim, true);
+  assertSafe(JSON.stringify(summary));
+}
+
 function assertOwnerActionLaneFreezeStatusSurface(summary) {
   assertOwnerActionLaneFreezeStatusSchemaAllowlist(summary);
   assert.equal(summary.schema, LIVE2D_OWNER_ACTION_LANE_FREEZE_STATUS_SCHEMA);
@@ -10539,4 +10593,11 @@ for (const fixture of [
   assertRendererReadyExtendedGuardCompletionReview(summary);
   assert.equal(summary.completionReviewOnly, true);
   assert.equal(summary.stopAfterReview, false);
+}
+
+{
+  const summary = createRendererReadyRealEvidenceRequestFinalWaitStateSummary();
+  assertRendererReadyRealEvidenceRequestFinalWaitState(summary);
+  assert.equal(summary.realEvidenceRequestSent, false);
+  assert.equal(summary.realEvidenceCollectionStarted, false);
 }
