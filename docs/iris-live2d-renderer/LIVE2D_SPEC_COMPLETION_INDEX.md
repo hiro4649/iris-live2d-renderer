@@ -118,6 +118,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort public role gate leak rejection | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit event stub no-write2 next. |
 | motion identity comfort audit event stub no-write2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add audit event unsafe-field guard2 next. |
 | motion identity comfort audit event unsafe-field guard2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add blocker grouping status surface next. |
+| motion identity comfort blocker grouping status surface | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add blocker grouping contract2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1145,6 +1146,37 @@ Rejected audit event unsafe-field guard2 promotions include audit_event_guard2_r
 | audit_event_write_attempted | false |
 | audit_entry_created | false |
 | audit_execution_started | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| owner_confirmation_confirmed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Blocker Grouping Status Surface
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-BLOCKER-GROUPING-STATUS-SURFACE1
+
+Status: blocker grouping status surface only. This surface exposes safe blocker groups and labels for status, health, and runtime config without resolving blockers, authorizing work, changing checked row count, making the motion dataset executable, enabling the trusted loader, creating owner confirmation, or claiming runtime or production readiness.
+
+Blocker grouping status surface groups include owner_action_blockers, real_evidence_blockers, dataset_blockers, execution_blockers, and readiness_blockers.
+
+Blocker grouping status surface labels include owner_confirmation_missing, owner_action_not_requested, real_renderer_evidence_missing, actual_cue_application_evidence_missing, audit_execution_not_started, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, trusted_loader_disabled, and readiness_claims_false.
+
+Rejected blocker grouping status surface promotions include blocker_grouping_status_surface_claims_resolution, blocker_grouping_status_surface_authorizes_work, blocker_grouping_status_surface_sets_checked_count, blocker_grouping_status_surface_makes_motion_executable, blocker_grouping_status_surface_enables_trusted_loader, blocker_grouping_status_surface_creates_owner_confirmation, blocker_grouping_status_surface_claims_runtime_ready, and blocker_grouping_status_surface_claims_production_ready.
+
+| Fact | Value |
+| --- | --- |
+| blocker_grouping_status_surface_present | true |
+| blocker_grouping_status_surface_claims_resolution | false |
+| blocker_grouping_status_surface_authorizes_work | false |
+| blocker_grouping_status_surface_sets_checked_count | false |
+| blocker_grouping_status_surface_makes_motion_executable | false |
+| blocker_grouping_status_surface_enables_trusted_loader | false |
+| blocker_grouping_status_surface_creates_owner_confirmation | false |
+| grouped_blocker_count | 10 |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
