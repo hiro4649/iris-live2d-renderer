@@ -108,6 +108,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort audit unsafe-field guard | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping next. |
 | motion identity comfort repeated blocker grouping | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add repeated blocker grouping contract next. |
 | motion identity comfort repeated blocker grouping contract | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger next. |
+| motion identity comfort continuation ledger | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger consistency next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -840,6 +841,35 @@ Rejected grouping contract promotions include grouping_contract_claims_resolutio
 | grouping_contract_creates_owner_confirmation | false |
 | grouping_contract_claims_runtime_ready | false |
 | grouping_contract_claims_production_ready | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_candidate | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+
+## Motion Identity Comfort Continuation Ledger
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-CONTINUATION-LEDGER1
+
+Status: continuation ledger only. This surface records completed safe-only continuation entries without requesting owner action, resolving blockers, changing checked_row_count, making motion executable, enabling trusted loader, starting actual data, or claiming runtime or production readiness.
+
+Continuation ledger entries: role_gate_stub_completed, role_gate_redaction_guard_completed, audit_stub_no_write_completed, audit_unsafe_field_guard_completed, repeated_blocker_grouping_completed, and repeated_blocker_grouping_contract_completed.
+
+Rejected continuation ledger promotions include continuation_ledger_claims_owner_action, continuation_ledger_claims_blocker_resolution, continuation_ledger_claims_runtime_ready, continuation_ledger_claims_production_ready, continuation_ledger_changes_checked_count, continuation_ledger_makes_motion_executable, continuation_ledger_enables_trusted_loader, and continuation_ledger_starts_actual_data.
+
+| Fact | Value |
+| --- | --- |
+| continuation_ledger_present | true |
+| continuation_ledger_claims_owner_action | false |
+| continuation_ledger_claims_blocker_resolution | false |
+| continuation_ledger_claims_runtime_ready | false |
+| continuation_ledger_claims_production_ready | false |
+| continuation_ledger_changes_checked_count | false |
+| continuation_ledger_makes_motion_executable | false |
+| continuation_ledger_enables_trusted_loader | false |
+| continuation_ledger_starts_actual_data | false |
 | runtime_readiness_claimed | false |
 | production_readiness_claimed | false |
 | renderer_ready_candidate | false |
