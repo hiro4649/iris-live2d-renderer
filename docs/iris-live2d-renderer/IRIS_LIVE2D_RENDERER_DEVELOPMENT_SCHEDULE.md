@@ -132,6 +132,15 @@ production_readiness_claimed: no
 - Boundary: consistency guard only, no motion execution, no renderer/browser probe, no cue application, no heartbeat collection, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
 - Next safe task: LIVE2D-MOTION-STRONG-MOTION-UNSAFE-OVERRIDE-REJECTION1.
 
+## Inserted Rejection Guard: LIVE2D-MOTION-STRONG-MOTION-UNSAFE-OVERRIDE-REJECTION1
+
+- Position: after LIVE2D-MOTION-FRESHNESS-POLICY-CROSS-SURFACE-CONSISTENCY1 and before identity comfort redaction sweep.
+- Scope: reject unsafe override attempts that mark strong motion labels executable or ready without recovery, cooldown, real evidence, owner confirmation, and blocker resolution.
+- Negative fixture attempts: surprise_scream executable, happy_dance executable, laugh_big without recovery, happy_loud_sing without cooldown, strongMotionReady true, and rendererReadyClaimed true.
+- Expected result: rejected or downgraded, readiness false, and no unsafe echo.
+- Boundary: rejection guard only, no motion execution, no renderer/browser probe, no cue application, no actual data, no owner confirmation, no trusted loader enablement, and no readiness claim.
+- Next safe task: LIVE2D-MOTION-IDENTITY-COMFORT-REDACTION-SWEEP1.
+
 ## Reaction Latency Roadmap
 
 この roadmap は phase-based schedule であり、calendar date は持たない。各 phase は前段の safety boundary と evidence requirement を壊さずに進める。Latency target は local renderer の engineering target であり、配信プラットフォーム上の viewer-visible latency は別途発生する。
