@@ -85,6 +85,7 @@ import {
   createLive2dMotionIdentityComfortContinuationLedgerConsistency2,
   createLive2dMotionIdentityComfortPreOwnerFinalWaitState,
   createLive2dMotionIdentityComfortImplementationGapAudit2Summary,
+  createLive2dMotionIdentityComfortImplementationGapRegister2Summary,
   createLive2dMotionIdentityComfortContinuationLedger,
   createLive2dMotionIdentityComfortContinuationLedgerConsistency,
   createLive2dMotionIdentityComfortFinalRedactionSweep2,
@@ -343,6 +344,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortContinuationLedgerConsistency2 = createLive2dMotionIdentityComfortContinuationLedgerConsistency2();
       const live2dMotionIdentityComfortPreOwnerFinalWaitState = createLive2dMotionIdentityComfortPreOwnerFinalWaitState();
       const live2dMotionIdentityComfortImplementationGapAudit2 = createLive2dMotionIdentityComfortImplementationGapAudit2Summary();
+      const live2dMotionIdentityComfortImplementationGapRegister2 = createLive2dMotionIdentityComfortImplementationGapRegister2Summary();
       const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
       const live2dMotionIdentityComfortContinuationLedgerConsistency = createLive2dMotionIdentityComfortContinuationLedgerConsistency();
       const live2dMotionIdentityComfortFinalRedactionSweep2 = createLive2dMotionIdentityComfortFinalRedactionSweep2();
@@ -554,6 +556,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_continuation_ledger_consistency2: live2dMotionIdentityComfortContinuationLedgerConsistency2,
           live2d_motion_identity_comfort_pre_owner_final_wait_state: live2dMotionIdentityComfortPreOwnerFinalWaitState,
           live2d_motion_identity_comfort_implementation_gap_audit2_summary: live2dMotionIdentityComfortImplementationGapAudit2,
+          live2d_motion_identity_comfort_implementation_gap_register2_summary: live2dMotionIdentityComfortImplementationGapRegister2,
           live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
           live2d_motion_identity_comfort_continuation_ledger_consistency: live2dMotionIdentityComfortContinuationLedgerConsistency,
           live2d_motion_identity_comfort_final_redaction_sweep2: live2dMotionIdentityComfortFinalRedactionSweep2,
@@ -714,6 +717,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_continuation_ledger_consistency2: live2dMotionIdentityComfortContinuationLedgerConsistency2,
           live2d_motion_identity_comfort_pre_owner_final_wait_state: live2dMotionIdentityComfortPreOwnerFinalWaitState,
           live2d_motion_identity_comfort_implementation_gap_audit2_summary: live2dMotionIdentityComfortImplementationGapAudit2,
+          live2d_motion_identity_comfort_implementation_gap_register2_summary: live2dMotionIdentityComfortImplementationGapRegister2,
           live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
           live2d_motion_identity_comfort_continuation_ledger_consistency: live2dMotionIdentityComfortContinuationLedgerConsistency,
           live2d_motion_identity_comfort_final_redaction_sweep2: live2dMotionIdentityComfortFinalRedactionSweep2,
@@ -915,6 +919,7 @@ export function createRendererState({
         live2d_motion_identity_comfort_continuation_ledger_consistency2: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger_consistency2,
         live2d_motion_identity_comfort_pre_owner_final_wait_state: status.renderer_health.live2d_motion_identity_comfort_pre_owner_final_wait_state,
         live2d_motion_identity_comfort_implementation_gap_audit2_summary: status.renderer_health.live2d_motion_identity_comfort_implementation_gap_audit2_summary,
+        live2d_motion_identity_comfort_implementation_gap_register2_summary: status.renderer_health.live2d_motion_identity_comfort_implementation_gap_register2_summary,
         live2d_motion_identity_comfort_continuation_ledger: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger,
         live2d_motion_identity_comfort_continuation_ledger_consistency: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger_consistency,
         live2d_motion_identity_comfort_final_redaction_sweep2: status.renderer_health.live2d_motion_identity_comfort_final_redaction_sweep2,
@@ -1170,6 +1175,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortContinuationLedgerConsistency2 = createLive2dMotionIdentityComfortContinuationLedgerConsistency2();
       const live2dMotionIdentityComfortPreOwnerFinalWaitState = createLive2dMotionIdentityComfortPreOwnerFinalWaitState();
       const live2dMotionIdentityComfortImplementationGapAudit2 = createLive2dMotionIdentityComfortImplementationGapAudit2Summary();
+      const live2dMotionIdentityComfortImplementationGapRegister2 = createLive2dMotionIdentityComfortImplementationGapRegister2Summary();
       const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
       const live2dMotionIdentityComfortContinuationLedgerConsistency = createLive2dMotionIdentityComfortContinuationLedgerConsistency();
       const live2dMotionIdentityComfortFinalRedactionSweep2 = createLive2dMotionIdentityComfortFinalRedactionSweep2();
@@ -1340,6 +1346,7 @@ export function createRendererState({
       response.live2d_motion_identity_comfort_continuation_ledger_consistency2 = live2dMotionIdentityComfortContinuationLedgerConsistency2;
       response.live2d_motion_identity_comfort_pre_owner_final_wait_state = live2dMotionIdentityComfortPreOwnerFinalWaitState;
       response.live2d_motion_identity_comfort_implementation_gap_audit2_summary = live2dMotionIdentityComfortImplementationGapAudit2;
+      response.live2d_motion_identity_comfort_implementation_gap_register2_summary = live2dMotionIdentityComfortImplementationGapRegister2;
       response.live2d_motion_identity_comfort_continuation_ledger = live2dMotionIdentityComfortContinuationLedger;
       response.live2d_motion_identity_comfort_continuation_ledger_consistency = live2dMotionIdentityComfortContinuationLedgerConsistency;
       response.live2d_motion_identity_comfort_final_redaction_sweep2 = live2dMotionIdentityComfortFinalRedactionSweep2;
@@ -1563,6 +1570,7 @@ export function createRendererState({
       const live2dMotionIdentityComfortContinuationLedgerConsistency2 = createLive2dMotionIdentityComfortContinuationLedgerConsistency2();
       const live2dMotionIdentityComfortPreOwnerFinalWaitState = createLive2dMotionIdentityComfortPreOwnerFinalWaitState();
       const live2dMotionIdentityComfortImplementationGapAudit2 = createLive2dMotionIdentityComfortImplementationGapAudit2Summary();
+      const live2dMotionIdentityComfortImplementationGapRegister2 = createLive2dMotionIdentityComfortImplementationGapRegister2Summary();
       const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
       const live2dMotionIdentityComfortContinuationLedgerConsistency = createLive2dMotionIdentityComfortContinuationLedgerConsistency();
       const live2dMotionIdentityComfortFinalRedactionSweep2 = createLive2dMotionIdentityComfortFinalRedactionSweep2();
@@ -1757,6 +1765,7 @@ export function createRendererState({
           live2d_motion_identity_comfort_continuation_ledger_consistency2: live2dMotionIdentityComfortContinuationLedgerConsistency2,
           live2d_motion_identity_comfort_pre_owner_final_wait_state: live2dMotionIdentityComfortPreOwnerFinalWaitState,
           live2d_motion_identity_comfort_implementation_gap_audit2_summary: live2dMotionIdentityComfortImplementationGapAudit2,
+          live2d_motion_identity_comfort_implementation_gap_register2_summary: live2dMotionIdentityComfortImplementationGapRegister2,
           live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
           live2d_motion_identity_comfort_continuation_ledger_consistency: live2dMotionIdentityComfortContinuationLedgerConsistency,
           live2d_motion_identity_comfort_final_redaction_sweep2: live2dMotionIdentityComfortFinalRedactionSweep2,
