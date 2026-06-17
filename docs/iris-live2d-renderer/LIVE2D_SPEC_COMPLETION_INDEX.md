@@ -124,6 +124,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort continuation ledger consistency2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add pre-owner final wait state next. |
 | motion identity comfort pre-owner final wait state | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit2 next. |
 | motion identity comfort implementation gap audit2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap register2 next. |
+| motion identity comfort implementation gap register2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add completion review4 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1324,6 +1325,34 @@ Rejected implementation gap audit2 promotions include gap_audit2_executes_render
 | implementation_gap_audit2_status | implementation_gap_audit2_blocked |
 | safe_gap_summary_only | true |
 | pre_owner_wait_state_present | true |
+| owner_action_required | true |
+| owner_action_received | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| real_renderer_evidence_present | false |
+| actual_data_task_started | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Implementation Gap Register2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-REGISTER2
+
+Status: safe gap register only. This surface registers the post-audit2 gap categories and safe non-action outcomes. It does not execute a renderer, apply cues, load a model or scene, mark owner action as received, create owner confirmation, start actual data work, enable trusted loader, resolve priority1, or claim runtime or production readiness.
+
+Implementation gap register2 categories include pre_owner_wait_state_gap, owner_action_gap, owner_confirmation_gap, renderer_evidence_gap, cue_application_gap, model_scene_evidence_gap, trusted_loader_gap, priority1_blocker_gap, row_count_gap, motion_dataset_execution_gap, and readiness_claim_gap.
+
+Implementation gap register2 actions keep owner action blocked, owner confirmation blocked, renderer execution blocked, cue application blocked, model/scene load blocked, actual data blocked, trusted loader disabled, priority1 blocked, checked row count zero, motion dataset non-executable, and readiness claims false.
+
+| Fact | Value |
+| --- | --- |
+| implementation_gap_register2_status | implementation_gap_register2_blocked |
+| safe_gap_register_only | true |
 | owner_action_required | true |
 | owner_action_received | false |
 | owner_confirmation_created | false |
