@@ -123,6 +123,7 @@ Status values: complete, partial, planned, blocked, not_started, not_applicable.
 | motion identity comfort continuation ledger2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add continuation ledger consistency2 next. |
 | motion identity comfort continuation ledger consistency2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add pre-owner final wait state next. |
 | motion identity comfort pre-owner final wait state | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap audit2 next. |
+| motion identity comfort implementation gap audit2 | complete | partial | complete | planned | blocked | blocked | blocked | blocked | Add implementation gap register2 next. |
 | renderer-ready dependency matrix | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Real renderer readiness remains unclaimed. |
 | split policy packet | complete | partial | complete | complete | blocked | blocked | blocked | blocked | Future dataset split metadata only. |
 | source hash owner checklist | complete | partial | complete | complete | blocked | blocked | blocked | blocked | No hash calculation in this PR. |
@@ -1300,6 +1301,35 @@ Rejected pre-owner wait state promotions include pre_owner_wait_state_claims_own
 | real_renderer_evidence_present | false |
 | actual_data_task_started | false |
 | trusted_loader_enabled | false |
+| checked_row_count | 0 |
+| priority1_status | BLOCKED |
+| motion_dataset_executable | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+## Motion Identity Comfort Implementation Gap Audit2
+
+Task: LIVE2D-MOTION-IDENTITY-COMFORT-IMPLEMENTATION-GAP-AUDIT2
+
+Status: safe gap summary only. This surface records the remaining motion identity/comfort implementation gaps after the pre-owner final wait state. It does not execute a renderer, apply cues, load a model or scene, mark owner action as received, create owner confirmation, start actual data work, enable trusted loader, resolve priority1, or claim runtime or production readiness.
+
+Implementation gap audit2 items include pre_owner_wait_state_present, owner_action_required, owner_action_not_received, owner_confirmation_missing, real_renderer_evidence_missing, actual_cue_application_evidence_missing, real_model_scene_evidence_missing, trusted_loader_disabled, priority1_blocked, checked_row_count_zero, motion_dataset_non_executable, runtime_readiness_not_claimed, and production_readiness_not_claimed.
+
+Rejected implementation gap audit2 promotions include gap_audit2_executes_renderer, gap_audit2_applies_cue, gap_audit2_loads_model, gap_audit2_loads_scene, gap_audit2_creates_owner_confirmation, gap_audit2_marks_owner_action_received, gap_audit2_enables_trusted_loader, gap_audit2_starts_actual_data, gap_audit2_claims_runtime_ready, gap_audit2_claims_production_ready, and gap_audit2_marks_priority1_resolved.
+
+| Fact | Value |
+| --- | --- |
+| implementation_gap_audit2_status | implementation_gap_audit2_blocked |
+| safe_gap_summary_only | true |
+| pre_owner_wait_state_present | true |
+| owner_action_required | true |
+| owner_action_received | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| real_renderer_evidence_present | false |
+| actual_data_task_started | false |
 | checked_row_count | 0 |
 | priority1_status | BLOCKED |
 | motion_dataset_executable | false |
