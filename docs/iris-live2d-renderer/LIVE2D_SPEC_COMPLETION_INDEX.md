@@ -189,6 +189,14 @@ Status: pure safe evidence decision engine only. The decision engine classifies 
 
 renderer_ready_candidate is explicitly not renderer_ready, not runtime readiness, not production readiness, and not owner confirmation. Fixture, manual-label-only, manifest-only, SSE-only, cue-accepted-only, unknown, stale, future timestamp, missing heartbeat, missing model, missing scene, model-scene mismatch, missing cue capability, missing last cue, missing audit reference, missing owner scope, or critical blocker inputs cannot produce readiness.
 
+## Motion Dataset Row Manifest Preflight
+
+Task: LIVE2D-MOTION-DATASET-ROW-MANIFEST-PREFLIGHT-PACK1
+
+Status: metadata-only manifest schema and pure validator. The validator accepts synthetic safe label entries, checks required labels, split allowlist, duplicate/overlap fixtures, supported motion labels, strong-motion recovery labels, stale cue downgrades, subtitle/gaze guard labels, unsafe field labels, and expected-summary leak labels without reading row bodies, reading files, calculating hashes, executing parsers, executing redaction scans, writing audits, or accepting private paths.
+
+External state remains unchanged: checked_row_count is 0, row body read is false, actual file read is false, source hash verified is false, declared row count checked is false, actual ingestion allowed is false, and motion dataset executable is false.
+
 ## Motion Identity and Comfort Specification
 
 Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1
