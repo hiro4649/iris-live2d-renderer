@@ -400,45 +400,47 @@ production_readiness_claimed: no
 
 ## Reaction Latency Roadmap
 
-邵ｺ阮吶・ roadmap 邵ｺ・ｯ phase-based schedule 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ窶ｦalendar date 邵ｺ・ｯ隰問・笳・ｸｺ・ｪ邵ｺ繝ｻﾂ繧・耳 phase 邵ｺ・ｯ陷題ざ・ｮ・ｵ邵ｺ・ｮ safety boundary 邵ｺ・ｨ evidence requirement 郢ｧ雋橸ｽ｣鄙ｫ・・ｸｺ螢ｹ竊馴ｨｾ・ｲ郢ｧ竏夲ｽ狗ｸｲ繝ｻatency target 邵ｺ・ｯ local renderer 邵ｺ・ｮ engineering target 邵ｺ・ｧ邵ｺ繧・ｽ顔ｸｲ繝ｻ繝ｻ闖ｫ・｡郢晏干ﾎ帷ｹ昴・繝ｨ郢晁ｼ斐°郢晢ｽｼ郢晢｣ｰ闕ｳ鄙ｫ繝ｻ viewer-visible latency 邵ｺ・ｯ陋ｻ・･鬨ｾ逧ｮ蛹ｱ騾墓ｺ倪・郢ｧ荵敖繝ｻ
+This roadmap is a phase-based schedule, not a calendar commitment. Each phase
+keeps its own safety boundary and evidence requirement. Latency targets are
+local renderer engineering targets only; viewer-visible latency still requires
+fresh real evidence before any runtime or production readiness claim.
 
 ## Phase 0: PR 27 dependency
 
-- Status: PR 27 must remain separate邵ｲ繝ｻ
-- Scope: cue retention邵ｲ縲影adiness truthfulness邵ｲ・孅tional write auth邵ｲ縲蛎fe runtime config邵ｲ繝ｻ
-- Readiness: no runtime readiness claim邵ｲ繝ｻ
+- Status: PR 27 must remain separate.
+- Scope: cue retention, readiness truthfulness, optional write auth, and safe runtime config.
+- Readiness: no runtime readiness claim.
 
 ## Phase 1: REACTION-LATENCY-SPEC1
 
-- Status: current docs-only PR邵ｲ繝ｻ
-- Scope: reaction latency targets邵ｲ縲仇o-stage response design邵ｲ縲脚ansport plan邵ｲ・搜eload plan邵ｲ縲蛎fety boundaries邵ｲ・・plementation order邵ｲ繝ｻ
-- Runtime: no runtime code邵ｲ繝ｻ
+- Status: docs-only planning.
+- Scope: reaction latency targets, two-stage response design, transport plan, preload plan, safety boundaries, and implementation order.
+- Runtime: no runtime code.
 
 ## Phase 2: RENDERER-CUE-CONTRACT-SAFETY1
 
-- Scope: cue allowlist邵ｲ縲系supported cue safe reject邵ｲ縲影covery-required strong motion validation邵ｲ繝ｻ
-- Outputs: safe cue validator邵ｲ縲餌w command / model path / endpoint / candidate / world_command rejection tests邵ｲ繝ｻ
-- Model loading: no real model loading邵ｲ繝ｻ
+- Scope: cue allowlist, unsupported cue safe rejection, and recovery-required strong motion validation.
+- Outputs: safe cue validator and raw command / model path / endpoint / candidate / world_command rejection tests.
+- Model loading: no real model loading.
 
 ## Phase 3: PUSH-CUE-DELIVERY2
 
-- Scope: cue contract safety merge 陟募ｾ娯・ SSE 邵ｺ・ｾ邵ｺ貅倥・ WebSocket delivery 郢ｧ繝ｻdesign / implement 邵ｺ蜷ｶ・狗ｸｲ繝ｻ
-- Goal: browser delivery latency 郢ｧ繝ｻpolling-scale 邵ｺ荵晢ｽ芽抄蜿厄ｽｸ蟶吮・郢ｧ荵敖繝ｻ
-- Boundary: safe output 邵ｺ・ｨ auth boundaries 郢ｧ蝣､・ｶ・ｭ隰問・笘・ｹｧ荵敖繝ｻ
-- Readiness: real evidence 邵ｺ蠕娯・邵ｺ繝ｻ蜑樒ｹｧ繝ｻreadiness claim 邵ｺ・ｪ邵ｺ蜉ｱﾂ繝ｻ
+- Scope: design and implement SSE or WebSocket delivery after cue contract safety is merged.
+- Goal: reduce browser delivery latency below polling-scale behavior.
+- Boundary: preserve safe output and auth boundaries.
+- Readiness: no readiness claim before fresh real evidence.
 
 ## Phase 4: PRELOAD-AND-SAFE-ASSET-ROUTE3
 
-- Scope: safe model asset route邵ｲ・搜eloading strategy邵ｲ・ｽo raw path exposure邵ｲ繝ｻ
-- Route: unavailable route 郢ｧ繝ｻadvertise 邵ｺ蜉ｱ竊醍ｸｺ繝ｻﾂ繝ｻ
-- Tests: model path redaction 郢ｧ蜻茨ｽ､諛・ｽｨ・ｼ邵ｺ蜷ｶ・狗ｸｲ繝ｻ
+- Scope: safe model asset route, preloading strategy, and no raw path exposure.
+- Route: do not advertise an unavailable route as ready.
+- Tests: include model path redaction and unavailable-route behavior.
 
 ## Phase 5: REAL-MODEL-LOAD4
 
-- Scope: real Cubism/model3 load邵ｲ縲劃ene binding邵ｲ窶决esh heartbeat邵ｲ縲影al model evidence邵ｲ繝ｻ
-- Goal: model_loaded 邵ｺ・ｨ scene_loaded 郢ｧ繝ｻtruthfully 邵ｺ・ｫ enable 邵ｺ蜷ｶ・狗ｸｲ繝ｻ
-- Production: no production readiness claim邵ｲ繝ｻ
-
+- Scope: real Cubism/model3 load, scene binding, fresh heartbeat, and real model evidence.
+- Goal: truthfully enable model_loaded and scene_loaded only after qualifying evidence.
+- Production: no production readiness claim.
 ## Inserted Preflight: LIVE2D-LOADER-INTEGRATION-PREFLIGHT5
 
 - Position: between REAL-MODEL-LOAD4 and MICRO-REACTION-PACK5.
@@ -523,33 +525,32 @@ production_readiness_claimed: no
 
 ## Phase 6: MICRO-REACTION-PACK5
 
-- Scope: instant nonverbal cue pack邵ｲ繝ｻ
-- Target: internal event arrival 陟輔・50 to 300 ms local renderer target邵ｲ繝ｻ
-- Examples: blink_attention邵ｲ縲確all_nod邵ｲ縲覚ft_smile邵ｲ縲隔rprise_micro邵ｲ・徨eathing_shift邵ｲ繝ｻ
+- Scope: instant nonverbal cue pack.
+- Target: 50 to 300 ms local renderer target after internal event arrival.
+- Examples: blink_attention, small_nod, soft_smile, surprise_micro, breathing_shift.
 
 ## Phase 7: COMMENT-REACTION-PIPELINE6
 
-- Scope: comment acknowledgement first邵ｲ縲角eech/TTS second邵ｲ繝ｻ
-- Targets: visual ack 邵ｺ・ｯ local comment event 陟輔・300 to 800 ms邵ｲ・ｴpoken response 邵ｺ・ｯ feasible 邵ｺ・ｪ陜｣・ｴ陷ｷ蛹ｻ竊・1.5 to 4 seconds邵ｲ繝ｻ
+- Scope: comment acknowledgement first, speech/TTS second.
+- Targets: visual acknowledgement 300 to 800 ms after local comment event; spoken response 1.5 to 4 seconds where feasible.
 
 ## Phase 8: GAME-REACTION-PIPELINE7
 
-- Scope: approved safe game-event reactions邵ｲ繝ｻ
-- Target: approved local game event 陟輔・50 to 300 ms邵ｲ繝ｻ
-- Boundary: no game input or OS command邵ｲ繝ｻ
+- Scope: approved safe game-event reactions.
+- Target: 50 to 300 ms after approved local game event.
+- Boundary: no game input or OS command.
 
 ## Phase 9: STRONG-MOTION-RECOVERY8
 
-- Scope: laugh_big邵ｲ縲隔rprise_scream邵ｲ窶拌ppy_dance邵ｲ窶拌ppy_loud_sing邵ｲ窶ｦloseup邵ｲ繝ｻ
-- Recovery: required邵ｲ繝ｻ
-- Guard: viewer comfort 邵ｺ・ｨ visibility guard 邵ｺ謔滂ｽｿ繝ｻ・ｦ竏堋繝ｻ
+- Scope: laugh_big, surprise_scream, happy_dance, happy_loud_sing, and closeup.
+- Recovery: required.
+- Guard: viewer comfort and visibility guard must be preserved.
 
 ## Phase 10: LIVE-READINESS-EVIDENCE9
 
-- Scope: fresh Live2D evidence collector邵ｲ・孩ner confirmation邵ｲ窶徙/no-go integration邵ｲ繝ｻ
-- Boundary: no fixture-to-real promotion邵ｲ繝ｻ
-- Production: owner confirmation 邵ｺ・ｨ fresh evidence 邵ｺ・ｪ邵ｺ蜉ｱ竊・production go 邵ｺ蜉ｱ竊醍ｸｺ繝ｻﾂ繝ｻ
-
+- Scope: fresh Live2D evidence collector, owner confirmation, and go/no-go integration.
+- Boundary: no fixture-to-real promotion.
+- Production: owner confirmation and fresh evidence are required before production go.
 ### LIVE2D-FRESH-EVIDENCE-BUNDLE1
 
 - Purpose: add a safe fresh evidence bundle for owner review preparation only.
