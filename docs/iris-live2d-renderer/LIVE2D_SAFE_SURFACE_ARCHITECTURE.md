@@ -157,6 +157,16 @@ The cleanup layer records only safe booleans for process start, exit observation
 
 The current public `/health`, `/status`, and `/renderer/runtime-config` safe responses are larger than the R2-B byte bound, so the actual R2 runner fails closed rather than weakening the bound or shrinking public server responses outside this task's allowed scope. This is a transport-boundary result, not a readiness result.
 
+## R2 Compact Probe Surface Unblock
+
+Task: LIVE2D-R2-COMPACT-PROBE-SURFACE-UNBLOCK-PACK1
+
+The R2 compact probe surface adds `GET /renderer/r2-probe-summary` as an R2-only localhost probe endpoint. It is disabled by default and is enabled only for the R2 child process through `IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED=1`. The route is hidden behind exact GET path matching, an empty query string, direct loopback socket checks, a `127.0.0.1:<port>` Host header, and forwarded-header rejection. Disabled, forwarded, query, POST, or non-direct-loopback requests return the same safe 404 shape.
+
+The compact surface projects only allowlisted fields from the existing `/health`, `/status`, and `/renderer/runtime-config` safe objects into `iris_live2d_r2_compact_probe_surface_v1`. It preserves the exact semantic route set by expanding the compact response back into `health`, `status`, and `runtime_config` bodies before V2 envelope validation. The response is bounded to 32768 bytes, remains below the R2 transport byte bound, and returns only fixed safe failure labels if projection or size validation blocks.
+
+This unblock does not shrink or remove existing public route fields, does not raise the transport byte limit, does not start a browser, does not execute Cubism SDK or Framework code, does not load a model or scene, does not apply cues, does not inject browser heartbeat, does not enable trusted loader, does not handle actual data, does not create owner confirmation, does not resolve priority1, and does not claim runtime or production readiness.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

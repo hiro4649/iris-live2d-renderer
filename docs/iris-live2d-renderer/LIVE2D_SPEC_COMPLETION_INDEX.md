@@ -9217,6 +9217,42 @@ The R2-B pack adds bounded loopback transport and process cleanup helpers for th
 | actual_runner_status | fail_closed_when_response_exceeds_bound |
 
 The current safe public route bodies exceed the bounded response size for actual R2 execution. R2-B therefore proves bounded fail-closed transport and cleanup behavior rather than relaxing the byte limit or changing public runtime surfaces outside the authorized file scope.
+## R2 Compact Probe Surface Unblock
+
+Task: LIVE2D-R2-COMPACT-PROBE-SURFACE-UNBLOCK-PACK1
+
+The R2-B2 pack adds a disabled-by-default compact probe endpoint for R2 localhost process probing only. The route is `GET /renderer/r2-probe-summary`, enabled only for the child process when `IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED=1`, and guarded by direct loopback socket checks, exact Host header, empty query string, GET-only routing, and forwarded-header rejection.
+
+| field | value |
+| --- | --- |
+| compact_probe_schema | iris_live2d_r2_compact_probe_surface_v1 |
+| compact_route_label | r2_compact_probe_summary |
+| semantic_route_expansion | health; status; runtime_config |
+| compact_response_bound_bytes | 32768 |
+| transport_bound_preserved | true |
+| full_public_routes_changed | false |
+| route_contract_preserved | true |
+| one_run_unblock_probe | pass |
+| process_cleanup | pass |
+| port_release | pass |
+| raw_response_stored | false |
+| raw_response_printed | false |
+| browser_started | false |
+| sdk_executed | false |
+| model_load_attempted | false |
+| scene_load_attempted | false |
+| cue_application_attempted | false |
+| browser_heartbeat_injected | false |
+| owner_confirmation_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
+| actual_ingestion_allowed | false |
+
+The compact endpoint unblocks R2 localhost semantic validation without weakening R2-B transport safety. It does not authorize runtime readiness, production readiness, owner confirmation, actual data work, trusted loader enablement, priority1 resolution, or executable motion dataset state. Next safe action is `LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1`.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1

@@ -6,6 +6,10 @@ import { basename, dirname, extname, isAbsolute, join, normalize, resolve } from
 import { ContractError, assertSafePublicObject, createBoundaryPolicy, createSafeError } from "./contracts.js";
 import { createRendererState } from "./state.js";
 import { contentTypeForModelAsset } from "./renderer/modelAssets.js";
+import {
+  LIVE2D_R2_COMPACT_PROBE_MAX_BYTES,
+  buildR2CompactProbeSurface,
+} from "./renderer/r2CompactProbeSurface.js";
 
 const MAX_BODY_BYTES = 256_000;
 const SSE_CUE_INTERVAL_MS = 150;
@@ -22,11 +26,27 @@ export function createLive2dRendererServer({
   state = createRendererState(),
   publicDir = join(__dirname, "..", "public"),
   rendererApiKey = "",
+  r2ProbeSurfaceEnabled = false,
 } = {}) {
   const requiredApiKey = String(rendererApiKey ?? "").trim();
+  const compactProbeEnabled = r2ProbeSurfaceEnabled === true;
   return createServer(async (request, response) => {
     try {
       const url = new URL(request.url, "http://127.0.0.1");
+      if (url.pathname === "/renderer/r2-probe-summary") {
+        if (
+          request.method !== "GET" ||
+          url.search ||
+          !compactProbeEnabled ||
+          !isDirectR2LoopbackProbeRequest(request)
+        ) {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        const status = state.status();
+        const health = state.health();
+        const runtimeConfig = state.browserRuntimeConfig();
+        return sendBoundedR2ProbeJson(response, buildR2CompactProbeSurface({ health, status, runtimeConfig }));
+      }
       if (request.method === "GET" && url.pathname === "/health") {
         return sendJson(response, 200, state.health());
       }
@@ -145,6 +165,28 @@ async function readJson(request) {
 function sendJson(response, status, body) {
   response.writeHead(status, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
   response.end(JSON.stringify(body));
+}
+
+function sendBoundedR2ProbeJson(response, body) {
+  const text = JSON.stringify(body);
+  if (Buffer.byteLength(text, "utf8") > LIVE2D_R2_COMPACT_PROBE_MAX_BYTES) {
+    response.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
+    response.end(JSON.stringify({
+      ok: false,
+      schema: "iris_live2d_r2_compact_probe_surface_v1",
+      projectionStatus: "blocked",
+      crossSurfaceParityStatus: "blocked",
+      failureLabels: ["compact_probe_response_too_large"],
+      safeSummaryOnly: true,
+    }));
+    return;
+  }
+  response.writeHead(200, {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "content-length": String(Buffer.byteLength(text, "utf8")),
+  });
+  response.end(text);
 }
 
 function safeDecodePathSegment(segment) {
@@ -312,6 +354,19 @@ function isLoopbackAddress(address) {
   return address === "127.0.0.1" || address === "::1" || address === "::ffff:127.0.0.1";
 }
 
+export function isDirectR2LoopbackProbeRequest(request) {
+  const remoteAddress = String(request.socket?.remoteAddress ?? "");
+  const localAddress = String(request.socket?.localAddress ?? "");
+  const host = String(request.headers?.host ?? "");
+  if (!(remoteAddress === "127.0.0.1" || remoteAddress === "::ffff:127.0.0.1")) return false;
+  if (!(localAddress === "127.0.0.1" || localAddress === "::ffff:127.0.0.1")) return false;
+  if (!/^127\.0\.0\.1:\d{1,5}$/.test(host)) return false;
+  for (const header of ["forwarded", "x-forwarded-for", "x-forwarded-host", "x-forwarded-proto"]) {
+    if (Object.hasOwn(request.headers ?? {}, header)) return false;
+  }
+  return true;
+}
+
 function statusForError(error) {
   if (error instanceof ContractError) {
     if (error.code === "auth_required") return 401;
@@ -332,6 +387,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const server = createLive2dRendererServer({
     state,
     rendererApiKey: process.env.IRIS_LIVE2D_RENDERER_API_KEY || process.env.IRIS_LOCAL_ENGINE_API_KEY || "",
+    r2ProbeSurfaceEnabled: process.env.IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED === "1",
   });
   const host = process.env.IRIS_LIVE2D_RENDERER_HOST || "127.0.0.1";
   const port = Number(process.env.IRIS_LIVE2D_RENDERER_PORT || 9130);
@@ -367,6 +423,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       "IRIS_LIVE2D_RENDERER_API_KEY",
       "IRIS_LOCAL_ENGINE_API_KEY",
       "IRIS_LIVE2D_BROWSER_HEARTBEAT_MAX_AGE_MS",
+      "IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED",
     ],
     renderer_ready: state.status().renderer_ready,
     boundary_policy: {
