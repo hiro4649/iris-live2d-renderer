@@ -9054,6 +9054,28 @@ The compact safe summary v2 adds the public key `live2d_safe_summary_v2` to stat
 | compatibility | legacy fields retained; v1 fixture retained; v2 fixture additive |
 
 `candidate_only` is a pure candidate label and is never readiness, production go, owner confirmation, trusted loader approval, actual data approval, or priority1 resolution.
+## Compact Safe Summary V2 Semantic Invariant Repair
+
+Task: LIVE2D-COMPACT-SAFE-SUMMARY-V2-SEMANTIC-INVARIANT-REPAIR1
+
+The compact safe summary v2 semantic invariant repair keeps blocker groups, `overallStatus`, and top-level safety boundary fields aligned to the immutable current product state. Input attempts to promote priority1, checked row count, motion dataset execution, owner confirmation, trusted loader, actual data, runtime readiness, production readiness, or real renderer evidence are rejected with fixed safe labels and cannot clear blockers.
+
+| field | value |
+| --- | --- |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| owner_confirmation_confirmed | false |
+| trusted_loader_allowlist_enabled | false |
+| actual_ingestion_allowed | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| candidate_engine_available_is_real_evidence | false |
+| candidate_only_with_critical_blocker | blocked |
+| attention_required_with_critical_blocker | blocked |
+| real_renderer_evidence_blocker_cleared_by_candidate_engine | false |
+
+This repair does not add a public top-level field, does not collect renderer evidence, does not run a renderer probe, does not create owner confirmation, does not enable trusted loader, does not ingest data, does not execute parser/redaction/audit work, and does not claim runtime or production readiness.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1

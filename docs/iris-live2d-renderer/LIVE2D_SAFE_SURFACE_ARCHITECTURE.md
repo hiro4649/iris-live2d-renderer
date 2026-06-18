@@ -101,6 +101,8 @@ The compact summary groups blockers under owner confirmation, real renderer evid
 
 The summary keeps runtime readiness false, production readiness false, owner confirmation false, actual ingestion false, trusted loader disabled, priority1 BLOCKED, checked row count 0, and motion dataset non-executable.
 
+The compact summary v2 semantic invariant repair makes the immutable boundary state authoritative for blocker groups and `overallStatus`. Input labels cannot clear `priority1`, checked row count, motion dataset, owner confirmation, trusted loader, actual data, runtime readiness, production readiness, or real renderer evidence blockers. Override attempts are reduced to fixed safe rejection labels, and `candidate_engine_available` remains a non-authorizing decision-engine label rather than real renderer evidence.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

@@ -59,7 +59,16 @@ const attention = createCompactSafeSummaryV2({
   productionReadinessStatus: "not_applicable_for_candidate",
   noncriticalAttentionLabels: ["stale_noncritical_summary"],
 });
-assert.equal(attention.overallStatus, "attention_required");
+assert.equal(attention.overallStatus, "blocked");
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:priority1_status"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:checked_row_count"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:motion_dataset_executable"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:owner_confirmation"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:trusted_loader"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:actual_data"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:runtime_readiness"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:production_readiness"), true);
+assert.equal(attention.rejectionLabels.includes("immutable_boundary_override:real_renderer_evidence"), true);
 assertBoundary(attention);
 
 const candidate = createCompactSafeSummaryV2({
@@ -75,8 +84,35 @@ const candidate = createCompactSafeSummaryV2({
   productionReadinessStatus: "not_applicable_for_candidate",
   candidateOnlyLabels: ["candidate_engine_available"],
 });
-assert.equal(candidate.overallStatus, "candidate_only");
+assert.equal(candidate.overallStatus, "blocked");
+assert.equal(candidate.blockerGroups.real_renderer_evidence.includes("real_renderer_evidence_missing"), true);
+assert.equal(candidate.rendererEvidenceStatus.includes("decision_engine_available_non_authorizing"), true);
+assert.equal(candidate.rendererEvidenceStatus.includes("candidate_engine_available_is_not_real_evidence"), true);
 assertBoundary(candidate);
+
+for (const [overrides, expected] of [
+  [{ priority1Status: "future_review_ready" }, "immutable_boundary_override:priority1_status"],
+  [{ checkedRowCount: 1 }, "immutable_boundary_override:checked_row_count"],
+  [{ motionDatasetExecutable: true }, "immutable_boundary_override:motion_dataset_executable"],
+  [{ ownerConfirmationConfirmed: true }, "immutable_boundary_override:owner_confirmation"],
+  [{ trustedLoaderStatus: "owner_scoped_future_ready" }, "immutable_boundary_override:trusted_loader"],
+  [{ actualDataStatus: "not_applicable_for_candidate" }, "immutable_boundary_override:actual_data"],
+  [{ runtimeReadinessStatus: "not_applicable_for_candidate" }, "immutable_boundary_override:runtime_readiness"],
+  [{ productionReadinessStatus: "not_applicable_for_candidate" }, "immutable_boundary_override:production_readiness"],
+  [{ realRendererEvidenceStatus: "candidate_engine_available" }, "immutable_boundary_override:real_renderer_evidence"],
+]) {
+  const result = createCompactSafeSummaryV2(overrides);
+  assert.equal(result.rejectionLabels.includes(expected), true, expected);
+  assert.equal(result.overallStatus, "blocked");
+  assertBoundary(result);
+}
+
+const auditReferenceOnly = createCompactSafeSummaryV2({ auditReferenceStatus: "present" });
+assert.deepEqual(auditReferenceOnly.blockerGroups.audit_reference, []);
+assert.equal(auditReferenceOnly.overallStatus, "blocked");
+assert.equal(auditReferenceOnly.blockerGroups.priority1.includes("priority1_blocked"), true);
+assert.equal(auditReferenceOnly.blockerGroups.real_renderer_evidence.includes("real_renderer_evidence_missing"), true);
+assertBoundary(auditReferenceOnly);
 
 for (const [overrides, expected] of [
   [{ overallStatus: "ready" }, "forbidden_status:ready"],
@@ -114,6 +150,8 @@ for (const [surfaceName, surface] of Object.entries(surfaces)) {
   assert.equal(summary.overallStatus, "blocked", surfaceName);
   assert.equal(summary.schema, fixture.publicKey[COMPACT_SAFE_SUMMARY_V2_PUBLIC_KEY].schema, surfaceName);
 }
+assert.deepEqual(surfaces.status.live2d_safe_summary_v2, surfaces.health.live2d_safe_summary_v2);
+assert.deepEqual(surfaces.status.live2d_safe_summary_v2, surfaces.runtimeConfig.live2d_safe_summary_v2);
 
 const input = { noncriticalAttentionLabels: ["attention"] };
 const snapshot = JSON.stringify(input);
