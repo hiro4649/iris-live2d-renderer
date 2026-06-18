@@ -1,0 +1,29 @@
+{
+  "schema": "live2d_safe_surface_contract_fixture_v2",
+  "safeSummaryOnly": true,
+  "compatibility": {
+    "v1ManifestRetained": true,
+    "legacyFieldsRetained": true,
+    "automaticRemoval": false
+  },
+  "publicKey": {
+    "live2d_safe_summary_v2": {
+      "schema": "iris_live2d_safe_summary_v2",
+      "surfaces": ["status", "health", "runtimeConfig"],
+      "overallStatuses": ["blocked", "attention_required", "candidate_only"],
+      "forbiddenStatuses": ["ready", "production_ready", "owner_confirmed"],
+      "safeSummaryOnly": true
+    }
+  },
+  "requiredInvariants": {
+    "runtimeReadinessClaimed": false,
+    "productionReadinessClaimed": false,
+    "ownerConfirmationCreated": false,
+    "ownerConfirmationConfirmed": false,
+    "trustedLoaderAllowlistEnabled": false,
+    "actualIngestionAllowed": false,
+    "motionDatasetExecutable": false,
+    "priority1Status": "BLOCKED",
+    "checkedRowCount": 0
+  }
+}

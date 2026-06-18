@@ -1041,3 +1041,8 @@ Planning-only final owner wait-for-data gate added. It keeps owner confirmation 
 Status: pure draft packet builder. This step prepares a future owner handoff packet from safe labels only; it does not send the packet, request owner action, create owner confirmation, authorize real evidence collection, run the renderer, read row bodies, ingest data, enable the trusted loader, resolve priority1, or claim runtime or production readiness.
 
 Next safe action: create a compact safe summary v2 that references the draft packet boundaries without promoting `ready_for_owner_review` into owner confirmation, readiness, or actual data approval.
+## LIVE2D-COMPACT-SAFE-SUMMARY-V2-PACK1
+
+Status: additive compact safe summary v2. This step adds `live2d_safe_summary_v2` as a registry-backed public key across status, health, and runtime-config semantics while retaining legacy fields and the v1 contract fixture. It does not remove legacy fields, create owner confirmation, start real renderer evidence collection, enable trusted loader, resolve priority1, ingest data, or claim runtime or production readiness.
+
+Next safe action: run the v1.2.6 architecture transition completion review without adding new status fields unless a meaningful doc/test gap is found.
