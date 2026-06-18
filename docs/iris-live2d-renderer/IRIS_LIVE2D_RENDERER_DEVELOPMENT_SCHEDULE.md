@@ -1060,3 +1060,11 @@ Status: pure owner-gated real evidence checklist builder and validator. This ste
 Boundary: no packet is sent, no owner confirmation is created, no real renderer evidence is collected, no renderer/browser/SDK probe is run, no file or row body is read, no hash is calculated, no actual ingestion is allowed, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
 
 Next safe action: run the real evidence preparation completion review and confirm the safe preparation layer remains non-authorizing before any future owner-gated runtime evidence task.
+
+## LIVE2D-R2-LOCALHOST-PROBE-SEMANTIC-BOUNDARY-ATTESTATION-PACK1
+
+Status: additive R2 semantic boundary attestation. This step adds a V2 localhost probe envelope and exact route contract for `/health`, `/status`, and `/renderer/runtime-config`. It fails closed on missing required fields, wrong field types, schema mismatch, missing compact summary, route set mismatch, critical boundary drift, and cross-surface semantic mismatch.
+
+Boundary: R1 compatibility is preserved. No browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
+
+Next safe action: run `LIVE2D-R2-LOCALHOST-PROBE-BOUNDED-TRANSPORT-AND-CLEANUP-PACK1` to add bounded loopback transport, minimal child environment, process cleanup, port release, and raw response non-persistence without expanding into browser, SDK, model, scene, cue, trusted loader, readiness, owner confirmation, or actual data work.

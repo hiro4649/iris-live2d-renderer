@@ -1,5 +1,12 @@
 export const LIVE2D_R1_LOCALHOST_PROCESS_PROBE_ENVELOPE_SCHEMA = "live2d_r1_localhost_process_probe_envelope_v1";
 
+export {
+  LIVE2D_R2_LOCALHOST_PROCESS_PROBE_ENVELOPE_SCHEMA,
+  buildLocalhostProcessProbeEnvelopeV2,
+  live2dR2RouteContractManifest,
+  summarizeLocalhostProbeBodyV2,
+} from "./localhostProcessProbeEnvelopeV2.js";
+
 export const LIVE2D_R1_LOCALHOST_PROBE_ROUTES = Object.freeze([
   { label: "health", path: "/health" },
   { label: "status", path: "/status" },
