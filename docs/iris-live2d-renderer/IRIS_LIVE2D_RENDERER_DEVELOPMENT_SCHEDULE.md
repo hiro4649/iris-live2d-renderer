@@ -1100,3 +1100,11 @@ Status: R2 localhost probe lane complete at the owner-decision point. R2 now inc
 Boundary: this completion review is not R3 and does not authorize browser, Playwright, Chromium, Cubism SDK or Framework execution, model load, scene load, cue application, browser heartbeat injection, trusted loader enablement, owner confirmation, actual data work, runtime readiness, production readiness, priority1 resolution, checked row count increase, or motion dataset execution.
 
 Next action: wait for a separate explicit owner-approved R3 scope before any browser-visible, SDK, model/scene, cue, trusted loader, actual data, owner confirmation, or readiness step.
+
+## LIVE2D-R3-OWNER-SCOPE-AND-BROWSER-PREFLIGHT1
+
+Status: pure R3 scope preflight. This step defines the owner labels required before a future browser-visible scaffold probe can run. A passing scope may allow browser process startup, DOM surface inspection, and canvas presence checks only.
+
+Boundary: this step does not start a browser, does not run Playwright or Chromium, does not execute Cubism SDK or Framework code, does not load a model or scene, does not apply cues, does not inject browser heartbeat, does not enable trusted loader, does not handle actual data, does not create owner confirmation, does not claim runtime or production readiness, does not resolve priority1, does not increase checked row count, and does not make the motion dataset executable.
+
+Next action: after explicit owner approval for the next R3 task, add a browser scaffold probe that verifies only page startup, DOM boundary, and canvas presence while still blocking SDK/model/scene/cue execution.

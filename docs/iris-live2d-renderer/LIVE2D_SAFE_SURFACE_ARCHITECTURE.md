@@ -183,6 +183,14 @@ The R2 completion review confirms that the R2 localhost probe line now has bound
 
 R2 completion does not advance into R3. Browser verification, Playwright or Chromium, Cubism SDK or Framework execution, model load, scene load, cue application, browser heartbeat injection, trusted loader enablement, actual data work, owner confirmation, runtime readiness, production readiness, priority1 resolution, checked row count increase, and motion dataset execution all remain blocked until a separate owner-approved R3 scope is provided.
 
+## R3 Owner Scope And Browser Preflight
+
+Task: LIVE2D-R3-OWNER-SCOPE-AND-BROWSER-PREFLIGHT1
+
+The R3 browser preflight is a pure scope gate for a future browser-visible probe. It can classify an owner-approved scope that allows browser process startup, DOM surface inspection, and canvas presence checks only. It still blocks Cubism SDK or Framework execution, model load, scene load, cue application, browser heartbeat injection, trusted loader enablement, actual data handling, owner confirmation creation, runtime readiness, production readiness, priority1 resolution, checked row count increase, motion dataset execution, and raw browser output collection.
+
+This preflight does not launch a browser and does not create R3 evidence. It only defines the minimum owner labels required before a later R3 task may start browser-visible scaffold verification.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

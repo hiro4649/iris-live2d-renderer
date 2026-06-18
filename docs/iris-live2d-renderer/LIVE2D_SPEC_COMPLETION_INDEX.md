@@ -9322,6 +9322,34 @@ The R2 completion review closes the localhost probe continuation lane at the R3 
 | next_action | wait_for_owner_approved_R3_scope |
 
 R3 is not started by this review. Any browser, SDK, model, scene, cue, trusted loader, actual data, owner confirmation, runtime readiness, production readiness, priority1, checked row count, or motion execution step requires a separate explicit owner-approved scope.
+## R3 Owner Scope And Browser Preflight
+
+Task: LIVE2D-R3-OWNER-SCOPE-AND-BROWSER-PREFLIGHT1
+
+The R3 owner scope and browser preflight adds a pure safe scope gate for a future browser-visible scaffold probe. It does not launch a browser. It only defines the labels that must be present before a later task can start browser process and DOM/canvas presence verification.
+
+| field | value |
+| --- | --- |
+| preflight_schema | live2d_r3_browser_preflight_scope_v1 |
+| browser_process_allowed_by_passing_scope | true |
+| dom_surface_allowed_by_passing_scope | true |
+| canvas_presence_allowed_by_passing_scope | true |
+| cubism_sdk_execution_allowed | false |
+| cubism_framework_execution_allowed | false |
+| model_load_allowed | false |
+| scene_load_allowed | false |
+| cue_application_allowed | false |
+| browser_heartbeat_injection_allowed | false |
+| trusted_loader_enablement_allowed | false |
+| actual_data_allowed | false |
+| owner_confirmation_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+
+Passing this preflight is not R3 evidence, not owner confirmation, not runtime readiness, not production readiness, not trusted loader approval, not actual data approval, and not priority1 resolution. Next safe action is a separately owner-approved R3 browser scaffold probe that still avoids SDK/model/scene/cue execution.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1
