@@ -115,6 +115,12 @@ The compact safe summary v2 now receives input from a pure adapter that mirrors 
 
 The parity guard checks that existing false or blocked v1 semantics still imply the corresponding v2 blocker labels: owner confirmation false, checked row count zero, motion dataset non-executable, priority1 BLOCKED, trusted loader disabled, actual ingestion false, runtime readiness false, production readiness false, and real renderer evidence missing. Contradiction fixtures fail if v2 becomes `candidate_only` or drops any required blocker while v1 remains blocked.
 
+## Safe Contract Catalog And Docs Deduplication
+
+Repeated fixed safe-label catalogs are consolidated into `src/renderer/live2dSafeContractCatalog.js`. The catalog is immutable, deterministic, side-effect free, and contains only safe public label lists: evidence source types, rejected evidence source types, runtime-supported motion labels, experimental motion labels, strong motion labels, owner handoff labels, and safe next action labels.
+
+The catalog does not include mutable runtime state, factory references, full schemas, owner-only data, raw values, file paths, row material, endpoints, tokens, or secrets. Docs now treat this architecture document as the canonical reference for the safe-surface consolidation narrative while the completion index and development schedule retain status and gate history.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

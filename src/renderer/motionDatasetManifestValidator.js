@@ -3,6 +3,11 @@ import {
   isPrototypePollutionKey,
   isSafeLabelValue,
 } from "./safeLabelValidation.js";
+import {
+  LIVE2D_EXPERIMENTAL_MOTION_LABELS,
+  LIVE2D_RUNTIME_SUPPORTED_MOTION_LABELS,
+  LIVE2D_STRONG_MOTION_LABELS,
+} from "./live2dSafeContractCatalog.js";
 
 export const REQUIRED_MANIFEST_LABELS = Object.freeze([
   "row_id",
@@ -43,33 +48,9 @@ export const MANIFEST_SPLIT_ALLOWLIST = Object.freeze([
   "quarantine_only",
 ]);
 
-const SUPPORTED_MOTION_LABELS = new Set([
-  "talk",
-  "focused_talk",
-  "laugh_big",
-  "idle_breath",
-  "surprise_scream",
-  "happy_humming",
-  "happy_dance",
-  "happy_loud_sing",
-]);
-
-const EXPERIMENTAL_MOTION_LABELS = new Set([
-  "blink_attention",
-  "small_nod",
-  "soft_smile",
-  "surprise_micro",
-  "breathing_shift",
-  "gaze_return",
-  "neutral_breath",
-]);
-
-const STRONG_MOTION_LABELS = new Set([
-  "laugh_big",
-  "surprise_scream",
-  "happy_dance",
-  "happy_loud_sing",
-]);
+const SUPPORTED_MOTION_LABELS = new Set(LIVE2D_RUNTIME_SUPPORTED_MOTION_LABELS);
+const EXPERIMENTAL_MOTION_LABELS = new Set(LIVE2D_EXPERIMENTAL_MOTION_LABELS);
+const STRONG_MOTION_LABELS = new Set(LIVE2D_STRONG_MOTION_LABELS);
 
 const UNSAFE_KEYS = new Set([
   "raw_row_body",
