@@ -1,4 +1,9 @@
 export const RENDERER_EVIDENCE_DECISION_SCHEMA = "live2d_renderer_evidence_decision_v1";
+import {
+  isPrototypePollutionKey,
+  validateSafeLabelArray,
+  validateSafeLabelValue,
+} from "./safeLabelValidation.js";
 
 export const RENDERER_EVIDENCE_ALLOWED_SOURCE_TYPES = Object.freeze([
   "real_probe",
@@ -13,8 +18,6 @@ export const RENDERER_EVIDENCE_REJECTED_SOURCE_TYPES = Object.freeze([
   "cue_accepted_only",
   "unknown",
 ]);
-
-const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 
 const ALLOWED_INPUT_KEYS = new Set([
   "schema",
@@ -33,6 +36,28 @@ const ALLOWED_INPUT_KEYS = new Set([
   "auditReferenceStatus",
   "ownerScopeStatus",
   "criticalBlockerLabels",
+]);
+
+const SCHEMA_ALLOWLIST = Object.freeze(["live2d_renderer_evidence_envelope_v1", "safe_evidence_envelope_v1"]);
+const COMPONENT_ALLOWLIST = Object.freeze(["live2d_renderer", "renderer"]);
+const SOURCE_TYPE_ALLOWLIST = Object.freeze([
+  ...RENDERER_EVIDENCE_ALLOWED_SOURCE_TYPES,
+  ...RENDERER_EVIDENCE_REJECTED_SOURCE_TYPES,
+]);
+const EVIDENCE_TIMESTAMP_STATUS_ALLOWLIST = Object.freeze(["fresh", "stale", "future", "missing"]);
+const FRESHNESS_STATUS_ALLOWLIST = Object.freeze(["fresh", "stale", "missing"]);
+const HEARTBEAT_STATUS_ALLOWLIST = Object.freeze(["fresh", "stale", "missing"]);
+const AUDIT_REFERENCE_STATUS_ALLOWLIST = Object.freeze(["present", "missing", "stale"]);
+const OWNER_SCOPE_STATUS_ALLOWLIST = Object.freeze(["confirmed", "missing", "expired", "wrong_scope"]);
+const CRITICAL_BLOCKER_LABEL_ALLOWLIST = Object.freeze([
+  "priority1_blocked",
+  "checked_row_count_zero",
+  "motion_dataset_non_executable",
+  "trusted_loader_disabled",
+  "actual_data_missing",
+  "audit_reference_missing",
+  "owner_scope_missing",
+  "real_renderer_probe_missing",
 ]);
 
 const UNSAFE_INPUT_KEYS = new Set([
@@ -64,7 +89,7 @@ function collectShapeFailures(input) {
   const failures = [];
   if (!isPlainObject(input)) return ["input_not_plain_object"];
   for (const key of Object.keys(input)) {
-    if (PROTOTYPE_POLLUTION_KEYS.has(key)) failures.push(`unsafe_key:${key}`);
+    if (isPrototypePollutionKey(key)) failures.push(`unsafe_key:${key}`);
     if (UNSAFE_INPUT_KEYS.has(key)) failures.push(`unsafe_field:${key}`);
     if (!ALLOWED_INPUT_KEYS.has(key)) failures.push(`unknown_field:${key}`);
   }
@@ -76,16 +101,16 @@ function hasPresentLabel(value) {
 }
 
 function normalizeCriticalBlockers(value) {
-  if (!Array.isArray(value)) return ["critical_blocker_labels_missing"];
-  const labels = [];
-  for (const item of value) {
-    if (typeof item !== "string" || !item.trim()) {
-      labels.push("critical_blocker_label_invalid");
-    } else {
-      labels.push(`critical_blocker:${item}`);
-    }
-  }
-  return labels;
+  const result = validateSafeLabelArray(value, {
+    allowedLabels: CRITICAL_BLOCKER_LABEL_ALLOWLIST,
+    missingLabel: "critical_blocker_labels_missing",
+    invalidLabel: "critical_blocker_label_invalid",
+    unknownLabel: "critical_blocker_label_unknown",
+  });
+  return [
+    ...result.labels.map((label) => `critical_blocker:${label}`),
+    ...result.failures,
+  ];
 }
 
 export function decideRendererEvidence(input = {}) {
@@ -105,6 +130,65 @@ export function decideRendererEvidence(input = {}) {
       safeSummaryOnly: true,
     };
   }
+
+  const schema = validateSafeLabelValue(input.schema, {
+    allowedLabels: SCHEMA_ALLOWLIST,
+    missingLabel: "schema_missing",
+    invalidLabel: "schema_invalid",
+    unknownLabel: "schema_unknown",
+  });
+  const component = validateSafeLabelValue(input.component, {
+    allowedLabels: COMPONENT_ALLOWLIST,
+    missingLabel: "component_missing",
+    invalidLabel: "component_invalid",
+    unknownLabel: "component_unknown",
+  });
+  const sourceType = validateSafeLabelValue(input.sourceType, {
+    allowedLabels: SOURCE_TYPE_ALLOWLIST,
+    missingLabel: "source_type_missing",
+    invalidLabel: "source_type_invalid",
+    unknownLabel: "source_type_unknown",
+  });
+  const evidenceTimestampStatus = validateSafeLabelValue(input.evidenceTimestampStatus, {
+    allowedLabels: EVIDENCE_TIMESTAMP_STATUS_ALLOWLIST,
+    missingLabel: "evidence_timestamp_status_missing",
+    invalidLabel: "evidence_timestamp_status_invalid",
+    unknownLabel: "evidence_timestamp_status_unknown",
+  });
+  const freshnessStatus = validateSafeLabelValue(input.freshnessStatus, {
+    allowedLabels: FRESHNESS_STATUS_ALLOWLIST,
+    missingLabel: "freshness_status_missing",
+    invalidLabel: "freshness_status_invalid",
+    unknownLabel: "freshness_status_unknown",
+  });
+  const heartbeatStatus = validateSafeLabelValue(input.rendererHeartbeatStatus, {
+    allowedLabels: HEARTBEAT_STATUS_ALLOWLIST,
+    missingLabel: "renderer_heartbeat_status_missing",
+    invalidLabel: "renderer_heartbeat_status_invalid",
+    unknownLabel: "renderer_heartbeat_status_unknown",
+  });
+  const auditStatus = validateSafeLabelValue(input.auditReferenceStatus, {
+    allowedLabels: AUDIT_REFERENCE_STATUS_ALLOWLIST,
+    missingLabel: "audit_reference_status_missing",
+    invalidLabel: "audit_reference_status_invalid",
+    unknownLabel: "audit_reference_status_unknown",
+  });
+  const ownerScopeStatus = validateSafeLabelValue(input.ownerScopeStatus, {
+    allowedLabels: OWNER_SCOPE_STATUS_ALLOWLIST,
+    missingLabel: "owner_scope_status_missing",
+    invalidLabel: "owner_scope_status_invalid",
+    unknownLabel: "owner_scope_status_unknown",
+  });
+  blockerLabels.push(
+    ...schema.failures,
+    ...component.failures,
+    ...sourceType.failures,
+    ...evidenceTimestampStatus.failures,
+    ...freshnessStatus.failures,
+    ...heartbeatStatus.failures,
+    ...auditStatus.failures,
+    ...ownerScopeStatus.failures,
+  );
 
   if (!RENDERER_EVIDENCE_ALLOWED_SOURCE_TYPES.includes(input.sourceType)) {
     blockerLabels.push(

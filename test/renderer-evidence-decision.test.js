@@ -47,6 +47,14 @@ for (const sourceType of RENDERER_EVIDENCE_REJECTED_SOURCE_TYPES) {
 }
 
 expectDecision({ sourceType: "not_registered" }, "blocked", "unsupported_source_type", "blockerLabels");
+expectDecision({ sourceType: "https://example.invalid" }, "blocked", "source_type_invalid", "blockerLabels");
+expectDecision({ schema: "not_registered" }, "blocked", "schema_unknown", "blockerLabels");
+expectDecision({ component: "not_registered" }, "blocked", "component_unknown", "blockerLabels");
+expectDecision({ evidenceTimestampStatus: "not_registered" }, "blocked", "evidence_timestamp_status_unknown", "blockerLabels");
+expectDecision({ freshnessStatus: "not_registered" }, "blocked", "freshness_status_unknown", "blockerLabels");
+expectDecision({ rendererHeartbeatStatus: "not_registered" }, "blocked", "renderer_heartbeat_status_unknown", "blockerLabels");
+expectDecision({ auditReferenceStatus: "not_registered" }, "blocked", "audit_reference_status_unknown", "blockerLabels");
+expectDecision({ ownerScopeStatus: "not_registered" }, "blocked", "owner_scope_status_unknown", "blockerLabels");
 expectDecision({ rawPayload: "redacted" }, "blocked", "unsafe_field:rawPayload", "blockerLabels");
 expectDecision({ endpoint: "redacted" }, "blocked", "unsafe_field:endpoint", "blockerLabels");
 expectDecision({ extraField: true }, "blocked", "unknown_field:extraField", "blockerLabels");
@@ -68,6 +76,8 @@ expectDecision({ auditReferenceStatus: "missing" }, "blocked", "audit_reference_
 expectDecision({ ownerScopeStatus: "missing" }, "blocked", "owner_scope_confirmed_missing");
 expectDecision({ criticalBlockerLabels: ["priority1_blocked"] }, "blocked", "critical_blocker:priority1_blocked", "blockerLabels");
 expectDecision({ criticalBlockerLabels: [""] }, "blocked", "critical_blocker_label_invalid", "blockerLabels");
+expectDecision({ criticalBlockerLabels: ["not_registered"] }, "blocked", "critical_blocker_label_unknown", "blockerLabels");
+expectDecision({ criticalBlockerLabels: ["priority1_blocked", "priority1_blocked"] }, "blocked", "critical_blocker_label_invalid", "blockerLabels");
 expectDecision({ criticalBlockerLabels: null }, "blocked", "critical_blocker_labels_missing", "blockerLabels");
 
 const input = evidence();

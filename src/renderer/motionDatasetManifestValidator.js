@@ -1,4 +1,8 @@
 export const MOTION_DATASET_MANIFEST_VALIDATOR_SCHEMA = "live2d_motion_dataset_manifest_validator_v1";
+import {
+  isPrototypePollutionKey,
+  isSafeLabelValue,
+} from "./safeLabelValidation.js";
 
 export const REQUIRED_MANIFEST_LABELS = Object.freeze([
   "row_id",
@@ -78,7 +82,6 @@ const UNSAFE_KEYS = new Set([
   "private_path",
 ]);
 
-const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 const ALLOWED_KEYS = new Set([...REQUIRED_MANIFEST_LABELS, ...OPTIONAL_MANIFEST_LABELS, "experimental_motion_executable"]);
 
 function isPlainObject(value) {
@@ -88,7 +91,7 @@ function isPlainObject(value) {
 }
 
 function hasLabel(value) {
-  return typeof value === "string" && value.trim().length > 0;
+  return isSafeLabelValue(value);
 }
 
 function baseResult(status, safeReasonLabels, rejectionLabels, count) {
@@ -113,12 +116,15 @@ function validateEntry(entry, index) {
   const rejectionLabels = [];
   if (!isPlainObject(entry)) return [`entry_not_plain_object:${index}`];
   for (const key of Object.keys(entry)) {
-    if (PROTOTYPE_POLLUTION_KEYS.has(key)) rejectionLabels.push(`unsafe_key:${key}`);
+    if (isPrototypePollutionKey(key)) rejectionLabels.push(`unsafe_key:${key}`);
     if (UNSAFE_KEYS.has(key)) rejectionLabels.push(`${key}_present`);
     if (!ALLOWED_KEYS.has(key)) rejectionLabels.push(`unknown_label:${key}`);
   }
   for (const label of REQUIRED_MANIFEST_LABELS) {
     if (!hasLabel(entry[label])) rejectionLabels.push(`${label}_missing`);
+  }
+  for (const label of OPTIONAL_MANIFEST_LABELS) {
+    if (entry[label] !== undefined && !hasLabel(entry[label])) rejectionLabels.push(`${label}_invalid`);
   }
   if (hasLabel(entry.split) && !MANIFEST_SPLIT_ALLOWLIST.includes(entry.split)) {
     rejectionLabels.push("split_unsupported");

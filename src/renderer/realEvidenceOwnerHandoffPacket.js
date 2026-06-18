@@ -1,4 +1,8 @@
 export const REAL_EVIDENCE_OWNER_HANDOFF_PACKET_SCHEMA = "live2d_real_evidence_owner_handoff_packet_v1";
+import {
+  isPrototypePollutionKey,
+  validateSafeLabelArray,
+} from "./safeLabelValidation.js";
 
 export const SAFE_NEXT_ACTION_LABELS = Object.freeze([
   "wait_for_explicit_owner_action",
@@ -8,7 +12,50 @@ export const SAFE_NEXT_ACTION_LABELS = Object.freeze([
   "keep_priority1_blocked_until_real_evidence",
 ]);
 
-const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "prototype", "constructor"]);
+const SCOPE_LABEL_ALLOWLIST = Object.freeze([
+  "live2d_renderer",
+  "motion_dataset",
+  "audit_reference",
+  "trusted_loader",
+  "runtime_readiness",
+  "production_readiness",
+  "owner_confirmation",
+  "real_evidence_collection",
+]);
+
+const REQUIRED_EVIDENCE_LABEL_ALLOWLIST = Object.freeze([
+  "fresh_renderer_heartbeat",
+  "real_model_load_supported",
+  "model_loaded",
+  "scene_loaded",
+  "model_scene_match_confirmed",
+  "cue_capability_confirmed",
+  "last_cue_applied",
+  "last_cue_applied_success",
+  "audit_reference_present",
+  "owner_scope_confirmed",
+  "metadata_row_manifest_present",
+]);
+
+const STALE_EVIDENCE_LABEL_ALLOWLIST = Object.freeze([
+  "renderer_heartbeat_stale",
+  "model_evidence_stale",
+  "scene_evidence_stale",
+  "cue_evidence_stale",
+  "audit_reference_stale",
+  "owner_scope_expired",
+]);
+
+const OWNER_ACTION_LABEL_ALLOWLIST = Object.freeze([
+  "review_scope",
+  "confirm_real_evidence_collection_scope",
+  "review_missing_evidence",
+  "review_stale_evidence",
+  "review_audit_reference",
+  "keep_trusted_loader_disabled",
+  "keep_priority1_blocked",
+  "prepare_metadata_only_row_manifest",
+]);
 
 const ALLOWED_INPUT_KEYS = new Set([
   "scopeLabels",
@@ -64,40 +111,11 @@ function collectShapeFailures(input) {
   const failures = [];
   if (!isPlainObject(input)) return ["input_not_plain_object"];
   for (const key of Object.keys(input)) {
-    if (PROTOTYPE_POLLUTION_KEYS.has(key)) failures.push(`unsafe_key:${key}`);
+    if (isPrototypePollutionKey(key)) failures.push(`unsafe_key:${key}`);
     if (UNSAFE_INPUT_KEYS.has(key)) failures.push(`unsafe_field:${key}`);
     if (!ALLOWED_INPUT_KEYS.has(key)) failures.push(`unknown_field:${key}`);
   }
   return failures;
-}
-
-function normalizeLabels(value, missingLabel, invalidLabel) {
-  if (!Array.isArray(value)) return { labels: [], failures: [missingLabel] };
-  const labels = [];
-  const failures = [];
-  for (const item of value) {
-    if (typeof item !== "string" || !item.trim()) {
-      failures.push(invalidLabel);
-    } else {
-      labels.push(item);
-    }
-  }
-  return { labels, failures };
-}
-
-function normalizeOptionalLabels(value, invalidLabel) {
-  if (value === undefined) return { labels: [], failures: [] };
-  if (!Array.isArray(value)) return { labels: [], failures: [invalidLabel] };
-  const labels = [];
-  const failures = [];
-  for (const item of value) {
-    if (typeof item !== "string" || !item.trim()) {
-      failures.push(invalidLabel);
-    } else {
-      labels.push(item);
-    }
-  }
-  return { labels, failures };
 }
 
 function pickStatus({
@@ -123,15 +141,33 @@ function pickStatus({
 
 export function buildRealEvidenceOwnerHandoffPacket(input = {}) {
   const rejectionLabels = collectShapeFailures(input);
-  const scope = normalizeLabels(input.scopeLabels, "scope_labels_missing", "scope_label_invalid");
-  const requiredEvidence = normalizeLabels(
-    input.requiredEvidenceLabels,
-    "required_evidence_labels_missing",
-    "required_evidence_label_invalid",
-  );
-  const missingEvidence = normalizeOptionalLabels(input.missingEvidenceLabels, "missing_evidence_label_invalid");
-  const staleEvidence = normalizeOptionalLabels(input.staleEvidenceLabels, "stale_evidence_label_invalid");
-  const ownerActions = normalizeOptionalLabels(input.ownerActionsRequired, "owner_action_label_invalid");
+  const scope = validateSafeLabelArray(input.scopeLabels, {
+    allowedLabels: SCOPE_LABEL_ALLOWLIST,
+    missingLabel: "scope_labels_missing",
+    invalidLabel: "scope_label_invalid",
+    unknownLabel: "scope_label_unknown",
+  });
+  const requiredEvidence = validateSafeLabelArray(input.requiredEvidenceLabels, {
+    allowedLabels: REQUIRED_EVIDENCE_LABEL_ALLOWLIST,
+    missingLabel: "required_evidence_labels_missing",
+    invalidLabel: "required_evidence_label_invalid",
+    unknownLabel: "required_evidence_label_unknown",
+  });
+  const missingEvidence = validateSafeLabelArray(input.missingEvidenceLabels || [], {
+    allowedLabels: REQUIRED_EVIDENCE_LABEL_ALLOWLIST,
+    invalidLabel: "missing_evidence_label_invalid",
+    unknownLabel: "missing_evidence_label_unknown",
+  });
+  const staleEvidence = validateSafeLabelArray(input.staleEvidenceLabels || [], {
+    allowedLabels: STALE_EVIDENCE_LABEL_ALLOWLIST,
+    invalidLabel: "stale_evidence_label_invalid",
+    unknownLabel: "stale_evidence_label_unknown",
+  });
+  const ownerActions = validateSafeLabelArray(input.ownerActionsRequired || [], {
+    allowedLabels: OWNER_ACTION_LABEL_ALLOWLIST,
+    invalidLabel: "owner_action_label_invalid",
+    unknownLabel: "owner_action_label_unknown",
+  });
 
   rejectionLabels.push(
     ...scope.failures,

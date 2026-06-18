@@ -9076,6 +9076,33 @@ The compact safe summary v2 semantic invariant repair keeps blocker groups, `ove
 | real_renderer_evidence_blocker_cleared_by_candidate_engine | false |
 
 This repair does not add a public top-level field, does not collect renderer evidence, does not run a renderer probe, does not create owner confirmation, does not enable trusted loader, does not ingest data, does not execute parser/redaction/audit work, and does not claim runtime or production readiness.
+## Pure Safe Module Input Label Hardening Pack
+
+Task: LIVE2D-PURE-SAFE-MODULE-INPUT-LABEL-HARDENING-PACK1
+
+This pack hardens label values in pure safe modules. It adds shared safe-label validation and applies it to the real evidence owner handoff packet, renderer evidence decision, motion dataset manifest validator, and compact safe summary v2.
+
+| field | value |
+| --- | --- |
+| safe_label_pattern | bounded ASCII token |
+| blank_label_rejected | true |
+| whitespace_label_rejected | true |
+| control_character_rejected | true |
+| path_separator_rejected | true |
+| url_like_value_rejected | true |
+| secret_like_value_rejected | true |
+| shell_like_value_rejected | true |
+| duplicate_label_rejected | true |
+| unknown_allowlist_value_rejected | true |
+| raw_value_echo | false |
+| public_status_field_added | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| owner_confirmation_created | false |
+| trusted_loader_enabled | false |
+| actual_ingestion_allowed | false |
+
+The validation is pure and deterministic. It does not execute renderer, SDK, browser, parser, redaction, audit, file, row, hash, external service, owner confirmation, trusted loader, runtime readiness, or production readiness work.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1

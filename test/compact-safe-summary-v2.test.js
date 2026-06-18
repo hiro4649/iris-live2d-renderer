@@ -125,6 +125,8 @@ for (const [overrides, expected] of [
   [{ actualFilePath: "redacted" }, "unsafe_field:actualFilePath"],
   [{ rowBody: "redacted" }, "unsafe_field:rowBody"],
   [{ unknownField: true }, "unknown_field:unknownField"],
+  [{ noncriticalAttentionLabels: ["https://example.invalid"] }, "noncritical_attention_label_invalid"],
+  [{ candidateOnlyLabels: ["candidate only"] }, "candidate_only_label_invalid"],
 ]) {
   const result = createCompactSafeSummaryV2(overrides);
   assert.equal(result.rejectionLabels.includes(expected), true, expected);
