@@ -3,6 +3,10 @@ import {
   confirmVisualCueApplication as confirmVisualCueApplicationState,
   createInitialCueLifecycleState,
 } from "./rendererCueLifecycle.js";
+import {
+  createNullRendererAdapter,
+  normalizeRendererAdapterResult,
+} from "./rendererAdapter.js";
 
 const HEARTBEAT_INTERVAL_MS = 1_000;
 const RENDERER_EVENTS_ROUTE = "/renderer/events";
@@ -74,6 +78,10 @@ export function createInitialRendererState() {
     browserBootstrapConfig: null,
     lastBootstrapRefreshAt: 0,
     bootstrapRefreshInFlight: false,
+    rendererAdapter: createNullRendererAdapter(),
+    rendererAdapterInitialized: false,
+    lastAdapterStatus: "not_initialized",
+    lastAdapterFailureLabel: "",
     eventStreamActive: false,
     eventStreamConnected: false,
     eventStreamFailed: false,
@@ -118,6 +126,7 @@ async function refreshBootstrapConfig(state = rendererState) {
     state.modelId = runtimeConfig.model_id || "";
     state.sceneId = runtimeConfig.scene_id || "";
     applyRuntimeConfig(state, runtimeConfig, await ensureCubismRuntimeLoaded(runtimeConfig));
+    initializeRendererAdapter(state);
     await updateModelLoadEvidence(state, runtimeConfig);
     flushPendingCues(state);
     updateStatusText(state);
@@ -173,6 +182,18 @@ export function applyRuntimeConfig(state, config, cubismRuntimeLoaded = state.cu
   state.loaderDependencyStatus = cubismRuntimeLoaded ? "missing_dependency" : "not_configured";
   state.loaderCandidateKind = "none";
   state.trustedLoaderEvidence = null;
+  return state;
+}
+
+export function initializeRendererAdapter(state = rendererState) {
+  if (!state.rendererAdapter || typeof state.rendererAdapter.initialize !== "function") {
+    state.rendererAdapter = createNullRendererAdapter();
+  }
+  if (state.rendererAdapterInitialized) return state;
+  const result = normalizeRendererAdapterResult(state.rendererAdapter.initialize());
+  state.rendererAdapterInitialized = true;
+  state.lastAdapterStatus = result.status;
+  state.lastAdapterFailureLabel = result.failureLabel;
   return state;
 }
 
@@ -443,13 +464,26 @@ export function flushPendingCues(state, now = Date.now) {
     state.lastCueApplyStatus = state.pendingCues.length > 0 ? "queued_until_ready" : "not_ready";
     return { accepted_count: 0, accepted_cues: [], pending_cue_count: state.pendingCues.length };
   }
+  initializeRendererAdapter(state);
   const acceptedCues = [];
   while (state.pendingCues.length > 0) {
     const cue = state.pendingCues.shift();
     acceptCueForApplication(state, cue, now());
+    const applyResult = normalizeRendererAdapterResult(state.rendererAdapter.applyCue(cue));
+    state.lastAdapterStatus = applyResult.status;
+    state.lastAdapterFailureLabel = applyResult.failureLabel;
+    const updateResult = normalizeRendererAdapterResult(state.rendererAdapter.update());
+    state.lastAdapterStatus = updateResult.status;
+    state.lastAdapterFailureLabel = updateResult.failureLabel;
+    const renderResult = normalizeRendererAdapterResult(state.rendererAdapter.render());
+    state.lastAdapterStatus = renderResult.status;
+    state.lastAdapterFailureLabel = renderResult.failureLabel;
+    const visualConfirmation = maybeConfirmVisualCueApplication(state, renderResult, now());
     acceptedCues.push({
       status_hash: state.lastAcceptedCueStatusHash,
       acceptance_status: state.lastCueAcceptanceStatus,
+      adapter_status: renderResult.status,
+      visual_application_confirmed: visualConfirmation.ok === true,
     });
   }
   return { accepted_count: acceptedCues.length, accepted_cues: acceptedCues, pending_cue_count: state.pendingCues.length };
@@ -457,6 +491,23 @@ export function flushPendingCues(state, now = Date.now) {
 
 export function confirmVisualCueApplication(state = rendererState, receipt = {}) {
   return confirmVisualCueApplicationState(state, receipt);
+}
+
+export function maybeConfirmVisualCueApplication(state, adapterResult, appliedAtMs = Date.now()) {
+  const result = normalizeRendererAdapterResult(adapterResult);
+  if (result.status !== "visual_application_confirmed" || result.visualApplicationConfirmed !== true) {
+    return {
+      ok: false,
+      status: "not_confirmed",
+      safeSummaryOnly: true,
+    };
+  }
+  return confirmVisualCueApplicationState(state, {
+    statusHash: state.lastAcceptedCueStatusHash,
+    appliedAtMs,
+    renderFrameSequence: result.renderFrameSequence,
+    adapterReceiptStatus: result.status,
+  });
 }
 
 export function isReadyForCueApply(state) {
@@ -511,6 +562,8 @@ export function createHeartbeatPayload(state, nowMs = Date.now()) {
     last_cue_acceptance_status: state.lastCueAcceptanceStatus,
     last_visual_application_status: state.lastVisualApplicationStatus,
     last_visual_application_frame_sequence: state.lastVisualApplicationFrameSequence,
+    last_adapter_status: state.lastAdapterStatus,
+    last_adapter_failure_label: state.lastAdapterFailureLabel,
     heartbeat_timestamp_ms: nowMs,
   };
 }

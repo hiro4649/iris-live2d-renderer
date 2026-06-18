@@ -73,6 +73,12 @@ export function createLive2dRendererServer({
         response.end(script);
         return;
       }
+      if (request.method === "GET" && (url.pathname === "/renderer-adapter.js" || url.pathname === "/rendererAdapter.js")) {
+        const script = await readFile(join(publicDir, "rendererAdapter.js"), "utf8");
+        response.writeHead(200, { "content-type": "application/javascript; charset=utf-8", "cache-control": "no-store" });
+        response.end(script);
+        return;
+      }
       if (request.method === "GET" && url.pathname === "/renderer/cues") {
         return sendJson(response, 200, state.readBrowserCues());
       }
@@ -446,6 +452,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       "GET /renderer/cues",
       "GET /renderer/events",
       "GET /renderer/runtime-config",
+      "GET /renderer-adapter.js",
       "GET /renderer/model3",
       "GET /renderer/model-asset/:asset_id",
       "GET /renderer/cubism-core.js",
