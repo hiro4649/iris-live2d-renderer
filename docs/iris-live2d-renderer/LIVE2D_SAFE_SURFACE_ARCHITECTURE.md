@@ -39,6 +39,14 @@ The registry extraction layer is declarative and compatibility-only:
   inventory and fails on missing registry IDs, orphan registry IDs, duplicate
   IDs, duplicate schemas, duplicate public keys, visibility violations, effect
   violations, schema mismatches, or missing surface presence.
+- `src/renderer/safeSurfaceProjection.js` resolves registered factories through
+  an explicit factory map and projects the registered motion identity/comfort
+  summaries onto status, health, and runtimeConfig without eval, global lookup,
+  prototype lookup, cache sharing, renderer execution, or external calls.
+- `test/fixtures/live2d-safe-surface-contract-v1.json` is an independent
+  safe-metadata contract baseline for outer public keys, schema labels, and
+  required invariant key presence. Tests compare current projections against
+  that baseline instead of regenerating it during test execution.
 
 This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not

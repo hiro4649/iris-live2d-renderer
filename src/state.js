@@ -166,6 +166,7 @@ import {
 import { validateRendererCueEnvelope } from "./renderer/cueValidation.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
 import { resolveSafeModelAsset } from "./renderer/modelAssets.js";
+import { buildRegisteredSafeSummaryMap, projectRegisteredSafeSummaries } from "./renderer/safeSurfaceProjection.js";
 
 const MAX_BROWSER_CUE_QUEUE = 20;
 
@@ -302,53 +303,8 @@ export function createRendererState({
       const motionDatasetOwnerSubmissionFormSpec = createMotionDatasetOwnerSubmissionFormSpecSummary();
       const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
-      const live2dMotionIdentityAndComfortSpec = createLive2dMotionIdentityAndComfortSpecSummary();
-      const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
-      const live2dMotionIdentityAndComfortDryRunValidator = createLive2dMotionIdentityAndComfortDryRunValidatorSummary();
-      const live2dMotionIdentityAndComfortRecoveryMatrix = createLive2dMotionIdentityAndComfortRecoveryMatrixSummary();
-      const live2dMotionIdentityAndComfortContextGate = createLive2dMotionIdentityAndComfortContextGateSummary();
-      const live2dMotionIdentityAndComfortSubtitleGazeGuard = createLive2dMotionIdentityAndComfortSubtitleGazeGuardSummary();
-      const live2dMotionIdentityAndComfortPersonaPressureGuard = createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary();
-      const live2dMotionIdentityAndComfortVoiceSyncHintBoundary = createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary();
-      const live2dMotionIdentityAndComfortAdaptiveBounds = createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary();
-      const live2dMotionIdentityComfortDevelopmentSchedule = createLive2dMotionIdentityComfortDevelopmentScheduleSummary();
-      const live2dMotionIdentityComfortCompletionReview = createLive2dMotionIdentityComfortCompletionReviewSummary();
-      const live2dMotionIdentityProfileStatusSurface = createLive2dMotionIdentityProfileStatusSurfaceSummary();
-      const live2dMotionComfortPolicyStatusSurface = createLive2dMotionComfortPolicyStatusSurfaceSummary();
-      const live2dMotionFreshnessPolicyCrossSurfaceConsistency = createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary();
-      const live2dMotionStrongMotionUnsafeOverrideRejection = createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary();
-      const live2dMotionIdentityComfortRedactionSweep = createLive2dMotionIdentityComfortRedactionSweepSummary();
-      const live2dMotionIdentityComfortNoSweeteningSweep = createLive2dMotionIdentityComfortNoSweeteningSweepSummary();
-      const live2dMotionIdentityComfortImplementationGapAudit = createLive2dMotionIdentityComfortImplementationGapAuditSummary();
-      const live2dMotionIdentityComfortImplementationGapRegister = createLive2dMotionIdentityComfortImplementationGapRegisterSummary();
-      const live2dMotionIdentityComfortFinalLongContinuationReview2 = createLive2dMotionIdentityComfortFinalLongContinuationReview2Summary();
-      const live2dMotionIdentityComfortLongContinuationCompletionReview3 = createLive2dMotionIdentityComfortLongContinuationCompletionReview3();
-      const live2dMotionIdentityComfortPublicSummary = createLive2dMotionIdentityComfortPublicSummary();
-      const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
-      const live2dMotionIdentityComfortPublicAdminSurfaceAlignment = createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment();
-      const live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2 = createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2();
-      const live2dMotionIdentityComfortPublicRoleGateLeakRejection = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection();
-      const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
-      const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
-      const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
-      const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
-      const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
-      const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
-      const live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2 = createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2();
-      const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
-      const live2dMotionIdentityComfortBlockerGroupingStatusSurface = createLive2dMotionIdentityComfortBlockerGroupingStatusSurface();
-      const live2dMotionIdentityComfortBlockerGroupingContract2 = createLive2dMotionIdentityComfortBlockerGroupingContract2();
-      const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
-      const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
-      const live2dMotionIdentityComfortContinuationLedger2 = createLive2dMotionIdentityComfortContinuationLedger2();
-      const live2dMotionIdentityComfortContinuationLedgerConsistency2 = createLive2dMotionIdentityComfortContinuationLedgerConsistency2();
-      const live2dMotionIdentityComfortPreOwnerFinalWaitState = createLive2dMotionIdentityComfortPreOwnerFinalWaitState();
-      const live2dMotionIdentityComfortImplementationGapAudit2 = createLive2dMotionIdentityComfortImplementationGapAudit2Summary();
-      const live2dMotionIdentityComfortImplementationGapRegister2 = createLive2dMotionIdentityComfortImplementationGapRegister2Summary();
-      const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
-      const live2dMotionIdentityComfortContinuationLedgerConsistency = createLive2dMotionIdentityComfortContinuationLedgerConsistency();
-      const live2dMotionIdentityComfortFinalRedactionSweep2 = createLive2dMotionIdentityComfortFinalRedactionSweep2();
-      const live2dMotionIdentityComfortFinalNoSweeteningSweep2 = createLive2dMotionIdentityComfortFinalNoSweeteningSweep2();
+      const motionIdentityComfortProjection = buildRegisteredSafeSummaryMap();
+      const motionIdentityComfortSummaries = motionIdentityComfortProjection.summaries;
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -514,53 +470,7 @@ export function createRendererState({
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
           motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
-          live2d_motion_identity_and_comfort_spec_summary: live2dMotionIdentityAndComfortSpec,
-          live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
-          live2d_motion_identity_and_comfort_dry_run_validator_summary: live2dMotionIdentityAndComfortDryRunValidator,
-          live2d_motion_identity_and_comfort_recovery_matrix_summary: live2dMotionIdentityAndComfortRecoveryMatrix,
-          live2d_motion_identity_and_comfort_context_gate_summary: live2dMotionIdentityAndComfortContextGate,
-          live2d_motion_identity_and_comfort_subtitle_gaze_guard_summary: live2dMotionIdentityAndComfortSubtitleGazeGuard,
-          live2d_motion_identity_and_comfort_persona_pressure_guard_summary: live2dMotionIdentityAndComfortPersonaPressureGuard,
-          live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: live2dMotionIdentityAndComfortVoiceSyncHintBoundary,
-          live2d_motion_identity_and_comfort_adaptive_bounds_summary: live2dMotionIdentityAndComfortAdaptiveBounds,
-          live2d_motion_identity_comfort_development_schedule_summary: live2dMotionIdentityComfortDevelopmentSchedule,
-          live2d_motion_identity_comfort_completion_review_summary: live2dMotionIdentityComfortCompletionReview,
-          live2d_motion_identity_profile_status_surface_summary: live2dMotionIdentityProfileStatusSurface,
-          live2d_motion_comfort_policy_status_surface_summary: live2dMotionComfortPolicyStatusSurface,
-          live2d_motion_freshness_policy_cross_surface_consistency_summary: live2dMotionFreshnessPolicyCrossSurfaceConsistency,
-          live2d_motion_strong_motion_unsafe_override_rejection_summary: live2dMotionStrongMotionUnsafeOverrideRejection,
-          live2d_motion_identity_comfort_redaction_sweep_summary: live2dMotionIdentityComfortRedactionSweep,
-          live2d_motion_identity_comfort_no_sweetening_sweep_summary: live2dMotionIdentityComfortNoSweeteningSweep,
-          live2d_motion_identity_comfort_implementation_gap_audit_summary: live2dMotionIdentityComfortImplementationGapAudit,
-          live2d_motion_identity_comfort_implementation_gap_register_summary: live2dMotionIdentityComfortImplementationGapRegister,
-          live2d_motion_identity_comfort_final_long_continuation_review2_summary: live2dMotionIdentityComfortFinalLongContinuationReview2,
-          live2d_motion_identity_comfort_long_continuation_completion_review3: live2dMotionIdentityComfortLongContinuationCompletionReview3,
-          live2d_motion_identity_comfort_public_summary: live2dMotionIdentityComfortPublicSummary,
-          live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
-          live2d_motion_identity_comfort_public_admin_surface_alignment: live2dMotionIdentityComfortPublicAdminSurfaceAlignment,
-          live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
-          live2d_motion_identity_comfort_public_role_gate_leak_rejection: live2dMotionIdentityComfortPublicRoleGateLeakRejection,
-          live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
-          live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
-          live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
-          live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
-          live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
-          live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
-          live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
-          live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
-          live2d_motion_identity_comfort_blocker_grouping_status_surface: live2dMotionIdentityComfortBlockerGroupingStatusSurface,
-          live2d_motion_identity_comfort_blocker_grouping_contract2: live2dMotionIdentityComfortBlockerGroupingContract2,
-          live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
-          live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
-          live2d_motion_identity_comfort_continuation_ledger2: live2dMotionIdentityComfortContinuationLedger2,
-          live2d_motion_identity_comfort_continuation_ledger_consistency2: live2dMotionIdentityComfortContinuationLedgerConsistency2,
-          live2d_motion_identity_comfort_pre_owner_final_wait_state: live2dMotionIdentityComfortPreOwnerFinalWaitState,
-          live2d_motion_identity_comfort_implementation_gap_audit2_summary: live2dMotionIdentityComfortImplementationGapAudit2,
-          live2d_motion_identity_comfort_implementation_gap_register2_summary: live2dMotionIdentityComfortImplementationGapRegister2,
-          live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
-          live2d_motion_identity_comfort_continuation_ledger_consistency: live2dMotionIdentityComfortContinuationLedgerConsistency,
-          live2d_motion_identity_comfort_final_redaction_sweep2: live2dMotionIdentityComfortFinalRedactionSweep2,
-          live2d_motion_identity_comfort_final_no_sweetening_sweep2: live2dMotionIdentityComfortFinalNoSweeteningSweep2,
+          ...motionIdentityComfortSummaries,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -675,53 +585,7 @@ export function createRendererState({
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
           motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
-          live2d_motion_identity_and_comfort_spec_summary: live2dMotionIdentityAndComfortSpec,
-          live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
-          live2d_motion_identity_and_comfort_dry_run_validator_summary: live2dMotionIdentityAndComfortDryRunValidator,
-          live2d_motion_identity_and_comfort_recovery_matrix_summary: live2dMotionIdentityAndComfortRecoveryMatrix,
-          live2d_motion_identity_and_comfort_context_gate_summary: live2dMotionIdentityAndComfortContextGate,
-          live2d_motion_identity_and_comfort_subtitle_gaze_guard_summary: live2dMotionIdentityAndComfortSubtitleGazeGuard,
-          live2d_motion_identity_and_comfort_persona_pressure_guard_summary: live2dMotionIdentityAndComfortPersonaPressureGuard,
-          live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: live2dMotionIdentityAndComfortVoiceSyncHintBoundary,
-          live2d_motion_identity_and_comfort_adaptive_bounds_summary: live2dMotionIdentityAndComfortAdaptiveBounds,
-          live2d_motion_identity_comfort_development_schedule_summary: live2dMotionIdentityComfortDevelopmentSchedule,
-          live2d_motion_identity_comfort_completion_review_summary: live2dMotionIdentityComfortCompletionReview,
-          live2d_motion_identity_profile_status_surface_summary: live2dMotionIdentityProfileStatusSurface,
-          live2d_motion_comfort_policy_status_surface_summary: live2dMotionComfortPolicyStatusSurface,
-          live2d_motion_freshness_policy_cross_surface_consistency_summary: live2dMotionFreshnessPolicyCrossSurfaceConsistency,
-          live2d_motion_strong_motion_unsafe_override_rejection_summary: live2dMotionStrongMotionUnsafeOverrideRejection,
-          live2d_motion_identity_comfort_redaction_sweep_summary: live2dMotionIdentityComfortRedactionSweep,
-          live2d_motion_identity_comfort_no_sweetening_sweep_summary: live2dMotionIdentityComfortNoSweeteningSweep,
-          live2d_motion_identity_comfort_implementation_gap_audit_summary: live2dMotionIdentityComfortImplementationGapAudit,
-          live2d_motion_identity_comfort_implementation_gap_register_summary: live2dMotionIdentityComfortImplementationGapRegister,
-          live2d_motion_identity_comfort_final_long_continuation_review2_summary: live2dMotionIdentityComfortFinalLongContinuationReview2,
-          live2d_motion_identity_comfort_long_continuation_completion_review3: live2dMotionIdentityComfortLongContinuationCompletionReview3,
-          live2d_motion_identity_comfort_public_summary: live2dMotionIdentityComfortPublicSummary,
-          live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
-          live2d_motion_identity_comfort_public_admin_surface_alignment: live2dMotionIdentityComfortPublicAdminSurfaceAlignment,
-          live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
-          live2d_motion_identity_comfort_public_role_gate_leak_rejection: live2dMotionIdentityComfortPublicRoleGateLeakRejection,
-          live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
-          live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
-          live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
-          live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
-          live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
-          live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
-          live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
-          live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
-          live2d_motion_identity_comfort_blocker_grouping_status_surface: live2dMotionIdentityComfortBlockerGroupingStatusSurface,
-          live2d_motion_identity_comfort_blocker_grouping_contract2: live2dMotionIdentityComfortBlockerGroupingContract2,
-          live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
-          live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
-          live2d_motion_identity_comfort_continuation_ledger2: live2dMotionIdentityComfortContinuationLedger2,
-          live2d_motion_identity_comfort_continuation_ledger_consistency2: live2dMotionIdentityComfortContinuationLedgerConsistency2,
-          live2d_motion_identity_comfort_pre_owner_final_wait_state: live2dMotionIdentityComfortPreOwnerFinalWaitState,
-          live2d_motion_identity_comfort_implementation_gap_audit2_summary: live2dMotionIdentityComfortImplementationGapAudit2,
-          live2d_motion_identity_comfort_implementation_gap_register2_summary: live2dMotionIdentityComfortImplementationGapRegister2,
-          live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
-          live2d_motion_identity_comfort_continuation_ledger_consistency: live2dMotionIdentityComfortContinuationLedgerConsistency,
-          live2d_motion_identity_comfort_final_redaction_sweep2: live2dMotionIdentityComfortFinalRedactionSweep2,
-          live2d_motion_identity_comfort_final_no_sweetening_sweep2: live2dMotionIdentityComfortFinalNoSweeteningSweep2,
+          ...motionIdentityComfortSummaries,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,
@@ -794,6 +658,7 @@ export function createRendererState({
 
     health() {
       const status = this.status();
+      const motionIdentityComfortSummaries = buildRegisteredSafeSummaryMap().summaries;
       const health = {
         ok: true,
         schema: "iris_live2d_renderer_health_v1",
@@ -877,53 +742,7 @@ export function createRendererState({
         motion_dataset_owner_submission_form_spec_summary: status.renderer_health.motion_dataset_owner_submission_form_spec_summary,
         motion_dataset_real_row_redaction_policy_matrix_summary: status.renderer_health.motion_dataset_real_row_redaction_policy_matrix_summary,
         motion_dataset_motion_allowlist_sync_review_summary: status.renderer_health.motion_dataset_motion_allowlist_sync_review_summary,
-        live2d_motion_identity_and_comfort_spec_summary: status.renderer_health.live2d_motion_identity_and_comfort_spec_summary,
-        live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: status.renderer_health.live2d_motion_identity_and_comfort_rejection_fixture_pack_summary,
-        live2d_motion_identity_and_comfort_dry_run_validator_summary: status.renderer_health.live2d_motion_identity_and_comfort_dry_run_validator_summary,
-        live2d_motion_identity_and_comfort_recovery_matrix_summary: status.renderer_health.live2d_motion_identity_and_comfort_recovery_matrix_summary,
-        live2d_motion_identity_and_comfort_context_gate_summary: status.renderer_health.live2d_motion_identity_and_comfort_context_gate_summary,
-        live2d_motion_identity_and_comfort_subtitle_gaze_guard_summary: status.renderer_health.live2d_motion_identity_and_comfort_subtitle_gaze_guard_summary,
-        live2d_motion_identity_and_comfort_persona_pressure_guard_summary: status.renderer_health.live2d_motion_identity_and_comfort_persona_pressure_guard_summary,
-        live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: status.renderer_health.live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary,
-        live2d_motion_identity_and_comfort_adaptive_bounds_summary: status.renderer_health.live2d_motion_identity_and_comfort_adaptive_bounds_summary,
-        live2d_motion_identity_comfort_development_schedule_summary: status.renderer_health.live2d_motion_identity_comfort_development_schedule_summary,
-        live2d_motion_identity_comfort_completion_review_summary: status.renderer_health.live2d_motion_identity_comfort_completion_review_summary,
-        live2d_motion_identity_profile_status_surface_summary: status.renderer_health.live2d_motion_identity_profile_status_surface_summary,
-        live2d_motion_comfort_policy_status_surface_summary: status.renderer_health.live2d_motion_comfort_policy_status_surface_summary,
-        live2d_motion_freshness_policy_cross_surface_consistency_summary: status.renderer_health.live2d_motion_freshness_policy_cross_surface_consistency_summary,
-        live2d_motion_strong_motion_unsafe_override_rejection_summary: status.renderer_health.live2d_motion_strong_motion_unsafe_override_rejection_summary,
-        live2d_motion_identity_comfort_redaction_sweep_summary: status.renderer_health.live2d_motion_identity_comfort_redaction_sweep_summary,
-        live2d_motion_identity_comfort_no_sweetening_sweep_summary: status.renderer_health.live2d_motion_identity_comfort_no_sweetening_sweep_summary,
-        live2d_motion_identity_comfort_implementation_gap_audit_summary: status.renderer_health.live2d_motion_identity_comfort_implementation_gap_audit_summary,
-        live2d_motion_identity_comfort_implementation_gap_register_summary: status.renderer_health.live2d_motion_identity_comfort_implementation_gap_register_summary,
-        live2d_motion_identity_comfort_final_long_continuation_review2_summary: status.renderer_health.live2d_motion_identity_comfort_final_long_continuation_review2_summary,
-        live2d_motion_identity_comfort_long_continuation_completion_review3: status.renderer_health.live2d_motion_identity_comfort_long_continuation_completion_review3,
-        live2d_motion_identity_comfort_public_summary: status.renderer_health.live2d_motion_identity_comfort_public_summary,
-        live2d_motion_identity_comfort_admin_summary_redaction: status.renderer_health.live2d_motion_identity_comfort_admin_summary_redaction,
-        live2d_motion_identity_comfort_public_admin_surface_alignment: status.renderer_health.live2d_motion_identity_comfort_public_admin_surface_alignment,
-        live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: status.renderer_health.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2,
-        live2d_motion_identity_comfort_public_role_gate_leak_rejection: status.renderer_health.live2d_motion_identity_comfort_public_role_gate_leak_rejection,
-        live2d_motion_identity_comfort_operator_handoff_no_action: status.renderer_health.live2d_motion_identity_comfort_operator_handoff_no_action,
-        live2d_motion_identity_comfort_owner_handoff_stub: status.renderer_health.live2d_motion_identity_comfort_owner_handoff_stub,
-        live2d_motion_identity_comfort_role_gate_stub: status.renderer_health.live2d_motion_identity_comfort_role_gate_stub,
-        live2d_motion_identity_comfort_role_gate_redaction_guard: status.renderer_health.live2d_motion_identity_comfort_role_gate_redaction_guard,
-        live2d_motion_identity_comfort_audit_stub_no_write: status.renderer_health.live2d_motion_identity_comfort_audit_stub_no_write,
-        live2d_motion_identity_comfort_audit_event_stub_no_write2: status.renderer_health.live2d_motion_identity_comfort_audit_event_stub_no_write2,
-        live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: status.renderer_health.live2d_motion_identity_comfort_audit_event_unsafe_field_guard2,
-        live2d_motion_identity_comfort_audit_unsafe_field_guard: status.renderer_health.live2d_motion_identity_comfort_audit_unsafe_field_guard,
-        live2d_motion_identity_comfort_blocker_grouping_status_surface: status.renderer_health.live2d_motion_identity_comfort_blocker_grouping_status_surface,
-        live2d_motion_identity_comfort_blocker_grouping_contract2: status.renderer_health.live2d_motion_identity_comfort_blocker_grouping_contract2,
-        live2d_motion_identity_comfort_repeated_blocker_grouping: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping,
-        live2d_motion_identity_comfort_repeated_blocker_grouping_contract: status.renderer_health.live2d_motion_identity_comfort_repeated_blocker_grouping_contract,
-        live2d_motion_identity_comfort_continuation_ledger2: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger2,
-        live2d_motion_identity_comfort_continuation_ledger_consistency2: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger_consistency2,
-        live2d_motion_identity_comfort_pre_owner_final_wait_state: status.renderer_health.live2d_motion_identity_comfort_pre_owner_final_wait_state,
-        live2d_motion_identity_comfort_implementation_gap_audit2_summary: status.renderer_health.live2d_motion_identity_comfort_implementation_gap_audit2_summary,
-        live2d_motion_identity_comfort_implementation_gap_register2_summary: status.renderer_health.live2d_motion_identity_comfort_implementation_gap_register2_summary,
-        live2d_motion_identity_comfort_continuation_ledger: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger,
-        live2d_motion_identity_comfort_continuation_ledger_consistency: status.renderer_health.live2d_motion_identity_comfort_continuation_ledger_consistency,
-        live2d_motion_identity_comfort_final_redaction_sweep2: status.renderer_health.live2d_motion_identity_comfort_final_redaction_sweep2,
-        live2d_motion_identity_comfort_final_no_sweetening_sweep2: status.renderer_health.live2d_motion_identity_comfort_final_no_sweetening_sweep2,
+        ...motionIdentityComfortSummaries,
         motion_dataset_renderer_ready_dependency_matrix_summary: status.renderer_health.motion_dataset_renderer_ready_dependency_matrix_summary,
         renderer_ready_false_positive_dependency_surface_summary: status.renderer_health.renderer_ready_false_positive_dependency_surface_summary,
         renderer_ready_fixture_vs_real_separation_contract_summary: status.renderer_health.renderer_ready_fixture_vs_real_separation_contract_summary,
@@ -1133,53 +952,8 @@ export function createRendererState({
       const motionDatasetOwnerSubmissionFormSpec = createMotionDatasetOwnerSubmissionFormSpecSummary();
       const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
-      const live2dMotionIdentityAndComfortSpec = createLive2dMotionIdentityAndComfortSpecSummary();
-      const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
-      const live2dMotionIdentityAndComfortDryRunValidator = createLive2dMotionIdentityAndComfortDryRunValidatorSummary();
-      const live2dMotionIdentityAndComfortRecoveryMatrix = createLive2dMotionIdentityAndComfortRecoveryMatrixSummary();
-      const live2dMotionIdentityAndComfortContextGate = createLive2dMotionIdentityAndComfortContextGateSummary();
-      const live2dMotionIdentityAndComfortSubtitleGazeGuard = createLive2dMotionIdentityAndComfortSubtitleGazeGuardSummary();
-      const live2dMotionIdentityAndComfortPersonaPressureGuard = createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary();
-      const live2dMotionIdentityAndComfortVoiceSyncHintBoundary = createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary();
-      const live2dMotionIdentityAndComfortAdaptiveBounds = createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary();
-      const live2dMotionIdentityComfortDevelopmentSchedule = createLive2dMotionIdentityComfortDevelopmentScheduleSummary();
-      const live2dMotionIdentityComfortCompletionReview = createLive2dMotionIdentityComfortCompletionReviewSummary();
-      const live2dMotionIdentityProfileStatusSurface = createLive2dMotionIdentityProfileStatusSurfaceSummary();
-      const live2dMotionComfortPolicyStatusSurface = createLive2dMotionComfortPolicyStatusSurfaceSummary();
-      const live2dMotionFreshnessPolicyCrossSurfaceConsistency = createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary();
-      const live2dMotionStrongMotionUnsafeOverrideRejection = createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary();
-      const live2dMotionIdentityComfortRedactionSweep = createLive2dMotionIdentityComfortRedactionSweepSummary();
-      const live2dMotionIdentityComfortNoSweeteningSweep = createLive2dMotionIdentityComfortNoSweeteningSweepSummary();
-      const live2dMotionIdentityComfortImplementationGapAudit = createLive2dMotionIdentityComfortImplementationGapAuditSummary();
-      const live2dMotionIdentityComfortImplementationGapRegister = createLive2dMotionIdentityComfortImplementationGapRegisterSummary();
-      const live2dMotionIdentityComfortFinalLongContinuationReview2 = createLive2dMotionIdentityComfortFinalLongContinuationReview2Summary();
-      const live2dMotionIdentityComfortLongContinuationCompletionReview3 = createLive2dMotionIdentityComfortLongContinuationCompletionReview3();
-      const live2dMotionIdentityComfortPublicSummary = createLive2dMotionIdentityComfortPublicSummary();
-      const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
-      const live2dMotionIdentityComfortPublicAdminSurfaceAlignment = createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment();
-      const live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2 = createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2();
-      const live2dMotionIdentityComfortPublicRoleGateLeakRejection = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection();
-      const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
-      const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
-      const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
-      const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
-      const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
-      const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
-      const live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2 = createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2();
-      const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
-      const live2dMotionIdentityComfortBlockerGroupingStatusSurface = createLive2dMotionIdentityComfortBlockerGroupingStatusSurface();
-      const live2dMotionIdentityComfortBlockerGroupingContract2 = createLive2dMotionIdentityComfortBlockerGroupingContract2();
-      const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
-      const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
-      const live2dMotionIdentityComfortContinuationLedger2 = createLive2dMotionIdentityComfortContinuationLedger2();
-      const live2dMotionIdentityComfortContinuationLedgerConsistency2 = createLive2dMotionIdentityComfortContinuationLedgerConsistency2();
-      const live2dMotionIdentityComfortPreOwnerFinalWaitState = createLive2dMotionIdentityComfortPreOwnerFinalWaitState();
-      const live2dMotionIdentityComfortImplementationGapAudit2 = createLive2dMotionIdentityComfortImplementationGapAudit2Summary();
-      const live2dMotionIdentityComfortImplementationGapRegister2 = createLive2dMotionIdentityComfortImplementationGapRegister2Summary();
-      const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
-      const live2dMotionIdentityComfortContinuationLedgerConsistency = createLive2dMotionIdentityComfortContinuationLedgerConsistency();
-      const live2dMotionIdentityComfortFinalRedactionSweep2 = createLive2dMotionIdentityComfortFinalRedactionSweep2();
-      const live2dMotionIdentityComfortFinalNoSweeteningSweep2 = createLive2dMotionIdentityComfortFinalNoSweeteningSweep2();
+      const motionIdentityComfortProjection = buildRegisteredSafeSummaryMap();
+      const motionIdentityComfortSummaries = motionIdentityComfortProjection.summaries;
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1304,53 +1078,7 @@ export function createRendererState({
       response.motion_dataset_owner_submission_form_spec_summary = motionDatasetOwnerSubmissionFormSpec;
       response.motion_dataset_real_row_redaction_policy_matrix_summary = motionDatasetRealRowRedactionPolicyMatrix;
       response.motion_dataset_motion_allowlist_sync_review_summary = motionDatasetMotionAllowlistSyncReview;
-      response.live2d_motion_identity_and_comfort_spec_summary = live2dMotionIdentityAndComfortSpec;
-      response.live2d_motion_identity_and_comfort_rejection_fixture_pack_summary = live2dMotionIdentityAndComfortRejectionFixturePack;
-      response.live2d_motion_identity_and_comfort_dry_run_validator_summary = live2dMotionIdentityAndComfortDryRunValidator;
-      response.live2d_motion_identity_and_comfort_recovery_matrix_summary = live2dMotionIdentityAndComfortRecoveryMatrix;
-      response.live2d_motion_identity_and_comfort_context_gate_summary = live2dMotionIdentityAndComfortContextGate;
-      response.live2d_motion_identity_and_comfort_subtitle_gaze_guard_summary = live2dMotionIdentityAndComfortSubtitleGazeGuard;
-      response.live2d_motion_identity_and_comfort_persona_pressure_guard_summary = live2dMotionIdentityAndComfortPersonaPressureGuard;
-      response.live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary = live2dMotionIdentityAndComfortVoiceSyncHintBoundary;
-      response.live2d_motion_identity_and_comfort_adaptive_bounds_summary = live2dMotionIdentityAndComfortAdaptiveBounds;
-      response.live2d_motion_identity_comfort_development_schedule_summary = live2dMotionIdentityComfortDevelopmentSchedule;
-      response.live2d_motion_identity_comfort_completion_review_summary = live2dMotionIdentityComfortCompletionReview;
-      response.live2d_motion_identity_profile_status_surface_summary = live2dMotionIdentityProfileStatusSurface;
-      response.live2d_motion_comfort_policy_status_surface_summary = live2dMotionComfortPolicyStatusSurface;
-      response.live2d_motion_freshness_policy_cross_surface_consistency_summary = live2dMotionFreshnessPolicyCrossSurfaceConsistency;
-      response.live2d_motion_strong_motion_unsafe_override_rejection_summary = live2dMotionStrongMotionUnsafeOverrideRejection;
-      response.live2d_motion_identity_comfort_redaction_sweep_summary = live2dMotionIdentityComfortRedactionSweep;
-      response.live2d_motion_identity_comfort_no_sweetening_sweep_summary = live2dMotionIdentityComfortNoSweeteningSweep;
-      response.live2d_motion_identity_comfort_implementation_gap_audit_summary = live2dMotionIdentityComfortImplementationGapAudit;
-      response.live2d_motion_identity_comfort_implementation_gap_register_summary = live2dMotionIdentityComfortImplementationGapRegister;
-      response.live2d_motion_identity_comfort_final_long_continuation_review2_summary = live2dMotionIdentityComfortFinalLongContinuationReview2;
-      response.live2d_motion_identity_comfort_long_continuation_completion_review3 = live2dMotionIdentityComfortLongContinuationCompletionReview3;
-      response.live2d_motion_identity_comfort_public_summary = live2dMotionIdentityComfortPublicSummary;
-      response.live2d_motion_identity_comfort_admin_summary_redaction = live2dMotionIdentityComfortAdminSummaryRedaction;
-      response.live2d_motion_identity_comfort_public_admin_surface_alignment = live2dMotionIdentityComfortPublicAdminSurfaceAlignment;
-      response.live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2 = live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2;
-      response.live2d_motion_identity_comfort_public_role_gate_leak_rejection = live2dMotionIdentityComfortPublicRoleGateLeakRejection;
-      response.live2d_motion_identity_comfort_operator_handoff_no_action = live2dMotionIdentityComfortOperatorHandoffNoAction;
-      response.live2d_motion_identity_comfort_owner_handoff_stub = live2dMotionIdentityComfortOwnerHandoffStub;
-      response.live2d_motion_identity_comfort_role_gate_stub = live2dMotionIdentityComfortRoleGateStub;
-      response.live2d_motion_identity_comfort_role_gate_redaction_guard = live2dMotionIdentityComfortRoleGateRedactionGuard;
-      response.live2d_motion_identity_comfort_audit_stub_no_write = live2dMotionIdentityComfortAuditStubNoWrite;
-      response.live2d_motion_identity_comfort_audit_event_stub_no_write2 = live2dMotionIdentityComfortAuditEventStubNoWrite2;
-      response.live2d_motion_identity_comfort_audit_event_unsafe_field_guard2 = live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2;
-      response.live2d_motion_identity_comfort_audit_unsafe_field_guard = live2dMotionIdentityComfortAuditUnsafeFieldGuard;
-      response.live2d_motion_identity_comfort_blocker_grouping_status_surface = live2dMotionIdentityComfortBlockerGroupingStatusSurface;
-      response.live2d_motion_identity_comfort_blocker_grouping_contract2 = live2dMotionIdentityComfortBlockerGroupingContract2;
-      response.live2d_motion_identity_comfort_repeated_blocker_grouping = live2dMotionIdentityComfortRepeatedBlockerGrouping;
-      response.live2d_motion_identity_comfort_repeated_blocker_grouping_contract = live2dMotionIdentityComfortRepeatedBlockerGroupingContract;
-      response.live2d_motion_identity_comfort_continuation_ledger2 = live2dMotionIdentityComfortContinuationLedger2;
-      response.live2d_motion_identity_comfort_continuation_ledger_consistency2 = live2dMotionIdentityComfortContinuationLedgerConsistency2;
-      response.live2d_motion_identity_comfort_pre_owner_final_wait_state = live2dMotionIdentityComfortPreOwnerFinalWaitState;
-      response.live2d_motion_identity_comfort_implementation_gap_audit2_summary = live2dMotionIdentityComfortImplementationGapAudit2;
-      response.live2d_motion_identity_comfort_implementation_gap_register2_summary = live2dMotionIdentityComfortImplementationGapRegister2;
-      response.live2d_motion_identity_comfort_continuation_ledger = live2dMotionIdentityComfortContinuationLedger;
-      response.live2d_motion_identity_comfort_continuation_ledger_consistency = live2dMotionIdentityComfortContinuationLedgerConsistency;
-      response.live2d_motion_identity_comfort_final_redaction_sweep2 = live2dMotionIdentityComfortFinalRedactionSweep2;
-      response.live2d_motion_identity_comfort_final_no_sweetening_sweep2 = live2dMotionIdentityComfortFinalNoSweeteningSweep2;
+      projectRegisteredSafeSummaries(response);
       response.motion_dataset_renderer_ready_dependency_matrix_summary = motionDatasetRendererReadyDependencyMatrix;
       response.renderer_ready_false_positive_dependency_surface_summary = rendererReadyFalsePositiveDependencySurface;
       response.renderer_ready_fixture_vs_real_separation_contract_summary = rendererReadyFixtureVsRealSeparationContract;
@@ -1528,53 +1256,8 @@ export function createRendererState({
       const motionDatasetOwnerSubmissionFormSpec = createMotionDatasetOwnerSubmissionFormSpecSummary();
       const motionDatasetRealRowRedactionPolicyMatrix = createMotionDatasetRealRowRedactionPolicyMatrixSummary();
       const motionDatasetMotionAllowlistSyncReview = createMotionDatasetMotionAllowlistSyncReviewSummary();
-      const live2dMotionIdentityAndComfortSpec = createLive2dMotionIdentityAndComfortSpecSummary();
-      const live2dMotionIdentityAndComfortRejectionFixturePack = createLive2dMotionIdentityAndComfortRejectionFixturePackSummary();
-      const live2dMotionIdentityAndComfortDryRunValidator = createLive2dMotionIdentityAndComfortDryRunValidatorSummary();
-      const live2dMotionIdentityAndComfortRecoveryMatrix = createLive2dMotionIdentityAndComfortRecoveryMatrixSummary();
-      const live2dMotionIdentityAndComfortContextGate = createLive2dMotionIdentityAndComfortContextGateSummary();
-      const live2dMotionIdentityAndComfortSubtitleGazeGuard = createLive2dMotionIdentityAndComfortSubtitleGazeGuardSummary();
-      const live2dMotionIdentityAndComfortPersonaPressureGuard = createLive2dMotionIdentityAndComfortPersonaPressureGuardSummary();
-      const live2dMotionIdentityAndComfortVoiceSyncHintBoundary = createLive2dMotionIdentityAndComfortVoiceSyncHintBoundarySummary();
-      const live2dMotionIdentityAndComfortAdaptiveBounds = createLive2dMotionIdentityAndComfortAdaptiveBoundsSummary();
-      const live2dMotionIdentityComfortDevelopmentSchedule = createLive2dMotionIdentityComfortDevelopmentScheduleSummary();
-      const live2dMotionIdentityComfortCompletionReview = createLive2dMotionIdentityComfortCompletionReviewSummary();
-      const live2dMotionIdentityProfileStatusSurface = createLive2dMotionIdentityProfileStatusSurfaceSummary();
-      const live2dMotionComfortPolicyStatusSurface = createLive2dMotionComfortPolicyStatusSurfaceSummary();
-      const live2dMotionFreshnessPolicyCrossSurfaceConsistency = createLive2dMotionFreshnessPolicyCrossSurfaceConsistencySummary();
-      const live2dMotionStrongMotionUnsafeOverrideRejection = createLive2dMotionStrongMotionUnsafeOverrideRejectionSummary();
-      const live2dMotionIdentityComfortRedactionSweep = createLive2dMotionIdentityComfortRedactionSweepSummary();
-      const live2dMotionIdentityComfortNoSweeteningSweep = createLive2dMotionIdentityComfortNoSweeteningSweepSummary();
-      const live2dMotionIdentityComfortImplementationGapAudit = createLive2dMotionIdentityComfortImplementationGapAuditSummary();
-      const live2dMotionIdentityComfortImplementationGapRegister = createLive2dMotionIdentityComfortImplementationGapRegisterSummary();
-      const live2dMotionIdentityComfortFinalLongContinuationReview2 = createLive2dMotionIdentityComfortFinalLongContinuationReview2Summary();
-      const live2dMotionIdentityComfortLongContinuationCompletionReview3 = createLive2dMotionIdentityComfortLongContinuationCompletionReview3();
-      const live2dMotionIdentityComfortPublicSummary = createLive2dMotionIdentityComfortPublicSummary();
-      const live2dMotionIdentityComfortAdminSummaryRedaction = createLive2dMotionIdentityComfortAdminSummaryRedaction();
-      const live2dMotionIdentityComfortPublicAdminSurfaceAlignment = createLive2dMotionIdentityComfortPublicAdminSurfaceAlignment();
-      const live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2 = createLive2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2();
-      const live2dMotionIdentityComfortPublicRoleGateLeakRejection = createLive2dMotionIdentityComfortPublicRoleGateLeakRejection();
-      const live2dMotionIdentityComfortOperatorHandoffNoAction = createLive2dMotionIdentityComfortOperatorHandoffNoAction();
-      const live2dMotionIdentityComfortOwnerHandoffStub = createLive2dMotionIdentityComfortOwnerHandoffStub();
-      const live2dMotionIdentityComfortRoleGateStub = createLive2dMotionIdentityComfortRoleGateStub();
-      const live2dMotionIdentityComfortRoleGateRedactionGuard = createLive2dMotionIdentityComfortRoleGateRedactionGuard();
-      const live2dMotionIdentityComfortAuditStubNoWrite = createLive2dMotionIdentityComfortAuditStubNoWrite();
-      const live2dMotionIdentityComfortAuditEventStubNoWrite2 = createLive2dMotionIdentityComfortAuditEventStubNoWrite2();
-      const live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2 = createLive2dMotionIdentityComfortAuditEventUnsafeFieldGuard2();
-      const live2dMotionIdentityComfortAuditUnsafeFieldGuard = createLive2dMotionIdentityComfortAuditUnsafeFieldGuard();
-      const live2dMotionIdentityComfortBlockerGroupingStatusSurface = createLive2dMotionIdentityComfortBlockerGroupingStatusSurface();
-      const live2dMotionIdentityComfortBlockerGroupingContract2 = createLive2dMotionIdentityComfortBlockerGroupingContract2();
-      const live2dMotionIdentityComfortRepeatedBlockerGrouping = createLive2dMotionIdentityComfortRepeatedBlockerGrouping();
-      const live2dMotionIdentityComfortRepeatedBlockerGroupingContract = createLive2dMotionIdentityComfortRepeatedBlockerGroupingContract();
-      const live2dMotionIdentityComfortContinuationLedger2 = createLive2dMotionIdentityComfortContinuationLedger2();
-      const live2dMotionIdentityComfortContinuationLedgerConsistency2 = createLive2dMotionIdentityComfortContinuationLedgerConsistency2();
-      const live2dMotionIdentityComfortPreOwnerFinalWaitState = createLive2dMotionIdentityComfortPreOwnerFinalWaitState();
-      const live2dMotionIdentityComfortImplementationGapAudit2 = createLive2dMotionIdentityComfortImplementationGapAudit2Summary();
-      const live2dMotionIdentityComfortImplementationGapRegister2 = createLive2dMotionIdentityComfortImplementationGapRegister2Summary();
-      const live2dMotionIdentityComfortContinuationLedger = createLive2dMotionIdentityComfortContinuationLedger();
-      const live2dMotionIdentityComfortContinuationLedgerConsistency = createLive2dMotionIdentityComfortContinuationLedgerConsistency();
-      const live2dMotionIdentityComfortFinalRedactionSweep2 = createLive2dMotionIdentityComfortFinalRedactionSweep2();
-      const live2dMotionIdentityComfortFinalNoSweeteningSweep2 = createLive2dMotionIdentityComfortFinalNoSweeteningSweep2();
+      const motionIdentityComfortProjection = buildRegisteredSafeSummaryMap();
+      const motionIdentityComfortSummaries = motionIdentityComfortProjection.summaries;
       const motionDatasetRendererReadyDependencyMatrix = createMotionDatasetRendererReadyDependencyMatrixSummary();
       const rendererReadyFalsePositiveDependencySurface = rendererReadyFalsePositiveDependencySurfaceFromHeartbeat(heartbeatStatus);
       const rendererReadyFixtureVsRealSeparationContract = rendererReadyFixtureVsRealSeparationContractFromHeartbeat(heartbeatStatus);
@@ -1723,53 +1406,7 @@ export function createRendererState({
           motion_dataset_owner_submission_form_spec_summary: motionDatasetOwnerSubmissionFormSpec,
           motion_dataset_real_row_redaction_policy_matrix_summary: motionDatasetRealRowRedactionPolicyMatrix,
           motion_dataset_motion_allowlist_sync_review_summary: motionDatasetMotionAllowlistSyncReview,
-          live2d_motion_identity_and_comfort_spec_summary: live2dMotionIdentityAndComfortSpec,
-          live2d_motion_identity_and_comfort_rejection_fixture_pack_summary: live2dMotionIdentityAndComfortRejectionFixturePack,
-          live2d_motion_identity_and_comfort_dry_run_validator_summary: live2dMotionIdentityAndComfortDryRunValidator,
-          live2d_motion_identity_and_comfort_recovery_matrix_summary: live2dMotionIdentityAndComfortRecoveryMatrix,
-          live2d_motion_identity_and_comfort_context_gate_summary: live2dMotionIdentityAndComfortContextGate,
-          live2d_motion_identity_and_comfort_subtitle_gaze_guard_summary: live2dMotionIdentityAndComfortSubtitleGazeGuard,
-          live2d_motion_identity_and_comfort_persona_pressure_guard_summary: live2dMotionIdentityAndComfortPersonaPressureGuard,
-          live2d_motion_identity_and_comfort_voice_sync_hint_boundary_summary: live2dMotionIdentityAndComfortVoiceSyncHintBoundary,
-          live2d_motion_identity_and_comfort_adaptive_bounds_summary: live2dMotionIdentityAndComfortAdaptiveBounds,
-          live2d_motion_identity_comfort_development_schedule_summary: live2dMotionIdentityComfortDevelopmentSchedule,
-          live2d_motion_identity_comfort_completion_review_summary: live2dMotionIdentityComfortCompletionReview,
-          live2d_motion_identity_profile_status_surface_summary: live2dMotionIdentityProfileStatusSurface,
-          live2d_motion_comfort_policy_status_surface_summary: live2dMotionComfortPolicyStatusSurface,
-          live2d_motion_freshness_policy_cross_surface_consistency_summary: live2dMotionFreshnessPolicyCrossSurfaceConsistency,
-          live2d_motion_strong_motion_unsafe_override_rejection_summary: live2dMotionStrongMotionUnsafeOverrideRejection,
-          live2d_motion_identity_comfort_redaction_sweep_summary: live2dMotionIdentityComfortRedactionSweep,
-          live2d_motion_identity_comfort_no_sweetening_sweep_summary: live2dMotionIdentityComfortNoSweeteningSweep,
-          live2d_motion_identity_comfort_implementation_gap_audit_summary: live2dMotionIdentityComfortImplementationGapAudit,
-          live2d_motion_identity_comfort_implementation_gap_register_summary: live2dMotionIdentityComfortImplementationGapRegister,
-          live2d_motion_identity_comfort_final_long_continuation_review2_summary: live2dMotionIdentityComfortFinalLongContinuationReview2,
-          live2d_motion_identity_comfort_long_continuation_completion_review3: live2dMotionIdentityComfortLongContinuationCompletionReview3,
-          live2d_motion_identity_comfort_public_summary: live2dMotionIdentityComfortPublicSummary,
-          live2d_motion_identity_comfort_admin_summary_redaction: live2dMotionIdentityComfortAdminSummaryRedaction,
-          live2d_motion_identity_comfort_public_admin_surface_alignment: live2dMotionIdentityComfortPublicAdminSurfaceAlignment,
-          live2d_motion_identity_comfort_owner_only_detail_role_gate_stub2: live2dMotionIdentityComfortOwnerOnlyDetailRoleGateStub2,
-          live2d_motion_identity_comfort_public_role_gate_leak_rejection: live2dMotionIdentityComfortPublicRoleGateLeakRejection,
-          live2d_motion_identity_comfort_operator_handoff_no_action: live2dMotionIdentityComfortOperatorHandoffNoAction,
-          live2d_motion_identity_comfort_owner_handoff_stub: live2dMotionIdentityComfortOwnerHandoffStub,
-          live2d_motion_identity_comfort_role_gate_stub: live2dMotionIdentityComfortRoleGateStub,
-          live2d_motion_identity_comfort_role_gate_redaction_guard: live2dMotionIdentityComfortRoleGateRedactionGuard,
-          live2d_motion_identity_comfort_audit_stub_no_write: live2dMotionIdentityComfortAuditStubNoWrite,
-          live2d_motion_identity_comfort_audit_event_stub_no_write2: live2dMotionIdentityComfortAuditEventStubNoWrite2,
-          live2d_motion_identity_comfort_audit_event_unsafe_field_guard2: live2dMotionIdentityComfortAuditEventUnsafeFieldGuard2,
-          live2d_motion_identity_comfort_audit_unsafe_field_guard: live2dMotionIdentityComfortAuditUnsafeFieldGuard,
-          live2d_motion_identity_comfort_blocker_grouping_status_surface: live2dMotionIdentityComfortBlockerGroupingStatusSurface,
-          live2d_motion_identity_comfort_blocker_grouping_contract2: live2dMotionIdentityComfortBlockerGroupingContract2,
-          live2d_motion_identity_comfort_repeated_blocker_grouping: live2dMotionIdentityComfortRepeatedBlockerGrouping,
-          live2d_motion_identity_comfort_repeated_blocker_grouping_contract: live2dMotionIdentityComfortRepeatedBlockerGroupingContract,
-          live2d_motion_identity_comfort_continuation_ledger2: live2dMotionIdentityComfortContinuationLedger2,
-          live2d_motion_identity_comfort_continuation_ledger_consistency2: live2dMotionIdentityComfortContinuationLedgerConsistency2,
-          live2d_motion_identity_comfort_pre_owner_final_wait_state: live2dMotionIdentityComfortPreOwnerFinalWaitState,
-          live2d_motion_identity_comfort_implementation_gap_audit2_summary: live2dMotionIdentityComfortImplementationGapAudit2,
-          live2d_motion_identity_comfort_implementation_gap_register2_summary: live2dMotionIdentityComfortImplementationGapRegister2,
-          live2d_motion_identity_comfort_continuation_ledger: live2dMotionIdentityComfortContinuationLedger,
-          live2d_motion_identity_comfort_continuation_ledger_consistency: live2dMotionIdentityComfortContinuationLedgerConsistency,
-          live2d_motion_identity_comfort_final_redaction_sweep2: live2dMotionIdentityComfortFinalRedactionSweep2,
-          live2d_motion_identity_comfort_final_no_sweetening_sweep2: live2dMotionIdentityComfortFinalNoSweeteningSweep2,
+          ...motionIdentityComfortSummaries,
           motion_dataset_renderer_ready_dependency_matrix_summary: motionDatasetRendererReadyDependencyMatrix,
           renderer_ready_false_positive_dependency_surface_summary: rendererReadyFalsePositiveDependencySurface,
           renderer_ready_fixture_vs_real_separation_contract_summary: rendererReadyFixtureVsRealSeparationContract,

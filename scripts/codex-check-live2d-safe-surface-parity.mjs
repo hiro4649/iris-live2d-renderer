@@ -10,6 +10,10 @@ import {
   MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY,
   validateMotionIdentityComfortSurfaceRegistry,
 } from "../src/renderer/motionIdentityComfortSurfaceRegistry.js";
+import {
+  validateProjectedSafeSummaries,
+  validateRegisteredFactoryMap,
+} from "../src/renderer/safeSurfaceProjection.js";
 
 const SURFACE_BUILDERS = {
   status: (state) => state.status(),
@@ -174,6 +178,10 @@ export function buildLive2dSafeSurfaceInventory() {
   const safeSurfaceRegistry = validateSafeSurfaceRegistry();
   const motionIdentityComfortRegistry = validateMotionIdentityComfortSurfaceRegistry();
   const motionIdentityComfortCoverage = buildMotionIdentityComfortCoverage(surfaces);
+  const registeredFactoryMap = validateRegisteredFactoryMap();
+  const projectedSafeSummaryValidation = Object.fromEntries(
+    Object.entries(surfaces).map(([surfaceName, surface]) => [surfaceName, validateProjectedSafeSummaries(surface)]),
+  );
   const unknownEntry = createSafeSurfaceFromRegistry("unknown_surface", state);
   const failures = entries.flatMap((entry) => [
     ...entry.missingKeys.map((key) => `${entry.id}:missing:${key}`),
@@ -184,6 +192,11 @@ export function buildLive2dSafeSurfaceInventory() {
   ]);
   failures.push(...safeSurfaceRegistry.failures.map((failure) => `safe_surface_registry:${failure}`));
   failures.push(...motionIdentityComfortRegistry.failures.map((failure) => `motion_identity_comfort_registry:${failure}`));
+  failures.push(...registeredFactoryMap.failures.map((failure) => `registered_factory_map:${failure}`));
+  for (const [surfaceName, validation] of Object.entries(projectedSafeSummaryValidation)) {
+    failures.push(...validation.failures.map((failure) => `projected_safe_summary:${surfaceName}:${failure}`));
+    if (validation.status !== "pass") failures.push(`projected_safe_summary_failed:${surfaceName}`);
+  }
   failures.push(...motionIdentityComfortCoverage.missingRegistryIds.map((id) => `motion_identity_comfort_missing_registry:${id}`));
   failures.push(...motionIdentityComfortCoverage.orphanRegistryIds.map((id) => `motion_identity_comfort_orphan_registry:${id}`));
   failures.push(...motionIdentityComfortCoverage.duplicateIds.map((id) => `motion_identity_comfort_duplicate_id:${id}`));
@@ -195,6 +208,7 @@ export function buildLive2dSafeSurfaceInventory() {
   failures.push(...motionIdentityComfortCoverage.surfacePresenceViolations.map((id) => `motion_identity_comfort_surface_presence:${id}`));
   if (safeSurfaceRegistry.status !== "pass") failures.push("safe_surface_registry_failed");
   if (motionIdentityComfortRegistry.status !== "pass") failures.push("motion_identity_comfort_registry_failed");
+  if (registeredFactoryMap.status !== "pass") failures.push("registered_factory_map_failed");
   if (unknownEntry.status !== "rejected" || unknownEntry.reason !== "unknown_safe_surface") {
     failures.push("unknown_surface_not_rejected");
   }
@@ -206,6 +220,8 @@ export function buildLive2dSafeSurfaceInventory() {
     registrySurfaceCount: safeSurfaceRegistry.surfaceCount,
     motionIdentityComfortRegistrySurfaceCount: motionIdentityComfortRegistry.surfaceCount,
     motionIdentityComfortCoverage,
+    registeredFactoryMap,
+    projectedSafeSummaryValidation,
     unknownEntryRejected: true,
     entries,
     status: failures.length ? "fail" : "pass",
@@ -224,6 +240,17 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     registrySurfaceCount: inventory.registrySurfaceCount,
     motionIdentityComfortRegistrySurfaceCount: inventory.motionIdentityComfortRegistrySurfaceCount,
     motionIdentityComfortCoverage: inventory.motionIdentityComfortCoverage,
+    registeredFactoryMap: {
+      status: inventory.registeredFactoryMap.status,
+      failures: inventory.registeredFactoryMap.failures,
+      registryEntryCount: inventory.registeredFactoryMap.registryEntryCount,
+    },
+    projectedSafeSummaryValidation: Object.fromEntries(
+      Object.entries(inventory.projectedSafeSummaryValidation).map(([surfaceName, validation]) => [surfaceName, {
+        status: validation.status,
+        failures: validation.failures,
+      }]),
+    ),
     unknownEntryRejected: inventory.unknownEntryRejected,
     entries: inventory.entries.map((entry) => ({
       id: entry.id,
