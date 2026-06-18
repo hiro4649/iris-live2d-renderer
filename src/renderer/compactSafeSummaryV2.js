@@ -48,6 +48,18 @@ const UNSAFE_KEYS = new Set([
   "ownerConfirmationClaim",
 ]);
 
+const IMMUTABLE_BOUNDARY = Object.freeze({
+  priority1Status: "BLOCKED",
+  checkedRowCount: 0,
+  motionDatasetExecutable: false,
+  ownerConfirmationConfirmed: false,
+  trustedLoaderStatus: "disabled",
+  realRendererEvidenceStatus: "missing",
+  actualDataStatus: "blocked",
+  runtimeReadinessStatus: "blocked",
+  productionReadinessStatus: "blocked",
+});
+
 function isPlainObject(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const prototype = Object.getPrototypeOf(value);
@@ -81,24 +93,71 @@ function collectShapeFailures(input) {
   return failures;
 }
 
-function blockerGroupsFor(input) {
+function collectImmutableBoundaryFailures(input) {
+  const failures = [];
+  if (!isPlainObject(input)) return failures;
+  if (Object.hasOwn(input, "priority1Status") && input.priority1Status !== IMMUTABLE_BOUNDARY.priority1Status) {
+    failures.push("immutable_boundary_override:priority1_status");
+  }
+  if (Object.hasOwn(input, "checkedRowCount") && input.checkedRowCount !== IMMUTABLE_BOUNDARY.checkedRowCount) {
+    failures.push("immutable_boundary_override:checked_row_count");
+  }
+  if (
+    Object.hasOwn(input, "motionDatasetExecutable")
+    && input.motionDatasetExecutable !== IMMUTABLE_BOUNDARY.motionDatasetExecutable
+  ) {
+    failures.push("immutable_boundary_override:motion_dataset_executable");
+  }
+  if (
+    Object.hasOwn(input, "ownerConfirmationConfirmed")
+    && input.ownerConfirmationConfirmed !== IMMUTABLE_BOUNDARY.ownerConfirmationConfirmed
+  ) {
+    failures.push("immutable_boundary_override:owner_confirmation");
+  }
+  if (Object.hasOwn(input, "trustedLoaderStatus") && input.trustedLoaderStatus !== IMMUTABLE_BOUNDARY.trustedLoaderStatus) {
+    failures.push("immutable_boundary_override:trusted_loader");
+  }
+  if (
+    Object.hasOwn(input, "actualDataStatus")
+    && input.actualDataStatus !== IMMUTABLE_BOUNDARY.actualDataStatus
+  ) {
+    failures.push("immutable_boundary_override:actual_data");
+  }
+  if (
+    Object.hasOwn(input, "runtimeReadinessStatus")
+    && input.runtimeReadinessStatus !== IMMUTABLE_BOUNDARY.runtimeReadinessStatus
+  ) {
+    failures.push("immutable_boundary_override:runtime_readiness");
+  }
+  if (
+    Object.hasOwn(input, "productionReadinessStatus")
+    && input.productionReadinessStatus !== IMMUTABLE_BOUNDARY.productionReadinessStatus
+  ) {
+    failures.push("immutable_boundary_override:production_readiness");
+  }
+  if (
+    Object.hasOwn(input, "realRendererEvidenceStatus")
+    && !["missing", "blocked_missing_real_evidence"].includes(input.realRendererEvidenceStatus)
+  ) {
+    failures.push("immutable_boundary_override:real_renderer_evidence");
+  }
+  return failures;
+}
+
+function blockerGroupsFor(boundary, auditReferenceStatus) {
   return {
-    owner_confirmation: input.ownerConfirmationConfirmed === true ? [] : ["owner_confirmation_false"],
-    real_renderer_evidence: input.realRendererEvidenceStatus === "candidate_engine_available"
-      ? []
-      : ["real_renderer_evidence_missing"],
+    owner_confirmation: boundary.ownerConfirmationConfirmed === true ? [] : ["owner_confirmation_false"],
+    real_renderer_evidence: ["real_renderer_evidence_missing"],
     motion_dataset: [
-      ...(input.motionDatasetExecutable === true ? [] : ["motion_dataset_non_executable"]),
-      ...(input.checkedRowCount === 0 ? ["checked_row_count_zero"] : []),
+      ...(boundary.motionDatasetExecutable === true ? [] : ["motion_dataset_non_executable"]),
+      ...(boundary.checkedRowCount === 0 ? ["checked_row_count_zero"] : []),
     ],
-    priority1: input.priority1Status === "BLOCKED" ? ["priority1_blocked"] : [],
-    trusted_loader: input.trustedLoaderStatus === "disabled" ? ["trusted_loader_disabled"] : [],
-    actual_data: input.actualDataStatus === "not_applicable_for_candidate" ? [] : ["actual_ingestion_false"],
-    runtime_readiness: input.runtimeReadinessStatus === "not_applicable_for_candidate" ? [] : ["runtime_readiness_false"],
-    production_readiness: input.productionReadinessStatus === "not_applicable_for_candidate"
-      ? []
-      : ["production_readiness_false"],
-    audit_reference: input.auditReferenceStatus === "present" ? [] : ["audit_reference_missing"],
+    priority1: boundary.priority1Status === "BLOCKED" ? ["priority1_blocked"] : [],
+    trusted_loader: boundary.trustedLoaderStatus === "disabled" ? ["trusted_loader_disabled"] : [],
+    actual_data: boundary.actualDataStatus === "blocked" ? ["actual_ingestion_false"] : [],
+    runtime_readiness: boundary.runtimeReadinessStatus === "blocked" ? ["runtime_readiness_false"] : [],
+    production_readiness: boundary.productionReadinessStatus === "blocked" ? ["production_readiness_false"] : [],
+    audit_reference: auditReferenceStatus === "present" ? [] : ["audit_reference_missing"],
   };
 }
 
@@ -108,22 +167,14 @@ function hasCriticalBlockers(groups) {
 
 export function createCompactSafeSummaryV2(input = {}) {
   const shapeFailures = collectShapeFailures(input);
+  const immutableBoundaryFailures = collectImmutableBoundaryFailures(input);
   const attention = normalizeLabels(input.noncriticalAttentionLabels, "noncritical_attention_label_invalid");
   const candidate = normalizeLabels(input.candidateOnlyLabels, "candidate_only_label_invalid");
-  const normalized = {
-    priority1Status: input.priority1Status || "BLOCKED",
-    checkedRowCount: Number.isInteger(input.checkedRowCount) ? input.checkedRowCount : 0,
-    motionDatasetExecutable: input.motionDatasetExecutable === true,
-    ownerConfirmationConfirmed: input.ownerConfirmationConfirmed === true,
-    trustedLoaderStatus: input.trustedLoaderStatus || "disabled",
-    auditReferenceStatus: input.auditReferenceStatus || "missing",
-    realRendererEvidenceStatus: input.realRendererEvidenceStatus || "missing",
-    actualDataStatus: input.actualDataStatus || "blocked",
-    runtimeReadinessStatus: input.runtimeReadinessStatus || "blocked",
-    productionReadinessStatus: input.productionReadinessStatus || "blocked",
-  };
-  const blockerGroups = blockerGroupsFor(normalized);
-  const rejectionLabels = [...new Set([...shapeFailures, ...attention.failures, ...candidate.failures])];
+  const auditReferenceStatus = input.auditReferenceStatus === "present" ? "present" : "missing";
+  const blockerGroups = blockerGroupsFor(IMMUTABLE_BOUNDARY, auditReferenceStatus);
+  const rejectionLabels = [
+    ...new Set([...shapeFailures, ...immutableBoundaryFailures, ...attention.failures, ...candidate.failures]),
+  ];
 
   let overallStatus = "blocked";
   if (!rejectionLabels.length && !hasCriticalBlockers(blockerGroups)) {
@@ -144,6 +195,8 @@ export function createCompactSafeSummaryV2(input = {}) {
     rendererEvidenceStatus: [
       "blocked_missing_real_evidence",
       "candidate_engine_available",
+      "decision_engine_available_non_authorizing",
+      "candidate_engine_available_is_not_real_evidence",
       "no_real_probe_started",
     ],
     datasetManifestStatus: [
