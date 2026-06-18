@@ -9126,6 +9126,37 @@ The owner-gated real evidence checklist pack adds a pure checklist builder and v
 | production_readiness_claimed | false |
 
 The checklist is label-only and side-effect free. It rejects unsafe fields, unknown fields, raw evidence, raw owner notes, endpoints, tokens, secrets, private paths, raw commands, actual execution requests, actual ingestion requests, trusted loader enablement requests, readiness requests, expired checklist reuse, wrong scope, and arbitrary owner action labels using fixed safe labels. `ready_for_owner_review` is not owner confirmation, not runtime readiness, not production readiness, not actual data approval, and not trusted loader approval.
+## R1 Localhost Safe Process Probe
+
+Task: LIVE2D-R1-LOCALHOST-SAFE-PROCESS-PROBE1
+
+The R1 localhost safe process probe starts the existing Node renderer process on loopback, requests only `/health`, `/status`, and `/renderer/runtime-config`, converts the responses into an allowlisted safe envelope, and stops the process. It is not a browser probe, not Cubism SDK execution, not model load, not scene load, not cue application, not browser heartbeat injection, not trusted loader enablement, not actual data handling, not owner confirmation, and not readiness approval.
+
+| field | value |
+| --- | --- |
+| probe_schema | live2d_r1_localhost_process_probe_envelope_v1 |
+| host_label | loopback |
+| route_labels | health, status, runtime_config |
+| raw_response_stored | false |
+| raw_response_printed | false |
+| external_network_used | false |
+| browser_started | false |
+| sdk_executed | false |
+| model_load_attempted | false |
+| scene_load_attempted | false |
+| cue_application_attempted | false |
+| browser_heartbeat_injected | false |
+| owner_confirmation_created | false |
+| trusted_loader_enabled | false |
+| actual_data_handled | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| renderer_ready_claimed | false |
+| priority1_resolved | false |
+| checked_row_count_increased | false |
+| motion_dataset_executable | false |
+
+The safe envelope may record route labels, status classes, known false/blocked readiness flags, and compact safe summary presence only. It must not store raw JSON responses, endpoint values, tokens, private paths, row bodies, file bodies, raw commands, or stack traces.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1
