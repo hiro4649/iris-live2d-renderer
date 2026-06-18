@@ -22,6 +22,15 @@
       "notes": "Target-specific test runner script; not a Codex harness script."
     },
     {
+      "pathPattern": "scripts/run-all-tests.mjs",
+      "classification": "test",
+      "surface": "verification",
+      "risk": "R3",
+      "requiresProductVerification": true,
+      "allowsFastPath": false,
+      "notes": "Target-specific all-tests runner script; not a Codex harness script."
+    },
+    {
       "pathPattern": "docs/process/**",
       "classification": "harness_managed",
       "surface": "harness",

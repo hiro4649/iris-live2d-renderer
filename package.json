@@ -6,7 +6,7 @@
   "description": "Local Live2D renderer scaffold for IRIS cue delivery.",
   "scripts": {
     "start": "node src/server.js",
-    "test": "node test/contract.test.js"
+    "test": "node scripts/run-all-tests.mjs"
   },
   "engines": {
     "node": ">=20"

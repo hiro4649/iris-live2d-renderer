@@ -31,7 +31,8 @@
     "test/",
     "tests/",
     "__tests__/",
-    "scripts/run-tests.js"
+    "scripts/run-tests.js",
+    "scripts/run-all-tests.mjs"
   ],
   "specFiles": [
     "specs/",
