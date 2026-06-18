@@ -1052,3 +1052,11 @@ Next safe action: run the v1.2.6 architecture transition completion review witho
 Status: docs-only completion review. This step records that the safe-surface architecture transition now has registry coverage, projection coverage, contract matrix coverage, a draft real evidence owner handoff packet, and additive compact safe summary v2 coverage. It does not add runtime behavior, remove legacy fields, create owner confirmation, collect real renderer evidence, execute a probe, enable the trusted loader, ingest data, resolve priority1, or claim runtime or production readiness.
 
 Next safe action: prioritize contract tightening and duplicate reduction before any additional public surface expansion. Real renderer evidence, trusted loader enablement, owner confirmation, actual data, audit execution, and readiness review remain separate future owner-gated tasks.
+
+## LIVE2D-OWNER-GATED-REAL-EVIDENCE-CHECKLIST-PACK1
+
+Status: pure owner-gated real evidence checklist builder and validator. This step prepares a safe label-only checklist for a future owner-gated real evidence review and allows the draft owner handoff packet to consume only fixed safe checklist result labels.
+
+Boundary: no packet is sent, no owner confirmation is created, no real renderer evidence is collected, no renderer/browser/SDK probe is run, no file or row body is read, no hash is calculated, no actual ingestion is allowed, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
+
+Next safe action: run the real evidence preparation completion review and confirm the safe preparation layer remains non-authorizing before any future owner-gated runtime evidence task.

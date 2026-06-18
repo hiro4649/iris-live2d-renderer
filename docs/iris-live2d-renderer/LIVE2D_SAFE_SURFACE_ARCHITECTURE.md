@@ -121,6 +121,12 @@ Repeated fixed safe-label catalogs are consolidated into `src/renderer/live2dSaf
 
 The catalog does not include mutable runtime state, factory references, full schemas, owner-only data, raw values, file paths, row material, endpoints, tokens, or secrets. Docs now treat this architecture document as the canonical reference for the safe-surface consolidation narrative while the completion index and development schedule retain status and gate history.
 
+## Owner-Gated Real Evidence Checklist
+
+`src/renderer/realEvidenceOwnerChecklist.js` prepares a pure safe checklist for a future owner-gated real evidence review. The checklist is schema-only and label-only. It records required sections for scope review, renderer evidence, motion dataset manifest requirements, audit reference, trusted loader boundary, runtime readiness boundary, production readiness boundary, expiry and reconfirmation, and safe next actions.
+
+The checklist never sends a packet, creates owner confirmation, authorizes evidence collection, starts a renderer or browser probe, executes SDK code, reads files or row bodies, calculates hashes, enables trusted loader, resolves priority1, or claims runtime or production readiness. The owner handoff packet may consume the checklist result only as fixed safe rejection labels; it does not embed the raw checklist object.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

@@ -10,6 +10,7 @@ import {
   LIVE2D_OWNER_HANDOFF_STALE_EVIDENCE_LABELS,
   LIVE2D_SAFE_NEXT_ACTION_LABELS,
 } from "./live2dSafeContractCatalog.js";
+import { ownerChecklistToHandoffRejectionLabels } from "./realEvidenceOwnerChecklist.js";
 
 export const SAFE_NEXT_ACTION_LABELS = LIVE2D_SAFE_NEXT_ACTION_LABELS;
 
@@ -29,6 +30,7 @@ const ALLOWED_INPUT_KEYS = new Set([
   "checkedRowCount",
   "auditReferenceStatus",
   "ownerActionsRequired",
+  "ownerChecklistResult",
   "generatedAtStatus",
   "expiryStatus",
 ]);
@@ -136,6 +138,9 @@ export function buildRealEvidenceOwnerHandoffPacket(input = {}) {
     ...missingEvidence.failures,
     ...staleEvidence.failures,
     ...ownerActions.failures,
+    ...(Object.hasOwn(input, "ownerChecklistResult")
+      ? ownerChecklistToHandoffRejectionLabels(input.ownerChecklistResult)
+      : []),
   );
 
   if (input.rowManifestStatus !== "metadata_only_ready") rejectionLabels.push("row_manifest_not_metadata_only_ready");

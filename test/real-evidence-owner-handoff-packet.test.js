@@ -4,6 +4,10 @@ import {
   SAFE_NEXT_ACTION_LABELS,
   buildRealEvidenceOwnerHandoffPacket,
 } from "../src/renderer/realEvidenceOwnerHandoffPacket.js";
+import {
+  REAL_EVIDENCE_OWNER_CHECKLIST_SECTIONS,
+  buildRealEvidenceOwnerChecklist,
+} from "../src/renderer/realEvidenceOwnerChecklist.js";
 
 function packet(overrides = {}) {
   return {
@@ -46,6 +50,38 @@ const safe = buildRealEvidenceOwnerHandoffPacket(packet());
 assert.equal(safe.packetStatus, "ready_for_owner_review");
 assert.deepEqual(safe.rejectionLabels, []);
 assertSafeBoundary(safe);
+
+const ownerChecklist = buildRealEvidenceOwnerChecklist({
+  scopeLabel: "live2d_renderer_real_evidence_owner_gated_review",
+  sectionStatuses: Object.fromEntries(REAL_EVIDENCE_OWNER_CHECKLIST_SECTIONS.map((section) => [section, "schema_valid"])),
+  requiredOwnerActions: ["confirm_real_evidence_collection_scope"],
+  missingPrerequisiteLabels: [],
+  blockingLabels: [],
+  expiryStatus: "active",
+  reconfirmationRequired: false,
+  generatedAtStatus: "label_only",
+});
+const safeWithChecklist = buildRealEvidenceOwnerHandoffPacket(packet({ ownerChecklistResult: ownerChecklist }));
+assert.equal(safeWithChecklist.packetStatus, "ready_for_owner_review");
+assert.equal(safeWithChecklist.rejectionLabels.includes("owner_checklist_blocked"), false);
+assert.equal(Object.hasOwn(safeWithChecklist, "ownerChecklistResult"), false);
+assertSafeBoundary(safeWithChecklist);
+
+const blockedChecklist = buildRealEvidenceOwnerChecklist({
+  scopeLabel: "live2d_renderer_real_evidence_owner_gated_review",
+  sectionStatuses: {},
+  requiredOwnerActions: ["confirm_real_evidence_collection_scope"],
+  missingPrerequisiteLabels: [],
+  blockingLabels: [],
+  expiryStatus: "active",
+  reconfirmationRequired: false,
+  generatedAtStatus: "label_only",
+});
+const blockedWithChecklist = buildRealEvidenceOwnerHandoffPacket(packet({ ownerChecklistResult: blockedChecklist }));
+assert.equal(blockedWithChecklist.packetStatus, "blocked_missing_evidence");
+assert.equal(blockedWithChecklist.rejectionLabels.includes("owner_checklist_blocked"), true);
+assert.equal(Object.hasOwn(blockedWithChecklist, "ownerChecklistResult"), false);
+assertSafeBoundary(blockedWithChecklist);
 
 for (const [overrides, expectedStatus, expectedLabel] of [
   [{ requiredEvidenceLabels: ["fresh_renderer_heartbeat"], missingEvidenceLabels: ["model_loaded"] }, "blocked_missing_evidence", null],
