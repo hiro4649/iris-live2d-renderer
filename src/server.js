@@ -15,7 +15,7 @@ import {
   assertWriteRequestBoundary,
 } from "./renderer/writeRequestBoundary.js";
 import { validateSafeTraversal } from "./renderer/safeTraversal.js";
-import { assertBrowserBootstrapConfigSize } from "./renderer/browserBootstrapConfig.js";
+import { assertBrowserBootstrapConfigSize, buildBrowserBootstrapConfig } from "./renderer/browserBootstrapConfig.js";
 
 const MAX_BODY_BYTES = 256_000;
 const SSE_CUE_INTERVAL_MS = 150;
@@ -34,6 +34,7 @@ export function createLive2dRendererServer({
   rendererApiKey = "",
   r2ProbeSurfaceEnabled = false,
   remoteWriteEnabled = false,
+  browserSmokeMode = process.env.IRIS_LIVE2D_BROWSER_SMOKE_MODE === "1",
 } = {}) {
   const requiredApiKey = String(rendererApiKey ?? "").trim();
   const compactProbeEnabled = r2ProbeSurfaceEnabled === true;
@@ -79,6 +80,15 @@ export function createLive2dRendererServer({
         response.end(script);
         return;
       }
+      if (request.method === "GET" && url.pathname === "/rendererCueLifecycle.js") {
+        const script = await readFile(join(publicDir, "rendererCueLifecycle.js"), "utf8");
+        response.writeHead(200, { "content-type": "application/javascript; charset=utf-8", "cache-control": "no-store" });
+        response.end(script);
+        return;
+      }
+      if (browserSmokeMode === true && isBrowserSmokeForbiddenRequest(request, url)) {
+        return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+      }
       if (request.method === "GET" && url.pathname === "/renderer/cues") {
         return sendJson(response, 200, state.readBrowserCues());
       }
@@ -96,7 +106,13 @@ export function createLive2dRendererServer({
         if (url.search) {
           return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
         }
-        return sendJson(response, 200, assertBrowserBootstrapConfigSize(state.browserBootstrapConfig()));
+        const config = browserSmokeMode === true
+          ? buildBrowserBootstrapConfig(state.browserRuntimeConfig(), {
+            heartbeatIntervalMs: Math.min(state.heartbeatMaxAgeMs ?? 1000, 30_000),
+            browserSmokeMode: true,
+          })
+          : state.browserBootstrapConfig();
+        return sendJson(response, 200, assertBrowserBootstrapConfigSize(config));
       }
       if (request.method === "GET" && url.pathname === "/renderer/model3") {
         assertLocalAssetRead(request);
@@ -389,6 +405,18 @@ function statusForCubismCoreGuard(status) {
   return 404;
 }
 
+function isBrowserSmokeForbiddenRequest(request, url) {
+  if (request.method === "GET" && url.pathname === "/renderer/events") return true;
+  if (request.method === "GET" && url.pathname === "/renderer/cues") return true;
+  if (request.method === "POST" && url.pathname === "/renderer/heartbeat") return true;
+  if (request.method === "GET" && url.pathname === "/renderer/cubism-core.js") return true;
+  if (request.method === "GET" && url.pathname === "/renderer/model3") return true;
+  if (request.method === "GET" && url.pathname.startsWith("/renderer/model-asset/")) return true;
+  if (request.method === "POST" && url.pathname === "/cue") return true;
+  if (request.method === "POST" && url.pathname === "/live2d-engine") return true;
+  return false;
+}
+
 function isLoopbackRequest(request) {
   const forwardedFor = String(request.headers?.["x-forwarded-for"] ?? "").split(",")[0].trim();
   if (forwardedFor && !isLoopbackAddress(forwardedFor)) return false;
@@ -453,6 +481,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
       "GET /renderer/events",
       "GET /renderer/runtime-config",
       "GET /renderer-adapter.js",
+      "GET /rendererCueLifecycle.js",
       "GET /renderer/model3",
       "GET /renderer/model-asset/:asset_id",
       "GET /renderer/cubism-core.js",
