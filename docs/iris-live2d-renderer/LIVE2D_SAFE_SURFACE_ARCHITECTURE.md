@@ -109,6 +109,12 @@ Pure safe modules now share a small label validator for public safe-label inputs
 
 The hardening applies to the real evidence owner handoff packet, renderer evidence decision, motion dataset manifest validator, and compact safe summary v2. Rejections are fixed safe reason labels only; raw input values are not echoed. No new public runtime status field is added, and the modules still do not execute renderer, SDK, browser, parser, redaction, audit, file, row, hash, external service, owner confirmation, trusted loader, runtime readiness, or production readiness work.
 
+## V1/V2 Semantic Drift Guard
+
+The compact safe summary v2 now receives input from a pure adapter that mirrors the existing blocked safe-state semantics before calling the v2 builder. `/status`, `/health`, and `/renderer/runtime-config` keep the same `live2d_safe_summary_v2` meaning without adding a public top-level field.
+
+The parity guard checks that existing false or blocked v1 semantics still imply the corresponding v2 blocker labels: owner confirmation false, checked row count zero, motion dataset non-executable, priority1 BLOCKED, trusted loader disabled, actual ingestion false, runtime readiness false, production readiness false, and real renderer evidence missing. Contradiction fixtures fail if v2 becomes `candidate_only` or drops any required blocker while v1 remains blocked.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.
