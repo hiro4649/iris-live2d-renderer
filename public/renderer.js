@@ -96,7 +96,8 @@ if (typeof document !== "undefined") {
 }
 
 async function startRendererLoop() {
-  await refreshBootstrapConfig();
+  const bootstrapConfig = await refreshBootstrapConfig();
+  if (bootstrapConfig?.browserSmokeMode === true) return;
   startCueEventStream(rendererState);
   await pollCueQueue();
   await postHeartbeat();
@@ -122,6 +123,10 @@ async function refreshBootstrapConfig(state = rendererState) {
     const config = await getJson(BROWSER_BOOTSTRAP_CONFIG_ROUTE);
     state.browserBootstrapConfig = config;
     state.lastBootstrapRefreshAt = Date.now();
+    if (config?.browserSmokeMode === true) {
+      applyBrowserSmokeMarkers(state, config);
+      return config;
+    }
     const runtimeConfig = runtimeConfigFromBootstrap(config);
     state.modelId = runtimeConfig.model_id || "";
     state.sceneId = runtimeConfig.scene_id || "";
@@ -134,6 +139,30 @@ async function refreshBootstrapConfig(state = rendererState) {
   } finally {
     state.bootstrapRefreshInFlight = false;
   }
+}
+
+export function applyBrowserSmokeMarkers(state = rendererState, config = {}, doc = globalThis.document) {
+  if (!doc?.documentElement) return false;
+  initializeRendererAdapter(state);
+  const canvas = doc.querySelector("#live2d-surface");
+  const root = doc.querySelector("#live2d-root") || doc.body || doc.documentElement;
+  const adapterCapabilities = state.rendererAdapter.getCapabilities();
+  const bootstrapOk = config?.schema === "iris_live2d_browser_bootstrap_config_v1";
+  const adapterStatus = adapterCapabilities?.rendererReady === false ? "null_blocked" : "blocked";
+  doc.documentElement.dataset.smokeSchema = "iris_live2d_r3_browser_smoke_v1";
+  doc.documentElement.dataset.smokeStatus = bootstrapOk && canvas ? "pass" : "blocked";
+  doc.documentElement.dataset.jsExecuted = "true";
+  doc.documentElement.dataset.bootstrapStatus = bootstrapOk ? "pass" : "blocked";
+  doc.documentElement.dataset.canvasPresent = canvas ? "true" : "false";
+  doc.documentElement.dataset.adapterStatus = adapterStatus;
+  doc.documentElement.dataset.runtimeReadiness = "false";
+  doc.documentElement.dataset.productionReadiness = "false";
+  doc.documentElement.dataset.ownerConfirmation = "false";
+  doc.documentElement.dataset.trustedLoader = "disabled";
+  doc.documentElement.dataset.motionDataset = "non_executable";
+  if (root) root.dataset.smokeStatus = doc.documentElement.dataset.smokeStatus;
+  updateStatusText(state);
+  return true;
 }
 
 function installBootstrapVisibilityRefresh(state = rendererState, doc = globalThis.document) {
