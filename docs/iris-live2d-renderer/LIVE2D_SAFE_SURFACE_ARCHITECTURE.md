@@ -88,3 +88,8 @@ This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not
 resolve priority1, does not change checked row count, and does not make the
 motion dataset executable.
+## Real Evidence Owner Handoff Packet Boundary
+
+The real evidence owner handoff packet is a pure safe-summary builder for future owner review. It accepts label-only scope, required evidence, missing evidence, stale evidence, row manifest status, trusted loader status, priority1 status, checked row count, audit reference status, owner action labels, generated-at status, and expiry status. It rejects unsafe fields, unknown fields, prototype pollution keys, raw evidence, raw command material, private paths, endpoint/token/secret labels, raw owner notes, audit bodies, actual probe requests, actual ingestion requests, trusted loader enablement requests, readiness claim requests, owner confirmation requests, package publish requests, and external service requests.
+
+The packet is draft-only and never sends itself. `sent`, `authorizing`, `ownerConfirmationCreated`, `ownerConfirmationConfirmed`, `actualEvidenceCollectionAuthorized`, `runtimeReadinessClaimed`, `productionReadinessClaimed`, `actualIngestionAllowed`, `trustedLoaderEnablementAuthorized`, `priority1Resolved`, `motionDatasetExecutable`, `sourceHashVerified`, and `declaredRowCountChecked` remain false. `ready_for_owner_review` is only a future-review label and does not authorize real renderer evidence collection, actual data work, trusted loader enablement, runtime readiness, or production readiness.
