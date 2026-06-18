@@ -191,6 +191,18 @@ The R3 browser preflight is a pure scope gate for a future browser-visible probe
 
 This preflight does not launch a browser and does not create R3 evidence. It only defines the minimum owner labels required before a later R3 task may start browser-visible scaffold verification.
 
+## R3 Preflight Strict Allowlist
+
+Task: LIVE2D-R3-PREFLIGHT-STRICT-ALLOWLIST-AND-PRODUCT-TRUTH-PACK1
+
+The R3 browser preflight now fails closed on exact input shape, label syntax, label bounds, duplicates, unknown owner labels, unknown requested actions, forbidden requested actions, missing required one-run browser scaffold actions, and scope/action mismatches. Invalid labels are no longer silently removed before a pass decision.
+
+Allowed one-run requested actions are limited to browser process probe, actual renderer page load, JavaScript execution check, DOM surface check, canvas presence check, loopback request observation, browser process cleanup check, temporary profile cleanup check, server cleanup check, and port release check. The five-run reproducibility check remains optional and requires its owner scope label when requested.
+
+The preflight returns fixed safe failure labels only and never echoes raw input values. It does not start a browser, execute Cubism SDK or Framework code, load a model or scene, apply cues, inject browser heartbeat, open SSE, enable trusted loader, handle actual data, create owner confirmation, resolve priority1, increase checked row count, make the motion dataset executable, or claim runtime or production readiness.
+
+Safe-surface planning summaries remain frozen by default. A future public surface or planning-only summary needs a blocking product gap ID, consumer code path, compatibility plan, test plan, and product value statement before it can be added.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.
