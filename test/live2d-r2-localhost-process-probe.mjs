@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { pathToFileURL } from "node:url";
 import {
   LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL,
   LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS,
@@ -23,7 +24,7 @@ function expandCompactProbeRouteResults(result) {
   }));
 }
 
-async function runProbe() {
+export async function runProbe() {
   const port = await reserveLoopbackPort();
   const processState = startRendererProcess({
     port,
@@ -78,33 +79,39 @@ async function runProbe() {
   }
 }
 
-const envelope = await runProbe();
-console.log(JSON.stringify({
-  schema: envelope.schema,
-  probeStatus: envelope.probeStatus,
-  routeSetStatus: envelope.routeSetStatus,
-  schemaParityStatus: envelope.schemaParityStatus,
-  requiredFieldPresenceStatus: envelope.requiredFieldPresenceStatus,
-  criticalBoundaryStatus: envelope.criticalBoundaryStatus,
-  crossSurfaceParityStatus: envelope.crossSurfaceParityStatus,
-  processStopped: envelope.processStopped,
-  portReleased: envelope.portReleased,
-  rawResponseStored: envelope.rawResponseStored,
-  rawResponsePrinted: envelope.rawResponsePrinted,
-  externalNetworkUsed: envelope.externalNetworkUsed,
-  browserStarted: envelope.browserStarted,
-  sdkExecuted: envelope.sdkExecuted,
-  modelLoadAttempted: envelope.modelLoadAttempted,
-  sceneLoadAttempted: envelope.sceneLoadAttempted,
-  cueApplicationAttempted: envelope.cueApplicationAttempted,
-  browserHeartbeatInjected: envelope.browserHeartbeatInjected,
-  ownerConfirmationCreated: envelope.ownerConfirmationCreated,
-  runtimeReadinessClaimed: envelope.runtimeReadinessClaimed,
-  productionReadinessClaimed: envelope.productionReadinessClaimed,
-  priority1Resolved: envelope.priority1Resolved,
-  checkedRowCountIncreased: envelope.checkedRowCountIncreased,
-  motionDatasetExecutable: envelope.motionDatasetExecutable,
-  failureLabels: envelope.failureLabels,
-  safeSummaryOnly: true,
-}, null, 2));
-process.exitCode = envelope.probeStatus === "pass" ? 0 : 1;
+export function summarizeProbeEnvelope(envelope) {
+  return {
+    schema: envelope.schema,
+    probeStatus: envelope.probeStatus,
+    routeSetStatus: envelope.routeSetStatus,
+    schemaParityStatus: envelope.schemaParityStatus,
+    requiredFieldPresenceStatus: envelope.requiredFieldPresenceStatus,
+    criticalBoundaryStatus: envelope.criticalBoundaryStatus,
+    crossSurfaceParityStatus: envelope.crossSurfaceParityStatus,
+    processStopped: envelope.processStopped,
+    portReleased: envelope.portReleased,
+    rawResponseStored: envelope.rawResponseStored,
+    rawResponsePrinted: envelope.rawResponsePrinted,
+    externalNetworkUsed: envelope.externalNetworkUsed,
+    browserStarted: envelope.browserStarted,
+    sdkExecuted: envelope.sdkExecuted,
+    modelLoadAttempted: envelope.modelLoadAttempted,
+    sceneLoadAttempted: envelope.sceneLoadAttempted,
+    cueApplicationAttempted: envelope.cueApplicationAttempted,
+    browserHeartbeatInjected: envelope.browserHeartbeatInjected,
+    ownerConfirmationCreated: envelope.ownerConfirmationCreated,
+    runtimeReadinessClaimed: envelope.runtimeReadinessClaimed,
+    productionReadinessClaimed: envelope.productionReadinessClaimed,
+    priority1Resolved: envelope.priority1Resolved,
+    checkedRowCountIncreased: envelope.checkedRowCountIncreased,
+    motionDatasetExecutable: envelope.motionDatasetExecutable,
+    failureLabels: envelope.failureLabels,
+    safeSummaryOnly: true,
+  };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const envelope = await runProbe();
+  console.log(JSON.stringify(summarizeProbeEnvelope(envelope), null, 2));
+  process.exitCode = envelope.probeStatus === "pass" ? 0 : 1;
+}

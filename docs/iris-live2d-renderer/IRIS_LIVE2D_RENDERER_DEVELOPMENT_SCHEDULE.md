@@ -1084,3 +1084,11 @@ Status: R2-only compact localhost probe surface added. This step adds a disabled
 Boundary: full public `/health`, `/status`, and `/renderer/runtime-config` shapes are not shrunk or removed, the R2 transport byte bound is not raised, no browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
 
 Next safe action: run `LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1` for five fresh compact-probe runs with process cleanup, port release, raw-response non-persistence, and stable semantic attestation before any R2-D completion review.
+
+## LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1
+
+Status: five-run compact localhost probe reproducibility attestation. This step runs five fresh renderer child processes on fresh loopback ports, uses the R2 compact probe endpoint, expands each compact response into the existing semantic route set, validates the V2 envelope, and reduces the results to safe aggregate pass/blocked labels.
+
+Boundary: the attestation stores no port numbers, PIDs, timestamps, durations, raw URLs, raw responses, raw errors, stack traces, environment values, temp paths, command bodies, private paths, tokens, or secrets. No browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
+
+Next safe action: run `LIVE2D-R2-LOCALHOST-PROBE-COMPLETION-REVIEW1` as a no-delta completion review. Stop at the R3 owner-decision point after R2-D; do not auto-start browser, SDK, model, scene, cue, trusted loader, readiness, owner confirmation, or actual data work.
