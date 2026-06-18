@@ -63,10 +63,14 @@ const MOTION_IDENTITY_COMFORT_SURFACE_DEFINITIONS = Object.freeze([
 ]);
 
 export const MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY = Object.freeze(
-  MOTION_IDENTITY_COMFORT_SURFACE_DEFINITIONS.map(([id, schema, factory]) => Object.freeze({
+  MOTION_IDENTITY_COMFORT_SURFACE_DEFINITIONS.map(([id, schema, factory], index) => Object.freeze({
     id,
     schema,
     factory,
+    factoryInvocationMode: "zero_arg_static",
+    contextAdapterId: null,
+    required: true,
+    projectionOrder: index,
     publicKey: id,
     surfaceKeys: ["schema"],
     surfaces: ["status", "health", "runtimeConfig"],
@@ -105,6 +109,10 @@ export function validateMotionIdentityComfortSurfaceRegistry(registry = MOTION_I
     .filter((entry) => (
       typeof entry.factory !== "string" ||
       !entry.factory ||
+      entry.factoryInvocationMode !== "zero_arg_static" ||
+      entry.contextAdapterId !== null ||
+      entry.required !== true ||
+      !Number.isInteger(entry.projectionOrder) ||
       entry.publicKey !== entry.id ||
       !Array.isArray(entry.surfaces) ||
       !entry.surfaces.includes("status") ||
