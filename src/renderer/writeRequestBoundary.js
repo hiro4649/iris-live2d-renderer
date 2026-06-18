@@ -27,7 +27,9 @@ export function assertWriteRequestBoundary(request, {
     remoteWriteEnabled,
   });
   if (decision.accepted) return decision;
-  const code = decision.failureLabels.includes("write_auth_required")
+  const code = decision.failureLabels.includes("write_content_type_not_allowed")
+    ? "invalid_json"
+    : decision.failureLabels.includes("write_auth_required")
     ? "auth_required"
     : "write_boundary_rejected";
   throw new ContractError("write boundary rejected", code);

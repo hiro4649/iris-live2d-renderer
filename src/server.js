@@ -14,6 +14,7 @@ import {
   assertAllowedListenHost,
   assertWriteRequestBoundary,
 } from "./renderer/writeRequestBoundary.js";
+import { validateSafeTraversal } from "./renderer/safeTraversal.js";
 
 const MAX_BODY_BYTES = 256_000;
 const SSE_CUE_INTERVAL_MS = 150;
@@ -156,18 +157,35 @@ export async function listen(server, { host = "127.0.0.1", port = 9130 } = {}) {
 }
 
 async function readJson(request) {
+  if (!isJsonContentType(request.headers?.["content-type"])) {
+    throw new ContractError("unsupported content type", "invalid_json");
+  }
   let size = 0;
   const chunks = [];
   for await (const chunk of request) {
     size += chunk.length;
-    if (size > MAX_BODY_BYTES) throw new ContractError("request body too large", "invalid_json");
+    if (size > MAX_BODY_BYTES) throw new ContractError("request body too large", "request_body_too_large");
     chunks.push(chunk);
   }
   try {
-    return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
-  } catch {
+    const bytes = Buffer.concat(chunks);
+    const text = bytes.length ? new TextDecoder("utf-8", { fatal: true }).decode(bytes) : "{}";
+    const payload = JSON.parse(text);
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+      throw new ContractError("object body required", "invalid_json");
+    }
+    const traversal = validateSafeTraversal(payload);
+    if (!traversal.ok) throw new ContractError("request body outside safe bounds", traversal.errorKind);
+    return payload;
+  } catch (error) {
+    if (error instanceof ContractError) throw error;
     throw new ContractError("invalid json", "invalid_json");
   }
+}
+
+function isJsonContentType(value) {
+  const text = String(value ?? "").trim().toLowerCase();
+  return text === "application/json" || text === "application/json; charset=utf-8";
 }
 
 function sendJson(response, status, body) {

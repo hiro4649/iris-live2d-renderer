@@ -1,4 +1,6 @@
-﻿export class ContractError extends Error {
+import { validateSafeTraversal } from "./renderer/safeTraversal.js";
+
+export class ContractError extends Error {
   constructor(message, code = "contract_error") {
     super(message);
     this.name = "ContractError";
@@ -19,10 +21,15 @@ export function assertSafeInput(value, context = "request") {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new ContractError(`${context}: object body required`, "invalid_json");
   }
+  assertSafeResourceBounds(value, context);
   assertNoUnsafeMaterial(value, context);
 }
 
 export function assertSafePublicObject(value, context = "public response") {
+  assertSafeResourceBounds(value, context, {
+    maxNodes: 100_000,
+    rejectPrototypePollutionKeys: false,
+  });
   assertNoUnsafeMaterial(value, context);
 }
 
@@ -43,6 +50,10 @@ export function createSafeError(error, status = 500) {
   const safeCode = [
     "auth_required",
     "invalid_json",
+    "request_body_too_large",
+    "request_body_too_deep",
+    "request_body_too_complex",
+    "request_string_too_large",
     "unsafe_payload",
     "contract_error",
     "not_found",
@@ -73,6 +84,13 @@ function isSafePolicyFlag(key, path) {
 function isSafeTrustedLoaderEvidenceField(key, path) {
   return path.endsWith("trusted_loader_evidence") &&
     key === "safe_moc_asset_token_hash";
+}
+
+function assertSafeResourceBounds(value, context, limits = {}) {
+  const traversal = validateSafeTraversal(value, limits);
+  if (!traversal.ok) {
+    throw new ContractError(`${context}: ${traversal.errorKind}`, traversal.errorKind);
+  }
 }
 
 function assertNoUnsafeMaterial(value, context, path = "root") {
