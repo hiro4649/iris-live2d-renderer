@@ -171,6 +171,16 @@ Experimental or review-only labels: blink_attention, small_nod, soft_smile, surp
 
 Experimental labels are not executable motion. Expression, gaze, breath, body, and camera labels must not be treated as runtime motion support unless a future implementation and test explicitly make them executable.
 
+## Motion Policy Evaluator
+
+Task: LIVE2D-MOTION-POLICY-EVALUATOR-PACK1
+
+Status: pure policy candidate evaluator only. The evaluator accepts strict safe-label input, rejects unknown or unsafe fields, rejects experimental/review-only motion labels as non-executable, and returns only safe decision summaries: allow_policy_candidate, downgrade, or reject.
+
+The evaluator covers cue freshness, confidence thresholds, repeated strong-motion fatigue, viewer comfort mode, subtitle/gaze/camera risk, recovery plan presence, cooldown state, serious focus, moderation state, minor/romantic/dependency pressure, and donation-only or relation-only escalation. It never starts the renderer, SDK, browser, external service, model load, scene load, cue application, parser, redaction scan, audit, or actual data ingestion.
+
+The output is not a renderer command, not cue application, not runtime readiness, not production readiness, not owner confirmation, and not trusted loader enablement.
+
 ## Motion Identity and Comfort Specification
 
 Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1
