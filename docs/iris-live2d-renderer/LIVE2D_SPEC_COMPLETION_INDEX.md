@@ -9291,6 +9291,37 @@ The R2-C pack adds a safe five-run reproducibility attestation for the compact l
 | actual_ingestion_allowed | false |
 
 The attestation excludes port numbers, PIDs, timestamps, durations, raw URLs, raw response bodies, raw errors, stack traces, environment values, temp paths, command bodies, private paths, tokens, and secrets. Next safe action is `LIVE2D-R2-LOCALHOST-PROBE-COMPLETION-REVIEW1`.
+## R2 Localhost Probe Completion Review
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-COMPLETION-REVIEW1
+
+The R2 completion review closes the localhost probe continuation lane at the R3 owner-decision point. R2 now has R1 compatibility, semantic V2 envelope validation, bounded loopback transport, safe process cleanup, compact endpoint unblocking, one-run compact probe pass, and five-run compact probe reproducibility pass.
+
+| field | value |
+| --- | --- |
+| r2_completion_status | complete_at_owner_decision_point |
+| exact_semantic_routes | health; status; runtime_config |
+| compact_transport_projection | present |
+| five_run_reproducibility | pass |
+| raw_response_stored | false |
+| raw_response_printed | false |
+| browser_started | false |
+| sdk_executed | false |
+| model_load_attempted | false |
+| scene_load_attempted | false |
+| cue_application_attempted | false |
+| browser_heartbeat_injected | false |
+| owner_confirmation_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
+| actual_ingestion_allowed | false |
+| next_action | wait_for_owner_approved_R3_scope |
+
+R3 is not started by this review. Any browser, SDK, model, scene, cue, trusted loader, actual data, owner confirmation, runtime readiness, production readiness, priority1, checked row count, or motion execution step requires a separate explicit owner-approved scope.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1

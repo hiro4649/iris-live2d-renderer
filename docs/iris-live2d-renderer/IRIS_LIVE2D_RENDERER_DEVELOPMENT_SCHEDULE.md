@@ -1092,3 +1092,11 @@ Status: five-run compact localhost probe reproducibility attestation. This step 
 Boundary: the attestation stores no port numbers, PIDs, timestamps, durations, raw URLs, raw responses, raw errors, stack traces, environment values, temp paths, command bodies, private paths, tokens, or secrets. No browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
 
 Next safe action: run `LIVE2D-R2-LOCALHOST-PROBE-COMPLETION-REVIEW1` as a no-delta completion review. Stop at the R3 owner-decision point after R2-D; do not auto-start browser, SDK, model, scene, cue, trusted loader, readiness, owner confirmation, or actual data work.
+
+## LIVE2D-R2-LOCALHOST-PROBE-COMPLETION-REVIEW1
+
+Status: R2 localhost probe lane complete at the owner-decision point. R2 now includes semantic V2 envelope validation, bounded loopback transport, child process cleanup, compact probe surface unblock, one-run compact probe pass, and five-run reproducibility pass.
+
+Boundary: this completion review is not R3 and does not authorize browser, Playwright, Chromium, Cubism SDK or Framework execution, model load, scene load, cue application, browser heartbeat injection, trusted loader enablement, owner confirmation, actual data work, runtime readiness, production readiness, priority1 resolution, checked row count increase, or motion dataset execution.
+
+Next action: wait for a separate explicit owner-approved R3 scope before any browser-visible, SDK, model/scene, cue, trusted loader, actual data, owner confirmation, or readiness step.
