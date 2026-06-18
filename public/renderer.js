@@ -1,3 +1,9 @@
+import {
+  acceptCueForApplication,
+  confirmVisualCueApplication as confirmVisualCueApplicationState,
+  createInitialCueLifecycleState,
+} from "./rendererCueLifecycle.js";
+
 const HEARTBEAT_INTERVAL_MS = 1_000;
 const RENDERER_EVENTS_ROUTE = "/renderer/events";
 const BROWSER_BOOTSTRAP_CONFIG_ROUTE = "/renderer/browser-bootstrap-config";
@@ -50,9 +56,7 @@ export function createInitialRendererState() {
     model3Loaded: false,
     sceneLoaded: false,
     realModelLoadSupported: false,
-    lastAppliedCueStatusHash: "",
-    lastCueAppliedAt: null,
-    lastCueApplyStatus: "not_ready",
+    ...createInitialCueLifecycleState(),
     model3ManifestAvailable: false,
     model3BrowserLoadSupported: false,
     modelAssetRouteAvailable: false,
@@ -437,17 +441,22 @@ export function enqueueBrowserCues(state, cues) {
 export function flushPendingCues(state, now = Date.now) {
   if (!isReadyForCueApply(state)) {
     state.lastCueApplyStatus = state.pendingCues.length > 0 ? "queued_until_ready" : "not_ready";
-    return { applied_count: 0, pending_cue_count: state.pendingCues.length };
+    return { accepted_count: 0, accepted_cues: [], pending_cue_count: state.pendingCues.length };
   }
-  let applied = 0;
+  const acceptedCues = [];
   while (state.pendingCues.length > 0) {
     const cue = state.pendingCues.shift();
-    state.lastAppliedCueStatusHash = cue.status_hash || "";
-    state.lastCueAppliedAt = now();
-    state.lastCueApplyStatus = "applied";
-    applied += 1;
+    acceptCueForApplication(state, cue, now());
+    acceptedCues.push({
+      status_hash: state.lastAcceptedCueStatusHash,
+      acceptance_status: state.lastCueAcceptanceStatus,
+    });
   }
-  return { applied_count: applied, pending_cue_count: state.pendingCues.length };
+  return { accepted_count: acceptedCues.length, accepted_cues: acceptedCues, pending_cue_count: state.pendingCues.length };
+}
+
+export function confirmVisualCueApplication(state = rendererState, receipt = {}) {
+  return confirmVisualCueApplicationState(state, receipt);
 }
 
 export function isReadyForCueApply(state) {
@@ -498,6 +507,10 @@ export function createHeartbeatPayload(state, nowMs = Date.now()) {
     last_applied_cue_status_hash: state.lastAppliedCueStatusHash,
     last_cue_applied_at_ms: state.lastCueAppliedAt,
     last_cue_apply_status: state.lastCueApplyStatus,
+    last_accepted_cue_status_hash: state.lastAcceptedCueStatusHash,
+    last_cue_acceptance_status: state.lastCueAcceptanceStatus,
+    last_visual_application_status: state.lastVisualApplicationStatus,
+    last_visual_application_frame_sequence: state.lastVisualApplicationFrameSequence,
     heartbeat_timestamp_ms: nowMs,
   };
 }

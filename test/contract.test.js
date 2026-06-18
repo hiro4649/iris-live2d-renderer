@@ -5380,7 +5380,7 @@ try {
   assert.equal(browserState.modelLoadStatus, "not_configured");
   assert.equal(enqueueBrowserCues(browserState, [{ status_hash: "browser_pending_hash" }]), 1);
   const pendingFlush = flushPendingCues(browserState, () => nowMs);
-  assert.equal(pendingFlush.applied_count, 0);
+  assert.equal(pendingFlush.accepted_count, 0);
   assert.equal(pendingFlush.pending_cue_count, 1);
   assert.equal(browserState.lastCueApplyStatus, "queued_until_ready");
   assert.equal(browserStatusText(browserState), "Live2D renderer preserving cue until real model load");
@@ -5505,9 +5505,10 @@ try {
   browserState.model3Loaded = true;
   browserState.sceneLoaded = true;
   const appliedFlush = flushPendingCues(browserState, () => nowMs);
-  assert.equal(appliedFlush.applied_count, 1);
+  assert.equal(appliedFlush.accepted_count, 1);
   assert.equal(appliedFlush.pending_cue_count, 0);
-  assert.equal(browserState.lastAppliedCueStatusHash, "browser_pending_hash");
+  assert.equal(browserState.lastAcceptedCueStatusHash, "browser_pending_hash");
+  assert.equal(browserState.lastAppliedCueStatusHash, "");
 
   const eventStreamBrowserState = createInitialRendererState();
   applyRuntimeConfig(eventStreamBrowserState, {
@@ -5519,15 +5520,16 @@ try {
   const eventStreamPending = handleCueEventMessage(eventStreamBrowserState, {
     data: JSON.stringify({ cues: [{ status_hash: "event_stream_pending_hash" }] }),
   });
-  assert.equal(eventStreamPending.applied_count, 0);
+  assert.equal(eventStreamPending.accepted_count, 0);
   assert.equal(eventStreamPending.pending_cue_count, 1);
   assert.equal(eventStreamBrowserState.lastCueApplyStatus, "queued_until_ready");
   eventStreamBrowserState.realModelLoadSupported = true;
   eventStreamBrowserState.model3Loaded = true;
   eventStreamBrowserState.sceneLoaded = true;
   const eventStreamApplied = flushPendingCues(eventStreamBrowserState, () => nowMs);
-  assert.equal(eventStreamApplied.applied_count, 1);
-  assert.equal(eventStreamBrowserState.lastAppliedCueStatusHash, "event_stream_pending_hash");
+  assert.equal(eventStreamApplied.accepted_count, 1);
+  assert.equal(eventStreamBrowserState.lastAcceptedCueStatusHash, "event_stream_pending_hash");
+  assert.equal(eventStreamBrowserState.lastAppliedCueStatusHash, "");
 
   const sdkMissingHeartbeat = await missing.postJson("/renderer/heartbeat", browserHeartbeat({
     cubism_runtime_loaded: false,
