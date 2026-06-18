@@ -9253,6 +9253,44 @@ The R2-B2 pack adds a disabled-by-default compact probe endpoint for R2 localhos
 | actual_ingestion_allowed | false |
 
 The compact endpoint unblocks R2 localhost semantic validation without weakening R2-B transport safety. It does not authorize runtime readiness, production readiness, owner confirmation, actual data work, trusted loader enablement, priority1 resolution, or executable motion dataset state. Next safe action is `LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1`.
+## R2 Localhost Probe Reproducibility Attestation
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1
+
+The R2-C pack adds a safe five-run reproducibility attestation for the compact localhost probe. Each run starts a fresh renderer child process on a fresh loopback port, uses the compact endpoint, expands the compact body into the existing three semantic routes, validates the V2 envelope, stops the process, and confirms port release. The final attestation keeps only safe aggregate labels.
+
+| field | value |
+| --- | --- |
+| attestation_schema | live2d_r2_localhost_probe_reproducibility_attestation_v1 |
+| expected_run_count | 5 |
+| route_coverage_status | pass required |
+| schema_parity_status | pass required |
+| required_field_presence_status | pass required |
+| critical_boundary_status | pass required |
+| cross_surface_parity_status | pass required |
+| process_cleanup_status | pass required |
+| port_release_status | pass required |
+| external_network_status | pass required |
+| raw_response_persistence_status | pass required |
+| semantic_reproducibility_status | pass required |
+| raw_response_stored | false |
+| raw_response_printed | false |
+| browser_started | false |
+| sdk_executed | false |
+| model_load_attempted | false |
+| scene_load_attempted | false |
+| cue_application_attempted | false |
+| browser_heartbeat_injected | false |
+| owner_confirmation_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| trusted_loader_boundary | disabled |
+| actual_ingestion_allowed | false |
+
+The attestation excludes port numbers, PIDs, timestamps, durations, raw URLs, raw response bodies, raw errors, stack traces, environment values, temp paths, command bodies, private paths, tokens, and secrets. Next safe action is `LIVE2D-R2-LOCALHOST-PROBE-COMPLETION-REVIEW1`.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1

@@ -167,6 +167,14 @@ The compact surface projects only allowlisted fields from the existing `/health`
 
 This unblock does not shrink or remove existing public route fields, does not raise the transport byte limit, does not start a browser, does not execute Cubism SDK or Framework code, does not load a model or scene, does not apply cues, does not inject browser heartbeat, does not enable trusted loader, does not handle actual data, does not create owner confirmation, does not resolve priority1, and does not claim runtime or production readiness.
 
+## R2 Localhost Probe Reproducibility Attestation
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1
+
+The R2 reproducibility attestation runs five fresh compact localhost process probes and reduces them to `live2d_r2_localhost_probe_reproducibility_attestation_v1`. It records only safe counts and pass/blocked labels for route coverage, schema parity, required field presence, critical boundary status, cross-surface parity, process cleanup, port release, external network boundary, raw response persistence, and semantic reproducibility.
+
+The attestation intentionally omits port numbers, PIDs, timestamps, durations, raw URLs, raw responses, raw errors, stack traces, environment values, temp paths, and command bodies. Variance produces fixed safe failure labels only. A pass means the R2 compact probe surface is semantically repeatable under the current blocked product state; it is not renderer readiness, runtime readiness, production readiness, owner confirmation, trusted loader approval, actual data approval, priority1 resolution, or motion dataset execution.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.
