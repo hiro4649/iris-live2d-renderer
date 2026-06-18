@@ -74,10 +74,15 @@ export function createHeartbeatStatus({
   const recoveryCueSupport = Boolean(cueCapabilities.recovery_cue_support);
   const cueAppliedAtMs = Number(heartbeat?.last_cue_applied_at_ms);
   const hasCueAppliedAt = Number.isFinite(cueAppliedAtMs) && cueAppliedAtMs <= nowMs + HEARTBEAT_FUTURE_SKEW_MS;
+  const visualApplicationConfirmed = heartbeat?.last_visual_application_status === "visual_application_confirmed";
+  const visualApplicationFrameSequence = Number(heartbeat?.last_visual_application_frame_sequence);
   const lastCueApplied = Boolean(
     lastDeliveredCueStatusHash &&
       heartbeat?.last_applied_cue_status_hash === lastDeliveredCueStatusHash &&
       heartbeat?.last_cue_apply_status === "applied" &&
+      visualApplicationConfirmed &&
+      Number.isInteger(visualApplicationFrameSequence) &&
+      visualApplicationFrameSequence > 0 &&
       hasCueAppliedAt
   );
   const cubismRuntimeLoaded = heartbeat?.cubism_runtime_loaded === true;
@@ -178,9 +183,24 @@ export function createHeartbeatStatus({
     recovery_cue_support: recoveryCueSupport,
     last_cue_applied: lastCueApplied,
     last_cue_applied_at: lastCueApplied ? cueAppliedAtMs : null,
+    last_accepted_cue_status_hash: safeStatusHash(heartbeat?.last_accepted_cue_status_hash),
+    last_cue_acceptance_status: safeCueAcceptanceStatus(heartbeat?.last_cue_acceptance_status),
+    last_visual_application_status: visualApplicationConfirmed ? "visual_application_confirmed" : "not_confirmed",
+    last_visual_application_frame_sequence: Number.isInteger(visualApplicationFrameSequence) && visualApplicationFrameSequence > 0
+      ? visualApplicationFrameSequence
+      : 0,
     renderer_ready_candidate: rendererReady,
     live2d_evidence_summary: live2dEvidenceSummary,
   };
+}
+
+function safeStatusHash(value) {
+  const text = String(value ?? "");
+  return /^[a-f0-9]{64}$/u.test(text) ? text : "";
+}
+
+function safeCueAcceptanceStatus(value) {
+  return value === "accepted_for_application" ? value : "not_accepted";
 }
 
 function createLive2dEvidenceSummary({
