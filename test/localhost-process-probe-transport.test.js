@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { ReadableStream } from "node:stream/web";
+import { LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL } from "../src/renderer/localhostProbeRouteContract.js";
 import {
   LIVE2D_R2_FETCH_TIMEOUT_MS,
   LIVE2D_R2_LOOPBACK_HOST,
@@ -27,6 +28,10 @@ assert.equal(LIVE2D_R2_MAX_RESPONSE_BYTES <= 262_144, true);
 const built = buildLoopbackProbeUrl({ routeLabel: "health", port: 12345 });
 assert.equal(built.ok, true);
 assert.equal(built.url, "http://127.0.0.1:12345/health");
+assert.equal(
+  buildLoopbackProbeUrl({ routeLabel: LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL, port: 12345 }).url,
+  "http://127.0.0.1:12345/renderer/r2-probe-summary",
+);
 assert.equal(buildLoopbackProbeUrl({ routeLabel: "other", port: 12345 }).ok, false);
 assert.equal(rejectUserProvidedUrl().ok, false);
 
@@ -63,7 +68,7 @@ const oversizedLength = await fetchBoundedLoopbackJson({
   fetchImpl: async () => jsonResponse({ ok: true }),
 });
 assert.equal(oversizedLength.ok, false);
-assert.equal(oversizedLength.failureLabels.includes("content_type_invalid"), true);
+assert.equal(oversizedLength.failureLabels.includes("response_too_large"), true);
 
 const oversizedStream = await fetchBoundedLoopbackJson({
   routeLabel: "health",
@@ -77,7 +82,15 @@ const oversizedStream = await fetchBoundedLoopbackJson({
   }), { headers: { "content-type": "application/json" } }),
 });
 assert.equal(oversizedStream.ok, false);
-assert.equal(oversizedStream.failureLabels.includes("content_type_invalid"), true);
+assert.equal(oversizedStream.failureLabels.includes("response_too_large"), true);
+
+const invalidUtf8 = await fetchBoundedLoopbackJson({
+  routeLabel: "health",
+  port: 12345,
+  fetchImpl: async () => new Response(new Uint8Array([0xff]), { headers: { "content-type": "application/json" } }),
+});
+assert.equal(invalidUtf8.ok, false);
+assert.equal(invalidUtf8.failureLabels.includes("invalid_utf8"), true);
 
 const invalidJson = await fetchBoundedLoopbackJson({
   routeLabel: "health",
@@ -85,7 +98,7 @@ const invalidJson = await fetchBoundedLoopbackJson({
   fetchImpl: async () => new Response("{", { headers: { "content-type": "application/json" } }),
 });
 assert.equal(invalidJson.ok, false);
-assert.equal(invalidJson.failureLabels.includes("response_not_json_object"), true);
+assert.equal(invalidJson.failureLabels.includes("invalid_json"), true);
 
 const jsonArray = await fetchBoundedLoopbackJson({
   routeLabel: "health",
@@ -102,6 +115,17 @@ const http500 = await fetchBoundedLoopbackJson({
 });
 assert.equal(http500.ok, false);
 assert.equal(http500.failureLabels.includes("http_not_success"), true);
+
+const requestTimeout = await fetchBoundedLoopbackJson({
+  routeLabel: "health",
+  port: 12345,
+  timeoutMs: 1,
+  fetchImpl: async (_url, options) => new Promise((resolve, reject) => {
+    options.signal.addEventListener("abort", () => reject(new Error("aborted")));
+  }),
+});
+assert.equal(requestTimeout.ok, false);
+assert.equal(requestTimeout.failureLabels.includes("request_timeout"), true);
 
 const serialized = JSON.stringify(ok);
 assert.equal(serialized.includes("secret"), false);

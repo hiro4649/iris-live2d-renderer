@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {
+  LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL,
   LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS,
 } from "../src/renderer/localhostProbeRouteContract.js";
 import { buildLocalhostProcessProbeEnvelopeV2 } from "../src/renderer/localhostProcessProbeEnvelopeV2.js";
@@ -12,9 +13,24 @@ import {
   waitForRendererStartup,
 } from "../src/renderer/localhostProcessController.js";
 
+function expandCompactProbeRouteResults(result) {
+  if (!result.ok || !result.body?.surfaces) return [];
+  return LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS.map((routeLabel) => ({
+    routeLabel,
+    httpStatus: result.httpStatus,
+    ok: result.ok === true,
+    body: result.body.surfaces[routeLabel] || {},
+  }));
+}
+
 async function runProbe() {
   const port = await reserveLoopbackPort();
-  const processState = startRendererProcess({ port, cwd: process.cwd(), env: process.env });
+  const processState = startRendererProcess({
+    port,
+    cwd: process.cwd(),
+    env: process.env,
+    r2ProbeSurfaceEnabled: true,
+  });
   let cleanup = {
     processExitObserved: false,
     sigtermSent: false,
@@ -25,17 +41,18 @@ async function runProbe() {
   };
   let portReleased = false;
   try {
+    const fetchCompact = () => fetchBoundedLoopbackJson({
+      routeLabel: LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL,
+      port,
+    });
     const startupReady = await waitForRendererStartup({
       probe: async () => {
-        const result = await fetchBoundedLoopbackJson({ routeLabel: "health", port });
+        const result = await fetchCompact();
         return result.ok === true && result.httpStatus === 200;
       },
     });
-    const routeResults = startupReady
-      ? await Promise.all(LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS.map((routeLabel) => (
-        fetchBoundedLoopbackJson({ routeLabel, port })
-      )))
-      : [];
+    const compactResult = startupReady ? await fetchCompact() : null;
+    const routeResults = compactResult ? expandCompactProbeRouteResults(compactResult) : [];
     cleanup = await stopRendererProcess(processState);
     portReleased = await waitForPortRelease({ port });
     return buildLocalhostProcessProbeEnvelopeV2({

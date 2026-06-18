@@ -1076,3 +1076,11 @@ Status: bounded transport and cleanup helpers. This step adds fixed-route loopba
 Boundary: no browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
 
 Current finding: the actual safe public route bodies are larger than the R2-B response byte bound, so the actual runner blocks safely. Next development should either add an owner-approved compact probe response surface or revise the R2-C scope before requiring five-run pass evidence.
+
+## LIVE2D-R2-COMPACT-PROBE-SURFACE-UNBLOCK-PACK1
+
+Status: R2-only compact localhost probe surface added. This step adds a disabled-by-default `GET /renderer/r2-probe-summary` endpoint guarded by the R2 child-process flag, direct loopback socket checks, exact Host header, empty query, GET-only routing, and forwarded-header rejection. The endpoint projects allowlisted fields from the existing safe route objects into a bounded compact schema and the R2 runner expands that compact response into the existing `health`, `status`, and `runtime_config` semantic route set before V2 validation.
+
+Boundary: full public `/health`, `/status`, and `/renderer/runtime-config` shapes are not shrunk or removed, the R2 transport byte bound is not raised, no browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
+
+Next safe action: run `LIVE2D-R2-LOCALHOST-PROBE-REPRODUCIBILITY-ATTESTATION-PACK1` for five fresh compact-probe runs with process cleanup, port release, raw-response non-persistence, and stable semantic attestation before any R2-D completion review.

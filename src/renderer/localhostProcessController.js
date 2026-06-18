@@ -19,7 +19,7 @@ const SAFE_ENV_KEYS = new Set([
   "LC_ALL",
 ]);
 
-export function createMinimalChildEnv(sourceEnv = process.env, { port } = {}) {
+export function createMinimalChildEnv(sourceEnv = process.env, { port, r2ProbeSurfaceEnabled = false } = {}) {
   const env = {};
   for (const key of SAFE_ENV_KEYS) {
     if (Object.hasOwn(sourceEnv, key) && sourceEnv[key]) env[key] = sourceEnv[key];
@@ -31,6 +31,9 @@ export function createMinimalChildEnv(sourceEnv = process.env, { port } = {}) {
   env.IRIS_LIVE2D_MODEL3_JSON = "";
   env.IRIS_LOCAL_LIVE2D_MODEL_ID = "";
   env.IRIS_LOCAL_LIVE2D_SCENE_ID = "";
+  if (r2ProbeSurfaceEnabled === true) {
+    env.IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED = "1";
+  }
   return env;
 }
 
@@ -45,10 +48,10 @@ export async function reserveLoopbackPort() {
   return address.port;
 }
 
-export function startRendererProcess({ port, cwd = process.cwd(), env = process.env } = {}) {
+export function startRendererProcess({ port, cwd = process.cwd(), env = process.env, r2ProbeSurfaceEnabled = false } = {}) {
   const child = spawn(process.execPath, ["src/server.js"], {
     cwd,
-    env: createMinimalChildEnv(env, { port }),
+    env: createMinimalChildEnv(env, { port, r2ProbeSurfaceEnabled }),
     shell: false,
     detached: false,
     windowsHide: true,

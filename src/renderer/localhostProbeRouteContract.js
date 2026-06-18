@@ -4,6 +4,9 @@ export const LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS = Object.freeze([
   "runtime_config",
 ]);
 
+export const LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL = "r2_compact_probe_summary";
+export const LIVE2D_R2_COMPACT_PROBE_ROUTE_PATH = "/renderer/r2-probe-summary";
+
 export const LIVE2D_R2_LOCALHOST_PROBE_FAILURE_LABELS = Object.freeze([
   "route_missing",
   "route_duplicate",
@@ -11,7 +14,11 @@ export const LIVE2D_R2_LOCALHOST_PROBE_FAILURE_LABELS = Object.freeze([
   "route_extra",
   "http_not_success",
   "content_type_invalid",
+  "response_too_large",
+  "invalid_utf8",
+  "invalid_json",
   "response_not_json_object",
+  "request_timeout",
   "schema_missing",
   "schema_mismatch",
   "required_field_missing",
@@ -168,4 +175,9 @@ export const LIVE2D_R2_LOCALHOST_PROBE_ROUTE_CONTRACTS = Object.freeze([
 
 export function getLive2dR2LocalhostProbeRouteContract(routeLabel) {
   return LIVE2D_R2_LOCALHOST_PROBE_ROUTE_CONTRACTS.find((contract) => contract.routeLabel === routeLabel) || null;
+}
+
+export function getLive2dR2TransportRoutePath(routeLabel) {
+  if (routeLabel === LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL) return LIVE2D_R2_COMPACT_PROBE_ROUTE_PATH;
+  return getLive2dR2LocalhostProbeRouteContract(routeLabel)?.path || "";
 }

@@ -19,6 +19,10 @@ assert.equal(env.GH_TOKEN, undefined);
 assert.equal(env.HTTP_PROXY, undefined);
 assert.equal(env.NODE_OPTIONS, undefined);
 assert.equal(env.NO_PROXY, "127.0.0.1");
+assert.equal(env.IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED, undefined);
+
+const probeEnv = createMinimalChildEnv({}, { port: 12345, r2ProbeSurfaceEnabled: true });
+assert.equal(probeEnv.IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED, "1");
 
 let attempts = 0;
 const ready = await waitForRendererStartup({

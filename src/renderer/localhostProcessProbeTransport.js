@@ -1,5 +1,9 @@
 import { TextDecoder } from "node:util";
-import { LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS, getLive2dR2LocalhostProbeRouteContract } from "./localhostProbeRouteContract.js";
+import {
+  LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL,
+  LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS,
+  getLive2dR2TransportRoutePath,
+} from "./localhostProbeRouteContract.js";
 
 export const LIVE2D_R2_LOOPBACK_HOST = "127.0.0.1";
 export const LIVE2D_R2_MAX_RESPONSE_BYTES = 262_144;
@@ -16,8 +20,10 @@ function isAllowedPort(port) {
 }
 
 export function buildLoopbackProbeUrl({ routeLabel, port }) {
-  const contract = getLive2dR2LocalhostProbeRouteContract(routeLabel);
-  if (!contract || !LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS.includes(routeLabel)) {
+  const path = getLive2dR2TransportRoutePath(routeLabel);
+  const routeAllowed = routeLabel === LIVE2D_R2_COMPACT_PROBE_ROUTE_LABEL ||
+    LIVE2D_R2_LOCALHOST_PROBE_ROUTE_LABELS.includes(routeLabel);
+  if (!path || !routeAllowed) {
     return { ...safeFailure("route_unknown"), url: "" };
   }
   if (!isAllowedPort(port)) {
@@ -25,9 +31,9 @@ export function buildLoopbackProbeUrl({ routeLabel, port }) {
   }
   return {
     ok: true,
-    url: `http://${LIVE2D_R2_LOOPBACK_HOST}:${port}${contract.path}`,
+    url: `http://${LIVE2D_R2_LOOPBACK_HOST}:${port}${path}`,
     routeLabel,
-    pathLabel: contract.path,
+    pathLabel: path,
     safeSummaryOnly: true,
   };
 }
@@ -56,7 +62,7 @@ function normalizeContentType(value) {
 async function readBoundedResponseBody(response, byteLimit = LIVE2D_R2_MAX_RESPONSE_BYTES) {
   const contentLength = Number(response.headers.get("content-length") || "0");
   if (contentLength > byteLimit) {
-    return { ...safeFailure("content_type_invalid"), bodyText: "" };
+    return { ...safeFailure("response_too_large"), bodyText: "" };
   }
   const reader = response.body?.getReader();
   if (!reader) return { ...safeFailure("response_not_json_object"), bodyText: "" };
@@ -68,7 +74,7 @@ async function readBoundedResponseBody(response, byteLimit = LIVE2D_R2_MAX_RESPO
     total += value.byteLength;
     if (total > byteLimit) {
       await reader.cancel();
-      return { ...safeFailure("content_type_invalid"), bodyText: "" };
+      return { ...safeFailure("response_too_large"), bodyText: "" };
     }
     chunks.push(value);
   }
@@ -86,7 +92,7 @@ async function readBoundedResponseBody(response, byteLimit = LIVE2D_R2_MAX_RESPO
       safeSummaryOnly: true,
     };
   } catch {
-    return { ...safeFailure("response_not_json_object"), bodyText: "" };
+    return { ...safeFailure("invalid_utf8"), bodyText: "" };
   }
 }
 
@@ -181,7 +187,7 @@ export async function fetchBoundedLoopbackJson({
         allRequestedHostsLoopback: true,
         redirectFollowed: false,
         proxyEnvForwarded: false,
-        failureLabels: ["response_not_json_object"],
+        failureLabels: ["invalid_json"],
         safeSummaryOnly: true,
       };
     }
@@ -202,6 +208,7 @@ export async function fetchBoundedLoopbackJson({
       safeSummaryOnly: true,
     };
   } catch {
+    const aborted = controller.signal.aborted;
     return {
       routeLabel,
       httpStatus: 0,
@@ -211,7 +218,7 @@ export async function fetchBoundedLoopbackJson({
       allRequestedHostsLoopback: true,
       redirectFollowed: false,
       proxyEnvForwarded: false,
-      failureLabels: ["http_not_success"],
+      failureLabels: [aborted ? "request_timeout" : "http_not_success"],
       safeSummaryOnly: true,
     };
   } finally {
