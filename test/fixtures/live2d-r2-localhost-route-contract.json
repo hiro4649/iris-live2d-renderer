@@ -1,0 +1,5 @@
+{
+  "schema": "live2d_r2_localhost_route_contract_v1",
+  "routeLabels": ["health", "status", "runtime_config"],
+  "safeSummaryOnly": true
+}

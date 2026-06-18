@@ -133,6 +133,18 @@ The checklist never sends a packet, creates owner confirmation, authorizes evide
 
 The R1 probe is process availability and safe-surface shape evidence only. It does not start a browser, execute Cubism SDK code, load a model, load a scene, apply a cue, inject a browser heartbeat, enable trusted loader, ingest data, calculate hashes, execute parser/redaction/audit work, create owner confirmation, resolve priority1, increase checked row count, make the motion dataset executable, or claim renderer/runtime/production readiness.
 
+## R2 Localhost Probe Semantic Boundary Attestation
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-SEMANTIC-BOUNDARY-ATTESTATION-PACK1
+
+The R2 semantic boundary attestation adds an additive V2 envelope for localhost probe interpretation while preserving the R1 envelope. `src/renderer/localhostProbeRouteContract.js` fixes the exact route set for `/health`, `/status`, and `/renderer/runtime-config`, including per-route schema names, required selectors, optional selectors, critical boundary selectors, compact summary selector, and surface role. The route contract is code-owned; it does not accept arbitrary selector paths from user input.
+
+`src/renderer/localhostProcessProbeEnvelopeV2.js` separates critical field presence from critical field value. Missing required fields, wrong types, schema mismatch, missing compact summary, unknown route, duplicate route, extra route, non-2xx route status, cross-surface semantic mismatch, non-loopback host, missing process start, missing process stop, or missing port release all produce fixed safe failure labels and block the probe. Missing fields are not converted into safe `false` values.
+
+The R2 V2 envelope checks that the blocked boundary remains blocked across all applicable safe surfaces: renderer ready false, model loaded false, scene loaded false, browser cue delivery ready false, runtime readiness false, production readiness false, owner confirmation false, actual ingestion false, trusted loader disabled, priority1 BLOCKED, checked row count 0, compact safe summary blocked, and motion dataset non-executable. Route shape differences are allowed; semantic differences are not.
+
+The R2-A pack is semantic interpretation only. It does not run a browser, Playwright, Chromium, Cubism SDK, Cubism Framework, model load, scene load, cue application, browser heartbeat injection, SSE/WebSocket clients, OBS, TTS, YouTube, Game, DB, trusted loader, actual data ingestion, parser, redaction scan, audit write, owner confirmation, runtime readiness, production readiness, priority1 resolution, checked row count increase, or motion dataset execution.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

@@ -9157,6 +9157,40 @@ The R1 localhost safe process probe starts the existing Node renderer process on
 | motion_dataset_executable | false |
 
 The safe envelope may record route labels, status classes, known false/blocked readiness flags, and compact safe summary presence only. It must not store raw JSON responses, endpoint values, tokens, private paths, row bodies, file bodies, raw commands, or stack traces.
+## R2 Localhost Probe Semantic Boundary Attestation
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-SEMANTIC-BOUNDARY-ATTESTATION-PACK1
+
+The R2-A pack adds the additive schema `live2d_r2_localhost_process_probe_envelope_v2` and the route contract manifest `live2d_r2_localhost_route_contract_v1`. R1 remains retained as the historical minimal process probe.
+
+| field | value |
+| --- | --- |
+| route_contract | health, status, runtime_config |
+| required_paths | /health, /status, /renderer/runtime-config |
+| field_presence_policy | fail_closed |
+| missing_required_field | blocked |
+| wrong_type | blocked |
+| unknown_route | blocked |
+| duplicate_route | blocked |
+| cross_surface_mismatch | blocked |
+| raw_response_stored | false |
+| raw_response_printed | false |
+| browser_started | false |
+| sdk_executed | false |
+| model_load_attempted | false |
+| scene_load_attempted | false |
+| cue_application_attempted | false |
+| browser_heartbeat_injected | false |
+| owner_confirmation_created | false |
+| trusted_loader_enabled | false |
+| actual_data_handled | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+
+The V2 envelope records only safe labels, route labels, schema names, selector labels, presence booleans, safe status labels, and fixed failure labels. It does not expose raw response bodies, endpoint values, port numbers, PIDs, private paths, tokens, secrets, owner notes, row bodies, file bodies, command bodies, raw errors, or stack traces.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1
