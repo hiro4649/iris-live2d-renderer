@@ -24,6 +24,11 @@ const surfaces = {
   health: state.health(),
   runtimeConfig: state.browserRuntimeConfig(),
 };
+const ADDITIVE_V2_PUBLIC_KEYS = new Set(["live2d_safe_summary_v2"]);
+
+function legacyV1Keys(surface) {
+  return Object.keys(surface).filter((key) => !ADDITIVE_V2_PUBLIC_KEYS.has(key)).sort();
+}
 
 assert.equal(registryStatus.status, "pass");
 assert.equal(inventory.status, "pass");
@@ -57,10 +62,11 @@ for (const entry of MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY) {
 
 for (const [surfaceName, surface] of Object.entries(surfaces)) {
   const expected = baseline.surfaces[surfaceName];
-  assert.deepEqual(Object.keys(surface).sort(), expected.outerPublicKeys, `${surfaceName}:outer_public_keys`);
+  assert.deepEqual(legacyV1Keys(surface), expected.outerPublicKeys, `${surfaceName}:outer_public_keys`);
   const schemaByPublicKey = {};
   const invariantKeysByPublicKey = {};
   for (const key of Object.keys(surface).sort()) {
+    if (ADDITIVE_V2_PUBLIC_KEYS.has(key)) continue;
     const value = surface[key];
     if (value && typeof value === "object" && !Array.isArray(value)) {
       if (typeof value.schema === "string") schemaByPublicKey[key] = value.schema;

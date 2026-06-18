@@ -91,6 +91,9 @@ const health = state.health();
 const runtimeConfig = state.browserRuntimeConfig();
 const projected = buildRegisteredSafeSummaryMap();
 assert.equal(projected.status, "pass");
+assert.equal(status.live2d_safe_summary_v2.schema, "iris_live2d_safe_summary_v2");
+assert.equal(health.live2d_safe_summary_v2.schema, "iris_live2d_safe_summary_v2");
+assert.equal(runtimeConfig.live2d_safe_summary_v2.schema, "iris_live2d_safe_summary_v2");
 
 const MOTION_IDENTITY_COMFORT_CONTRACT_MATRIX = MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY.flatMap((entry) => [
   { entry, surfaceName: "status", surface: status.renderer_health[entry.publicKey] },

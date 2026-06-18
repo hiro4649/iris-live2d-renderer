@@ -167,6 +167,7 @@ import { validateRendererCueEnvelope } from "./renderer/cueValidation.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
 import { resolveSafeModelAsset } from "./renderer/modelAssets.js";
 import { buildRegisteredSafeSummaryMap, projectRegisteredSafeSummaries } from "./renderer/safeSurfaceProjection.js";
+import { createCompactSafeSummaryV2 } from "./renderer/compactSafeSummaryV2.js";
 
 const MAX_BROWSER_CUE_QUEUE = 20;
 
@@ -359,6 +360,7 @@ export function createRendererState({
       const motionDatasetFinalOwnerWaitForDataGate = createMotionDatasetFinalOwnerWaitForDataGateSummary();
       const motionDatasetRowFileChecksumPreflightManifest = createMotionDatasetRowFileChecksumPreflightManifestSummary();
       const ownerActionLaneFreezeStatus = createOwnerActionLaneFreezeStatusSummary();
+      const compactSafeSummaryV2 = createCompactSafeSummaryV2();
       const status = {
         ok: true,
         schema: "iris_live2d_renderer_status_v1",
@@ -642,6 +644,7 @@ export function createRendererState({
         motion_dataset_synthetic_row_fixture_pack_summary: motionDatasetSyntheticRowFixturePack,
         motion_dataset_row_schema_preflight_summary: motionDatasetRowSchemaPreflight,
         renderer_ready: heartbeatStatus.renderer_ready_candidate,
+        live2d_safe_summary_v2: compactSafeSummaryV2,
         last_cue_received_at: state.lastCueReceivedAt,
         last_cue_status_hash: state.lastCueHash,
         received_cue_count: state.cueCount,
@@ -686,6 +689,7 @@ export function createRendererState({
         trusted_loader_error_kind: status.renderer_health.trusted_loader_error_kind,
         live2d_evidence_summary: status.renderer_health.live2d_evidence_summary,
         trusted_loader_preflight_summary: status.renderer_health.trusted_loader_preflight_summary,
+        live2d_safe_summary_v2: status.live2d_safe_summary_v2,
         trusted_loader_enablement_gate_summary: status.renderer_health.trusted_loader_enablement_gate_summary,
         trusted_loader_owner_handoff_summary: status.renderer_health.trusted_loader_owner_handoff_summary,
         fresh_evidence_bundle_summary: status.renderer_health.fresh_evidence_bundle_summary,
@@ -1021,6 +1025,7 @@ export function createRendererState({
         loaderProvisioning: state.cubismLoaderProvisioning,
       });
       response.live2d_evidence_summary = heartbeatStatus.live2d_evidence_summary;
+      response.live2d_safe_summary_v2 = createCompactSafeSummaryV2();
       response.trusted_loader_preflight_summary = trustedLoaderPreflight;
       response.trusted_loader_enablement_gate_summary = trustedLoaderEnablementGate;
       response.trusted_loader_owner_handoff_summary = trustedLoaderOwnerHandoff;

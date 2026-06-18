@@ -9033,3 +9033,24 @@ The real evidence owner handoff packet builder is a pure draft packet generator 
 | motion_dataset_boundary | non_executable |
 
 `ready_for_owner_review` is only a safe draft-review status. It is not owner confirmation, not runtime readiness, not production readiness, not actual evidence collection approval, and not trusted loader approval. Remaining blockers are explicit future owner confirmation, fresh real renderer evidence, audit reference review, priority1 review, checked row count review for any real data phase, and a separate go/no-go review.
+## Compact Safe Summary V2 Pack
+
+Task: LIVE2D-COMPACT-SAFE-SUMMARY-V2-PACK1
+
+The compact safe summary v2 adds the public key `live2d_safe_summary_v2` to status, health, and runtime-config surfaces as an additive safe summary. It does not remove legacy fields, does not deprecate automatically, does not include owner-only detail or raw values, and does not create owner confirmation, runtime readiness, production readiness, actual ingestion, trusted loader enablement, priority1 resolution, or executable motion dataset state.
+
+| field | value |
+| --- | --- |
+| schema | iris_live2d_safe_summary_v2 |
+| overall_status_values | blocked; attention_required; candidate_only |
+| forbidden_status_values | ready; production_ready; owner_confirmed |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| trusted_loader_allowlist_enabled | false |
+| motion_dataset_executable | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| owner_confirmation_confirmed | false |
+| compatibility | legacy fields retained; v1 fixture retained; v2 fixture additive |
+
+`candidate_only` is a pure candidate label and is never readiness, production go, owner confirmation, trusted loader approval, actual data approval, or priority1 resolution.
