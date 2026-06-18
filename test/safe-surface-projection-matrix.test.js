@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import "./safe-surface-characterization.test.js";
 import { createRendererState } from "../src/state.js";
 import {
   SAFE_SURFACE_REGISTRY,

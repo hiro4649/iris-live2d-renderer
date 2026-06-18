@@ -29,11 +29,16 @@ The registry extraction layer is declarative and compatibility-only:
 
 - `src/renderer/safeSurfaceRegistry.js` lists the current status, health, and
   runtimeConfig safe surfaces.
-- `src/renderer/motionIdentityComfortSurfaceRegistry.js` lists representative
-  motion identity/comfort safe surfaces.
+- `src/renderer/motionIdentityComfortSurfaceRegistry.js` lists the current
+  motion identity/comfort safe summary public keys exposed on status, health,
+  and runtimeConfig.
 - registry entries point at existing factories instead of moving factory logic.
 - unknown registry entries are rejected as safe labels only.
 - authorizing, readiness, owner, and actual data effects remain false or none.
+- the parity check compares registered IDs against the in-memory public
+  inventory and fails on missing registry IDs, orphan registry IDs, duplicate
+  IDs, duplicate schemas, duplicate public keys, visibility violations, effect
+  violations, schema mismatches, or missing surface presence.
 
 This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not

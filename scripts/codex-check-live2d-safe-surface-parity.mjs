@@ -7,6 +7,7 @@ import {
   validateSafeSurfaceRegistry,
 } from "../src/renderer/safeSurfaceRegistry.js";
 import {
+  MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY,
   validateMotionIdentityComfortSurfaceRegistry,
 } from "../src/renderer/motionIdentityComfortSurfaceRegistry.js";
 
@@ -95,6 +96,75 @@ function classifySurface(name, surface) {
   };
 }
 
+function duplicates(values) {
+  const seen = new Set();
+  const duplicateValues = new Set();
+  for (const value of values) {
+    if (seen.has(value)) duplicateValues.add(value);
+    seen.add(value);
+  }
+  return [...duplicateValues].sort();
+}
+
+function buildMotionIdentityComfortCoverage(surfaces) {
+  const registeredIds = MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY.map((entry) => entry.id).sort();
+  const registeredIdSet = new Set(registeredIds);
+  const registryById = new Map(MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY.map((entry) => [entry.id, entry]));
+  const inventoryIds = Object.values(surfaces)
+    .flatMap((surface) => Object.keys(surface).filter((key) => key.startsWith("live2d_motion_")))
+    .filter((key, index, keys) => keys.indexOf(key) === index)
+    .sort();
+  const inventoryIdSet = new Set(inventoryIds);
+  const missingRegistryIds = inventoryIds.filter((id) => !registeredIdSet.has(id));
+  const orphanRegistryIds = registeredIds.filter((id) => !inventoryIdSet.has(id));
+  const duplicateIds = duplicates(MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY.map((entry) => entry.id));
+  const duplicateSchemas = duplicates(MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY.map((entry) => entry.schema));
+  const duplicateSurfaceKeys = duplicates(MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY.map((entry) => entry.publicKey));
+  const visibilityViolations = MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY
+    .filter((entry) => entry.visibility !== "public_safe_summary")
+    .map((entry) => entry.id)
+    .sort();
+  const effectViolations = MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY
+    .filter((entry) => (
+      entry.authorizing !== false ||
+      entry.readinessEffect !== "none" ||
+      entry.ownerEffect !== "none" ||
+      entry.actualDataEffect !== "none"
+    ))
+    .map((entry) => entry.id)
+    .sort();
+  const schemaMismatches = inventoryIds
+    .filter((id) => {
+      const entry = registryById.get(id);
+      if (!entry) return false;
+      return Object.values(surfaces).some((surface) => (
+        Object.hasOwn(surface, id) &&
+        surface[id] &&
+        typeof surface[id] === "object" &&
+        surface[id].schema !== entry.schema
+      ));
+    })
+    .sort();
+  const surfacePresenceViolations = MOTION_IDENTITY_COMFORT_SURFACE_REGISTRY
+    .filter((entry) => entry.surfaces.some((surfaceName) => !Object.hasOwn(surfaces[surfaceName] || {}, entry.id)))
+    .map((entry) => entry.id)
+    .sort();
+
+  return {
+    registeredIds,
+    inventoryIds,
+    missingRegistryIds,
+    orphanRegistryIds,
+    duplicateIds,
+    duplicateSchemas,
+    duplicateSurfaceKeys,
+    visibilityViolations,
+    effectViolations,
+    schemaMismatches,
+    surfacePresenceViolations,
+  };
+}
+
 export function buildLive2dSafeSurfaceInventory() {
   const state = createRendererState();
   const surfaces = Object.fromEntries(
@@ -103,6 +173,7 @@ export function buildLive2dSafeSurfaceInventory() {
   const entries = Object.entries(surfaces).map(([name, surface]) => classifySurface(name, surface));
   const safeSurfaceRegistry = validateSafeSurfaceRegistry();
   const motionIdentityComfortRegistry = validateMotionIdentityComfortSurfaceRegistry();
+  const motionIdentityComfortCoverage = buildMotionIdentityComfortCoverage(surfaces);
   const unknownEntry = createSafeSurfaceFromRegistry("unknown_surface", state);
   const failures = entries.flatMap((entry) => [
     ...entry.missingKeys.map((key) => `${entry.id}:missing:${key}`),
@@ -113,6 +184,15 @@ export function buildLive2dSafeSurfaceInventory() {
   ]);
   failures.push(...safeSurfaceRegistry.failures.map((failure) => `safe_surface_registry:${failure}`));
   failures.push(...motionIdentityComfortRegistry.failures.map((failure) => `motion_identity_comfort_registry:${failure}`));
+  failures.push(...motionIdentityComfortCoverage.missingRegistryIds.map((id) => `motion_identity_comfort_missing_registry:${id}`));
+  failures.push(...motionIdentityComfortCoverage.orphanRegistryIds.map((id) => `motion_identity_comfort_orphan_registry:${id}`));
+  failures.push(...motionIdentityComfortCoverage.duplicateIds.map((id) => `motion_identity_comfort_duplicate_id:${id}`));
+  failures.push(...motionIdentityComfortCoverage.duplicateSchemas.map((schema) => `motion_identity_comfort_duplicate_schema:${schema}`));
+  failures.push(...motionIdentityComfortCoverage.duplicateSurfaceKeys.map((key) => `motion_identity_comfort_duplicate_surface_key:${key}`));
+  failures.push(...motionIdentityComfortCoverage.visibilityViolations.map((id) => `motion_identity_comfort_visibility_violation:${id}`));
+  failures.push(...motionIdentityComfortCoverage.effectViolations.map((id) => `motion_identity_comfort_effect_violation:${id}`));
+  failures.push(...motionIdentityComfortCoverage.schemaMismatches.map((id) => `motion_identity_comfort_schema_mismatch:${id}`));
+  failures.push(...motionIdentityComfortCoverage.surfacePresenceViolations.map((id) => `motion_identity_comfort_surface_presence:${id}`));
   if (safeSurfaceRegistry.status !== "pass") failures.push("safe_surface_registry_failed");
   if (motionIdentityComfortRegistry.status !== "pass") failures.push("motion_identity_comfort_registry_failed");
   if (unknownEntry.status !== "rejected" || unknownEntry.reason !== "unknown_safe_surface") {
@@ -125,6 +205,7 @@ export function buildLive2dSafeSurfaceInventory() {
     surfaceCount: entries.length,
     registrySurfaceCount: safeSurfaceRegistry.surfaceCount,
     motionIdentityComfortRegistrySurfaceCount: motionIdentityComfortRegistry.surfaceCount,
+    motionIdentityComfortCoverage,
     unknownEntryRejected: true,
     entries,
     status: failures.length ? "fail" : "pass",
@@ -142,6 +223,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     failures: inventory.failures,
     registrySurfaceCount: inventory.registrySurfaceCount,
     motionIdentityComfortRegistrySurfaceCount: inventory.motionIdentityComfortRegistrySurfaceCount,
+    motionIdentityComfortCoverage: inventory.motionIdentityComfortCoverage,
     unknownEntryRejected: inventory.unknownEntryRejected,
     entries: inventory.entries.map((entry) => ({
       id: entry.id,
