@@ -127,6 +127,12 @@ The catalog does not include mutable runtime state, factory references, full sch
 
 The checklist never sends a packet, creates owner confirmation, authorizes evidence collection, starts a renderer or browser probe, executes SDK code, reads files or row bodies, calculates hashes, enables trusted loader, resolves priority1, or claims runtime or production readiness. The owner handoff packet may consume the checklist result only as fixed safe rejection labels; it does not embed the raw checklist object.
 
+## R1 Localhost Safe Process Probe
+
+`test/live2d-r1-localhost-process-probe.mjs` starts the existing Node renderer process on loopback only, reads `/health`, `/status`, and `/renderer/runtime-config`, and immediately stops the process. The output is a safe envelope built by `src/renderer/localhostProcessProbeEnvelope.js`; raw responses, endpoint values, tokens, private paths, file bodies, row bodies, commands, stack traces, and payload bodies are not stored or printed.
+
+The R1 probe is process availability and safe-surface shape evidence only. It does not start a browser, execute Cubism SDK code, load a model, load a scene, apply a cue, inject a browser heartbeat, enable trusted loader, ingest data, calculate hashes, execute parser/redaction/audit work, create owner confirmation, resolve priority1, increase checked row count, make the motion dataset executable, or claim renderer/runtime/production readiness.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.
