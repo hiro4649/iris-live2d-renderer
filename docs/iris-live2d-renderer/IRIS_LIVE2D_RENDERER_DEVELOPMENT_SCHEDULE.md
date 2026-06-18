@@ -1036,3 +1036,8 @@ Planning-only source hash owner checklist added. Future real hash verification s
 ### LIVE2D-MOTION-DATASET-FINAL-OWNER-WAIT-FOR-DATA-GATE1
 
 Planning-only final owner wait-for-data gate added. It keeps owner confirmation false, actual data task started false, checked_row_count 0, go/no-go no_go, priority1 BLOCKED, and the motion dataset non-executable until a separate owner-confirmed actual data task exists.
+## LIVE2D-REAL-EVIDENCE-OWNER-HANDOFF-PACKET-PACK1
+
+Status: pure draft packet builder. This step prepares a future owner handoff packet from safe labels only; it does not send the packet, request owner action, create owner confirmation, authorize real evidence collection, run the renderer, read row bodies, ingest data, enable the trusted loader, resolve priority1, or claim runtime or production readiness.
+
+Next safe action: create a compact safe summary v2 that references the draft packet boundaries without promoting `ready_for_owner_review` into owner confirmation, readiness, or actual data approval.
