@@ -10,6 +10,10 @@ import {
   LIVE2D_R2_COMPACT_PROBE_MAX_BYTES,
   buildR2CompactProbeSurface,
 } from "./renderer/r2CompactProbeSurface.js";
+import {
+  assertAllowedListenHost,
+  assertWriteRequestBoundary,
+} from "./renderer/writeRequestBoundary.js";
 
 const MAX_BODY_BYTES = 256_000;
 const SSE_CUE_INTERVAL_MS = 150;
@@ -27,9 +31,11 @@ export function createLive2dRendererServer({
   publicDir = join(__dirname, "..", "public"),
   rendererApiKey = "",
   r2ProbeSurfaceEnabled = false,
+  remoteWriteEnabled = false,
 } = {}) {
   const requiredApiKey = String(rendererApiKey ?? "").trim();
   const compactProbeEnabled = r2ProbeSurfaceEnabled === true;
+  const allowRemoteWrite = remoteWriteEnabled === true;
   return createServer(async (request, response) => {
     try {
       const url = new URL(request.url, "http://127.0.0.1");
@@ -115,16 +121,17 @@ export function createLive2dRendererServer({
         return;
       }
       if (request.method === "POST" && url.pathname === "/renderer/heartbeat") {
+        assertWriteRequestBoundary(request, { url, requiredApiKey, remoteWriteEnabled: allowRemoteWrite });
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptBrowserHeartbeat(payload));
       }
       if (request.method === "POST" && url.pathname === "/live2d-engine") {
-        assertAuthorizedWrite(request, requiredApiKey);
+        assertWriteRequestBoundary(request, { url, requiredApiKey, remoteWriteEnabled: allowRemoteWrite });
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptCue(payload, "live2d-engine"));
       }
       if (request.method === "POST" && url.pathname === "/cue") {
-        assertAuthorizedWrite(request, requiredApiKey);
+        assertWriteRequestBoundary(request, { url, requiredApiKey, remoteWriteEnabled: allowRemoteWrite });
         const payload = await readJson(request);
         return sendJson(response, 200, state.acceptCue(payload, "cue"));
       }
@@ -137,6 +144,7 @@ export function createLive2dRendererServer({
 }
 
 export async function listen(server, { host = "127.0.0.1", port = 9130 } = {}) {
+  assertAllowedListenHost(host);
   await new Promise((resolve, reject) => {
     server.once("error", reject);
     server.listen(port, host, () => {
@@ -263,15 +271,6 @@ function createRendererEventHeartbeat(state) {
   return heartbeat;
 }
 
-function assertAuthorizedWrite(request, requiredApiKey) {
-  if (!requiredApiKey) return;
-  const authorization = String(request.headers.authorization ?? "");
-  const bearerToken = authorization.match(/^Bearer\s+(.+)$/iu)?.[1] ?? "";
-  const explicitApiKey = String(request.headers["x-api-key"] ?? "");
-  if (bearerToken === requiredApiKey || explicitApiKey === requiredApiKey) return;
-  throw new ContractError("auth required", "auth_required");
-}
-
 function assertLocalAssetRead(request) {
   if (isLoopbackRequest(request)) return;
   throw new ContractError("not found", "not_found");
@@ -370,6 +369,7 @@ export function isDirectR2LoopbackProbeRequest(request) {
 function statusForError(error) {
   if (error instanceof ContractError) {
     if (error.code === "auth_required") return 401;
+    if (error.code === "write_boundary_rejected" || error.code === "non_loopback_bind_rejected") return 403;
     return 400;
   }
   return 500;
@@ -388,6 +388,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     state,
     rendererApiKey: process.env.IRIS_LIVE2D_RENDERER_API_KEY || process.env.IRIS_LOCAL_ENGINE_API_KEY || "",
     r2ProbeSurfaceEnabled: process.env.IRIS_LIVE2D_R2_PROBE_SURFACE_ENABLED === "1",
+    remoteWriteEnabled: process.env.IRIS_LIVE2D_REMOTE_WRITE_ENABLED === "1",
   });
   const host = process.env.IRIS_LIVE2D_RENDERER_HOST || "127.0.0.1";
   const port = Number(process.env.IRIS_LIVE2D_RENDERER_PORT || 9130);
