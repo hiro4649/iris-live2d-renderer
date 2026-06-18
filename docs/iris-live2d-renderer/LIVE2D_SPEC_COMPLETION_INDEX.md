@@ -9191,6 +9191,32 @@ The R2-A pack adds the additive schema `live2d_r2_localhost_process_probe_envelo
 | motion_dataset_boundary | non_executable |
 
 The V2 envelope records only safe labels, route labels, schema names, selector labels, presence booleans, safe status labels, and fixed failure labels. It does not expose raw response bodies, endpoint values, port numbers, PIDs, private paths, tokens, secrets, owner notes, row bodies, file bodies, command bodies, raw errors, or stack traces.
+## R2 Localhost Probe Bounded Transport And Cleanup
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-BOUNDED-TRANSPORT-AND-CLEANUP-PACK1
+
+The R2-B pack adds bounded loopback transport and process cleanup helpers for the R2 localhost probe. The transport constructs URLs from the fixed route contract only, uses `127.0.0.1`, rejects redirects and non-JSON responses, enforces a response byte bound, decodes UTF-8 in fatal mode, accepts only JSON objects, and returns fixed safe labels without storing raw response bodies.
+
+| field | value |
+| --- | --- |
+| loopback_host | 127.0.0.1 |
+| user_url_accepted | false |
+| redirect_followed | false |
+| external_network_used | false |
+| proxy_env_forwarded | false |
+| node_options_forwarded | false |
+| child_stdio | ignore |
+| child_shell | false |
+| child_detached | false |
+| raw_body_returned | false |
+| raw_error_returned | false |
+| pid_returned | false |
+| port_returned | false |
+| process_cleanup_status | safe_boolean_only |
+| port_release_status | safe_boolean_only |
+| actual_runner_status | fail_closed_when_response_exceeds_bound |
+
+The current safe public route bodies exceed the bounded response size for actual R2 execution. R2-B therefore proves bounded fail-closed transport and cleanup behavior rather than relaxing the byte limit or changing public runtime surfaces outside the authorized file scope.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1
