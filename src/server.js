@@ -15,6 +15,7 @@ import {
   assertWriteRequestBoundary,
 } from "./renderer/writeRequestBoundary.js";
 import { validateSafeTraversal } from "./renderer/safeTraversal.js";
+import { assertBrowserBootstrapConfigSize } from "./renderer/browserBootstrapConfig.js";
 
 const MAX_BODY_BYTES = 256_000;
 const SSE_CUE_INTERVAL_MS = 150;
@@ -76,11 +77,20 @@ export function createLive2dRendererServer({
         return sendJson(response, 200, state.readBrowserCues());
       }
       if (request.method === "GET" && url.pathname === "/renderer/events") {
-        sendRendererEvents(request, response, state);
+        if (url.search && url.search !== "?summary=compact") {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        sendRendererEvents(request, response, state, { compact: url.searchParams.get("summary") === "compact" });
         return;
       }
       if (request.method === "GET" && url.pathname === "/renderer/runtime-config") {
         return sendJson(response, 200, state.browserRuntimeConfig());
+      }
+      if (request.method === "GET" && url.pathname === "/renderer/browser-bootstrap-config") {
+        if (url.search) {
+          return sendJson(response, 404, createSafeError(new ContractError("not found", "not_found"), 404));
+        }
+        return sendJson(response, 200, assertBrowserBootstrapConfigSize(state.browserBootstrapConfig()));
       }
       if (request.method === "GET" && url.pathname === "/renderer/model3") {
         assertLocalAssetRead(request);
@@ -224,7 +234,7 @@ function safeDecodePathSegment(segment) {
   }
 }
 
-function sendRendererEvents(request, response, state) {
+function sendRendererEvents(request, response, state, { compact = false } = {}) {
   response.writeHead(200, {
     "content-type": "text/event-stream; charset=utf-8",
     "cache-control": "no-store",
@@ -261,11 +271,23 @@ function sendRendererEvents(request, response, state) {
   response.on("error", closeStream);
 
   response.write(": renderer events connected\n\n");
-  sendEvent("renderer_status", state.status());
+  sendEvent("renderer_status", compact ? createCompactRendererStatus(state) : state.status());
   sendEvent("heartbeat", createRendererEventHeartbeat(state));
   sendCues();
   cueTimer = setInterval(sendCues, SSE_CUE_INTERVAL_MS);
   heartbeatTimer = setInterval(() => sendEvent("heartbeat", createRendererEventHeartbeat(state)), SSE_HEARTBEAT_INTERVAL_MS);
+}
+
+function createCompactRendererStatus(state) {
+  const bootstrap = state.browserBootstrapConfig();
+  const status = {
+    ok: true,
+    schema: "iris_live2d_renderer_event_compact_status_v1",
+    compactSafeSummary: bootstrap.compactSafeSummary,
+    safeSummaryOnly: true,
+  };
+  assertSafePublicObject(status, "compact renderer event status");
+  return status;
 }
 
 function writeSseEvent(response, eventName, payload) {

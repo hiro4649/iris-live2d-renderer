@@ -1,5 +1,7 @@
 const HEARTBEAT_INTERVAL_MS = 1_000;
 const RENDERER_EVENTS_ROUTE = "/renderer/events";
+const BROWSER_BOOTSTRAP_CONFIG_ROUTE = "/renderer/browser-bootstrap-config";
+const BROWSER_BOOTSTRAP_REFRESH_MIN_INTERVAL_MS = 30_000;
 const MAX_PENDING_BROWSER_CUES = 20;
 const MODEL_LOAD_STATUS = new Set([
   "not_configured",
@@ -65,6 +67,9 @@ export function createInitialRendererState() {
     loaderCandidateKind: "none",
     trustedLoaderEvidence: null,
     cubismRuntimeLoadAttempted: false,
+    browserBootstrapConfig: null,
+    lastBootstrapRefreshAt: 0,
+    bootstrapRefreshInFlight: false,
     eventStreamActive: false,
     eventStreamConnected: false,
     eventStreamFailed: false,
@@ -79,11 +84,11 @@ if (typeof document !== "undefined") {
 }
 
 async function startRendererLoop() {
-  await refreshStatus();
+  await refreshBootstrapConfig();
   startCueEventStream(rendererState);
   await pollCueQueue();
   await postHeartbeat();
-  setInterval(refreshStatus, HEARTBEAT_INTERVAL_MS * 3);
+  installBootstrapVisibilityRefresh(rendererState);
   setInterval(pollCueQueue, HEARTBEAT_INTERVAL_MS);
   setInterval(postHeartbeat, HEARTBEAT_INTERVAL_MS);
 }
@@ -96,6 +101,58 @@ async function refreshStatus() {
   await updateModelLoadEvidence(rendererState, config);
   flushPendingCues(rendererState);
   updateStatusText(rendererState);
+}
+
+async function refreshBootstrapConfig(state = rendererState) {
+  if (state.bootstrapRefreshInFlight) return state.browserBootstrapConfig;
+  state.bootstrapRefreshInFlight = true;
+  try {
+    const config = await getJson(BROWSER_BOOTSTRAP_CONFIG_ROUTE);
+    state.browserBootstrapConfig = config;
+    state.lastBootstrapRefreshAt = Date.now();
+    const runtimeConfig = runtimeConfigFromBootstrap(config);
+    state.modelId = runtimeConfig.model_id || "";
+    state.sceneId = runtimeConfig.scene_id || "";
+    applyRuntimeConfig(state, runtimeConfig, await ensureCubismRuntimeLoaded(runtimeConfig));
+    await updateModelLoadEvidence(state, runtimeConfig);
+    flushPendingCues(state);
+    updateStatusText(state);
+    return config;
+  } finally {
+    state.bootstrapRefreshInFlight = false;
+  }
+}
+
+function installBootstrapVisibilityRefresh(state = rendererState, doc = globalThis.document) {
+  if (!doc || typeof doc.addEventListener !== "function") return false;
+  doc.addEventListener("visibilitychange", () => {
+    if (doc.visibilityState !== "visible") return;
+    const elapsed = Date.now() - Number(state.lastBootstrapRefreshAt || 0);
+    if (elapsed < BROWSER_BOOTSTRAP_REFRESH_MIN_INTERVAL_MS) return;
+    refreshBootstrapConfig(state).catch(() => {
+      state.lastCueApplyStatus = "bootstrap_refresh_failed";
+    });
+  });
+  return true;
+}
+
+function runtimeConfigFromBootstrap(config) {
+  return {
+    ok: true,
+    schema: "iris_live2d_browser_runtime_config_from_bootstrap_v1",
+    model_id: config?.model?.id || "",
+    scene_id: config?.scene?.id || "",
+    cubism_sdk: { status: config?.cubismSdkStatus || "not_configured" },
+    model3: {
+      configured: Boolean(config?.model?.configured),
+      available: config?.modelManifestStatus !== "not_configured",
+      manifest_available: config?.modelManifestStatus !== "not_configured",
+      status: config?.modelManifestStatus || "not_configured",
+      browser_load_supported: Boolean(config?.modelAssetRouteAvailable),
+    },
+    loader_selection: { status: config?.loaderSelectionStatus || "not_configured" },
+    live2d_safe_summary_v2: config?.compactSafeSummary || {},
+  };
 }
 
 export function applyRuntimeConfig(state, config, cubismRuntimeLoaded = state.cubismRuntimeLoaded) {
@@ -327,7 +384,7 @@ export function startCueEventStream(state = rendererState, EventSourceCtor = glo
   if (!EventSourceCtor || state.eventStreamActive || state.eventStreamConnected) return false;
   let source;
   try {
-    source = new EventSourceCtor(RENDERER_EVENTS_ROUTE);
+    source = new EventSourceCtor(`${RENDERER_EVENTS_ROUTE}?summary=compact`);
   } catch {
     state.eventStreamFailed = true;
     return false;
