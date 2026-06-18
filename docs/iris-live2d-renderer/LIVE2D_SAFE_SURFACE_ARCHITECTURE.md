@@ -25,6 +25,16 @@ server, browser, renderer, SDK, model load, scene load, cue application,
 heartbeat collection, row ingestion, parser, redaction scan, audit, or external
 service.
 
+The registry extraction layer is declarative and compatibility-only:
+
+- `src/renderer/safeSurfaceRegistry.js` lists the current status, health, and
+  runtimeConfig safe surfaces.
+- `src/renderer/motionIdentityComfortSurfaceRegistry.js` lists representative
+  motion identity/comfort safe surfaces.
+- registry entries point at existing factories instead of moving factory logic.
+- unknown registry entries are rejected as safe labels only.
+- authorizing, readiness, owner, and actual data effects remain false or none.
+
 This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not
 resolve priority1, does not change checked row count, and does not make the

@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 import { fileURLToPath } from "node:url";
 import { createRendererState } from "../src/state.js";
+import {
+  SAFE_SURFACE_REGISTRY,
+  createSafeSurfaceFromRegistry,
+  validateSafeSurfaceRegistry,
+} from "../src/renderer/safeSurfaceRegistry.js";
+import {
+  validateMotionIdentityComfortSurfaceRegistry,
+} from "../src/renderer/motionIdentityComfortSurfaceRegistry.js";
 
 const SURFACE_BUILDERS = {
   status: (state) => state.status(),
@@ -31,11 +39,9 @@ const NON_EXECUTABLE_KEYS = new Set([
   "motionDatasetExecutable",
 ]);
 
-const REQUIRED_SURFACE_KEYS = {
-  status: ["schema", "renderer_ready", "renderer_health", "boundary_policy"],
-  health: ["schema", "renderer_ready", "live2d_evidence_summary", "boundary_policy"],
-  runtimeConfig: ["schema", "model3", "live2d_evidence_summary"],
-};
+const REQUIRED_SURFACE_KEYS = Object.fromEntries(
+  SAFE_SURFACE_REGISTRY.map((entry) => [entry.id, entry.surfaceKeys]),
+);
 
 function visit(node, path = [], records = []) {
   if (!node || typeof node !== "object") return records;
@@ -95,6 +101,9 @@ export function buildLive2dSafeSurfaceInventory() {
     Object.entries(SURFACE_BUILDERS).map(([name, builder]) => [name, builder(state)]),
   );
   const entries = Object.entries(surfaces).map(([name, surface]) => classifySurface(name, surface));
+  const safeSurfaceRegistry = validateSafeSurfaceRegistry();
+  const motionIdentityComfortRegistry = validateMotionIdentityComfortSurfaceRegistry();
+  const unknownEntry = createSafeSurfaceFromRegistry("unknown_surface", state);
   const failures = entries.flatMap((entry) => [
     ...entry.missingKeys.map((key) => `${entry.id}:missing:${key}`),
     ...entry.trueAuthorizingKeys.map((key) => `${entry.id}:authorizing_true:${key}`),
@@ -102,11 +111,21 @@ export function buildLive2dSafeSurfaceInventory() {
     ...entry.priorityResolved.map((key) => `${entry.id}:priority_resolved:${key}`),
     ...entry.checkedRowCountNonZero.map((key) => `${entry.id}:checked_row_count_nonzero:${key}`),
   ]);
+  failures.push(...safeSurfaceRegistry.failures.map((failure) => `safe_surface_registry:${failure}`));
+  failures.push(...motionIdentityComfortRegistry.failures.map((failure) => `motion_identity_comfort_registry:${failure}`));
+  if (safeSurfaceRegistry.status !== "pass") failures.push("safe_surface_registry_failed");
+  if (motionIdentityComfortRegistry.status !== "pass") failures.push("motion_identity_comfort_registry_failed");
+  if (unknownEntry.status !== "rejected" || unknownEntry.reason !== "unknown_safe_surface") {
+    failures.push("unknown_surface_not_rejected");
+  }
 
   return {
     schema: "live2d_safe_surface_inventory_v1",
     safeSummaryOnly: true,
     surfaceCount: entries.length,
+    registrySurfaceCount: safeSurfaceRegistry.surfaceCount,
+    motionIdentityComfortRegistrySurfaceCount: motionIdentityComfortRegistry.surfaceCount,
+    unknownEntryRejected: true,
     entries,
     status: failures.length ? "fail" : "pass",
     failures,
@@ -121,6 +140,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     surfaceCount: inventory.surfaceCount,
     status: inventory.status,
     failures: inventory.failures,
+    registrySurfaceCount: inventory.registrySurfaceCount,
+    motionIdentityComfortRegistrySurfaceCount: inventory.motionIdentityComfortRegistrySurfaceCount,
+    unknownEntryRejected: inventory.unknownEntryRejected,
     entries: inventory.entries.map((entry) => ({
       id: entry.id,
       publicKeyCount: entry.publicKeyCount,
