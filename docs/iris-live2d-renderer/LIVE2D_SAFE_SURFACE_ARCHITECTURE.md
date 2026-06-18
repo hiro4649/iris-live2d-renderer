@@ -103,6 +103,12 @@ The summary keeps runtime readiness false, production readiness false, owner con
 
 The compact summary v2 semantic invariant repair makes the immutable boundary state authoritative for blocker groups and `overallStatus`. Input labels cannot clear `priority1`, checked row count, motion dataset, owner confirmation, trusted loader, actual data, runtime readiness, production readiness, or real renderer evidence blockers. Override attempts are reduced to fixed safe rejection labels, and `candidate_engine_available` remains a non-authorizing decision-engine label rather than real renderer evidence.
 
+## Pure Safe Module Input Label Hardening
+
+Pure safe modules now share a small label validator for public safe-label inputs. The validator accepts only bounded ASCII label tokens and rejects blank labels, whitespace, control characters, path separators, URL-like values, secret-like values, shell-like fragments, duplicates, oversized arrays, unknown allowlist values, and prototype pollution keys.
+
+The hardening applies to the real evidence owner handoff packet, renderer evidence decision, motion dataset manifest validator, and compact safe summary v2. Rejections are fixed safe reason labels only; raw input values are not echoed. No new public runtime status field is added, and the modules still do not execute renderer, SDK, browser, parser, redaction, audit, file, row, hash, external service, owner confirmation, trusted loader, runtime readiness, or production readiness work.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

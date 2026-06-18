@@ -1,4 +1,8 @@
 export const COMPACT_SAFE_SUMMARY_V2_SCHEMA = "iris_live2d_safe_summary_v2";
+import {
+  isPrototypePollutionKey,
+  validateSafeLabelArray,
+} from "./safeLabelValidation.js";
 export const COMPACT_SAFE_SUMMARY_V2_PUBLIC_KEY = "live2d_safe_summary_v2";
 
 export const COMPACT_SAFE_SUMMARY_V2_BLOCKER_GROUPS = Object.freeze([
@@ -14,7 +18,6 @@ export const COMPACT_SAFE_SUMMARY_V2_BLOCKER_GROUPS = Object.freeze([
 ]);
 
 const FORBIDDEN_STATUSES = new Set(["ready", "production_ready", "owner_confirmed"]);
-const PROTOTYPE_POLLUTION_KEYS = new Set(["__proto__", "prototype", "constructor"]);
 const ALLOWED_KEYS = new Set([
   "priority1Status",
   "checkedRowCount",
@@ -68,24 +71,14 @@ function isPlainObject(value) {
 
 function normalizeLabels(value, invalidLabel) {
   if (value === undefined) return { labels: [], failures: [] };
-  if (!Array.isArray(value)) return { labels: [], failures: [invalidLabel] };
-  const labels = [];
-  const failures = [];
-  for (const item of value) {
-    if (typeof item !== "string" || !item.trim()) {
-      failures.push(invalidLabel);
-    } else {
-      labels.push(item);
-    }
-  }
-  return { labels, failures };
+  return validateSafeLabelArray(value, { invalidLabel });
 }
 
 function collectShapeFailures(input) {
   const failures = [];
   if (!isPlainObject(input)) return ["input_not_plain_object"];
   for (const key of Object.keys(input)) {
-    if (PROTOTYPE_POLLUTION_KEYS.has(key)) failures.push(`unsafe_key:${key}`);
+    if (isPrototypePollutionKey(key)) failures.push(`unsafe_key:${key}`);
     if (UNSAFE_KEYS.has(key)) failures.push(`unsafe_field:${key}`);
     if (!ALLOWED_KEYS.has(key)) failures.push(`unknown_field:${key}`);
   }

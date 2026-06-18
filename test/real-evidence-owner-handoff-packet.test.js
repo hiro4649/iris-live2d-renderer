@@ -7,8 +7,8 @@ import {
 
 function packet(overrides = {}) {
   return {
-    scopeLabels: ["renderer_safe_evidence_future_owner_scope"],
-    requiredEvidenceLabels: ["fresh_probe_label", "heartbeat_label", "model_scene_match_label"],
+    scopeLabels: ["live2d_renderer", "real_evidence_collection", "owner_confirmation"],
+    requiredEvidenceLabels: ["fresh_renderer_heartbeat", "real_model_load_supported", "model_scene_match_confirmed"],
     missingEvidenceLabels: [],
     staleEvidenceLabels: [],
     rowManifestStatus: "metadata_only_ready",
@@ -16,7 +16,7 @@ function packet(overrides = {}) {
     priority1Status: "ready_for_future_review",
     checkedRowCount: 1,
     auditReferenceStatus: "present",
-    ownerActionsRequired: ["explicit_future_owner_confirmation_required"],
+    ownerActionsRequired: ["confirm_real_evidence_collection_scope"],
     generatedAtStatus: "label_only",
     expiryStatus: "active",
     ...overrides,
@@ -48,7 +48,7 @@ assert.deepEqual(safe.rejectionLabels, []);
 assertSafeBoundary(safe);
 
 for (const [overrides, expectedStatus, expectedLabel] of [
-  [{ requiredEvidenceLabels: ["fresh_probe_label"], missingEvidenceLabels: ["heartbeat_label"] }, "blocked_missing_evidence", null],
+  [{ requiredEvidenceLabels: ["fresh_renderer_heartbeat"], missingEvidenceLabels: ["model_loaded"] }, "blocked_missing_evidence", null],
   [{ scopeLabels: [] }, "blocked_missing_scope", null],
   [{ auditReferenceStatus: "missing" }, "blocked_missing_audit", null],
   [{ priority1Status: "BLOCKED" }, "blocked_priority1", null],
@@ -56,6 +56,13 @@ for (const [overrides, expectedStatus, expectedLabel] of [
   [{ expiryStatus: "expired" }, "expired", null],
   [{ requiredEvidenceLabels: [] }, "blocked_missing_evidence", null],
   [{ scopeLabels: [""] }, "blocked_missing_scope", "scope_label_invalid"],
+  [{ scopeLabels: ["not_registered"] }, "blocked_missing_scope", "scope_label_unknown"],
+  [{ scopeLabels: ["https://example.invalid"] }, "blocked_missing_scope", "scope_label_invalid"],
+  [{ scopeLabels: ["live2d_renderer", "live2d_renderer"] }, "blocked_missing_evidence", "scope_label_invalid"],
+  [{ requiredEvidenceLabels: ["not_registered"] }, "blocked_missing_evidence", "required_evidence_label_unknown"],
+  [{ missingEvidenceLabels: ["not_registered"] }, "blocked_missing_evidence", "missing_evidence_label_unknown"],
+  [{ staleEvidenceLabels: ["not_registered"] }, "blocked_missing_evidence", "stale_evidence_label_unknown"],
+  [{ ownerActionsRequired: ["not_registered"] }, "blocked_missing_evidence", "owner_action_label_unknown"],
   [{ rowManifestStatus: "actual_rows_present" }, "blocked_missing_evidence", "row_manifest_not_metadata_only_ready"],
   [{ trustedLoaderStatus: "enabled" }, "blocked_missing_evidence", "trusted_loader_not_disabled"],
   [{ priority1Status: "RESOLVED" }, "blocked_missing_evidence", "priority1_status_invalid"],
