@@ -47,6 +47,10 @@ The registry extraction layer is declarative and compatibility-only:
   safe-metadata contract baseline for outer public keys, schema labels, and
   required invariant key presence. Tests compare current projections against
   that baseline instead of regenerating it during test execution.
+- `test/safe-surface-projection-matrix.test.js` uses the safe surface and
+  motion identity/comfort registries as the authoritative contract matrices for
+  schema presence, surface presence, no-sweetening invariants, owner boundary,
+  actual data boundary, and readiness boundary checks.
 
 This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not
