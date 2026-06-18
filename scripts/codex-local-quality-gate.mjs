@@ -12384,11 +12384,30 @@ async function runTargetHarnessGate() {
 
 
 
-  report.mergeReady = failures.length === 0 && warnings.length === 0;
-
-
-
-  report.targetMergeReady = report.mergeReady;
+  const remoteEvidencePhase = process.env.CODEX_REMOTE_EVIDENCE_PHASE || 'remote_evidence_required_after_push';
+  const sameHeadRemoteSatisfied = remoteEvidencePhase === 'same_head_remote_pass' || remoteEvidencePhase === 'same_head_remote_verified';
+  report.remoteEvidencePhase = remoteEvidencePhase;
+  report.remoteEvidencePass = sameHeadRemoteSatisfied;
+  report.localPassIsRemotePass = false;
+  report.runtimeReadinessClaimed = false;
+  report.productionReadinessClaimed = false;
+  report.ownerConfirmationCreated = false;
+  report.ownerConfirmationConfirmed = false;
+  report.trustedLoaderAllowlistEnabled = false;
+  report.actualIngestionAllowed = false;
+  report.priority1Status = 'BLOCKED';
+  report.checkedRowCount = 0;
+  report.motionDatasetExecutable = false;
+  report.mergeReady = false;
+  report.targetMergeReady = false;
+  report.mergeBlockedReasons = [
+    ...(report.mergeBlockedReasons || []),
+    ...(sameHeadRemoteSatisfied ? [] : ['same_head_remote_required']),
+    'owner_confirmation_required',
+    'priority1_blocked',
+    'checked_row_count_zero',
+    'motion_dataset_non_executable',
+  ];
 
 
 

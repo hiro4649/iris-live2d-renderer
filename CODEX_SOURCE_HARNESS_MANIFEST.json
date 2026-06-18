@@ -1334,7 +1334,10 @@
     "vgcBscScanVerificationBoundaryStatus",
     "vgcMainnetReadinessBoundaryStatus"
   ],
-  "targetHarnessVersion": "1.2.5",
+  "targetHarnessVersion": "1.2.6",
+  "compatibleTargetHarnessVersions": [
+    "1.2.5"
+  ],
   "evidenceSchemaVersion": 6,
   "theme": "Observed-State Bridge-Safe Loop Runtime with Context-Slim Skill and Validation Routing",
   "requiredStatuses": [
