@@ -52,6 +52,38 @@ The registry extraction layer is declarative and compatibility-only:
   schema presence, surface presence, no-sweetening invariants, owner boundary,
   actual data boundary, and readiness boundary checks.
 
+## Safe Guard Freeze And Real Evidence Transition
+
+The safe guard transition layer freezes further one-field public status
+expansion unless a proposed safe surface has a blocking product gap label, a
+product value statement label, an existing-registry reuse check, a compact
+summary impact check, a compatibility plan, and an explicit owner-scope
+requirement. This keeps the registry authoritative and routes future public
+surface changes through product value review instead of incremental safe-summary
+growth.
+
+`src/renderer/safeGuardTransitionPolicy.js` is a pure policy module. It accepts
+safe labels only and returns safe summaries only. It does not collect renderer
+evidence, run a probe, load a model, load a scene, apply a cue, calculate a
+hash, read a row body, read file contents, start a parser, run a redaction scan,
+write an audit, enable the trusted loader, or create owner confirmation.
+
+Real renderer evidence transition remains owner-gated and blocked until safe
+metadata can show a real probe or owner-approved safe evidence source, fresh
+timestamp status, heartbeat presence, model-load support, model loaded, scene
+loaded, model-scene match, cue capability, last cue applied, last cue success,
+audit reference presence, and owner scope presence. Fixture, manual-label-only,
+manifest-only, SSE-only, cue-accepted-only, unknown, future-timestamp, stale, or
+missing-signal inputs are rejected or downgraded as safe labels and never become
+runtime readiness or production readiness.
+
+`test/safe-guard-transition-policy.test.js` covers the freeze policy, safe
+surface approval labels, source allowlist, rejected source classes, timestamp
+status handling, missing-signal blockers, unsafe key rejection, deterministic
+output, and the invariant that readiness, owner confirmation, actual ingestion,
+trusted loader, priority1, checked row count, and motion dataset boundaries do
+not change.
+
 This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not
 resolve priority1, does not change checked row count, and does not make the
