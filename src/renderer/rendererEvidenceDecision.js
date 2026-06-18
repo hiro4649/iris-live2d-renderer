@@ -4,20 +4,14 @@ import {
   validateSafeLabelArray,
   validateSafeLabelValue,
 } from "./safeLabelValidation.js";
+import {
+  LIVE2D_EVIDENCE_SOURCE_TYPES,
+  LIVE2D_REJECTED_EVIDENCE_SOURCE_TYPES,
+} from "./live2dSafeContractCatalog.js";
 
-export const RENDERER_EVIDENCE_ALLOWED_SOURCE_TYPES = Object.freeze([
-  "real_probe",
-  "owner_approved_safe_evidence",
-]);
+export const RENDERER_EVIDENCE_ALLOWED_SOURCE_TYPES = LIVE2D_EVIDENCE_SOURCE_TYPES;
 
-export const RENDERER_EVIDENCE_REJECTED_SOURCE_TYPES = Object.freeze([
-  "fixture",
-  "manual_label_only",
-  "manifest_only",
-  "sse_only",
-  "cue_accepted_only",
-  "unknown",
-]);
+export const RENDERER_EVIDENCE_REJECTED_SOURCE_TYPES = LIVE2D_REJECTED_EVIDENCE_SOURCE_TYPES;
 
 const ALLOWED_INPUT_KEYS = new Set([
   "schema",

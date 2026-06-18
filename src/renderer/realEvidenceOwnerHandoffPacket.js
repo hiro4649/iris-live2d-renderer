@@ -3,59 +3,20 @@ import {
   isPrototypePollutionKey,
   validateSafeLabelArray,
 } from "./safeLabelValidation.js";
+import {
+  LIVE2D_OWNER_HANDOFF_ACTION_LABELS,
+  LIVE2D_OWNER_HANDOFF_REQUIRED_EVIDENCE_LABELS,
+  LIVE2D_OWNER_HANDOFF_SCOPE_LABELS,
+  LIVE2D_OWNER_HANDOFF_STALE_EVIDENCE_LABELS,
+  LIVE2D_SAFE_NEXT_ACTION_LABELS,
+} from "./live2dSafeContractCatalog.js";
 
-export const SAFE_NEXT_ACTION_LABELS = Object.freeze([
-  "wait_for_explicit_owner_action",
-  "collect_real_renderer_evidence_after_owner_confirmation",
-  "prepare_metadata_only_row_manifest",
-  "keep_trusted_loader_disabled",
-  "keep_priority1_blocked_until_real_evidence",
-]);
+export const SAFE_NEXT_ACTION_LABELS = LIVE2D_SAFE_NEXT_ACTION_LABELS;
 
-const SCOPE_LABEL_ALLOWLIST = Object.freeze([
-  "live2d_renderer",
-  "motion_dataset",
-  "audit_reference",
-  "trusted_loader",
-  "runtime_readiness",
-  "production_readiness",
-  "owner_confirmation",
-  "real_evidence_collection",
-]);
-
-const REQUIRED_EVIDENCE_LABEL_ALLOWLIST = Object.freeze([
-  "fresh_renderer_heartbeat",
-  "real_model_load_supported",
-  "model_loaded",
-  "scene_loaded",
-  "model_scene_match_confirmed",
-  "cue_capability_confirmed",
-  "last_cue_applied",
-  "last_cue_applied_success",
-  "audit_reference_present",
-  "owner_scope_confirmed",
-  "metadata_row_manifest_present",
-]);
-
-const STALE_EVIDENCE_LABEL_ALLOWLIST = Object.freeze([
-  "renderer_heartbeat_stale",
-  "model_evidence_stale",
-  "scene_evidence_stale",
-  "cue_evidence_stale",
-  "audit_reference_stale",
-  "owner_scope_expired",
-]);
-
-const OWNER_ACTION_LABEL_ALLOWLIST = Object.freeze([
-  "review_scope",
-  "confirm_real_evidence_collection_scope",
-  "review_missing_evidence",
-  "review_stale_evidence",
-  "review_audit_reference",
-  "keep_trusted_loader_disabled",
-  "keep_priority1_blocked",
-  "prepare_metadata_only_row_manifest",
-]);
+const SCOPE_LABEL_ALLOWLIST = LIVE2D_OWNER_HANDOFF_SCOPE_LABELS;
+const REQUIRED_EVIDENCE_LABEL_ALLOWLIST = LIVE2D_OWNER_HANDOFF_REQUIRED_EVIDENCE_LABELS;
+const STALE_EVIDENCE_LABEL_ALLOWLIST = LIVE2D_OWNER_HANDOFF_STALE_EVIDENCE_LABELS;
+const OWNER_ACTION_LABEL_ALLOWLIST = LIVE2D_OWNER_HANDOFF_ACTION_LABELS;
 
 const ALLOWED_INPUT_KEYS = new Set([
   "scopeLabels",
