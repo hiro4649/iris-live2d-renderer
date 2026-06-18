@@ -7822,15 +7822,15 @@ try {
     heartbeatMaxAgeMs: 2_000,
     now: () => nowMs,
   }), { rendererApiKey: "fixture-renderer-key" });
-  const unauthorized = await fetch(`${authRequired.baseUrl}/cue`, {
+  const localWithoutKey = await fetch(`${authRequired.baseUrl}/cue`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ schema: "iris_live2d_renderer_cue_delivery_v1", cue: { schema: "iris_live2d_renderer_cue_v1" } }),
   });
-  const unauthorizedBody = await unauthorized.json();
-  assert.equal(unauthorized.status, 401);
-  assert.equal(unauthorizedBody.error_kind, "auth_required");
-  assertSafe(JSON.stringify(unauthorizedBody));
+  const localWithoutKeyBody = await localWithoutKey.json();
+  assert.equal(localWithoutKey.status, 200);
+  assert.equal(localWithoutKeyBody.accepted, true);
+  assertSafe(JSON.stringify(localWithoutKeyBody));
   const authorized = await fetch(`${authRequired.baseUrl}/cue`, {
     method: "POST",
     headers: { "content-type": "application/json", "x-api-key": "fixture-renderer-key" },

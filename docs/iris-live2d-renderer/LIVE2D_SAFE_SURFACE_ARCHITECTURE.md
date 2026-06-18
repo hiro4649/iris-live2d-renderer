@@ -203,6 +203,18 @@ The preflight returns fixed safe failure labels only and never echoes raw input 
 
 Safe-surface planning summaries remain frozen by default. A future public surface or planning-only summary needs a blocking product gap ID, consumer code path, compatibility plan, test plan, and product value statement before it can be added.
 
+## Write Route Fail-Closed Boundary
+
+Task: LIVE2D-WRITE-ROUTE-FAIL-CLOSED-BOUNDARY1
+
+`POST /cue`, `POST /live2d-engine`, and `POST /renderer/heartbeat` now share a fail-closed write boundary before request body parsing. The default accepted write shape is direct loopback only: remote and local socket addresses must be `127.0.0.1` or IPv4-mapped loopback, the Host header must be `127.0.0.1:<valid port>`, the method must be POST, the path must have no query string, the content type must be JSON, and forwarded headers must be absent.
+
+Remote write mode remains disabled unless explicitly configured by code or `IRIS_LIVE2D_REMOTE_WRITE_ENABLED=1`. Even when remote write mode is enabled, a nonempty renderer API key and a valid Bearer token or `x-api-key` are required, forwarded headers are still rejected, and token comparison uses fixed-length-safe comparison with safe length-mismatch handling. Rejection summaries use fixed safe labels only and never echo token, authorization, endpoint, host, or address values.
+
+Non-loopback bind remains rejected by default. `IRIS_LIVE2D_ALLOW_NON_LOOPBACK_BIND=1` can allow listening on a non-loopback host, but that does not enable remote writes; write authorization is a separate boundary.
+
+This boundary does not start a browser, execute Cubism SDK or Framework code, load a model or scene, apply cues, inject browser heartbeat, enable trusted loader, handle actual data, create owner confirmation, resolve priority1, increase checked row count, make the motion dataset executable, or claim runtime or production readiness.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.
