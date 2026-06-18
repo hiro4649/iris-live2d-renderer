@@ -1,4 +1,5 @@
 import { safeText } from "../contracts.js";
+import { validateSafeTraversal } from "./safeTraversal.js";
 
 export const TRUSTED_LOADER_EVIDENCE_SCHEMA = "iris_live2d_trusted_loader_evidence_v1";
 export const TRUSTED_LOADER_KINDS = Object.freeze([]);
@@ -106,6 +107,12 @@ export function validateTrustedLoaderEvidence(evidence, {
     });
   }
   if (!isPlainObject(evidence)) {
+    return createValidationResult({
+      status: "invalid",
+      errorKind: "trusted_loader_evidence_invalid",
+    });
+  }
+  if (!validateSafeTraversal(evidence).ok) {
     return createValidationResult({
       status: "invalid",
       errorKind: "trusted_loader_evidence_invalid",

@@ -1,4 +1,5 @@
 import { ContractError, safeText } from "../contracts.js";
+import { validateSafeTraversal } from "./safeTraversal.js";
 
 const RENDERER_CUE_DELIVERY_SCHEMA = "iris_live2d_renderer_cue_delivery_v1";
 const RENDERER_CUE_SCHEMA = "iris_live2d_renderer_cue_v1";
@@ -253,6 +254,12 @@ const UNSAFE_VALUE_PATTERNS = [
 export function validateRendererCueEnvelope(payload) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     throw createSafeCueValidationError("invalid_cue_contract");
+  }
+  const traversal = validateSafeTraversal(payload);
+  if (!traversal.ok) {
+    throw createSafeCueValidationError(
+      traversal.errorKind === "unsafe_payload" ? "unsafe_cue_field" : "invalid_cue_contract"
+    );
   }
   scanUnsafeCueMaterial(payload);
 
