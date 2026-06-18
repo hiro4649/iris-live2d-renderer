@@ -165,6 +165,10 @@ import {
 } from "./renderer/cubismLoaderProvisioning.js";
 import { validateRendererCueEnvelope } from "./renderer/cueValidation.js";
 import { DEFAULT_HEARTBEAT_MAX_AGE_MS, createHeartbeatStatus } from "./renderer/heartbeat.js";
+import {
+  BROWSER_BOOTSTRAP_REFRESH_MIN_INTERVAL_MS,
+  buildBrowserBootstrapConfig,
+} from "./renderer/browserBootstrapConfig.js";
 import { resolveSafeModelAsset } from "./renderer/modelAssets.js";
 import { buildRegisteredSafeSummaryMap, projectRegisteredSafeSummaries } from "./renderer/safeSurfaceProjection.js";
 import { createCompactSafeSummaryV2 } from "./renderer/compactSafeSummaryV2.js";
@@ -1166,6 +1170,12 @@ export function createRendererState({
       response.motion_dataset_row_schema_preflight_summary = motionDatasetRowSchemaPreflight;
       assertSafePublicObject(response, "browser runtime config");
       return response;
+    },
+
+    browserBootstrapConfig() {
+      return buildBrowserBootstrapConfig(this.browserRuntimeConfig(), {
+        heartbeatIntervalMs: Math.min(state.heartbeatMaxAgeMs, BROWSER_BOOTSTRAP_REFRESH_MIN_INTERVAL_MS),
+      });
     },
 
     browserModel3Manifest() {
