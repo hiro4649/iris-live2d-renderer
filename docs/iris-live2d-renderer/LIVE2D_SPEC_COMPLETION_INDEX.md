@@ -181,6 +181,14 @@ The evaluator covers cue freshness, confidence thresholds, repeated strong-motio
 
 The output is not a renderer command, not cue application, not runtime readiness, not production readiness, not owner confirmation, and not trusted loader enablement.
 
+## Renderer Evidence Decision Engine
+
+Task: LIVE2D-RENDERER-EVIDENCE-DECISION-ENGINE-PACK1
+
+Status: pure safe evidence decision engine only. The decision engine classifies a safe evidence envelope as blocked, attention_required, or renderer_ready_candidate. It does not run a real probe, read raw evidence, require raw timestamp values, echo raw payloads, start renderer/SDK/browser work, or write audits.
+
+renderer_ready_candidate is explicitly not renderer_ready, not runtime readiness, not production readiness, and not owner confirmation. Fixture, manual-label-only, manifest-only, SSE-only, cue-accepted-only, unknown, stale, future timestamp, missing heartbeat, missing model, missing scene, model-scene mismatch, missing cue capability, missing last cue, missing audit reference, missing owner scope, or critical blocker inputs cannot produce readiness.
+
 ## Motion Identity and Comfort Specification
 
 Task: LIVE2D-MOTION-IDENTITY-AND-COMFORT-SPEC1
