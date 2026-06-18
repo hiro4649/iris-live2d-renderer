@@ -1108,3 +1108,13 @@ Status: pure R3 scope preflight. This step defines the owner labels required bef
 Boundary: this step does not start a browser, does not run Playwright or Chromium, does not execute Cubism SDK or Framework code, does not load a model or scene, does not apply cues, does not inject browser heartbeat, does not enable trusted loader, does not handle actual data, does not create owner confirmation, does not claim runtime or production readiness, does not resolve priority1, does not increase checked row count, and does not make the motion dataset executable.
 
 Next action: after explicit owner approval for the next R3 task, add a browser scaffold probe that verifies only page startup, DOM boundary, and canvas presence while still blocking SDK/model/scene/cue execution.
+
+## LIVE2D-R3-PREFLIGHT-STRICT-ALLOWLIST-AND-PRODUCT-TRUTH-PACK1
+
+Status: R3 preflight strict allowlist hardening and product-truth correction. This step converts the R3 preflight from permissive cleanup to exact allowlist validation for owner scope labels and requested browser scaffold action labels. It blocks unknown fields, prototype pollution shapes, missing arrays, invalid labels, oversized labels, duplicates, unknown labels, forbidden actions, missing required one-run actions, and scope/action mismatches.
+
+Boundary: no browser is started, no browser download occurs, no package installation occurs, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat or SSE connection is opened, no trusted loader is enabled, no actual data is handled, no owner confirmation is created, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
+
+Product truth: safe spec and safe contract coverage are high, but browser scaffold completion is only about 45-55 percent, actual loader/render loop/motion application remain low, actual dataset audit remains 0 percent, working Live2D MVP completion is about 30-40 percent, and production readiness remains about 15-20 percent. These estimates are not readiness claims.
+
+Next action: run `LIVE2D-ALL-TESTS-SINGLE-ENTRYPOINT1` so the standard `npm test` command becomes the single reliable local test entrypoint before any browser smoke task.

@@ -1,7 +1,7 @@
 # Live2D Spec Completion Index
 
 Task: LIVE2D-SPEC-COMPLETION-INDEX1
-Harness: v1.1.8
+Harness: v1.2.6
 Scope: planning/index-only
 
 This index is the authoritative safe summary for the Live2D renderer specification and implementation state. It does not ingest row data, read row bodies, calculate real hashes, execute parsers, execute redaction scans, execute audits, collect real resident evidence, create owner confirmation, enable a trusted loader, or claim runtime or production readiness.
@@ -10,8 +10,8 @@ This index is the authoritative safe summary for the Live2D renderer specificati
 
 | Field | Value |
 | --- | --- |
-| spec_completion_estimate | about 89 percent |
-| implementation_completion_estimate | about 38 percent |
+| spec_completion_estimate | about 90 percent safe-spec coverage |
+| implementation_completion_estimate | about 30-40 percent working Live2D MVP coverage |
 | production_readiness_estimate | below 20 percent |
 | highest_blockers | real resident evidence missing; owner confirmation missing; checked_row_count remains 0; go/no-go review missing; trusted loader disabled; real renderer/model/scene evidence missing |
 | safe_next_action | Continue safe motion identity comfort blocker review or wait for owner-gated real renderer evidence. |
@@ -9350,6 +9350,58 @@ The R3 owner scope and browser preflight adds a pure safe scope gate for a futur
 | motion_dataset_boundary | non_executable |
 
 Passing this preflight is not R3 evidence, not owner confirmation, not runtime readiness, not production readiness, not trusted loader approval, not actual data approval, and not priority1 resolution. Next safe action is a separately owner-approved R3 browser scaffold probe that still avoids SDK/model/scene/cue execution.
+## R3 Preflight Strict Allowlist And Product Truth
+
+Task: LIVE2D-R3-PREFLIGHT-STRICT-ALLOWLIST-AND-PRODUCT-TRUTH-PACK1
+
+The R3 preflight is now strict allowlist validation rather than denylist filtering. It accepts only an exact plain object with `ownerScopeLabels` and `requestedActionLabels`, requires both arrays, rejects unknown input fields, rejects prototype pollution shapes, rejects duplicates, rejects invalid or oversized labels, rejects unknown owner labels, rejects unknown or forbidden action labels, requires all one-run browser scaffold action labels, and blocks any action that lacks its matching owner scope label.
+
+The preflight emits fixed safe failure labels only. It does not echo raw label values, raw browser output, endpoints, paths, tokens, secrets, command material, row bodies, file bodies, stack traces, or process details.
+
+| field | value |
+| --- | --- |
+| schema | live2d_r3_browser_preflight_scope_v1 |
+| validation_model | exact_allowlist_fail_closed |
+| one_run_required_actions | browser_process_probe; actual_renderer_page_load; javascript_execution_check; dom_surface_check; canvas_presence_check; loopback_request_observation; browser_process_cleanup_check; temporary_profile_cleanup_check; server_cleanup_check; port_release_check |
+| optional_action | five_run_reproducibility_check |
+| five_run_action_without_scope | blocked |
+| unknown_owner_label | blocked |
+| unknown_action_label | blocked |
+| invalid_label | blocked |
+| duplicate_label | blocked |
+| raw_value_echo | false |
+| browser_started_by_this_task | false |
+| cubism_sdk_execution_allowed | false |
+| model_load_allowed | false |
+| scene_load_allowed | false |
+| cue_application_allowed | false |
+| browser_heartbeat_injection_allowed | false |
+| sse_connection_allowed | false |
+| trusted_loader_enabled | false |
+| actual_data_allowed | false |
+| owner_confirmation_created | false |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+
+Current product truth under v1.2.6:
+
+| category | estimate | note |
+| --- | --- | --- |
+| safe_spec_completion | about 90 percent | Safe planning/spec coverage is broad, but it is not runtime evidence. |
+| safe_contract_completion | about 90-95 percent | Contract and blocker surfaces are strong; strict R3 scope validation is now fail-closed. |
+| node_scaffold_completion | about 75 percent | Node safe-process and localhost safe-surface scaffolds exist. |
+| browser_scaffold_completion | about 45-55 percent | Browser-visible scaffold work is only preflighted; actual browser smoke is still a future task. |
+| actual_loader_completion | about 10-20 percent | Trusted loader remains disabled and untrusted. |
+| actual_render_loop_completion | about 5-15 percent | No real render loop evidence is claimed. |
+| actual_motion_application_completion | about 5-10 percent | Cue application remains blocked. |
+| actual_dataset_audit_completion | 0 percent | No parser, redaction scan, audit, or checked row count exists. |
+| working_live2d_mvp_completion | about 30-40 percent | This is a conservative product estimate, not a readiness claim. |
+| production_readiness | about 15-20 percent | Runtime and production readiness remain unclaimed. |
+
+These estimates are not runtime readiness, production readiness, owner confirmation, trusted loader approval, actual data approval, priority1 resolution, or executable motion dataset approval.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1
