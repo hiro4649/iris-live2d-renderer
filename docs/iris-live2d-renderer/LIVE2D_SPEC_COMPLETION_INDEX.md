@@ -9103,6 +9103,29 @@ This pack hardens label values in pure safe modules. It adds shared safe-label v
 | actual_ingestion_allowed | false |
 
 The validation is pure and deterministic. It does not execute renderer, SDK, browser, parser, redaction, audit, file, row, hash, external service, owner confirmation, trusted loader, runtime readiness, or production readiness work.
+## Owner-Gated Real Evidence Checklist Pack
+
+Task: LIVE2D-OWNER-GATED-REAL-EVIDENCE-CHECKLIST-PACK1
+
+The owner-gated real evidence checklist pack adds a pure checklist builder and validator for a future owner-gated real evidence review. It records safe labels for scope review, renderer evidence requirements, motion dataset manifest requirements, audit reference requirements, trusted loader boundary, runtime readiness boundary, production readiness boundary, expiry and reconfirmation, and safe next actions.
+
+| field | value |
+| --- | --- |
+| checklist_schema | live2d_real_evidence_owner_checklist_v1 |
+| checklist_statuses | draft, blocked, ready_for_owner_review, expired |
+| packet_sent | false |
+| owner_confirmation_created | false |
+| owner_confirmation_confirmed | false |
+| actual_evidence_collection_authorized | false |
+| actual_ingestion_allowed | false |
+| trusted_loader_enabled | false |
+| priority1_status | BLOCKED |
+| checked_row_count | 0 |
+| motion_dataset_boundary | non_executable |
+| runtime_readiness_claimed | false |
+| production_readiness_claimed | false |
+
+The checklist is label-only and side-effect free. It rejects unsafe fields, unknown fields, raw evidence, raw owner notes, endpoints, tokens, secrets, private paths, raw commands, actual execution requests, actual ingestion requests, trusted loader enablement requests, readiness requests, expired checklist reuse, wrong scope, and arbitrary owner action labels using fixed safe labels. `ready_for_owner_review` is not owner confirmation, not runtime readiness, not production readiness, not actual data approval, and not trusted loader approval.
 ## V1.2.6 Architecture Transition Completion Review
 
 Task: LIVE2D-V126-ARCHITECTURE-TRANSITION-COMPLETION-REVIEW1
