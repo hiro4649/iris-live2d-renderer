@@ -145,6 +145,18 @@ The R2 V2 envelope checks that the blocked boundary remains blocked across all a
 
 The R2-A pack is semantic interpretation only. It does not run a browser, Playwright, Chromium, Cubism SDK, Cubism Framework, model load, scene load, cue application, browser heartbeat injection, SSE/WebSocket clients, OBS, TTS, YouTube, Game, DB, trusted loader, actual data ingestion, parser, redaction scan, audit write, owner confirmation, runtime readiness, production readiness, priority1 resolution, checked row count increase, or motion dataset execution.
 
+## R2 Localhost Probe Bounded Transport And Cleanup
+
+Task: LIVE2D-R2-LOCALHOST-PROBE-BOUNDED-TRANSPORT-AND-CLEANUP-PACK1
+
+The R2-B transport layer constructs URLs only from the code-owned route contract and `127.0.0.1` ephemeral ports. It rejects user-provided URLs, unknown route labels, non-loopback hosts, redirects, non-JSON content types, invalid UTF-8, invalid JSON, arrays, primitives, HTTP failures, and responses that exceed the bounded byte limit before persisting any raw body. It does not forward proxy environment variables to the child process.
+
+The process controller starts `process.execPath src/server.js` with `shell: false`, `detached: false`, hidden window mode on Windows, ignored stdio, repository cwd, and a minimal child environment. Secret-like environment values, proxy variables, and `NODE_OPTIONS` are not forwarded. The explicit renderer environment remains limited to loopback host, ephemeral port, and empty Cubism/model identifiers.
+
+The cleanup layer records only safe booleans for process start, exit observation, SIGTERM, SIGKILL fallback, process stop, port release, spawn error presence, and unexpected exit presence. It does not expose PID, port number, raw errors, stack traces, raw process output, endpoint values, private paths, tokens, or secrets.
+
+The current public `/health`, `/status`, and `/renderer/runtime-config` safe responses are larger than the R2-B byte bound, so the actual R2 runner fails closed rather than weakening the bound or shrinking public server responses outside this task's allowed scope. This is a transport-boundary result, not a readiness result.
+
 ## V1.2.6 Architecture Transition Completion Review
 
 The v1.2.6 architecture transition is complete for the safe-surface consolidation layer only. The registry coverage, state projection integration, contract matrix integration, real evidence owner handoff packet, and compact safe summary v2 are present as non-authorizing surfaces.

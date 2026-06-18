@@ -226,6 +226,11 @@ export function buildLocalhostProcessProbeEnvelopeV2({
   rawResponseStored = false,
   rawResponsePrinted = false,
   externalNetworkUsed = false,
+  processExitObserved = false,
+  sigtermSent = false,
+  sigkillFallbackUsed = false,
+  spawnErrorPresent = false,
+  unexpectedExitPresent = false,
 } = {}) {
   const routeSummaries = routeResults.map((result) => {
     const bodySummary = summarizeLocalhostProbeBodyV2(result.routeLabel, result.body);
@@ -292,8 +297,13 @@ export function buildLocalhostProcessProbeEnvelopeV2({
     crossSurfaceParityStatus: crossSurfaceFailures(routeSummaries).length ? "blocked" : "pass",
     hostLabel: hostLabel === "loopback" ? "loopback" : "unknown",
     processStarted: processStarted === true,
+    processExitObserved: processExitObserved === true,
+    sigtermSent: sigtermSent === true,
+    sigkillFallbackUsed: sigkillFallbackUsed === true,
     processStopped: processStopped === true,
     portReleased: portReleased === true,
+    spawnErrorPresent: spawnErrorPresent === true,
+    unexpectedExitPresent: unexpectedExitPresent === true,
     rawResponseStored: false,
     rawResponsePrinted: false,
     externalNetworkUsed: externalNetworkUsed === true,

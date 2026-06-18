@@ -1068,3 +1068,11 @@ Status: additive R2 semantic boundary attestation. This step adds a V2 localhost
 Boundary: R1 compatibility is preserved. No browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
 
 Next safe action: run `LIVE2D-R2-LOCALHOST-PROBE-BOUNDED-TRANSPORT-AND-CLEANUP-PACK1` to add bounded loopback transport, minimal child environment, process cleanup, port release, and raw response non-persistence without expanding into browser, SDK, model, scene, cue, trusted loader, readiness, owner confirmation, or actual data work.
+
+## LIVE2D-R2-LOCALHOST-PROBE-BOUNDED-TRANSPORT-AND-CLEANUP-PACK1
+
+Status: bounded transport and cleanup helpers. This step adds fixed-route loopback URL construction, user URL rejection, redirect rejection, JSON content-type enforcement, bounded response reading, fatal UTF-8 decode, JSON object-only parsing, minimal child environment construction, child process stop handling, and port release checking.
+
+Boundary: no browser is started, no Playwright or Chromium is executed, no Cubism SDK or Framework is executed, no model or scene is loaded, no cue is applied, no browser heartbeat is injected, no actual data is handled, no owner confirmation is created, no trusted loader is enabled, priority1 remains BLOCKED, checked_row_count remains 0, the motion dataset remains non-executable, and runtime/production readiness are not claimed.
+
+Current finding: the actual safe public route bodies are larger than the R2-B response byte bound, so the actual runner blocks safely. Next development should either add an owner-approved compact probe response surface or revise the R2-C scope before requiring five-run pass evidence.
