@@ -2,7 +2,7 @@
 
 Harness: v1.2.7
 
-This document records the safe planning-module extraction boundary before any physical definition move. It is a machine-checkable planning manifest only. It does not execute Cubism, load a model, read model files, ingest dataset rows, run parser/redaction/audit work, enable trusted loader, create owner confirmation, or claim runtime or production readiness.
+This document records the safe planning-module extraction boundary before any physical definition move. The machine authority is `docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json`; tests may not invent symbol inventory from local constants. This is a planning manifest and source-structure checker only. It does not execute Cubism, load a model, read model files, ingest dataset rows, run parser/redaction/audit work, enable trusted loader, create owner confirmation, or claim runtime or production readiness.
 
 ## Boundary Categories
 
@@ -20,15 +20,47 @@ This document records the safe planning-module extraction boundary before any ph
 | --- | --- |
 | checker | scripts/check-live2d-planning-module-boundaries.mjs |
 | test | test/planning-module-boundaries.test.js |
+| symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json |
 | physicalMovedExportCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
-| planningMonolithImportStatus | compatibility_allowed_before_physical_extraction |
+| planningMonolithImportStatus | facade_compatibility_allowed_before_queue_c1 |
 | runtimeReadinessClaimed | false |
 | productionReadinessClaimed | false |
 | ownerConfirmationCreated | false |
 | actualIngestionAllowed | false |
 | trustedLoaderAllowlistEnabled | false |
+
+## Reality Checks
+
+The checker derives its report from actual source text under `src/renderer/cubismLoaderProvisioning.js` and `src/renderer/planning/**/*.js`.
+
+It measures:
+
+- actual definition file and definition count
+- duplicate definitions
+- static import/export-from graph edges
+- direct and indirect module cycles
+- planning-to-monolith imports
+- legacy export presence
+- facade export presence
+- physical moved export count
+- unknown manifest dependencies
+- forbidden cross-domain dependencies
+
+The checker does not count import bindings, export lists, comments, strings, fixtures, or test text as definitions. Compatibility facades may temporarily re-export unmoved symbols from the monolith. Physically extracted core, safety, or shared planning modules must not import the monolith.
+
+## Pre-Move Baseline
+
+`test/fixtures/planning/motion-dataset-core-baseline-v1.json` freezes current behavior for:
+
+- `createMotionDatasetRowSchemaPreflightSummary`
+- `createMotionDatasetSyntheticRowFixturePackSummary`
+
+The fixture records synthetic-only default, null, non-object, supported motion style, experimental label, unsupported style, unsafe field label, checked-row-count, execution, readiness, owner-confirmation, and trusted-loader attempts. It also records returned object key order, exact `JSON.stringify` output, constant values, ordering, and `Object.isFrozen` status.
+
+Future physical extraction PRs must compare against this fixture. Regenerating it to hide a behavior change is not allowed.
 
 ## Extraction Rule
 
