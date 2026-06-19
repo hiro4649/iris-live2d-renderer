@@ -22,9 +22,9 @@ This document records the safe planning-module extraction boundary and the depen
 | checker schema | live2d_planning_module_boundary_report_v3 |
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
-| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json |
-| physicalMovedExportCount | 108 |
-| auditedSymbolCount | 108 |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-nogo-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json |
+| physicalMovedExportCount | 128 |
+| auditedSymbolCount | 128 |
 | pendingSymbolCount | 83 |
 | unregisteredExtractedLegacyPublicSymbolCount | 0 |
 | manifestedButNotLegacyPublicCount | 0 |
@@ -137,3 +137,11 @@ The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exp
 X1B2B physically extracts the owner no-go / fail-closed planning closure into `src/renderer/planning/motionDatasetOwnerNoGoGates.js`. The moved closure contains 22 legacy public symbols: five schemas, twelve planning constants, and five factory summaries for go/no-go blocker mapping, pre-ingestion review, final dry-run checklist, missing-data fail-closed gating, and actual-data task entry gating.
 
 The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and keeps the planning facade limited to its existing eight public no-go symbols. Legacy-only helper constants and factories remain outside the facade. The new module does not import the monolith, does not execute parser/redaction/audit/runtime work, does not read actual files or row bodies, does not calculate hashes, does not create owner confirmation, does not enable trusted loader state, and preserves priority1 BLOCKED with checked_row_count 0 and motion dataset non-executable.
+
+## X1B2C1 Actual-Data Preauth Gates Physical Extraction Status
+
+X1B2C1 physically extracts the actual-data preauthorization planning closure into `src/renderer/planning/motionDatasetActualDataPreauthGates.js`. The moved closure contains 20 legacy public symbols: five schemas, ten planning constants, and five factory summaries for real-row acceptance criteria, owner actual-data task handoff review, no-go projection, owner submission readiness, and final actual-data preauthorization blocker gating.
+
+The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and intentionally does not expand `src/renderer/planning/motionDatasetPlanningSummaries.js`. These symbols remain legacy-only public compatibility names until a later facade decision. `test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json` freezes synthetic-only behavior with test-only parity fingerprints for object shape, key order, JSON length, JSON SHA-256, selected safety projection, constant values, freeze status, and input non-mutation. The test-only fingerprint is not product source-hash verification and does not read actual files.
+
+This module is still planning-only. It does not preauthorize actual data, start an actual data task, accept actual data, ingest rows, read row bodies, read actual files, calculate product hashes, run parser/redaction/audit work, create or confirm owner confirmation, claim runtime readiness, claim production readiness, enable trusted loader state, resolve priority1, or make the motion dataset executable. Fixed safety truth remains priority1 BLOCKED, checked_row_count 0, actual_ingestion_allowed false, go_nogo_status no_go, and motion dataset non-executable.
