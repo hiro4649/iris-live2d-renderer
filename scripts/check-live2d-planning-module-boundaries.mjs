@@ -16,6 +16,7 @@ const DEFAULT_MODULE_REGISTRY = Object.freeze({
   "src/renderer/planning/motionDatasetOwnerGates.js": "motion_dataset",
   "src/renderer/planning/motionDatasetOwnerHandoffGates.js": "motion_dataset",
   "src/renderer/planning/motionDatasetAuditStubs.js": "motion_dataset",
+  "src/renderer/planning/motionDatasetActualDataPreauthGates.js": "motion_dataset",
   "src/renderer/planning/motionIdentityComfortCore.js": "motion_identity_comfort",
   "src/renderer/planning/motionIdentityComfortGovernance.js": "motion_identity_comfort",
   "src/renderer/planning/rendererReadinessCore.js": "renderer_readiness",
