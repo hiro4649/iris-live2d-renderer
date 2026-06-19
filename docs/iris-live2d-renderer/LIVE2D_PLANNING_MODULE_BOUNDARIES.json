@@ -77,16 +77,16 @@
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA",
@@ -203,16 +203,16 @@
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_STUB_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_STUB_SCHEMA",
@@ -231,16 +231,16 @@
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA",
@@ -2287,6 +2287,181 @@
       "dependencies": [],
       "facadeExportRequired": false,
       "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_REVIEW_SECTIONS",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_CONFIRMATION_SCOPES",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_METADATA_LABELS",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_FUTURE_REFS",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_ACCEPTED_CASES",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_REJECTED_ATTEMPT_CASES",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SAFE_PUBLIC_REJECTED_ATTEMPT_CASES",
+      "kind": "constant",
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary",
+      "kind": "factory",
+      "dependencies": [
+        "LIVE2D_EXPERIMENTAL_MOTION_LABELS",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_CONFIRMATION_SCOPES",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_REVIEW_SECTIONS",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_PACKET_SCHEMA",
+        "LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA",
+        "LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA",
+        "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES"
+      ],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary",
+      "kind": "factory",
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_FUTURE_REFS",
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_METADATA_LABELS",
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_STUB_SCHEMA"
+      ],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "createMotionDatasetOwnerRowDataSubmissionRejectionFixturePackSummary",
+      "kind": "factory",
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_ACCEPTED_CASES",
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SAFE_PUBLIC_REJECTED_ATTEMPT_CASES",
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA"
+      ],
+      "sharedDependencyGroup": "owner_handoff_gates",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerHandoffGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "facadeFile": null
     }
   ],
   "safety": {
@@ -2309,6 +2484,7 @@
     "src/renderer/planning/motionIdentityComfortGovernance.js": "motion_identity_comfort",
     "src/renderer/planning/rendererReadinessCore.js": "renderer_readiness",
     "src/renderer/planning/rendererReadinessGovernance.js": "renderer_readiness",
-    "src/renderer/planning/motionDatasetParserAuditStubs.js": "motion_dataset"
+    "src/renderer/planning/motionDatasetParserAuditStubs.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetOwnerHandoffGates.js": "motion_dataset"
   }
 }

@@ -17,7 +17,6 @@ assert.equal(report.status, "pass");
 assert.equal(report.failureCount, 0);
 assert.equal(report.duplicateDefinitionCount, 0);
 assert.equal(report.cycleCount, 0);
-assert.equal(report.physicalMovedExportCount, 63);
 assert.equal(report.scannedPlanningFileCount >= 9, true);
 assert.equal(report.unregisteredPlanningModuleCount, 0);
 assert.equal(report.planningMonolithImportStatus, "facade_compatibility_allowed_before_queue_c1");
@@ -30,8 +29,6 @@ assert.equal(report.crossDomainDependencyViolationCount, 0);
 assert.equal(report.kindMismatchCount, 0);
 assert.equal(report.currentDomainMismatchCount, 0);
 assert.equal(report.actualPhysicalMoveMismatchCount, 0);
-assert.equal(report.auditedSymbolCount, 63);
-assert.equal(report.pendingSymbolCount, report.symbolCount - 63);
 assert.equal(report.entries.length, report.symbolCount);
 
 const movedSymbols = new Map([
@@ -98,7 +95,25 @@ const movedSymbols = new Map([
   ["createMotionDatasetIngestionAuditTrailStubSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
   ["createMotionDatasetIngestionRollbackPlanStubSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
   ["createMotionDatasetParserDryRunEnvelopeSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_REVIEW_SECTIONS", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_CONFIRMATION_SCOPES", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_STUB_SCHEMA", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_METADATA_LABELS", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_FUTURE_REFS", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_ACCEPTED_CASES", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_REJECTED_ATTEMPT_CASES", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SAFE_PUBLIC_REJECTED_ATTEMPT_CASES", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["createMotionDatasetOwnerRowDataSubmissionRejectionFixturePackSummary", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
 ]);
+
+assert.equal(report.physicalMovedExportCount, movedSymbols.size);
+assert.equal(report.auditedSymbolCount, movedSymbols.size);
+assert.equal(report.pendingSymbolCount, report.symbolCount - report.auditedSymbolCount);
 
 for (const entry of report.entries) {
   assert.equal(entry.actualDefinitionFile, movedSymbols.get(entry.name) ?? "src/renderer/cubismLoaderProvisioning.js");

@@ -22,10 +22,10 @@ This document records the safe planning-module extraction boundary and the depen
 | checker schema | live2d_planning_module_boundary_report_v3 |
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
-| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json |
-| physicalMovedExportCount | 63 |
-| auditedSymbolCount | 63 |
-| pendingSymbolCount | 94 |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json |
+| physicalMovedExportCount | 77 |
+| auditedSymbolCount | 77 |
+| pendingSymbolCount | 91 |
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
@@ -112,3 +112,11 @@ The parser-audit stubs extraction moves row-body parser contract planning, parse
 This module is still planning-only. It does not parse row bodies, read files, accept actual row content, create ingestion audit events, create rollback snapshots, execute dry runs, ingest data, create owner confirmation, enable trusted loader, claim runtime readiness, or claim production readiness.
 
 The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports moved public names for compatibility. The planning facade continues to expose only parser-audit names that were already part of the facade inventory. `test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json` freezes synthetic-only pre-move behavior, key order, JSON serialization, constant values, freeze status, and input non-mutation checks for the five moved factories.
+
+## X1B2A Owner-Handoff Gates Physical Extraction Status
+
+The owner-handoff gates extraction moves metadata-only owner handoff packet planning, owner row-data submission receipt stubs, rejection fixture pack labels, their safe planning constants, and their summary factories into `src/renderer/planning/motionDatasetOwnerHandoffGates.js`.
+
+This module remains a planning-only owner handoff boundary. It does not receive owner submissions, read row bodies, accept actual file paths, read actual file content, calculate hashes, run parser/redaction/audit work, create owner confirmation, enable trusted loader, claim runtime readiness, claim production readiness, resolve priority1, or make the motion dataset executable.
+
+The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports moved public names for compatibility. The planning facade directly exposes only the three schema names that were already part of the facade inventory. The moved factories and their related review/rejection/receipt constants remain legacy-only and do not expand the facade. `test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json` freezes synthetic-only pre-move behavior, key order, JSON serialization, constant values, freeze status, and input non-mutation checks for the three moved factories.
