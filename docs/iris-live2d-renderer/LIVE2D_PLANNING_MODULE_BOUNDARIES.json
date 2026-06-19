@@ -1,5 +1,5 @@
 {
-  "schema": "live2d_planning_module_boundaries_manifest_v1",
+  "schema": "live2d_planning_module_boundaries_manifest_v2",
   "harness": "v1.2.7",
   "authority": "docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json",
   "sourceState": "motion_dataset_core_physical_extraction_in_progress",
@@ -14,7 +14,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA",
@@ -26,7 +28,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_PACKET_SCHEMA",
@@ -38,7 +42,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA",
@@ -50,7 +56,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA",
@@ -62,7 +70,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA",
@@ -74,7 +84,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA",
@@ -86,7 +98,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA",
@@ -98,7 +112,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA",
@@ -110,7 +126,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_MAP_SCHEMA",
@@ -122,7 +140,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_PRE_INGESTION_REVIEW_PACKET_SCHEMA",
@@ -134,7 +154,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_FINAL_DRY_RUN_CHECKLIST_SCHEMA",
@@ -146,7 +168,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_MISSING_DATA_FAIL_CLOSED_GATE_SCHEMA",
@@ -158,7 +182,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_PACKET_SCHEMA",
@@ -170,7 +196,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_STUB_SCHEMA",
@@ -182,7 +210,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_STUB_SCHEMA",
@@ -194,7 +224,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA",
@@ -206,7 +238,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_SCHEMA",
@@ -218,7 +252,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA",
@@ -230,7 +266,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA",
@@ -242,7 +280,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA",
@@ -254,7 +294,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA",
@@ -266,7 +308,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA",
@@ -278,7 +322,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA",
@@ -290,7 +336,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA",
@@ -302,7 +350,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS",
@@ -314,7 +364,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_REJECTED_RAW_FIELDS",
@@ -326,7 +378,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES",
@@ -338,7 +392,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES",
@@ -350,7 +406,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_REQUIRED_FIELDS",
@@ -362,7 +420,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_ALLOWED_FILE_FORMATS",
@@ -374,7 +434,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REJECTED_REQUEST_FIELDS",
@@ -386,7 +448,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES",
@@ -398,7 +462,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES",
@@ -410,7 +476,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REQUIRED_METADATA",
@@ -422,7 +490,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS",
@@ -434,7 +504,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS",
@@ -446,7 +518,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS",
@@ -458,7 +532,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_REQUIRED_LABELS",
@@ -470,7 +546,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_REJECTION_REASONS",
@@ -482,7 +560,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_REQUIRED_PREREQUISITES",
@@ -494,7 +574,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_ENTRY_GATE_BLOCKING_CONDITIONS",
@@ -506,7 +588,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS",
@@ -518,7 +602,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASONS",
@@ -530,7 +616,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS",
@@ -542,7 +630,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS",
@@ -554,7 +644,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRowSchemaPreflightSummary",
@@ -565,17 +657,18 @@
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [
-        "LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA",
-        "LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS",
-        "LIVE2D_MOTION_DATASET_ROW_REJECTED_RAW_FIELDS",
-        "LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA",
+        "LIVE2D_EXPERIMENTAL_MOTION_LABELS",
         "LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA",
+        "LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA",
         "LIVE2D_MOTION_DATASET_UX_AUDIT_AXES",
-        "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES",
-        "LIVE2D_EXPERIMENTAL_MOTION_LABELS"
+        "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES"
       ],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "createMotionDatasetSyntheticRowFixturePackSummary",
@@ -586,17 +679,18 @@
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [
-        "LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA",
+        "LIVE2D_EXPERIMENTAL_MOTION_LABELS",
         "LIVE2D_MOTION_DATASET_ACCEPTED_SYNTHETIC_FIXTURE_CASES",
         "LIVE2D_MOTION_DATASET_REJECTED_SYNTHETIC_FIXTURE_CASES",
-        "LIVE2D_MOTION_DATASET_ROW_REJECTED_RAW_FIELDS",
         "LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_SYNTHETIC_ROW_FIXTURE_PACK_SCHEMA",
         "LIVE2D_MOTION_DATASET_UX_AUDIT_AXES",
-        "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES",
-        "LIVE2D_EXPERIMENTAL_MOTION_LABELS"
+        "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES"
       ],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "createMotionDatasetRealRowIntakeRequestPacketSummary",
@@ -608,7 +702,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRealRowIntakeDryRunValidatorSummary",
@@ -620,7 +716,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary",
@@ -632,7 +730,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRealRowAuditManifestSummary",
@@ -644,7 +744,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRealRowRedactionScannerFixturePackSummary",
@@ -656,7 +758,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetOwnerRowDataSubmissionPacketSummary",
@@ -668,7 +772,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetOwnerRowDataMetadataValidatorStubSummary",
@@ -680,7 +786,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetActualDataTaskEntryGateSummary",
@@ -692,7 +800,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRowBodyParserContractStubSummary",
@@ -704,7 +814,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetRowBodyParserRejectionFixturePackSummary",
@@ -716,7 +828,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetIngestionAuditTrailStubSummary",
@@ -728,7 +842,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetIngestionRollbackPlanStubSummary",
@@ -740,7 +856,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetParserDryRunEnvelopeSummary",
@@ -752,7 +870,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetOwnerWaitStatePacketSummary",
@@ -764,7 +884,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createMotionDatasetPlanningCompletionReviewPacketSummary",
@@ -776,7 +898,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_SCHEMA",
@@ -788,7 +912,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_COMPLETION_REVIEW_SCHEMA",
@@ -800,7 +926,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_SCHEMA",
@@ -812,7 +940,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_SCHEMA",
@@ -824,7 +954,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_IMPLEMENTATION_GAP_AUDIT_SCHEMA",
@@ -836,7 +968,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_SUMMARY_SCHEMA",
@@ -848,7 +982,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_ADMIN_SUMMARY_REDACTION_SCHEMA",
@@ -860,7 +996,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_SCHEMA",
@@ -872,7 +1010,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_SCHEMA",
@@ -884,7 +1024,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_SCHEMA",
@@ -896,7 +1038,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_SCHEMA",
@@ -908,7 +1052,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_SCHEMA",
@@ -920,7 +1066,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_PRE_OWNER_FINAL_WAIT_STATE_SCHEMA",
@@ -932,7 +1080,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_FINAL_REDACTION_SWEEP2_SCHEMA",
@@ -944,7 +1094,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_FINAL_NO_SWEETENING_SWEEP2_SCHEMA",
@@ -956,7 +1108,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_PHASES",
@@ -968,7 +1122,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_DEVELOPMENT_SCHEDULE_BOUNDARIES",
@@ -980,7 +1136,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_COMPLETION_REVIEW_OPEN_BLOCKERS",
@@ -992,7 +1150,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_REDACTION_SWEEP_REJECTIONS",
@@ -1004,7 +1164,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_NO_SWEETENING_SWEEP_REJECTIONS",
@@ -1016,7 +1178,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_PUBLIC_SUMMARY_ALLOWED_LABELS",
@@ -1028,7 +1192,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_OWNER_HANDOFF_STUB_BLOCKERS",
@@ -1040,7 +1206,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_STUB_ROLES",
@@ -1052,7 +1220,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_ROLE_GATE_REDACTION_GUARD_FIELDS",
@@ -1064,7 +1234,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_AUDIT_STUB_NO_WRITE_REJECTIONS",
@@ -1076,7 +1248,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_CONTINUATION_LEDGER_ENTRIES",
@@ -1088,7 +1262,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_PRE_OWNER_FINAL_WAIT_STATE_BLOCKERS",
@@ -1100,7 +1276,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_IDENTITY_COMFORT_FINAL_REDACTION_SWEEP2_REJECTIONS",
@@ -1112,7 +1290,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortDevelopmentScheduleSummary",
@@ -1124,7 +1304,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortCompletionReviewSummary",
@@ -1136,7 +1318,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortRedactionSweepSummary",
@@ -1148,7 +1332,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortNoSweeteningSweepSummary",
@@ -1160,7 +1346,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortImplementationGapAuditSummary",
@@ -1172,7 +1360,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortImplementationGapRegisterSummary",
@@ -1184,7 +1374,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortPublicSummary",
@@ -1196,7 +1388,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortAdminSummaryRedaction",
@@ -1208,7 +1402,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortOwnerHandoffStub",
@@ -1220,7 +1416,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortRoleGateStub",
@@ -1232,7 +1430,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortRoleGateRedactionGuard",
@@ -1244,7 +1444,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortAuditStubNoWrite",
@@ -1256,7 +1458,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortContinuationLedger",
@@ -1268,7 +1472,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortPreOwnerFinalWaitState",
@@ -1280,7 +1486,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortFinalRedactionSweep2",
@@ -1292,7 +1500,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createLive2dMotionIdentityComfortFinalNoSweeteningSweep2",
@@ -1304,7 +1514,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA",
@@ -1316,7 +1528,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA",
@@ -1328,7 +1542,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_FRESH_EVIDENCE_ENVELOPE_SCHEMA",
@@ -1340,7 +1556,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_STALE_EVIDENCE_DOWNGRADE_CONTRACT_SCHEMA",
@@ -1352,7 +1570,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_ALLOWLIST_SCHEMA",
@@ -1364,7 +1584,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_EVIDENCE_COMPLETENESS_BLOCKER_MATRIX_SCHEMA",
@@ -1376,7 +1598,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_GO_NOGO_BLOCKER_SURFACE_SCHEMA",
@@ -1388,7 +1612,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_PACKET_STUB_SCHEMA",
@@ -1400,7 +1626,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_MANIFEST_STUB_SCHEMA",
@@ -1412,7 +1640,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_RUNTIME_READINESS_FINAL_NO_GO_SCHEMA",
@@ -1424,7 +1654,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA",
@@ -1436,7 +1668,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS",
@@ -1448,7 +1682,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_NO_GO_REASONS",
@@ -1460,7 +1696,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_GO_NOGO_REASONS",
@@ -1472,7 +1710,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_SAFE_NEXT_ACTIONS",
@@ -1484,7 +1724,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_REAL_PROBE_PREFLIGHT_BLOCKERS",
@@ -1496,7 +1738,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_LABELS",
@@ -1508,7 +1752,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_FINAL_PRE_OWNER_BLOCKERS",
@@ -1520,7 +1766,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS",
@@ -1532,7 +1780,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_RENDERER_READY_FRESH_EVIDENCE_REQUIRED_BLOCKERS",
@@ -1544,7 +1794,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyFalsePositiveDependencySurfaceSummary",
@@ -1556,7 +1808,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyFixtureVsRealSeparationContractSummary",
@@ -1568,7 +1822,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyFreshEvidenceEnvelopeSummary",
@@ -1580,7 +1836,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyStaleEvidenceDowngradeContractSummary",
@@ -1592,7 +1850,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyEvidenceSourceAllowlistSummary",
@@ -1604,7 +1864,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyEvidenceCompletenessBlockerMatrixSummary",
@@ -1616,7 +1878,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyGoNoGoBlockerSurfaceSummary",
@@ -1628,7 +1892,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyOwnerEvidenceHandoffPacketStubSummary",
@@ -1640,7 +1906,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyEvidenceCollectorManifestStubSummary",
@@ -1652,7 +1920,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyEvidenceCollectorNoExecutionGuardSummary",
@@ -1664,7 +1934,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyEvidenceCollectorSafeOutputSchemaSummary",
@@ -1676,7 +1948,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyRuntimeReadinessFinalNoGoSummary",
@@ -1688,7 +1962,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyProductionReadinessFinalNoGoSummary",
@@ -1700,7 +1976,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyRealEvidenceRequestFinalWaitStateSummary",
@@ -1712,7 +1990,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "createRendererReadyRealEvidenceRequestRejectionFixturePackSummary",
@@ -1724,7 +2004,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved"
+      "physicalMoveStatus": "not_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "pending"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA",
@@ -1736,7 +2018,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS",
@@ -1748,7 +2032,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_UX_AUDIT_AXES",
@@ -1760,7 +2046,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES",
@@ -1772,7 +2060,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "motion_catalog",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_EXPERIMENTAL_MOTION_LABELS",
@@ -1784,7 +2074,9 @@
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "motion_catalog",
-      "physicalMoveStatus": "physically_moved"
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": true,
+      "dependencyAuditStatus": "audited"
     }
   ],
   "safety": {
@@ -1794,5 +2086,18 @@
     "actualIngestionAllowed": false,
     "trustedLoaderAllowlistEnabled": false,
     "actualCubismExecution": false
+  },
+  "checkerSchema": "live2d_planning_module_boundary_report_v3",
+  "moduleRegistry": {
+    "src/renderer/cubismLoaderProvisioning.js": "actual_loader_core",
+    "src/renderer/planning/sharedMotionCatalog.js": "shared_planning_safety",
+    "src/renderer/planning/motionDatasetPlanningSafety.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetPlanningCore.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetOwnerGates.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetAuditStubs.js": "motion_dataset",
+    "src/renderer/planning/motionIdentityComfortCore.js": "motion_identity_comfort",
+    "src/renderer/planning/motionIdentityComfortGovernance.js": "motion_identity_comfort",
+    "src/renderer/planning/rendererReadinessCore.js": "renderer_readiness",
+    "src/renderer/planning/rendererReadinessGovernance.js": "renderer_readiness"
   }
 }
