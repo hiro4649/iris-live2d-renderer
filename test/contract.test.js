@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import "./safe-surface-projection-matrix.test.js";
+import { assertSafeSurfaceProjectionMatrix } from "./helpers/safeSurfaceProjectionMatrixAssertions.js";
 import { createLive2dRendererServer, listen } from "../src/server.js";
 import { createRendererState } from "../src/state.js";
+
+assertSafeSurfaceProjectionMatrix();
 import {
   ALLOWED_CUBISM_LOADER_ENV_NAMES,
   CUBISM_LOADER_KIND_CANDIDATES,
