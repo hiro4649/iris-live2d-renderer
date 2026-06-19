@@ -22,7 +22,7 @@ This document records the safe planning-module extraction boundary before any ph
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
 | pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json |
-| physicalMovedExportCount | 0 |
+| physicalMovedExportCount | 13 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
 | planningMonolithImportStatus | facade_compatibility_allowed_before_queue_c1 |
@@ -64,4 +64,14 @@ Future physical extraction PRs must compare against this fixture. Regenerating i
 
 ## Extraction Rule
 
-Future physical extraction PRs must move definitions rather than copy them, keep legacy exports compatible, preserve schema and factory output parity, and keep actual loader core in the monolith until the owner SDK/model decision review is complete.
+Physical extraction PRs must move definitions rather than copy them, keep legacy exports compatible, preserve schema and factory output parity, and keep actual loader core in the monolith until the owner SDK/model decision review is complete.
+
+## X1A Physical Extraction Status
+
+The motion dataset planning core extraction moved the first safe core set into planning modules:
+
+- `src/renderer/planning/sharedMotionCatalog.js` owns the shared runtime-supported and experimental-review-only motion catalogs.
+- `src/renderer/planning/motionDatasetPlanningSafety.js` owns reusable motion dataset rejected-field and safe-label helpers.
+- `src/renderer/planning/motionDatasetPlanningCore.js` owns row schema preflight, synthetic fixture pack, their pure metadata constants, and the two summary factories.
+
+The legacy `src/renderer/cubismLoaderProvisioning.js` surface re-exports moved public names for compatibility. Compatibility facades may still re-export unmoved symbols from the monolith until QUEUE-C1.
