@@ -23,9 +23,9 @@ This document records the safe planning-module extraction boundary and the depen
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
 | pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json |
-| physicalMovedExportCount | 13 |
-| auditedSymbolCount | 13 |
-| pendingSymbolCount | 134 |
+| physicalMovedExportCount | 29 |
+| auditedSymbolCount | 29 |
+| pendingSymbolCount | 118 |
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
@@ -90,3 +90,9 @@ The legacy `src/renderer/cubismLoaderProvisioning.js` surface re-exports moved p
 The dependency-truth repair upgrades the checker to schema v3 and classifies the 13 physically moved X1A symbols as `dependencyAuditStatus: "audited"`. Their declared dependencies now match direct manifest-symbol references found in source bodies. Unmoved symbols remain `pending`; they are tracked for inventory and source-location truth, but their dependency declarations are not promoted to audited evidence until their own physical extraction queue.
 
 The manifest `moduleRegistry` is used only as inert planning metadata for domain classification. It does not execute non-LIVE2D scopes and does not authorize runtime readiness, production readiness, owner confirmation, actual data handling, trusted loader enablement, or priority1 resolution.
+
+## X1B1 Owner-Gates Physical Extraction Status
+
+The owner-gate extraction moved the metadata-only owner intake request, dry-run, quarantine, submission packet, and metadata validator stub summaries into `src/renderer/planning/motionDatasetOwnerGates.js`. The move also relocates their direct safe planning constants and request-field helpers so physically extracted planning modules do not import the monolith.
+
+The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports those public names for compatibility. `test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json` freezes synthetic-only pre-move behavior for the five moved factories. This extraction remains non-executable: it does not accept actual row content, read files, calculate hashes, ingest rows, create owner confirmation, claim readiness, enable trusted loader, or resolve priority1.

@@ -8,14 +8,15 @@ import * as live2d from "../src/renderer/cubismLoaderProvisioning.js";
 
 const report = buildLive2dPlanningModuleBoundaryReport();
 const baseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-core-baseline-v1.json", "utf8"));
+const ownerGatesBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json", "utf8"));
 
 assert.equal(report.schema, "live2d_planning_module_boundary_report_v3");
 assert.equal(report.status, "pass");
 assert.equal(report.failureCount, 0);
 assert.equal(report.duplicateDefinitionCount, 0);
 assert.equal(report.cycleCount, 0);
-assert.equal(report.physicalMovedExportCount, 13);
-assert.equal(report.scannedPlanningFileCount, 6);
+assert.equal(report.physicalMovedExportCount, 29);
+assert.equal(report.scannedPlanningFileCount, 7);
 assert.equal(report.unregisteredPlanningModuleCount, 0);
 assert.equal(report.planningMonolithImportStatus, "facade_compatibility_allowed_before_queue_c1");
 assert.equal(report.physicallyExtractedModulesImportingMonolithCount, 0);
@@ -27,8 +28,8 @@ assert.equal(report.crossDomainDependencyViolationCount, 0);
 assert.equal(report.kindMismatchCount, 0);
 assert.equal(report.currentDomainMismatchCount, 0);
 assert.equal(report.actualPhysicalMoveMismatchCount, 0);
-assert.equal(report.auditedSymbolCount, 13);
-assert.equal(report.pendingSymbolCount, report.symbolCount - 13);
+assert.equal(report.auditedSymbolCount, 29);
+assert.equal(report.pendingSymbolCount, report.symbolCount - 29);
 assert.equal(report.entries.length, report.symbolCount);
 
 const movedSymbols = new Map([
@@ -45,6 +46,22 @@ const movedSymbols = new Map([
   ["LIVE2D_MOTION_DATASET_UX_AUDIT_AXES", "src/renderer/planning/motionDatasetPlanningCore.js"],
   ["createMotionDatasetRowSchemaPreflightSummary", "src/renderer/planning/motionDatasetPlanningCore.js"],
   ["createMotionDatasetSyntheticRowFixturePackSummary", "src/renderer/planning/motionDatasetPlanningCore.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_PACKET_SCHEMA", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_VALIDATOR_SCHEMA", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_ENVELOPE_SCHEMA", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_PACKET_SCHEMA", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_STUB_SCHEMA", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REQUEST_REQUIRED_FIELDS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_ALLOWED_FILE_FORMATS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_REJECTED_REQUEST_FIELDS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REQUIRED_METADATA", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_REQUIRED_LABELS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_REJECTION_REASONS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["createMotionDatasetRealRowIntakeRequestPacketSummary", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["createMotionDatasetRealRowIntakeDryRunValidatorSummary", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["createMotionDatasetOwnerRowDataSubmissionPacketSummary", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["createMotionDatasetOwnerRowDataMetadataValidatorStubSummary", "src/renderer/planning/motionDatasetOwnerGates.js"],
 ]);
 
 for (const entry of report.entries) {
@@ -116,6 +133,32 @@ for (const [factoryName, cases] of Object.entries(baseline.factories)) {
   }
 }
 
+assert.equal(ownerGatesBaseline.schema, "live2d_motion_dataset_owner_gates_baseline_v1");
+assert.equal(ownerGatesBaseline.safety.syntheticInputsOnly, true);
+assert.equal(ownerGatesBaseline.safety.actualDataRead, false);
+assert.equal(ownerGatesBaseline.safety.actualFileRead, false);
+assert.equal(ownerGatesBaseline.safety.actualHashCalculated, false);
+assert.equal(ownerGatesBaseline.safety.actualIngestionAllowed, false);
+assert.equal(ownerGatesBaseline.safety.runtimeReadinessClaimed, false);
+assert.equal(ownerGatesBaseline.safety.productionReadinessClaimed, false);
+assert.equal(ownerGatesBaseline.safety.ownerConfirmationCreated, false);
+assert.equal(ownerGatesBaseline.safety.trustedLoaderEnabled, false);
+assert.equal(ownerGatesBaseline.safety.priority1Status, "BLOCKED");
+assert.equal(ownerGatesBaseline.safety.checkedRowCount, 0);
+assert.equal(ownerGatesBaseline.safety.motionDatasetExecutable, false);
+
+for (const [factoryName, cases] of Object.entries(ownerGatesBaseline.factories)) {
+  for (const [caseName, expected] of Object.entries(cases)) {
+    const value = caseName === "default_input"
+      ? live2d[factoryName]()
+      : live2d[factoryName](inputForOwnerGatesBaselineCase(caseName));
+    assert.equal(expected.behavior, "return", `owner gate baseline expected return: ${factoryName}:${caseName}`);
+    assert.deepEqual(value, expected.object, `owner gate factory object changed: ${factoryName}:${caseName}`);
+    assert.deepEqual(Object.keys(value), expected.keys, `owner gate factory key order changed: ${factoryName}:${caseName}`);
+    assert.equal(JSON.stringify(value), expected.json, `owner gate factory json changed: ${factoryName}:${caseName}`);
+  }
+}
+
 function inputForBaselineCase(caseName) {
   return {
     null_input: null,
@@ -129,6 +172,38 @@ function inputForBaselineCase(caseName) {
     readiness_attempt: { renderer_ready: true, runtime_readiness_claimed: true, production_readiness_claimed: true },
     owner_confirmation_attempt: { owner_confirmation_created: true, owner_confirmation_confirmed: true },
     trusted_loader_attempt: { trusted_loader_allowlist_enabled: true, loader_trusted: true },
+  }[caseName];
+}
+
+function inputForOwnerGatesBaselineCase(caseName) {
+  return {
+    null_input: null,
+    non_object_input: "safe_non_object_label",
+    safe_metadata_labels_only: {
+      request_id: "safe_request_label",
+      dataset_name: "safe_dataset_label",
+      requested_file_format: "jsonl",
+      expected_row_count: 10,
+      dataset_split_plan: "safe_split_label",
+      source_file_label: "safe_file_label",
+      source_hash: "safe_hash_label",
+      audit_run_id: "safe_audit_label",
+      auditor_version: "safe_auditor_label",
+      owner_confirmation_required: true,
+      redaction_policy_ref: "safe_redaction_label",
+    },
+    unsupported_format: { requested_file_format: "unsupported_safe_label" },
+    unsafe_material_attempt: { raw_dataset_row_body: "safe_redacted_label" },
+    file_read_attempt: { actual_file_path_value: "safe_redacted_label", file_content_read: true },
+    hash_calculation_attempt: { actual_hash_calculated: true },
+    submission_acceptance_attempt: { owner_submission_received: true, owner_submission_accepted: true },
+    checked_row_count_attempt: { checked_row_count: 1 },
+    ingestion_attempt: { actual_ingestion_allowed: true, ingest_rows: true },
+    execution_attempt: { motion_dataset_executable: true, execute_motion: true },
+    readiness_attempt: { renderer_ready: true, runtime_readiness_claimed: true, production_readiness_claimed: true },
+    owner_confirmation_attempt: { owner_confirmation_created: true, owner_confirmation_confirmed: true },
+    trusted_loader_attempt: { trusted_loader_allowlist_enabled: true, loader_trusted: true },
+    priority_resolution_attempt: { priority1_status: "RESOLVED", priority1_resolved: true, go_nogo_status: "go" },
   }[caseName];
 }
 
