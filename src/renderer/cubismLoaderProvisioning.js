@@ -53,7 +53,7 @@ import {
   createMotionDatasetOwnerRowDataMetadataValidatorStubSummary,
   safeOwnerRowSubmissionRejectedFieldLabel,
   safeOwnerRowSubmissionFileShapeLabel,
-  detectedRejectedRequestFields
+  detectedRejectedRequestFields,
 } from "./planning/motionDatasetOwnerGates.js";
 import {
   LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS,
@@ -162,9 +162,6 @@ export {
   createMotionDatasetRealRowIntakeQuarantineEnvelopeSummary,
   createMotionDatasetOwnerRowDataSubmissionPacketSummary,
   createMotionDatasetOwnerRowDataMetadataValidatorStubSummary,
-  safeOwnerRowSubmissionRejectedFieldLabel,
-  safeOwnerRowSubmissionFileShapeLabel,
-  detectedRejectedRequestFields
 } from "./planning/motionDatasetOwnerGates.js";
 
 export {
