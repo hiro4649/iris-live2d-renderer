@@ -91,44 +91,44 @@
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_GO_NOGO_BLOCKER_MAP_SCHEMA",
@@ -455,30 +455,30 @@
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES",
       "kind": "constant",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES",
       "kind": "constant",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REQUIRED_METADATA",
@@ -497,44 +497,44 @@
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS",
       "kind": "constant",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS",
       "kind": "constant",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS",
       "kind": "constant",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_REQUIRED_LABELS",
@@ -764,30 +764,43 @@
     {
       "name": "createMotionDatasetRealRowAuditManifestSummary",
       "kind": "factory",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
-      "dependencies": [],
+      "dependencies": [
+        "LIVE2D_EXPERIMENTAL_MOTION_LABELS",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS",
+        "LIVE2D_MOTION_DATASET_UX_AUDIT_AXES",
+        "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES"
+      ],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "createMotionDatasetRealRowRedactionScannerFixturePackSummary",
       "kind": "factory",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
-      "dependencies": [],
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES"
+      ],
       "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "createMotionDatasetOwnerRowDataSubmissionPacketSummary",
@@ -1732,6 +1745,52 @@
       "physicalMoveStatus": "not_moved",
       "facadeExportRequired": true,
       "dependencyAuditStatus": "pending"
+    },
+    {
+      "name": "createMotionDatasetRealRowEvidenceLinkManifestSummary",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "legacyExportRequired": true,
+      "sharedDependencyGroup": "none",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "kind": "factory",
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA",
+        "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS"
+      ],
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "legacyExportRequired": true,
+      "sharedDependencyGroup": "none",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "kind": "constant",
+      "dependencies": [],
+      "facadeExportRequired": false,
+      "facadeFile": null
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS",
+      "definitionFile": "src/renderer/planning/motionDatasetAuditStubs.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "legacyExportRequired": true,
+      "sharedDependencyGroup": "none",
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "kind": "constant",
+      "dependencies": [],
+      "facadeExportRequired": false,
+      "facadeFile": null
     },
     {
       "name": "LIVE2D_RENDERER_READY_GO_NOGO_REASONS",
