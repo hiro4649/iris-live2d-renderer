@@ -22,9 +22,9 @@ This document records the safe planning-module extraction boundary and the depen
 | checker schema | live2d_planning_module_boundary_report_v3 |
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
-| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-nogo-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json |
-| physicalMovedExportCount | 128 |
-| auditedSymbolCount | 128 |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-nogo-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-checksum-preflight-baseline-v1.json |
+| physicalMovedExportCount | 134 |
+| auditedSymbolCount | 134 |
 | pendingSymbolCount | 83 |
 | unregisteredExtractedLegacyPublicSymbolCount | 0 |
 | manifestedButNotLegacyPublicCount | 0 |
@@ -145,3 +145,11 @@ X1B2C1 physically extracts the actual-data preauthorization planning closure int
 The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and intentionally does not expand `src/renderer/planning/motionDatasetPlanningSummaries.js`. These symbols remain legacy-only public compatibility names until a later facade decision. `test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json` freezes synthetic-only behavior with test-only parity fingerprints for object shape, key order, JSON length, JSON SHA-256, selected safety projection, constant values, freeze status, and input non-mutation. The test-only fingerprint is not product source-hash verification and does not read actual files.
 
 This module is still planning-only. It does not preauthorize actual data, start an actual data task, accept actual data, ingest rows, read row bodies, read actual files, calculate product hashes, run parser/redaction/audit work, create or confirm owner confirmation, claim runtime readiness, claim production readiness, enable trusted loader state, resolve priority1, or make the motion dataset executable. Fixed safety truth remains priority1 BLOCKED, checked_row_count 0, actual_ingestion_allowed false, go_nogo_status no_go, and motion dataset non-executable.
+
+## X1B2C2 Checksum Preflight Physical Extraction Status
+
+X1B2C2 physically extracts the row-file checksum preflight planning closure into `src/renderer/planning/motionDatasetChecksumPreflight.js`. The moved closure contains six legacy public symbols: the checksum preflight schema, four metadata-only label catalogs, and the checksum preflight manifest summary factory.
+
+The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and intentionally does not expand `src/renderer/planning/motionDatasetPlanningSummaries.js`. These symbols remain legacy-only public compatibility names until a later facade decision. `test/fixtures/planning/motion-dataset-checksum-preflight-baseline-v1.json` freezes synthetic-only behavior with test-only parity fingerprints for object shape, key order, JSON length, JSON SHA-256, selected safety projection, constant values, freeze status, and input non-mutation. The test-only fingerprint is not product source-hash verification and does not read actual files.
+
+This module is still planning-only. It does not read actual files, accept actual file paths, accept actual file content, calculate product hashes, verify `source_hash_label`, check `declared_row_count_label`, ingest rows, run parser/redaction/audit work, create or confirm owner confirmation, claim runtime readiness, claim production readiness, enable trusted loader state, resolve priority1, or make the motion dataset executable. Fixed safety truth remains priority1 BLOCKED, checked_row_count 0, actual_ingestion_allowed false, source hash unverified, declared row count unchecked, and motion dataset non-executable.

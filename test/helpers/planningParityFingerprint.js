@@ -34,3 +34,27 @@ export function selectPlanningSafetyProjection(value) {
     blocker_resolved: value.blocker_resolved ?? false,
   };
 }
+
+export function selectChecksumPreflightSafetyProjection(value) {
+  return {
+    actual_file_read: value.actual_file_read ?? false,
+    actual_hash_calculated: value.actual_hash_calculated ?? false,
+    actual_file_reference_accepted: value.actual_file_reference_accepted ?? false,
+    actual_file_content_accepted: value.actual_file_content_accepted ?? false,
+    source_hash_verified: value.source_hash_verified ?? false,
+    actual_ingestion_allowed: value.actual_ingestion_allowed ?? false,
+    owner_confirmation_created: value.owner_confirmation_created ?? false,
+    owner_confirmation_confirmed: value.owner_confirmation_confirmed ?? false,
+    real_row_data_present: value.real_row_data_present ?? false,
+    row_body_read: value.row_body_read ?? false,
+    checked_row_count: value.checked_row_count ?? 0,
+    motion_dataset_executable: value.motion_dataset_executable ?? false,
+    runtime_readiness_claimed: value.runtime_readiness_claimed ?? false,
+    production_readiness_claimed: value.production_readiness_claimed ?? false,
+    priority1_status: value.priority1_status ?? "BLOCKED",
+    go_nogo_status: value.go_nogo_status ?? "no_go",
+    go_candidate: value.go_candidate ?? false,
+    blocker_resolved: value.blocker_resolved ?? false,
+    trusted_loader_allowlist_enabled: value.trusted_loader_allowlist_enabled ?? false,
+  };
+}
