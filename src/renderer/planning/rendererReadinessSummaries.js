@@ -1,3 +1,40 @@
 // Compatibility facade for renderer-readiness planning summaries.
-// The parity tests keep the legacy surface frozen before deeper mechanical splits.
-export * from "../cubismLoaderProvisioning.js";
+// Keep this boundary explicit so unrelated provisioning exports cannot leak into
+// the planning module while deeper mechanical splits continue.
+export {
+  LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_LABELS,
+  LIVE2D_RENDERER_READY_EVIDENCE_COLLECTOR_MANIFEST_STUB_SCHEMA,
+  LIVE2D_RENDERER_READY_EVIDENCE_COMPLETENESS_BLOCKER_MATRIX_SCHEMA,
+  LIVE2D_RENDERER_READY_EVIDENCE_SOURCE_ALLOWLIST_SCHEMA,
+  LIVE2D_RENDERER_READY_FALSE_POSITIVE_BLOCKERS,
+  LIVE2D_RENDERER_READY_FALSE_POSITIVE_DEPENDENCY_SURFACE_SCHEMA,
+  LIVE2D_RENDERER_READY_FIXTURE_VS_REAL_SEPARATION_CONTRACT_SCHEMA,
+  LIVE2D_RENDERER_READY_FRESH_EVIDENCE_ENVELOPE_SCHEMA,
+  LIVE2D_RENDERER_READY_FRESH_EVIDENCE_REQUIRED_BLOCKERS,
+  LIVE2D_RENDERER_READY_FINAL_PRE_OWNER_BLOCKERS,
+  LIVE2D_RENDERER_READY_GO_NOGO_BLOCKER_SURFACE_SCHEMA,
+  LIVE2D_RENDERER_READY_GO_NOGO_REASONS,
+  LIVE2D_RENDERER_READY_OWNER_EVIDENCE_HANDOFF_PACKET_STUB_SCHEMA,
+  LIVE2D_RENDERER_READY_PRODUCTION_READINESS_FINAL_NO_GO_SCHEMA,
+  LIVE2D_RENDERER_READY_REAL_EVIDENCE_REQUEST_NO_GO_REASONS,
+  LIVE2D_RENDERER_READY_REAL_PROBE_PREFLIGHT_BLOCKERS,
+  LIVE2D_RENDERER_READY_RUNTIME_READINESS_FINAL_NO_GO_SCHEMA,
+  LIVE2D_RENDERER_READY_SAFE_NEXT_ACTIONS,
+  LIVE2D_RENDERER_READY_SAFE_OPERATOR_CHECKLIST_ITEMS,
+  LIVE2D_RENDERER_READY_STALE_EVIDENCE_DOWNGRADE_CONTRACT_SCHEMA,
+  createRendererReadyEvidenceCollectorManifestStubSummary,
+  createRendererReadyEvidenceCollectorNoExecutionGuardSummary,
+  createRendererReadyEvidenceCollectorSafeOutputSchemaSummary,
+  createRendererReadyEvidenceCompletenessBlockerMatrixSummary,
+  createRendererReadyEvidenceSourceAllowlistSummary,
+  createRendererReadyFalsePositiveDependencySurfaceSummary,
+  createRendererReadyFixtureVsRealSeparationContractSummary,
+  createRendererReadyFreshEvidenceEnvelopeSummary,
+  createRendererReadyGoNoGoBlockerSurfaceSummary,
+  createRendererReadyOwnerEvidenceHandoffPacketStubSummary,
+  createRendererReadyProductionReadinessFinalNoGoSummary,
+  createRendererReadyRealEvidenceRequestFinalWaitStateSummary,
+  createRendererReadyRealEvidenceRequestRejectionFixturePackSummary,
+  createRendererReadyRuntimeReadinessFinalNoGoSummary,
+  createRendererReadyStaleEvidenceDowngradeContractSummary,
+} from "../cubismLoaderProvisioning.js";
