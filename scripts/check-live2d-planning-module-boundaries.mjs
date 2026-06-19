@@ -138,6 +138,54 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
   const actualDependencyMismatchCount = missingDeclaredDependencyCount + staleDeclaredDependencyCount;
   const pendingSymbolCount = entries.filter((entry) => entry.dependencyAuditStatus !== "audited").length;
   const auditedSymbolCount = auditedEntries.length;
+  const entriesByName = new Map(entries.map((entry) => [entry.name, entry]));
+  const legacyPublicNames = sourceRecords[LEGACY_FILE]?.exports ?? new Set();
+  const legacyPublicSymbolCount = legacyPublicNames.size;
+  const extractedLegacyPublicSymbols = [...legacyPublicNames]
+    .filter((name) => {
+      const definitions = definitionsByName.get(name) ?? [];
+      return definitions.length === 1 && definitions[0].file.startsWith(`${PLANNING_DIR}/`);
+    })
+    .sort();
+  const manifestedExtractedLegacyPublicSymbols = entries
+    .filter((entry) => entry.legacyExportRequired !== false)
+    .filter((entry) => entry.actualPhysicalMoveStatus === "physically_moved")
+    .map((entry) => entry.name)
+    .sort();
+  const manifestedExtractedLegacyPublicSet = new Set(manifestedExtractedLegacyPublicSymbols);
+  const unregisteredExtractedLegacyPublicSymbols = extractedLegacyPublicSymbols
+    .filter((name) => !manifestedExtractedLegacyPublicSet.has(name))
+    .sort();
+  const manifestedButNotLegacyPublicSymbols = manifestedExtractedLegacyPublicSymbols
+    .filter((name) => !legacyPublicNames.has(name))
+    .sort();
+  for (const name of unregisteredExtractedLegacyPublicSymbols) failures.push(`unregistered_extracted_legacy_public_symbol:${name}`);
+  for (const name of manifestedButNotLegacyPublicSymbols) failures.push(`manifested_legacy_public_symbol_missing_from_inventory:${name}`);
+
+  const facadePublicNamesByFile = Object.fromEntries(
+    Object.entries(sourceRecords)
+      .filter(([file]) => file.startsWith(`${PLANNING_DIR}/`) && file.endsWith("Summaries.js"))
+      .map(([file, record]) => [file, [...record.exports].sort()]),
+  );
+  const facadePublicSymbols = Object.entries(facadePublicNamesByFile)
+    .flatMap(([file, names]) => names.map((name) => ({ file, name })))
+    .sort((left, right) => left.name.localeCompare(right.name) || left.file.localeCompare(right.file));
+  const facadeManifestMismatches = facadePublicSymbols
+    .filter(({ file, name }) => {
+      const entry = entriesByName.get(name);
+      return !entry || entry.facadeExportRequired === false || entry.facadeFile !== file;
+    })
+    .map(({ file, name }) => ({ name, actualFacadeFile: file, manifestFacadeFile: entriesByName.get(name)?.facadeFile ?? null }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+  for (const mismatch of facadeManifestMismatches) failures.push(`facade_manifest_mismatch:${mismatch.name}`);
+
+  const facadePublicNameSet = new Set(facadePublicSymbols.map(({ name }) => name));
+  const internalPlanningExports = Object.entries(sourceRecords)
+    .filter(([file]) => file.startsWith(`${PLANNING_DIR}/`) && !file.endsWith("Summaries.js"))
+    .flatMap(([file, record]) => [...record.exports]
+      .filter((name) => !legacyPublicNames.has(name) && !facadePublicNameSet.has(name))
+      .map((name) => ({ file, name })))
+    .sort((left, right) => left.name.localeCompare(right.name) || left.file.localeCompare(right.file));
 
   return {
     schema: "live2d_planning_module_boundary_report_v3",
@@ -156,6 +204,21 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
     planningMonolithImportStatus: planningToMonolithImports.length === 0 ? "zero" : "facade_compatibility_allowed_before_queue_c1",
     physicallyExtractedModulesImportingMonolithCount: forbiddenMonolithImports.length,
     physicalMovedExportCount,
+    legacyPublicSymbolCount,
+    extractedLegacyPublicSymbolCount: extractedLegacyPublicSymbols.length,
+    extractedLegacyPublicSymbols,
+    manifestedExtractedLegacyPublicSymbolCount: manifestedExtractedLegacyPublicSymbols.length,
+    manifestedExtractedLegacyPublicSymbols,
+    unregisteredExtractedLegacyPublicSymbolCount: unregisteredExtractedLegacyPublicSymbols.length,
+    unregisteredExtractedLegacyPublicSymbols,
+    manifestedButNotLegacyPublicCount: manifestedButNotLegacyPublicSymbols.length,
+    manifestedButNotLegacyPublicSymbols,
+    facadePublicSymbolCount: facadePublicSymbols.length,
+    facadePublicNamesByFile,
+    facadeManifestMismatchCount: facadeManifestMismatches.length,
+    facadeManifestMismatches,
+    internalPlanningExportCount: internalPlanningExports.length,
+    internalPlanningExports,
     unknownDependencyCount: entries.reduce((count, entry) => count + entry.unknownDependencies.length, 0),
     missingDeclaredDependencyCount,
     staleDeclaredDependencyCount,
@@ -583,6 +646,14 @@ if (invokedPath && fileURLToPath(import.meta.url) === invokedPath) {
     planningToMonolithImportCount: report.planningToMonolithImportCount,
     physicallyExtractedModulesImportingMonolithCount: report.physicallyExtractedModulesImportingMonolithCount,
     physicalMovedExportCount: report.physicalMovedExportCount,
+    legacyPublicSymbolCount: report.legacyPublicSymbolCount,
+    extractedLegacyPublicSymbolCount: report.extractedLegacyPublicSymbolCount,
+    manifestedExtractedLegacyPublicSymbolCount: report.manifestedExtractedLegacyPublicSymbolCount,
+    unregisteredExtractedLegacyPublicSymbolCount: report.unregisteredExtractedLegacyPublicSymbolCount,
+    manifestedButNotLegacyPublicCount: report.manifestedButNotLegacyPublicCount,
+    facadePublicSymbolCount: report.facadePublicSymbolCount,
+    facadeManifestMismatchCount: report.facadeManifestMismatchCount,
+    internalPlanningExportCount: report.internalPlanningExportCount,
     unknownDependencyCount: report.unknownDependencyCount,
     missingDeclaredDependencyCount: report.missingDeclaredDependencyCount,
     staleDeclaredDependencyCount: report.staleDeclaredDependencyCount,
