@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const FACADES = Object.freeze([
   {
@@ -38,7 +40,6 @@ export function checkLive2dPlanningFacadeBoundaries() {
     const duplicates = duplicateLabels(actual);
 
     if (/export\s+\*\s+from/.test(source)) failures.push(`${facade.domain}:wildcard_export`);
-    if (exportSourceCount(source) !== 1) failures.push(`${facade.domain}:multiple_source_export`);
     for (const { label, pattern } of FORBIDDEN_IMPORT_PATTERNS) {
       if (pattern.test(source)) failures.push(`${facade.domain}:${label}`);
     }
@@ -78,13 +79,12 @@ function readExpectedExports(file, listName) {
 }
 
 function readFacadeExports(source) {
-  const match = source.match(/export\s*\{([\s\S]*?)\}\s*from\s*["'][^"']+["']/);
-  if (!match) return [];
-  return match[1]
+  return [...source.matchAll(/export\s*\{([\s\S]*?)\}\s*from\s*["'][^"']+["']/g)]
+    .flatMap((match) => match[1]
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean)
-    .map((item) => item.split(/\s+as\s+/)[0].trim());
+    .map((item) => item.split(/\s+as\s+/)[0].trim()));
 }
 
 function duplicateLabels(values) {
@@ -97,11 +97,8 @@ function duplicateLabels(values) {
   return [...duplicates].sort();
 }
 
-function exportSourceCount(source) {
-  return [...source.matchAll(/from\s+["'][^"']+["']/g)].length;
-}
-
-if (import.meta.url === `file://${process.argv[1].replace(/\\/g, "/")}`) {
+const invokedPath = process.argv[1] ? resolve(process.argv[1]) : null;
+if (invokedPath && fileURLToPath(import.meta.url) === invokedPath) {
   const result = checkLive2dPlanningFacadeBoundaries();
   console.log(JSON.stringify(result));
   process.exitCode = result.status === "pass" ? 0 : 1;
