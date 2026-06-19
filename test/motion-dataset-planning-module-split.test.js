@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import * as legacyProvisioning from "../src/renderer/cubismLoaderProvisioning.js";
 import * as motionDatasetAuditStubs from "../src/renderer/planning/motionDatasetAuditStubs.js";
+import * as motionDatasetOwnerHandoffGates from "../src/renderer/planning/motionDatasetOwnerHandoffGates.js";
 import * as motionDatasetPlanning from "../src/renderer/planning/motionDatasetPlanningSummaries.js";
 import * as motionDatasetParserAuditStubs from "../src/renderer/planning/motionDatasetParserAuditStubs.js";
 
@@ -117,6 +118,39 @@ for (const name of [
   "createMotionDatasetRealRowEvidenceLinkManifestSummary",
 ]) {
   assert.equal(Object.hasOwn(motionDatasetPlanning, name), false, `legacy-only audit symbol leaked into planning facade ${name}`);
+}
+
+const OWNER_HANDOFF_SCHEMA_DIRECT_EXPORTS = Object.freeze([
+  "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_PACKET_SCHEMA",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_STUB_SCHEMA",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SCHEMA",
+]);
+
+for (const name of OWNER_HANDOFF_SCHEMA_DIRECT_EXPORTS) {
+  assert.equal(Object.hasOwn(motionDatasetOwnerHandoffGates, name), true, `owner handoff module export missing ${name}`);
+  assert.equal(Object.hasOwn(legacyProvisioning, name), true, `legacy owner handoff export missing ${name}`);
+  assert.equal(Object.hasOwn(motionDatasetPlanning, name), true, `planning owner handoff schema export missing ${name}`);
+  assert.equal(motionDatasetOwnerHandoffGates[name], legacyProvisioning[name], `owner handoff legacy identity mismatch ${name}`);
+  assert.equal(motionDatasetPlanning[name], motionDatasetOwnerHandoffGates[name], `owner handoff facade identity mismatch ${name}`);
+}
+
+for (const name of [
+  "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_REVIEW_SECTIONS",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REQUIRED_CONFIRMATION_SCOPES",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_OWNER_HANDOFF_REJECTED_FIELDS",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_METADATA_LABELS",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_RECEIPT_REQUIRED_FUTURE_REFS",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_ACCEPTED_CASES",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_REJECTED_ATTEMPT_CASES",
+  "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTION_FIXTURE_PACK_SAFE_PUBLIC_REJECTED_ATTEMPT_CASES",
+  "createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary",
+  "createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary",
+  "createMotionDatasetOwnerRowDataSubmissionRejectionFixturePackSummary",
+]) {
+  assert.equal(Object.hasOwn(motionDatasetOwnerHandoffGates, name), true, `owner handoff module legacy-only export missing ${name}`);
+  assert.equal(Object.hasOwn(legacyProvisioning, name), true, `legacy owner handoff legacy-only export missing ${name}`);
+  assert.equal(motionDatasetOwnerHandoffGates[name], legacyProvisioning[name], `owner handoff legacy-only identity mismatch ${name}`);
+  assert.equal(Object.hasOwn(motionDatasetPlanning, name), false, `legacy-only owner handoff symbol leaked into planning facade ${name}`);
 }
 
 const PARSER_AUDIT_STUB_DIRECT_EXPORTS = Object.freeze([
