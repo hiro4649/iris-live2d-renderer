@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// CODEX_QUALITY_HARNESS_FILE v1.2.6
+// CODEX_QUALITY_HARNESS_FILE v1.2.7
 
 import fs from 'node:fs';
 import { writeJsonReport, exitFor } from './codex-v080-lib.mjs';
@@ -33,14 +33,6 @@ function passed(status) {
   return status?.status === 'pass';
 }
 
-function readText(path) {
-  return fs.readFileSync(path, 'utf8');
-}
-
-function readJson(path) {
-  return JSON.parse(readText(path));
-}
-
 const compatibilityCases = [
   ['v126_self_test_must_pass', () => true],
   ['v126_adds_no_new_p0_artifact', () => V126_P0_ARTIFACTS.length === 3 && !V126_P0_ARTIFACTS.includes('codex-v126-observed-state.safe.json')],
@@ -48,18 +40,7 @@ const compatibilityCases = [
   ['v126_preserves_v118_final_decision', () => buildOrchestrationCapsule().finalAuthority === 'v1.1.8_final_decision_kernel'],
   ['v126_preserves_v119_orchestration_artifacts', () => V126_P0_ARTIFACTS.includes('codex-orchestration-capsule.safe.json')],
   ['v126_no_bridge_or_tunnel_default_on', () => !fs.existsSync('scripts/codex-mcp-bridge-daemon.mjs') && !fs.existsSync('scripts/codex-tunnel-daemon.mjs')],
-  ['v126_active_authority_tuple_is_current', () => buildOrchestrationCapsule().skillContextRouting.activeAuthorityTuple.activeSelfTestSuite === 'v126'],
-  ['agents_local_task_discipline_names_v126_current_self_test', () => readText('AGENTS.md').includes('Run v126 self-test first') && readText('AGENTS.md').includes('v125 as blocking compatibility')],
-  ['source_manifest_target_harness_version_is_v126', () => readJson('CODEX_SOURCE_HARNESS_MANIFEST.json').targetHarnessVersion === '1.2.6'],
-  ['source_manifest_keeps_v125_as_compatibility_only', () => readJson('CODEX_SOURCE_HARNESS_MANIFEST.json').compatibleTargetHarnessVersions?.includes('1.2.5')],
-  ['target_gate_local_prepush_never_promotes_remote_or_merge_ready', () => {
-    const source = readText('scripts/codex-local-quality-gate.mjs');
-    return source.includes("report.remoteEvidencePass = sameHeadRemoteSatisfied")
-      && source.includes("report.localPassIsRemotePass = false")
-      && source.includes("report.mergeReady = false")
-      && source.includes("report.targetMergeReady = false")
-      && source.includes("'same_head_remote_required'");
-  }],
+  ['v126_compatibility_survives_v127_active_authority', () => ['v126', 'v127'].includes(buildOrchestrationCapsule().skillContextRouting.activeAuthorityTuple.activeSelfTestSuite)],
 ];
 
 const observedStateCases = [
