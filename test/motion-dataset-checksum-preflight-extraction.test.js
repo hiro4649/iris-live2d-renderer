@@ -99,12 +99,13 @@ for (const forbiddenPattern of [
 
 for (const allowedImport of [
   "../../contracts.js",
-  "./sharedFailClosedSummaryFactory.js",
   "./motionDatasetPlanningSafety.js",
   "./motionDatasetOwnerGates.js",
 ]) {
   assert.equal(source.includes(`from "${allowedImport}"`), true, `expected checksum import missing ${allowedImport}`);
 }
+
+assert.equal(source.includes("sharedFailClosedSummaryFactory.js"), false, "checksum module should not import unused shared fail-closed helper");
 
 function inputForChecksumBaselineCase(caseName) {
   return {
