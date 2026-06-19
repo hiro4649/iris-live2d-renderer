@@ -9,16 +9,26 @@ import * as live2d from "../src/renderer/cubismLoaderProvisioning.js";
 const report = buildLive2dPlanningModuleBoundaryReport();
 const baseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-core-baseline-v1.json", "utf8"));
 
-assert.equal(report.schema, "live2d_planning_module_boundary_report_v2");
+assert.equal(report.schema, "live2d_planning_module_boundary_report_v3");
 assert.equal(report.status, "pass");
 assert.equal(report.failureCount, 0);
 assert.equal(report.duplicateDefinitionCount, 0);
 assert.equal(report.cycleCount, 0);
 assert.equal(report.physicalMovedExportCount, 13);
+assert.equal(report.scannedPlanningFileCount, 6);
+assert.equal(report.unregisteredPlanningModuleCount, 0);
 assert.equal(report.planningMonolithImportStatus, "facade_compatibility_allowed_before_queue_c1");
 assert.equal(report.physicallyExtractedModulesImportingMonolithCount, 0);
 assert.equal(report.unknownDependencyCount, 0);
+assert.equal(report.missingDeclaredDependencyCount, 0);
+assert.equal(report.staleDeclaredDependencyCount, 0);
+assert.equal(report.actualDependencyMismatchCount, 0);
 assert.equal(report.crossDomainDependencyViolationCount, 0);
+assert.equal(report.kindMismatchCount, 0);
+assert.equal(report.currentDomainMismatchCount, 0);
+assert.equal(report.actualPhysicalMoveMismatchCount, 0);
+assert.equal(report.auditedSymbolCount, 13);
+assert.equal(report.pendingSymbolCount, report.symbolCount - 13);
 assert.equal(report.entries.length, report.symbolCount);
 
 const movedSymbols = new Map([
@@ -45,8 +55,23 @@ for (const entry of report.entries) {
   assert.equal(entry.legacyExportPresent, true);
   assert.equal(entry.facadeExportPresent, true);
   assert.equal(entry.physicalMoveStatus, movedSymbols.has(entry.name) ? "physically_moved" : "not_moved");
+  assert.equal(entry.actualPhysicalMoveStatus, movedSymbols.has(entry.name) ? "physically_moved" : "not_moved");
+  assert.equal(entry.dependencyAuditStatus, movedSymbols.has(entry.name) ? "audited" : "pending");
   assert.equal(Array.isArray(entry.dependencies), true);
 }
+
+assert.deepEqual(
+  report.entries.find((entry) => entry.name === "createMotionDatasetRowSchemaPreflightSummary").actualManifestDependencies,
+  [
+    "LIVE2D_EXPERIMENTAL_MOTION_LABELS",
+    "LIVE2D_MOTION_DATASET_ROW_RENDERER_READY_REQUIRED_FIELDS",
+    "LIVE2D_MOTION_DATASET_ROW_REQUIRED_AUDIT_METADATA",
+    "LIVE2D_MOTION_DATASET_ROW_REQUIRED_FIELDS",
+    "LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA",
+    "LIVE2D_MOTION_DATASET_UX_AUDIT_AXES",
+    "LIVE2D_RUNTIME_SUPPORTED_MOTION_STYLES",
+  ],
+);
 
 assert.equal(baseline.schema, "live2d_motion_dataset_core_baseline_v1");
 assert.equal(baseline.safety.syntheticInputsOnly, true);
@@ -119,6 +144,8 @@ const baseManifest = {
       legacyExportRequired: true,
       dependencies: [],
       sharedDependencyGroup: "none",
+      facadeExportRequired: true,
+      dependencyAuditStatus: "pending",
       physicalMoveStatus: "not_moved",
     },
   ],
@@ -174,6 +201,47 @@ assert.match(
 );
 
 assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.symbols[0].dependencyAuditStatus = "audited";
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] = "export const B_SYMBOL = 1;\nexport const A_SYMBOL = B_SYMBOL;\n";
+    manifest.symbols.push({
+      ...manifest.symbols[0],
+      name: "B_SYMBOL",
+      dependencies: [],
+    });
+  }).failures.join("\n"),
+  /missing_declared_dependency:A_SYMBOL:B_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest }) => {
+    manifest.symbols[0].dependencyAuditStatus = "audited";
+    manifest.symbols.push({
+      ...manifest.symbols[0],
+      name: "B_SYMBOL",
+      dependencies: [],
+    });
+    manifest.symbols[0].dependencies = ["B_SYMBOL"];
+  }).failures.join("\n"),
+  /stale_declared_dependency:A_SYMBOL:B_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.symbols[0].kind = "factory";
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] = "export const A_SYMBOL = Object.freeze([]);\n";
+  }).failures.join("\n"),
+  /kind_mismatch:A_SYMBOL:constant:factory/,
+);
+
+assert.match(
+  syntheticReport(({ manifest }) => {
+    manifest.symbols[0].currentDomain = "motion_dataset";
+  }).failures.join("\n"),
+  /current_domain_mismatch:A_SYMBOL:actual_loader_core:motion_dataset/,
+);
+
+assert.match(
   syntheticReport(({ manifest }) => {
     manifest.symbols.push({
       ...manifest.symbols[0],
@@ -184,6 +252,36 @@ assert.match(
     manifest.symbols[0].dependencies = ["B_SYMBOL"];
   }).failures.join("\n"),
   /forbidden_cross_domain_dependency:A_SYMBOL:B_SYMBOL/,
+);
+
+assert.equal(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.symbols[0].facadeExportRequired = false;
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] = "export {};\n";
+  }).status,
+  "pass",
+);
+
+assert.equal(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] = [
+      "export const A_SYMBOL = (input = {}) => {",
+      "  const B_SYMBOL = input.B_SYMBOL;",
+      "  return Boolean(B_SYMBOL);",
+      "};",
+    ].join("\n");
+  }).status,
+  "pass",
+);
+
+assert.equal(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] = [
+      "// import \"./fake-cycle.js\";",
+      "export const A_SYMBOL = \"import './fake-cycle.js'\";",
+    ].join("\n");
+  }).cycleCount,
+  0,
 );
 
 assert.match(
@@ -214,7 +312,25 @@ assert.match(
   syntheticReport(({ manifest }) => {
     manifest.symbols[0].physicalMoveStatus = "physically_moved";
   }).failures.join("\n"),
-  /incorrect_physicalMoveStatus:A_SYMBOL/,
+  /actual_physical_move_mismatch:A_SYMBOL:not_moved:physically_moved/,
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.symbols[0].definitionFile = "src/renderer/planning/motionDatasetPlanningCore.js";
+    manifest.symbols[0].currentDomain = "motion_dataset";
+    manifest.symbols[0].physicalMoveStatus = "physically_moved";
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] = "export { A_SYMBOL } from \"./planning/motionDatasetPlanningCore.js\";\n";
+    sourceTexts["src/renderer/planning/motionDatasetPlanningCore.js"] = "export const A_SYMBOL = Object.freeze([]);\n";
+  }).failures.join("\n"),
+  /pending_dependency_audit_for_physical_move:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/planning/unregistered.js"] = "export const UNREGISTERED_SYMBOL = 1;\n";
+  }).failures.join("\n"),
+  /unregistered_planning_module:src\/renderer\/planning\/unregistered\.js/,
 );
 
 console.log("planning-module-boundaries: pass");
