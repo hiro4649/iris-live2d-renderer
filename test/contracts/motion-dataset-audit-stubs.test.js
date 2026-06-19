@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { assertSafe } from "../helpers/safeContractAssertions.js";
+import * as motionDatasetAuditStubs from "../../src/renderer/planning/motionDatasetAuditStubs.js";
 import {
   LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA,
   LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA,
@@ -17,11 +19,39 @@ import {
   createMotionDatasetRealRowRedactionScannerFixturePackSummary,
 } from "../../src/renderer/cubismLoaderProvisioning.js";
 
-const auditManifest = createMotionDatasetRealRowAuditManifestSummary({
+const auditStubSource = readFileSync("src/renderer/planning/motionDatasetAuditStubs.js", "utf8");
+for (const forbiddenImport of [
+  "node:fs",
+  "node:path",
+  "node:crypto",
+  "node:child_process",
+  "fetch(",
+  "EventSource",
+  "existsSync",
+]) {
+  assert.equal(auditStubSource.includes(forbiddenImport), false, `audit stub source must not use ${forbiddenImport}`);
+}
+
+const originalFetch = globalThis.fetch;
+const originalEventSource = globalThis.EventSource;
+let sideEffectProbeCount = 0;
+globalThis.fetch = () => {
+  sideEffectProbeCount += 1;
+  throw new Error("fetch must not be called");
+};
+globalThis.EventSource = class {
+  constructor() {
+    sideEffectProbeCount += 1;
+    throw new Error("EventSource must not be constructed");
+  }
+};
+
+const auditManifestInput = {
   checked_row_count: 9,
   audit_execution_started: true,
   actual_ingestion_allowed: true,
-});
+};
+const auditManifest = createMotionDatasetRealRowAuditManifestSummary(auditManifestInput);
 assert.equal(auditManifest.schema, LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA);
 assert.equal(auditManifest.motion_dataset_real_row_audit_manifest_status, "planning_only_blocked");
 assert.equal(auditManifest.checked_row_count, 0);
@@ -50,6 +80,15 @@ assert.equal(evidenceLink.motion_dataset_real_row_evidence_link_manifest_status,
 assert.equal(evidenceLink.evidence_link_manifest_marks_audit_complete, false);
 assert.equal(evidenceLink.checked_row_count, 0);
 assertSafe(JSON.stringify(evidenceLink));
+
+assert.deepEqual(
+  motionDatasetAuditStubs.createMotionDatasetRealRowAuditManifestSummary(auditManifestInput),
+  auditManifest,
+  "direct audit module and legacy audit manifest must preserve identity behavior",
+);
+assert.equal(sideEffectProbeCount, 0);
+globalThis.fetch = originalFetch;
+globalThis.EventSource = originalEventSource;
 
 const goNoGo = createMotionDatasetRealRowGoNoGoBlockerMapSummary({
   go_nogo_status: "go",

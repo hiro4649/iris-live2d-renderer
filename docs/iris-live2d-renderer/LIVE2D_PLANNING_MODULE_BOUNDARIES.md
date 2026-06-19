@@ -22,10 +22,10 @@ This document records the safe planning-module extraction boundary and the depen
 | checker schema | live2d_planning_module_boundary_report_v3 |
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
-| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json |
-| physicalMovedExportCount | 29 |
-| auditedSymbolCount | 29 |
-| pendingSymbolCount | 118 |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json |
+| physicalMovedExportCount | 42 |
+| auditedSymbolCount | 42 |
+| pendingSymbolCount | 108 |
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
@@ -96,3 +96,11 @@ The manifest `moduleRegistry` is used only as inert planning metadata for domain
 The owner-gate extraction moved the metadata-only owner intake request, dry-run, quarantine, submission packet, and metadata validator stub summaries into `src/renderer/planning/motionDatasetOwnerGates.js`. The move also relocates their direct safe planning constants and request-field helpers so physically extracted planning modules do not import the monolith.
 
 The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports those public names for compatibility. `test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json` freezes synthetic-only pre-move behavior for the five moved factories. This extraction remains non-executable: it does not accept actual row content, read files, calculate hashes, ingest rows, create owner confirmation, claim readiness, enable trusted loader, or resolve priority1.
+
+## X1C1 Audit-Gates Physical Extraction Status
+
+The audit-gate extraction moves the metadata-only real-row audit manifest, synthetic redaction fixture pack, evidence-link manifest labels, their safe planning constants, and their summary factories into `src/renderer/planning/motionDatasetAuditStubs.js`.
+
+This module is an audit-stub planning boundary only. It does not execute parser, redaction scan, audit, rollback, ingestion audit event, go/no-go approval, owner confirmation, SDK/model/browser work, network work, or actual data handling.
+
+The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports moved public names for compatibility. The planning facade continues to expose only the audit-gate names that were already part of that facade inventory, while legacy-only evidence-link helpers remain available through the legacy surface without expanding the facade. `test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json` freezes synthetic-only pre-move behavior, key order, JSON serialization, constant values, freeze status, and input non-mutation checks for the three moved factories.

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import * as legacyProvisioning from "../src/renderer/cubismLoaderProvisioning.js";
+import * as motionDatasetAuditStubs from "../src/renderer/planning/motionDatasetAuditStubs.js";
 import * as motionDatasetPlanning from "../src/renderer/planning/motionDatasetPlanningSummaries.js";
 
 const MOTION_DATASET_EXPORTS = Object.freeze([
@@ -85,6 +86,36 @@ for (const name of summaryFactories) {
   assert.equal(JSON.stringify(planningSummary).includes("runtime_readiness_claimed\":true"), false);
   assert.equal(JSON.stringify(planningSummary).includes("production_readiness_claimed\":true"), false);
   assert.equal(JSON.stringify(planningSummary).includes("motion_dataset_executable\":true"), false);
+}
+
+const AUDIT_STUB_DIRECT_EXPORTS = Object.freeze([
+  "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_MANIFEST_SCHEMA",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_FIXTURE_PACK_SCHEMA",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_MANIFEST_SCHEMA",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_RUN_METADATA_REQUIRED_FIELDS",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_ROW_LEVEL_REQUIRED_FIELDS",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_ACCEPTED_FIXTURE_CASES",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_SCANNER_REJECTED_FIXTURE_CASES",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES",
+  "createMotionDatasetRealRowAuditManifestSummary",
+  "createMotionDatasetRealRowRedactionScannerFixturePackSummary",
+  "createMotionDatasetRealRowEvidenceLinkManifestSummary",
+]);
+
+for (const name of AUDIT_STUB_DIRECT_EXPORTS) {
+  assert.equal(Object.hasOwn(motionDatasetAuditStubs, name), true, `audit module export missing ${name}`);
+  assert.equal(Object.hasOwn(legacyProvisioning, name), true, `legacy audit export missing ${name}`);
+  assert.equal(motionDatasetAuditStubs[name], legacyProvisioning[name], `audit legacy identity mismatch ${name}`);
+}
+
+for (const name of [
+  "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_REQUIRED_LINK_REFS",
+  "LIVE2D_MOTION_DATASET_REAL_ROW_EVIDENCE_LINK_EVIDENCE_REF_TYPES",
+  "createMotionDatasetRealRowEvidenceLinkManifestSummary",
+]) {
+  assert.equal(Object.hasOwn(motionDatasetPlanning, name), false, `legacy-only audit symbol leaked into planning facade ${name}`);
 }
 
 const negativeFixture = {
