@@ -10,14 +10,15 @@ const report = buildLive2dPlanningModuleBoundaryReport();
 const baseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-core-baseline-v1.json", "utf8"));
 const ownerGatesBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json", "utf8"));
 const auditGatesBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json", "utf8"));
+const parserAuditStubsBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json", "utf8"));
 
 assert.equal(report.schema, "live2d_planning_module_boundary_report_v3");
 assert.equal(report.status, "pass");
 assert.equal(report.failureCount, 0);
 assert.equal(report.duplicateDefinitionCount, 0);
 assert.equal(report.cycleCount, 0);
-assert.equal(report.physicalMovedExportCount, 42);
-assert.equal(report.scannedPlanningFileCount >= 8, true);
+assert.equal(report.physicalMovedExportCount, 63);
+assert.equal(report.scannedPlanningFileCount >= 9, true);
 assert.equal(report.unregisteredPlanningModuleCount, 0);
 assert.equal(report.planningMonolithImportStatus, "facade_compatibility_allowed_before_queue_c1");
 assert.equal(report.physicallyExtractedModulesImportingMonolithCount, 0);
@@ -29,8 +30,8 @@ assert.equal(report.crossDomainDependencyViolationCount, 0);
 assert.equal(report.kindMismatchCount, 0);
 assert.equal(report.currentDomainMismatchCount, 0);
 assert.equal(report.actualPhysicalMoveMismatchCount, 0);
-assert.equal(report.auditedSymbolCount, 42);
-assert.equal(report.pendingSymbolCount, report.symbolCount - 42);
+assert.equal(report.auditedSymbolCount, 63);
+assert.equal(report.pendingSymbolCount, report.symbolCount - 63);
 assert.equal(report.entries.length, report.symbolCount);
 
 const movedSymbols = new Map([
@@ -76,6 +77,27 @@ const movedSymbols = new Map([
   ["createMotionDatasetRealRowAuditManifestSummary", "src/renderer/planning/motionDatasetAuditStubs.js"],
   ["createMotionDatasetRealRowRedactionScannerFixturePackSummary", "src/renderer/planning/motionDatasetAuditStubs.js"],
   ["createMotionDatasetRealRowEvidenceLinkManifestSummary", "src/renderer/planning/motionDatasetAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASONS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SAFE_PUBLIC_REJECTION_REASONS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_ACCEPTED_CASES", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SAFE_PUBLIC_REJECTED_INPUT_ATTEMPT_CASES", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REQUIRED_EVENT_FIELDS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_REDACTION_POLICY", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_INPUTS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_OUTPUTS", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["createMotionDatasetRowBodyParserContractStubSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["createMotionDatasetRowBodyParserRejectionFixturePackSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["createMotionDatasetIngestionAuditTrailStubSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["createMotionDatasetIngestionRollbackPlanStubSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
+  ["createMotionDatasetParserDryRunEnvelopeSummary", "src/renderer/planning/motionDatasetParserAuditStubs.js"],
 ]);
 
 for (const entry of report.entries) {
@@ -217,6 +239,38 @@ for (const [caseName, factories] of Object.entries(auditGatesBaseline.cases)) {
   }
 }
 
+assert.equal(parserAuditStubsBaseline.schema, "live2d_motion_dataset_parser_audit_stubs_baseline_v1");
+assert.equal(parserAuditStubsBaseline.safety.syntheticInputsOnly, true);
+assert.equal(parserAuditStubsBaseline.safety.actualDataRead, false);
+assert.equal(parserAuditStubsBaseline.safety.actualFileRead, false);
+assert.equal(parserAuditStubsBaseline.safety.actualIngestionAllowed, false);
+assert.equal(parserAuditStubsBaseline.safety.parserExecution, false);
+assert.equal(parserAuditStubsBaseline.safety.auditExecution, false);
+assert.equal(parserAuditStubsBaseline.safety.priority1Status, "BLOCKED");
+assert.equal(parserAuditStubsBaseline.safety.checkedRowCount, 0);
+assert.equal(parserAuditStubsBaseline.safety.motionDatasetExecutable, false);
+
+for (const [name, expected] of Object.entries(parserAuditStubsBaseline.constants)) {
+  assert.deepEqual(Array.isArray(live2d[name]) ? [...live2d[name]] : live2d[name], expected, `parser audit constant changed: ${name}`);
+  if (Array.isArray(live2d[name])) {
+    assert.equal(Object.isFrozen(live2d[name]), parserAuditStubsBaseline.frozen[name], `parser audit constant freeze changed: ${name}`);
+  }
+}
+
+for (const [caseName, factories] of Object.entries(parserAuditStubsBaseline.cases)) {
+  for (const [factoryName, expected] of Object.entries(factories)) {
+    const input = caseName === "default_input" ? undefined : inputForParserAuditStubsBaselineCase(caseName);
+    const before = input === undefined ? undefined : structuredClone(input);
+    const value = caseName === "default_input" ? live2d[factoryName]() : live2d[factoryName](input);
+    assert.equal(expected.status, "returned", `parser audit baseline expected return: ${factoryName}:${caseName}`);
+    assert.deepEqual(value, expected.value, `parser audit factory object changed: ${factoryName}:${caseName}`);
+    assert.deepEqual(Object.keys(value), expected.keys, `parser audit factory key order changed: ${factoryName}:${caseName}`);
+    assert.equal(JSON.stringify(value), expected.json, `parser audit factory json changed: ${factoryName}:${caseName}`);
+    assert.equal(expected.inputMutated, false, `parser audit baseline recorded mutation: ${factoryName}:${caseName}`);
+    assert.deepEqual(input, before, `parser audit factory mutated input: ${factoryName}:${caseName}`);
+  }
+}
+
 function inputForBaselineCase(caseName) {
   return {
     null_input: null,
@@ -316,6 +370,35 @@ function inputForAuditGatesBaselineCase(caseName) {
       actual_file_content: "safe_redacted_label",
       raw_dataset_row_body: "safe_redacted_label",
     },
+  }[caseName];
+}
+
+function inputForParserAuditStubsBaselineCase(caseName) {
+  return {
+    null_input: null,
+    non_object_input: "safe_non_object_label",
+    safe_metadata_labels_only: { request_label: "safe_request_label" },
+    parser_execution_attempt: {
+      row_body_parser_enabled: true,
+      row_body_parser_executed: true,
+      parser_dry_run_executed: true,
+    },
+    row_body_read_attempt: { row_body_read: true, raw_dataset_row_body: "safe_redacted_label" },
+    actual_file_read_attempt: {
+      actual_file_read: true,
+      actual_file_content: "safe_redacted_label",
+      actual_file_path_value: "safe_redacted_label",
+    },
+    actual_ingestion_attempt: {
+      actual_ingestion_allowed: true,
+      actual_data_task_started: true,
+      real_ingestion_audit_event_created: true,
+    },
+    readiness_attempt: { runtime_readiness_claimed: true, production_readiness_claimed: true, renderer_ready: true },
+    owner_confirmation_attempt: { owner_confirmation_confirmed: true, owner_confirmation_status: "confirmed" },
+    priority_resolution_attempt: { priority1_status: "RESOLVED", priority1_resolved: true, blocker_resolved: true },
+    go_attempt: { go_nogo_status: "go", go_candidate: true },
+    motion_execution_attempt: { motion_dataset_executable: true, motion_execution_enabled: true },
   }[caseName];
 }
 

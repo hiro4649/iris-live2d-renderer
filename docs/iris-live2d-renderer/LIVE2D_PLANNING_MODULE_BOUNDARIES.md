@@ -22,10 +22,10 @@ This document records the safe planning-module extraction boundary and the depen
 | checker schema | live2d_planning_module_boundary_report_v3 |
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
-| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json |
-| physicalMovedExportCount | 42 |
-| auditedSymbolCount | 42 |
-| pendingSymbolCount | 108 |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json |
+| physicalMovedExportCount | 63 |
+| auditedSymbolCount | 63 |
+| pendingSymbolCount | 94 |
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
@@ -104,3 +104,11 @@ The audit-gate extraction moves the metadata-only real-row audit manifest, synth
 This module is an audit-stub planning boundary only. It does not execute parser, redaction scan, audit, rollback, ingestion audit event, go/no-go approval, owner confirmation, SDK/model/browser work, network work, or actual data handling.
 
 The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports moved public names for compatibility. The planning facade continues to expose only the audit-gate names that were already part of that facade inventory, while legacy-only evidence-link helpers remain available through the legacy surface without expanding the facade. `test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json` freezes synthetic-only pre-move behavior, key order, JSON serialization, constant values, freeze status, and input non-mutation checks for the three moved factories.
+
+## X1C2 Parser-Audit Stubs Physical Extraction Status
+
+The parser-audit stubs extraction moves row-body parser contract planning, parser rejection fixtures, ingestion audit trail stubs, rollback plan stubs, parser dry-run envelope labels, and their safe public constants into `src/renderer/planning/motionDatasetParserAuditStubs.js`.
+
+This module is still planning-only. It does not parse row bodies, read files, accept actual row content, create ingestion audit events, create rollback snapshots, execute dry runs, ingest data, create owner confirmation, enable trusted loader, claim runtime readiness, or claim production readiness.
+
+The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports moved public names for compatibility. The planning facade continues to expose only parser-audit names that were already part of the facade inventory. `test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json` freezes synthetic-only pre-move behavior, key order, JSON serialization, constant values, freeze status, and input non-mutation checks for the five moved factories.
