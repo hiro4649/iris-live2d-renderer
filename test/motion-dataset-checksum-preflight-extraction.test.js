@@ -99,6 +99,7 @@ for (const forbiddenPattern of [
 
 for (const allowedImport of [
   "../../contracts.js",
+  "./sharedFailClosedSummaryFactory.js",
   "./motionDatasetPlanningSafety.js",
   "./motionDatasetOwnerGates.js",
 ]) {
