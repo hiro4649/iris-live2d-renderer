@@ -3128,6 +3128,97 @@
         "LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_REQUIRED_BLOCKERS",
         "LIVE2D_MOTION_DATASET_FINAL_ACTUAL_DATA_PREAUTH_CLEARANCE_CONDITIONS"
       ]
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA",
+      "kind": "schema",
+      "definitionFile": "src/renderer/planning/motionDatasetChecksumPreflight.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "sharedDependencyGroup": "none",
+      "dependencies": []
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_HASH_METADATA_LABELS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetChecksumPreflight.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "sharedDependencyGroup": "none",
+      "dependencies": []
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetChecksumPreflight.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "sharedDependencyGroup": "none",
+      "dependencies": []
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetChecksumPreflight.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "sharedDependencyGroup": "none",
+      "dependencies": []
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_OWNER_CONFIRMATION_REFS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetChecksumPreflight.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "sharedDependencyGroup": "none",
+      "dependencies": []
+    },
+    {
+      "name": "createMotionDatasetRowFileChecksumPreflightManifestSummary",
+      "kind": "factory",
+      "definitionFile": "src/renderer/planning/motionDatasetChecksumPreflight.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "facadeExportRequired": false,
+      "physicalMoveStatus": "physically_moved",
+      "dependencyAuditStatus": "audited",
+      "sharedDependencyGroup": "none",
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTED_FIELDS",
+        "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA",
+        "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_HASH_METADATA_LABELS",
+        "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS",
+        "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS",
+        "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_OWNER_CONFIRMATION_REFS"
+      ]
     }
   ],
   "safety": {
@@ -3153,6 +3244,7 @@
     "src/renderer/planning/motionDatasetParserAuditStubs.js": "motion_dataset",
     "src/renderer/planning/motionDatasetOwnerHandoffGates.js": "motion_dataset",
     "src/renderer/planning/motionDatasetOwnerNoGoGates.js": "motion_dataset",
-    "src/renderer/planning/motionDatasetActualDataPreauthGates.js": "motion_dataset"
+    "src/renderer/planning/motionDatasetActualDataPreauthGates.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetChecksumPreflight.js": "motion_dataset"
   }
 }
