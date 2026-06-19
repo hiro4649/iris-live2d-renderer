@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import * as legacyProvisioning from "../src/renderer/cubismLoaderProvisioning.js";
 import * as motionDatasetAuditStubs from "../src/renderer/planning/motionDatasetAuditStubs.js";
 import * as motionDatasetPlanning from "../src/renderer/planning/motionDatasetPlanningSummaries.js";
+import * as motionDatasetParserAuditStubs from "../src/renderer/planning/motionDatasetParserAuditStubs.js";
 
 const MOTION_DATASET_EXPORTS = Object.freeze([
   "LIVE2D_MOTION_DATASET_ROW_SCHEMA_PREFLIGHT_SCHEMA",
@@ -116,6 +117,29 @@ for (const name of [
   "createMotionDatasetRealRowEvidenceLinkManifestSummary",
 ]) {
   assert.equal(Object.hasOwn(motionDatasetPlanning, name), false, `legacy-only audit symbol leaked into planning facade ${name}`);
+}
+
+const PARSER_AUDIT_STUB_DIRECT_EXPORTS = Object.freeze([
+  "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_SCHEMA",
+  "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_SCHEMA",
+  "LIVE2D_MOTION_DATASET_INGESTION_AUDIT_TRAIL_STUB_SCHEMA",
+  "LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_SCHEMA",
+  "LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_SCHEMA",
+  "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REQUIRED_FIELDS",
+  "LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_CONTRACT_STUB_REJECTION_REASONS",
+  "LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_REQUIRED_FIELDS",
+  "LIVE2D_MOTION_DATASET_INGESTION_ROLLBACK_PLAN_STUB_BLOCKERS",
+  "createMotionDatasetRowBodyParserContractStubSummary",
+  "createMotionDatasetRowBodyParserRejectionFixturePackSummary",
+  "createMotionDatasetIngestionAuditTrailStubSummary",
+  "createMotionDatasetIngestionRollbackPlanStubSummary",
+  "createMotionDatasetParserDryRunEnvelopeSummary",
+]);
+
+for (const name of PARSER_AUDIT_STUB_DIRECT_EXPORTS) {
+  assert.equal(Object.hasOwn(motionDatasetParserAuditStubs, name), true, `parser audit module export missing ${name}`);
+  assert.equal(Object.hasOwn(legacyProvisioning, name), true, `legacy parser audit export missing ${name}`);
+  assert.equal(motionDatasetParserAuditStubs[name], legacyProvisioning[name], `parser audit legacy identity mismatch ${name}`);
 }
 
 const negativeFixture = {
