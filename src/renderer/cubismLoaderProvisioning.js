@@ -308,9 +308,9 @@ import {
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS,
   LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_OWNER_CONFIRMATION_REFS,
-  createMotionDatasetPlanningOnlyGateSummary,
   createMotionDatasetRowFileChecksumPreflightManifestSummary,
 } from "./planning/motionDatasetChecksumPreflight.js";
+import { createMotionDatasetPlanningOnlyGateSummary } from "./planning/sharedFailClosedSummaryFactory.js";
 
 
 export {

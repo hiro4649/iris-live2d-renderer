@@ -11,7 +11,7 @@ This document records the safe planning-module extraction boundary and the depen
 | motion_dataset | facade compatibility exports | split into core, owner gates, and audit stubs |
 | motion_identity_comfort | facade compatibility exports | split into core and governance |
 | renderer_readiness | facade compatibility exports | split into core and owner/no-go governance |
-| shared_planning_safety | referenced labels only | keep non-authorizing safety constants shared |
+| shared_planning_safety | referenced labels and fail-closed helpers only | keep non-authorizing safety constants and planning-only summary factories shared |
 | actual_loader_core | remains in monolith | do not move before owner SDK/model decision |
 
 ## Current Machine Check
@@ -153,3 +153,9 @@ X1B2C2 physically extracts the row-file checksum preflight planning closure into
 The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and intentionally does not expand `src/renderer/planning/motionDatasetPlanningSummaries.js`. These symbols remain legacy-only public compatibility names until a later facade decision. `test/fixtures/planning/motion-dataset-checksum-preflight-baseline-v1.json` freezes synthetic-only behavior with test-only parity fingerprints for object shape, key order, JSON length, JSON SHA-256, selected safety projection, constant values, freeze status, and input non-mutation. The test-only fingerprint is not product source-hash verification and does not read actual files.
 
 This module is still planning-only. It does not read actual files, accept actual file paths, accept actual file content, calculate product hashes, verify `source_hash_label`, check `declared_row_count_label`, ingest rows, run parser/redaction/audit work, create or confirm owner confirmation, claim runtime readiness, claim production readiness, enable trusted loader state, resolve priority1, or make the motion dataset executable. Fixed safety truth remains priority1 BLOCKED, checked_row_count 0, actual_ingestion_allowed false, source hash unverified, declared row count unchecked, and motion dataset non-executable.
+
+## XS1 Shared Fail-Closed Summary Factory Status
+
+XS1 moves the reusable planning-only fail-closed summary helper into `src/renderer/planning/sharedFailClosedSummaryFactory.js`. The shared helper is not a legacy public export and does not expand any planning facade. It exists only to keep planning summaries consistent while preserving fail-closed fields for owner confirmation, actual data, parser/redaction/audit execution, runtime readiness, production readiness, priority1, checked row count, and motion execution.
+
+The helper remains non-authorizing shared planning infrastructure. It does not create owner confirmation, preauthorize actual data, read files, calculate hashes, ingest rows, run parser/redaction/audit work, enable trusted loader state, claim readiness, resolve priority1, or make the motion dataset executable.

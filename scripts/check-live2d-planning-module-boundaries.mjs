@@ -11,6 +11,7 @@ const KNOWN_DOMAINS = new Set(["motion_dataset", "motion_identity_comfort", "ren
 const DEFAULT_MODULE_REGISTRY = Object.freeze({
   "src/renderer/cubismLoaderProvisioning.js": "actual_loader_core",
   "src/renderer/planning/sharedMotionCatalog.js": "shared_planning_safety",
+  "src/renderer/planning/sharedFailClosedSummaryFactory.js": "shared_planning_safety",
   "src/renderer/planning/motionDatasetPlanningSafety.js": "motion_dataset",
   "src/renderer/planning/motionDatasetPlanningCore.js": "motion_dataset",
   "src/renderer/planning/motionDatasetOwnerGates.js": "motion_dataset",
