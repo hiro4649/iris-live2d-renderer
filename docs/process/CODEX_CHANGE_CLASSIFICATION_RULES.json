@@ -32,7 +32,8 @@
     "tests/",
     "__tests__/",
     "scripts/run-tests.js",
-    "scripts/run-all-tests.mjs"
+    "scripts/run-all-tests.mjs",
+    "scripts/live2dTestDiscovery.mjs"
   ],
   "specFiles": [
     "specs/",
