@@ -23,9 +23,12 @@ This document records the safe planning-module extraction boundary and the depen
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
 | pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json |
-| physicalMovedExportCount | 77 |
-| auditedSymbolCount | 77 |
+| physicalMovedExportCount | 86 |
+| auditedSymbolCount | 86 |
 | pendingSymbolCount | 91 |
+| unregisteredExtractedLegacyPublicSymbolCount | 0 |
+| manifestedButNotLegacyPublicCount | 0 |
+| facadeManifestMismatchCount | 0 |
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
@@ -59,6 +62,14 @@ It measures:
 - forbidden cross-domain dependencies
 
 The checker does not count import bindings, export lists, comments, strings, fixtures, or test text as definitions. Function bodies are bounded after the parameter list so default parameter object literals cannot truncate dependency scanning. Import graph scanning ignores comment-only fake imports while preserving real static import/export specifiers. Compatibility facades may temporarily re-export unmoved symbols from the monolith. Physically extracted core, safety, or shared planning modules must not import the monolith.
+
+## X0R3 Public Symbol Coverage Status
+
+The public symbol coverage repair extends the boundary checker beyond manifest-listed symbols. It compares the current legacy public export inventory, current planning facade inventories, and actual top-level definition ownership across `src/renderer/cubismLoaderProvisioning.js` and `src/renderer/planning/**/*.js`.
+
+The checker now fails if a legacy public symbol has been physically extracted to a planning module but is missing from the manifest, if a manifested physically moved legacy public symbol is no longer present in the legacy public inventory, or if a current facade public symbol is missing from the manifest or points at the wrong facade file. Internal planning-module helpers may remain exported for module-to-module use without becoming legacy public symbols or facade symbols.
+
+X0R3 registers the nine owner-gate constants that were already physically extracted and legacy-public but not yet represented in the machine manifest. They remain legacy-only planning constants and do not expand the planning facade. This repair changes boundary authority only; it does not change factory output, public export inventory, runtime readiness, production readiness, actual data handling, owner confirmation, trusted loader state, or priority1 status.
 
 ## Pre-Move Baseline
 

@@ -109,11 +109,30 @@ const movedSymbols = new Map([
   ["createMotionDatasetRealRowIntakeOwnerHandoffPacketSummary", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
   ["createMotionDatasetOwnerRowDataSubmissionReceiptStubSummary", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
   ["createMotionDatasetOwnerRowDataSubmissionRejectionFixturePackSummary", "src/renderer/planning/motionDatasetOwnerHandoffGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_ALLOWED_FILE_FORMATS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_METADATA_VALIDATOR_ALLOWED_HASH_ALGORITHMS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_CONFIRMATION_SCOPES", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_FILE_SHAPE", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_ITEMS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTED_FIELDS", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_ACCEPTED_REQUEST_FIXTURE_CASES", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_DRY_RUN_REJECTED_REQUEST_FIXTURE_CASES", "src/renderer/planning/motionDatasetOwnerGates.js"],
+  ["LIVE2D_MOTION_DATASET_REAL_ROW_INTAKE_QUARANTINE_REJECTED_FIELDS", "src/renderer/planning/motionDatasetOwnerGates.js"],
 ]);
 
 assert.equal(report.physicalMovedExportCount, movedSymbols.size);
 assert.equal(report.auditedSymbolCount, movedSymbols.size);
 assert.equal(report.pendingSymbolCount, report.symbolCount - report.auditedSymbolCount);
+assert.equal(report.extractedLegacyPublicSymbolCount, movedSymbols.size);
+assert.equal(report.manifestedExtractedLegacyPublicSymbolCount, movedSymbols.size);
+assert.equal(report.unregisteredExtractedLegacyPublicSymbolCount, 0);
+assert.deepEqual(report.unregisteredExtractedLegacyPublicSymbols, []);
+assert.equal(report.manifestedButNotLegacyPublicCount, 0);
+assert.deepEqual(report.manifestedButNotLegacyPublicSymbols, []);
+assert.equal(report.facadeManifestMismatchCount, 0);
+assert.deepEqual(report.facadeManifestMismatches, []);
+assert.equal(report.facadePublicSymbolCount, Object.values(report.facadePublicNamesByFile).reduce((count, names) => count + names.length, 0));
+assert.equal(report.internalPlanningExportCount >= 3, true);
 
 for (const entry of report.entries) {
   assert.equal(entry.actualDefinitionFile, movedSymbols.get(entry.name) ?? "src/renderer/cubismLoaderProvisioning.js");
@@ -616,6 +635,55 @@ assert.match(
     sourceTexts["src/renderer/planning/unregistered.js"] = "export const UNREGISTERED_SYMBOL = 1;\n";
   }).failures.join("\n"),
   /unregistered_planning_module:src\/renderer\/planning\/unregistered\.js/,
+);
+
+assert.match(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/planning/motionDatasetPlanningCore.js"] = "export const B_SYMBOL = Object.freeze([]);\n";
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] += "export { B_SYMBOL } from \"./planning/motionDatasetPlanningCore.js\";\n";
+  }).failures.join("\n"),
+  /unregistered_extracted_legacy_public_symbol:B_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    sourceTexts["src/renderer/planning/motionDatasetPlanningCore.js"] = "export const B_SYMBOL = Object.freeze([]);\n";
+    manifest.symbols.push({
+      ...manifest.symbols[0],
+      name: "B_SYMBOL",
+      definitionFile: "src/renderer/planning/motionDatasetPlanningCore.js",
+      currentDomain: "motion_dataset",
+      physicalMoveStatus: "physically_moved",
+      facadeExportRequired: false,
+      facadeFile: null,
+      dependencyAuditStatus: "audited",
+      dependencies: [],
+    });
+  }).failures.join("\n"),
+  /manifested_legacy_public_symbol_missing_from_inventory:B_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] += "export { B_SYMBOL } from \"./motionDatasetPlanningCore.js\";\n";
+    sourceTexts["src/renderer/planning/motionDatasetPlanningCore.js"] = "export const B_SYMBOL = Object.freeze([]);\n";
+  }).failures.join("\n"),
+  /facade_manifest_mismatch:B_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] += "export { A_SYMBOL } from \"./motionDatasetPlanningCore.js\";\n";
+    manifest.symbols[0].facadeExportRequired = false;
+  }).failures.join("\n"),
+  /facade_manifest_mismatch:A_SYMBOL/,
+);
+
+assert.equal(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSafety.js"] = "export const INTERNAL_HELPER_SYMBOL = 1;\n";
+  }).internalPlanningExports.some((entry) => entry.name === "INTERNAL_HELPER_SYMBOL"),
+  true,
 );
 
 console.log("planning-module-boundaries: pass");
