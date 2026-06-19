@@ -159,3 +159,11 @@ This module is still planning-only. It does not read actual files, accept actual
 XS1 moves the reusable planning-only fail-closed summary helper into `src/renderer/planning/sharedFailClosedSummaryFactory.js`. The shared helper is not a legacy public export and does not expand any planning facade. It exists only to keep planning summaries consistent while preserving fail-closed fields for owner confirmation, actual data, parser/redaction/audit execution, runtime readiness, production readiness, priority1, checked row count, and motion execution.
 
 The helper remains non-authorizing shared planning infrastructure. It does not create owner confirmation, preauthorize actual data, read files, calculate hashes, ingest rows, run parser/redaction/audit work, enable trusted loader state, claim readiness, resolve priority1, or make the motion dataset executable.
+
+## XS1R Shared Fail-Closed Summary Factory Hardening Status
+
+XS1R hardens `src/renderer/planning/sharedFailClosedSummaryFactory.js` so caller-supplied static configuration cannot promote fixed fail-closed state. The helper now reapplies locked safety truth after caller `boundaries`, `flags`, and `arrays` are expanded, while preserving existing key order and JSON serialization for current call sites.
+
+`test/fixtures/planning/shared-fail-closed-callsite-baseline-v1.json` and `test/shared-fail-closed-callsite-parity.test.js` freeze synthetic-only call-site output parity for the current fail-closed planning factory inventory. The recorded SHA-256 values are test-only object fingerprints; they are not product source-hash verification and do not read actual files.
+
+XS1R also removes the unused `sharedFailClosedSummaryFactory.js` import from the checksum preflight module. This keeps the checksum dependency graph narrow without changing checksum output, legacy public exports, planning facade inventory, manifest symbol counts, runtime readiness, production readiness, actual data handling, owner confirmation, trusted loader state, priority1 status, checked row count, or motion dataset executability.

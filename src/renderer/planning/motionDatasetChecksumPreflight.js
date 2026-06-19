@@ -1,5 +1,4 @@
 import { assertSafePublicObject, createBoundaryPolicy } from "../../contracts.js";
-import { createMotionDatasetPlanningOnlyGateSummary } from "./sharedFailClosedSummaryFactory.js";
 import { detectedMotionDatasetRawFields } from "./motionDatasetPlanningSafety.js";
 import {
   LIVE2D_MOTION_DATASET_OWNER_ROW_DATA_SUBMISSION_REJECTED_FIELDS,

@@ -37,6 +37,60 @@ const summary = createMotionDatasetPlanningOnlyGateSummary({
   go_nogo_status: "go",
 });
 
+const adversarialConfigSummary = createMotionDatasetPlanningOnlyGateSummary({
+  schema: "test_shared_fail_closed_config_v1",
+  statusKey: "test_shared_fail_closed_config_status",
+  status: "planning_only_blocked",
+  boundaries: {
+    planning_only_boundary: false,
+    owner_confirmation_created: true,
+    actual_data_preauthorized: true,
+    actual_data_task_started: true,
+    runtime_readiness_claimed: true,
+    production_readiness_claimed: true,
+    priority1_status: "RESOLVED",
+    go_nogo_status: "go",
+    blocker_resolved: true,
+  },
+  flags: {
+    schema: "unsafe_schema_override",
+    owner_confirmation_confirmed: true,
+    actual_data_accepted: true,
+    checked_row_count: 1,
+    actual_ingestion_allowed: true,
+    motion_dataset_executable: true,
+    trusted_loader_allowlist_enabled: true,
+    source_hash_verified: true,
+    declared_row_count_checked: true,
+    parser_execution: true,
+    redaction_scan_execution: true,
+    audit_execution: true,
+  },
+  arrays: {
+    test_shared_fail_closed_config_status: "unsafe_status_override",
+    motion_dataset_executable: true,
+    checked_row_count: 1,
+  },
+  blockedReasons: ["shared_fail_closed_config_planning_only"],
+  safeNextAction: "reject_unsafe_static_config_without_promoting_state",
+  context: "shared fail closed adversarial config test",
+});
+
+const pollutedBoundaries = {};
+Object.defineProperty(pollutedBoundaries, "__proto__", {
+  value: true,
+  enumerable: true,
+});
+const prototypePollutionSummary = createMotionDatasetPlanningOnlyGateSummary({
+  schema: "test_shared_fail_closed_pollution_v1",
+  statusKey: "test_shared_fail_closed_pollution_status",
+  status: "planning_only_blocked",
+  boundaries: pollutedBoundaries,
+  blockedReasons: ["shared_fail_closed_pollution_planning_only"],
+  safeNextAction: "reject_prototype_pollution_key_without_raw_value",
+  context: "shared fail closed prototype pollution test",
+});
+
 assert.equal(summary.schema, "test_shared_fail_closed_summary_v1");
 assert.equal(summary.test_shared_fail_closed_status, "planning_only_blocked");
 assert.equal(summary.planning_only_boundary, true);
@@ -66,5 +120,36 @@ assert.equal(summary.boundary_policy.no_real_row_ingestion, true);
 assert.equal(summary.boundary_policy.no_row_body_read, true);
 assert.equal(summary.boundary_policy.no_runtime_readiness_claim, true);
 assert.equal(summary.boundary_policy.no_production_readiness_claim, true);
+
+assert.equal(adversarialConfigSummary.schema, "test_shared_fail_closed_config_v1");
+assert.equal(adversarialConfigSummary.test_shared_fail_closed_config_status, "planning_only_blocked");
+assert.equal(adversarialConfigSummary.planning_only_boundary, true);
+assert.equal(adversarialConfigSummary.owner_confirmation_created, false);
+assert.equal(adversarialConfigSummary.owner_confirmation_confirmed, false);
+assert.equal(adversarialConfigSummary.actual_data_preauthorized, false);
+assert.equal(adversarialConfigSummary.actual_data_task_started, false);
+assert.equal(adversarialConfigSummary.actual_data_accepted, false);
+assert.equal(adversarialConfigSummary.checked_row_count, 0);
+assert.equal(adversarialConfigSummary.actual_ingestion_allowed, false);
+assert.equal(adversarialConfigSummary.motion_dataset_executable, false);
+assert.equal(adversarialConfigSummary.runtime_readiness_claimed, false);
+assert.equal(adversarialConfigSummary.production_readiness_claimed, false);
+assert.equal(adversarialConfigSummary.priority1_status, "BLOCKED");
+assert.equal(adversarialConfigSummary.go_nogo_status, "no_go");
+assert.equal(adversarialConfigSummary.blocker_resolved, false);
+assert.equal(adversarialConfigSummary.trusted_loader_allowlist_enabled, false);
+assert.equal(adversarialConfigSummary.source_hash_verified, false);
+assert.equal(adversarialConfigSummary.declared_row_count_checked, false);
+assert.equal(adversarialConfigSummary.parser_execution, false);
+assert.equal(adversarialConfigSummary.redaction_scan_execution, false);
+assert.equal(adversarialConfigSummary.audit_execution, false);
+assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_boundaries_owner_confirmation_created_unsafe_promotion"), true);
+assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_flags_trusted_loader_allowlist_enabled_unsafe_promotion"), true);
+assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_flags_schema_summary_identity_override"), true);
+assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_arrays_test_shared_fail_closed_config_status_summary_identity_override"), true);
+
+assert.equal(prototypePollutionSummary.schema, "test_shared_fail_closed_pollution_v1");
+assert.equal(prototypePollutionSummary.planning_only_boundary, true);
+assert.equal(prototypePollutionSummary.blocked_reasons.includes("test_shared_fail_closed_pollution_rejected_boundaries_prototype_pollution_key"), true);
 
 console.log("shared-fail-closed-summary-factory: pass");
