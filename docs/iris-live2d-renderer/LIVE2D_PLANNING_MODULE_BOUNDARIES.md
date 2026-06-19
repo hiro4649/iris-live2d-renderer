@@ -23,9 +23,9 @@ This document records the safe planning-module extraction boundary and the depen
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
 | pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json |
-| physicalMovedExportCount | 86 |
-| auditedSymbolCount | 86 |
-| pendingSymbolCount | 91 |
+| physicalMovedExportCount | 108 |
+| auditedSymbolCount | 108 |
+| pendingSymbolCount | 83 |
 | unregisteredExtractedLegacyPublicSymbolCount | 0 |
 | manifestedButNotLegacyPublicCount | 0 |
 | facadeManifestMismatchCount | 0 |
@@ -131,3 +131,9 @@ The owner-handoff gates extraction moves metadata-only owner handoff packet plan
 This module remains a planning-only owner handoff boundary. It does not receive owner submissions, read row bodies, accept actual file paths, read actual file content, calculate hashes, run parser/redaction/audit work, create owner confirmation, enable trusted loader, claim runtime readiness, claim production readiness, resolve priority1, or make the motion dataset executable.
 
 The legacy `src/renderer/cubismLoaderProvisioning.js` surface imports and re-exports moved public names for compatibility. The planning facade directly exposes only the three schema names that were already part of the facade inventory. The moved factories and their related review/rejection/receipt constants remain legacy-only and do not expand the facade. `test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json` freezes synthetic-only pre-move behavior, key order, JSON serialization, constant values, freeze status, and input non-mutation checks for the three moved factories.
+
+## X1B2B Owner No-Go Gates Physical Extraction Status
+
+X1B2B physically extracts the owner no-go / fail-closed planning closure into `src/renderer/planning/motionDatasetOwnerNoGoGates.js`. The moved closure contains 22 legacy public symbols: five schemas, twelve planning constants, and five factory summaries for go/no-go blocker mapping, pre-ingestion review, final dry-run checklist, missing-data fail-closed gating, and actual-data task entry gating.
+
+The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and keeps the planning facade limited to its existing eight public no-go symbols. Legacy-only helper constants and factories remain outside the facade. The new module does not import the monolith, does not execute parser/redaction/audit/runtime work, does not read actual files or row bodies, does not calculate hashes, does not create owner confirmation, does not enable trusted loader state, and preserves priority1 BLOCKED with checked_row_count 0 and motion dataset non-executable.
