@@ -167,3 +167,11 @@ XS1R hardens `src/renderer/planning/sharedFailClosedSummaryFactory.js` so caller
 `test/fixtures/planning/shared-fail-closed-callsite-baseline-v1.json` and `test/shared-fail-closed-callsite-parity.test.js` freeze synthetic-only call-site output parity for the current fail-closed planning factory inventory. The recorded SHA-256 values are test-only object fingerprints; they are not product source-hash verification and do not read actual files.
 
 XS1R also removes the unused `sharedFailClosedSummaryFactory.js` import from the checksum preflight module. This keeps the checksum dependency graph narrow without changing checksum output, legacy public exports, planning facade inventory, manifest symbol counts, runtime readiness, production readiness, actual data handling, owner confirmation, trusted loader state, priority1 status, checked row count, or motion dataset executability.
+
+## XS1R2 Shared Fail-Closed Config Contract Repair Status
+
+XS1R2 hardens the shared fail-closed helper config contract before any computed status-key assignment or summary construction occurs. `createMotionDatasetPlanningOnlyGateSummary` now validates its static config as a plain data object, rejects unknown top-level keys, accessors, symbol keys, custom prototypes, prototype-pollution keys, invalid status keys, invalid blocked reasons, and invalid required string fields with fixed safe `TypeError` reason codes only.
+
+Promotion attempts inside otherwise valid `boundaries`, `flags`, or `arrays` configs still return a planning-only summary, add safe rejection reasons, and relock fixed fail-closed state without mutating config input or changing existing call-site output. The XS1R call-site baseline fixture remains authoritative and was not regenerated for this repair.
+
+This contract repair does not change legacy public exports, planning facade exports, manifest symbol ownership, package files, workflows, runtime readiness, production readiness, actual data handling, owner confirmation, trusted loader state, priority1 status, checked row count, or motion dataset executability.

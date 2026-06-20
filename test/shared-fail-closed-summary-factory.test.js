@@ -4,6 +4,109 @@ import { createMotionDatasetPlanningOnlyGateSummary } from "../src/renderer/plan
 
 assert.equal(Object.hasOwn(legacyProvisioning, "createMotionDatasetPlanningOnlyGateSummary"), false);
 
+function validConfig(overrides = {}) {
+  return {
+    schema: "test_shared_fail_closed_valid_v1",
+    statusKey: "test_shared_fail_closed_valid_status",
+    status: "planning_only_blocked",
+    boundaries: {},
+    flags: {},
+    arrays: {},
+    blockedReasons: ["shared_fail_closed_valid_planning_only"],
+    safeNextAction: "keep_planning_only",
+    context: "shared fail closed valid config",
+    ...overrides,
+  };
+}
+
+function assertConfigError(config, code) {
+  assert.throws(
+    () => createMotionDatasetPlanningOnlyGateSummary(config),
+    (error) => {
+      assert.equal(error instanceof TypeError, true);
+      assert.equal(error.code, code);
+      assert.equal(error.message, code);
+      return true;
+    },
+  );
+}
+
+assertConfigError(undefined, "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(null, "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError([], "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(new Date(0), "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(new Map(), "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(new Set(), "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(/safe/, "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(Promise.resolve(), "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+class CustomConfig {}
+assertConfigError(new CustomConfig(), "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(Object.create({ inherited: true }), "ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+assertConfigError(validConfig({ unknownKey: true }), "ERR_LIVE2D_PLANNING_CONFIG_UNKNOWN_KEY");
+assertConfigError(validConfig({ schema: "" }), "ERR_LIVE2D_PLANNING_CONFIG_SCHEMA_INVALID");
+assertConfigError(validConfig({ schema: {} }), "ERR_LIVE2D_PLANNING_CONFIG_SCHEMA_INVALID");
+assertConfigError(validConfig({ status: "" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_INVALID");
+assertConfigError(validConfig({ status: {} }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_INVALID");
+assertConfigError(validConfig({ statusKey: "__proto__" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+assertConfigError(validConfig({ statusKey: "prototype" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+assertConfigError(validConfig({ statusKey: "constructor" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+assertConfigError(validConfig({ statusKey: "schema" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+assertConfigError(validConfig({ statusKey: "priority1_status" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+assertConfigError(validConfig({ statusKey: "planning_only_boundary" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+assertConfigError(validConfig({ statusKey: "Upper_status" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_INVALID");
+assertConfigError(validConfig({ statusKey: "missing_suffix" }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_INVALID");
+assertConfigError(validConfig({ statusKey: {} }), "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_INVALID");
+assertConfigError(validConfig({ safeNextAction: "" }), "ERR_LIVE2D_PLANNING_CONFIG_SAFE_NEXT_ACTION_INVALID");
+assertConfigError(validConfig({ context: "" }), "ERR_LIVE2D_PLANNING_CONFIG_CONTEXT_INVALID");
+assertConfigError(validConfig({ blockedReasons: "unsafe" }), "ERR_LIVE2D_PLANNING_CONFIG_BLOCKED_REASONS_INVALID");
+assertConfigError(validConfig({ blockedReasons: [""] }), "ERR_LIVE2D_PLANNING_CONFIG_BLOCKED_REASONS_INVALID");
+assertConfigError(validConfig({ blockedReasons: [{}] }), "ERR_LIVE2D_PLANNING_CONFIG_BLOCKED_REASONS_INVALID");
+assertConfigError(validConfig({ boundaries: [] }), "ERR_LIVE2D_PLANNING_CONFIG_SECTION_NOT_PLAIN");
+assertConfigError(validConfig({ boundaries: Object.create({ inherited: true }) }), "ERR_LIVE2D_PLANNING_CONFIG_SECTION_NOT_PLAIN");
+
+let topLevelGetterExecuted = false;
+const accessorConfig = validConfig();
+Object.defineProperty(accessorConfig, "schema", {
+  enumerable: true,
+  get() {
+    topLevelGetterExecuted = true;
+    return "test_shared_fail_closed_accessor_v1";
+  },
+});
+assertConfigError(accessorConfig, "ERR_LIVE2D_PLANNING_CONFIG_ACCESSOR_REJECTED");
+assert.equal(topLevelGetterExecuted, false);
+
+let sectionGetterExecuted = false;
+const getterBoundaries = {};
+Object.defineProperty(getterBoundaries, "test_boundary", {
+  enumerable: true,
+  get() {
+    sectionGetterExecuted = true;
+    return true;
+  },
+});
+assertConfigError(validConfig({ boundaries: getterBoundaries }), "ERR_LIVE2D_PLANNING_CONFIG_ACCESSOR_REJECTED");
+assert.equal(sectionGetterExecuted, false);
+
+const setterArrays = {};
+Object.defineProperty(setterArrays, "safe_array", {
+  enumerable: true,
+  set() {},
+});
+assertConfigError(validConfig({ arrays: setterArrays }), "ERR_LIVE2D_PLANNING_CONFIG_ACCESSOR_REJECTED");
+
+assertConfigError({ ...validConfig(), [Symbol("unsafe")]: true }, "ERR_LIVE2D_PLANNING_CONFIG_SYMBOL_KEY_REJECTED");
+assertConfigError(validConfig({ flags: { [Symbol("unsafe")]: true } }), "ERR_LIVE2D_PLANNING_CONFIG_SYMBOL_KEY_REJECTED");
+
+const pollutedBoundaries = {};
+Object.defineProperty(pollutedBoundaries, "__proto__", {
+  value: true,
+  enumerable: true,
+});
+assertConfigError(validConfig({ boundaries: pollutedBoundaries }), "ERR_LIVE2D_PLANNING_CONFIG_PROTOTYPE_KEY_REJECTED");
+assertConfigError(validConfig({ boundaries: JSON.parse("{\"__proto__\":true}") }), "ERR_LIVE2D_PLANNING_CONFIG_PROTOTYPE_KEY_REJECTED");
+assert.equal(Object.prototype.owner_confirmation_created, undefined);
+
 const summary = createMotionDatasetPlanningOnlyGateSummary({
   schema: "test_shared_fail_closed_summary_v1",
   statusKey: "test_shared_fail_closed_status",
@@ -76,21 +179,6 @@ const adversarialConfigSummary = createMotionDatasetPlanningOnlyGateSummary({
   context: "shared fail closed adversarial config test",
 });
 
-const pollutedBoundaries = {};
-Object.defineProperty(pollutedBoundaries, "__proto__", {
-  value: true,
-  enumerable: true,
-});
-const prototypePollutionSummary = createMotionDatasetPlanningOnlyGateSummary({
-  schema: "test_shared_fail_closed_pollution_v1",
-  statusKey: "test_shared_fail_closed_pollution_status",
-  status: "planning_only_blocked",
-  boundaries: pollutedBoundaries,
-  blockedReasons: ["shared_fail_closed_pollution_planning_only"],
-  safeNextAction: "reject_prototype_pollution_key_without_raw_value",
-  context: "shared fail closed prototype pollution test",
-});
-
 assert.equal(summary.schema, "test_shared_fail_closed_summary_v1");
 assert.equal(summary.test_shared_fail_closed_status, "planning_only_blocked");
 assert.equal(summary.planning_only_boundary, true);
@@ -144,12 +232,9 @@ assert.equal(adversarialConfigSummary.parser_execution, false);
 assert.equal(adversarialConfigSummary.redaction_scan_execution, false);
 assert.equal(adversarialConfigSummary.audit_execution, false);
 assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_boundaries_owner_confirmation_created_unsafe_promotion"), true);
+assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_boundaries_planning_only_boundary_summary_identity_override"), true);
 assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_flags_trusted_loader_allowlist_enabled_unsafe_promotion"), true);
 assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_flags_schema_summary_identity_override"), true);
 assert.equal(adversarialConfigSummary.blocked_reasons.includes("test_shared_fail_closed_config_rejected_arrays_test_shared_fail_closed_config_status_summary_identity_override"), true);
-
-assert.equal(prototypePollutionSummary.schema, "test_shared_fail_closed_pollution_v1");
-assert.equal(prototypePollutionSummary.planning_only_boundary, true);
-assert.equal(prototypePollutionSummary.blocked_reasons.includes("test_shared_fail_closed_pollution_rejected_boundaries_prototype_pollution_key"), true);
 
 console.log("shared-fail-closed-summary-factory: pass");

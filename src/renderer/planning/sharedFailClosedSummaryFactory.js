@@ -55,16 +55,131 @@ const PROTOTYPE_POLLUTION_KEYS = Object.freeze([
   "constructor",
 ]);
 
-function safeConfigObject(value) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+const ALLOWED_CONFIG_KEYS = Object.freeze([
+  "schema",
+  "statusKey",
+  "status",
+  "boundaries",
+  "flags",
+  "arrays",
+  "blockedReasons",
+  "safeNextAction",
+  "context",
+]);
+
+const RESERVED_STATUS_KEYS = Object.freeze([
+  "__proto__",
+  "prototype",
+  "constructor",
+  "schema",
+  "planning_only_boundary",
+  "blocked_reasons",
+  "safe_next_action",
+  "boundary_policy",
+  ...Object.keys(LOCKED_FAIL_CLOSED_SUMMARY_STATE),
+  ...SAFE_FALSE_ONLY_CONFIG_KEYS,
+]);
+
+function createSafeConfigError(code) {
+  const error = new TypeError(code);
+  error.code = code;
+  return error;
+}
+
+function isPlainDataObject(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+
+function validatePlainConfigSection(value) {
+  if (value === undefined) return {};
+  if (!isPlainDataObject(value)) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_SECTION_NOT_PLAIN");
+  }
+  if (Reflect.ownKeys(value).some((key) => typeof key === "symbol")) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_SYMBOL_KEY_REJECTED");
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  for (const [key, descriptor] of Object.entries(descriptors)) {
+    if (descriptor.get || descriptor.set) {
+      throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_ACCESSOR_REJECTED");
+    }
+    if (PROTOTYPE_POLLUTION_KEYS.includes(key)) {
+      throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_PROTOTYPE_KEY_REJECTED");
+    }
+  }
   return value;
+}
+
+function validateStringField(value, code, pattern = /[\s\S]+/) {
+  if (typeof value !== "string" || !pattern.test(value)) {
+    throw createSafeConfigError(code);
+  }
+  return value;
+}
+
+function validateBlockedReasons(value) {
+  if (value === undefined) return [];
+  if (!Array.isArray(value)) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_BLOCKED_REASONS_INVALID");
+  }
+  if (!value.every((item) => typeof item === "string" && item.length > 0)) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_BLOCKED_REASONS_INVALID");
+  }
+  return value;
+}
+
+function validateFailClosedSummaryConfig(config) {
+  if (!isPlainDataObject(config)) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_NOT_PLAIN");
+  }
+  if (Reflect.ownKeys(config).some((key) => typeof key === "symbol")) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_SYMBOL_KEY_REJECTED");
+  }
+  const descriptors = Object.getOwnPropertyDescriptors(config);
+  for (const [key, descriptor] of Object.entries(descriptors)) {
+    if (descriptor.get || descriptor.set) {
+      throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_ACCESSOR_REJECTED");
+    }
+    if (PROTOTYPE_POLLUTION_KEYS.includes(key)) {
+      throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_PROTOTYPE_KEY_REJECTED");
+    }
+    if (!ALLOWED_CONFIG_KEYS.includes(key)) {
+      throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_UNKNOWN_KEY");
+    }
+  }
+
+  const schema = validateStringField(config.schema, "ERR_LIVE2D_PLANNING_CONFIG_SCHEMA_INVALID");
+  const statusKey = validateStringField(config.statusKey, "ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_INVALID");
+  if (RESERVED_STATUS_KEYS.includes(statusKey)) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_RESERVED");
+  }
+  if (!/^[a-z][a-z0-9_]*_status$/.test(statusKey)) {
+    throw createSafeConfigError("ERR_LIVE2D_PLANNING_CONFIG_STATUS_KEY_INVALID");
+  }
+  const status = validateStringField(config.status, "ERR_LIVE2D_PLANNING_CONFIG_STATUS_INVALID");
+  const safeNextAction = validateStringField(config.safeNextAction, "ERR_LIVE2D_PLANNING_CONFIG_SAFE_NEXT_ACTION_INVALID");
+  const context = validateStringField(config.context, "ERR_LIVE2D_PLANNING_CONFIG_CONTEXT_INVALID");
+
+  return {
+    schema,
+    statusKey,
+    status,
+    boundaries: validatePlainConfigSection(config.boundaries),
+    flags: validatePlainConfigSection(config.flags),
+    arrays: validatePlainConfigSection(config.arrays),
+    blockedReasons: validateBlockedReasons(config.blockedReasons),
+    safeNextAction,
+    context,
+  };
 }
 
 function unsafeConfigReasonCodes(statusKey, configs) {
   const reasonPrefix = statusKey.replace(/_status$/, "");
   const reasons = [];
   for (const [configName, config] of configs) {
-    const source = safeConfigObject(config);
+    const source = config;
     for (const key of Object.keys(source)) {
       if (PROTOTYPE_POLLUTION_KEYS.includes(key)) {
         reasons.push(`${reasonPrefix}_rejected_${configName}_prototype_pollution_key`);
@@ -75,7 +190,14 @@ function unsafeConfigReasonCodes(statusKey, configs) {
       if (SAFE_FALSE_ONLY_CONFIG_KEYS.includes(key) && source[key] !== false) {
         reasons.push(`${reasonPrefix}_rejected_${configName}_${key}_unsafe_promotion`);
       }
-      if ((key === "schema" || key === statusKey || key === "planning_only_boundary") && configName !== "boundaries") {
+      if ([
+        "schema",
+        statusKey,
+        "planning_only_boundary",
+        "blocked_reasons",
+        "safe_next_action",
+        "boundary_policy",
+      ].includes(key)) {
         reasons.push(`${reasonPrefix}_rejected_${configName}_${key}_summary_identity_override`);
       }
     }
@@ -85,7 +207,18 @@ function unsafeConfigReasonCodes(statusKey, configs) {
 
 // Shared planning-only fail-closed summary factory.
 // It never executes parser, audit, renderer, loader, file, hash, or ingestion work.
-export function createMotionDatasetPlanningOnlyGateSummary({ schema, statusKey, status, boundaries = {}, flags = {}, arrays = {}, blockedReasons = [], safeNextAction, context }, input = {}) {
+export function createMotionDatasetPlanningOnlyGateSummary(config, input = {}) {
+  const {
+    schema,
+    statusKey,
+    status,
+    boundaries,
+    flags,
+    arrays,
+    blockedReasons,
+    safeNextAction,
+    context,
+  } = validateFailClosedSummaryConfig(config);
   const source = input && typeof input === "object" ? input : {};
   const rejectedAttempt = Boolean(
     source.owner_confirmation_created ||
