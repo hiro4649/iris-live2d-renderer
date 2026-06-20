@@ -164,6 +164,18 @@ const movedSymbols = new Map([
   ["LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_REASONS", "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js"],
   ["LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_FUTURE_ACTIONS", "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js"],
   ["createMotionDatasetFinalOwnerWaitForDataGateSummary", "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js"],
+  ["LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LEDGER_SCHEMA", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LABELS", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_UNFREEZE_CONDITIONS", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["createMotionDatasetActualDataFreezeStateLedgerSummary", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_FINAL_OWNER_ACTUAL_DATA_PACKET_SCHEMA", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_FINAL_OWNER_ACTUAL_DATA_PACKET_REQUIRED_SECTIONS", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_FINAL_OWNER_ACTUAL_DATA_PACKET_BLOCKERS", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["createMotionDatasetFinalOwnerActualDataPacketSummary", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_NO_ACTION_PACKET_SCHEMA", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_SAFE_STEPS", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_BLOCKERS", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
+  ["createMotionDatasetActualDataTaskRunbookNoActionPacketSummary", "src/renderer/planning/motionDatasetOwnerFinalPackets.js"],
   ["LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_MANIFEST_SCHEMA", "src/renderer/planning/motionDatasetChecksumPreflight.js"],
   ["LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_HASH_METADATA_LABELS", "src/renderer/planning/motionDatasetChecksumPreflight.js"],
   ["LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_ALLOWED_HASH_ALGORITHMS", "src/renderer/planning/motionDatasetChecksumPreflight.js"],
@@ -217,9 +229,9 @@ assert.deepEqual(report.ambiguousLegacyPlanningCandidates, []);
 assert.equal(report.motionDatasetPrefixedLegacyPublicSymbolCount, report.motionDatasetPrefixedManifestedSymbolCount);
 assert.equal(report.motionDatasetPrefixedCrossDomainSymbolCount, 4);
 assert.equal(report.motionDatasetManifestSymbolCount, 200);
-assert.equal(report.motionDatasetPhysicalMovedSymbolCount, 148);
-assert.equal(report.motionDatasetAuditedSymbolCount, 148);
-assert.equal(report.motionDatasetPendingSymbolCount, 52);
+assert.equal(report.motionDatasetPhysicalMovedSymbolCount, 160);
+assert.equal(report.motionDatasetAuditedSymbolCount, 160);
+assert.equal(report.motionDatasetPendingSymbolCount, 40);
 
 assert.equal(currentMachineCheck.get("checker"), "scripts/check-live2d-planning-module-boundaries.mjs");
 assert.equal(currentMachineCheck.get("checker schema"), report.schema);
@@ -231,6 +243,12 @@ assert.equal(
 assert.equal(
   currentMachineCheck.get("pre-move behavior baseline").includes(
     "test/fixtures/planning/motion-dataset-final-owner-wait-gates-baseline-v1.json",
+  ),
+  true,
+);
+assert.equal(
+  currentMachineCheck.get("pre-move behavior baseline").includes(
+    "test/fixtures/planning/motion-dataset-owner-final-packets-baseline-v1.json",
   ),
   true,
 );
