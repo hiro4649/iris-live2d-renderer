@@ -3343,6 +3343,66 @@
       "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": false,
       "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA",
+      "kind": "schema",
+      "definitionFile": "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "final_owner_wait_for_data",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_REASONS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "final_owner_wait_for_data",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_FUTURE_ACTIONS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "final_owner_wait_for_data",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "createMotionDatasetFinalOwnerWaitForDataGateSummary",
+      "kind": "factory",
+      "definitionFile": "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": null,
+      "legacyExportRequired": true,
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_GATE_SCHEMA",
+        "LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_REASONS",
+        "LIVE2D_MOTION_DATASET_FINAL_OWNER_WAIT_FOR_DATA_FUTURE_ACTIONS"
+      ],
+      "sharedDependencyGroup": "final_owner_wait_for_data",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
     }
   ],
   "safety": {
@@ -3370,6 +3430,7 @@
     "src/renderer/planning/motionDatasetOwnerNoGoGates.js": "motion_dataset",
     "src/renderer/planning/motionDatasetActualDataPreauthGates.js": "motion_dataset",
     "src/renderer/planning/motionDatasetChecksumPreflight.js": "motion_dataset",
-    "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js": "motion_dataset"
+    "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetFinalOwnerWaitGates.js": "motion_dataset"
   }
 }
