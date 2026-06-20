@@ -11,6 +11,8 @@ const baseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-
 const ownerGatesBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json", "utf8"));
 const auditGatesBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json", "utf8"));
 const parserAuditStubsBaseline = JSON.parse(readFileSync("test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json", "utf8"));
+const boundaryDocs = readFileSync("docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.md", "utf8");
+const currentMachineCheck = parseCurrentMachineCheck(boundaryDocs);
 
 assert.equal(report.schema, "live2d_planning_module_boundary_report_v3");
 assert.equal(report.status, "pass");
@@ -205,6 +207,33 @@ assert.equal(report.facadeManifestMismatchCount, 0);
 assert.deepEqual(report.facadeManifestMismatches, []);
 assert.equal(report.facadePublicSymbolCount, Object.values(report.facadePublicNamesByFile).reduce((count, names) => count + names.length, 0));
 assert.equal(report.internalPlanningExportCount >= 3, true);
+
+assert.equal(currentMachineCheck.get("checker"), "scripts/check-live2d-planning-module-boundaries.mjs");
+assert.equal(currentMachineCheck.get("checker schema"), report.schema);
+assert.equal(currentMachineCheck.get("test"), "test/planning-module-boundaries.test.js");
+assert.equal(
+  currentMachineCheck.get("symbol inventory authority"),
+  "docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json",
+);
+assert.equal(
+  currentMachineCheck.get("pre-move behavior baseline").includes(
+    "test/fixtures/planning/motion-dataset-final-owner-wait-gates-baseline-v1.json",
+  ),
+  true,
+);
+for (const field of [
+  "symbolCount",
+  "physicalMovedExportCount",
+  "auditedSymbolCount",
+  "pendingSymbolCount",
+  "facadeManifestMismatchCount",
+  "facadeMetadataMismatchCount",
+  "duplicateDefinitionCount",
+  "cycleCount",
+  "actualDependencyMismatchCount",
+]) {
+  assert.equal(Number(currentMachineCheck.get(field)), report[field], `docs machine summary drifted: ${field}`);
+}
 
 for (const entry of report.entries) {
   assert.equal(entry.actualDefinitionFile, movedSymbols.get(entry.name) ?? "src/renderer/cubismLoaderProvisioning.js");
@@ -506,6 +535,27 @@ function inputForParserAuditStubsBaselineCase(caseName) {
     go_attempt: { go_nogo_status: "go", go_candidate: true },
     motion_execution_attempt: { motion_dataset_executable: true, motion_execution_enabled: true },
   }[caseName];
+}
+
+function parseCurrentMachineCheck(markdown) {
+  const lines = markdown.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.trim() === "## Current Machine Check");
+  assert.equal(start >= 0, true, "Current Machine Check section missing");
+  const rows = new Map();
+  for (const line of lines.slice(start + 1)) {
+    if (line.startsWith("## ")) {
+      break;
+    }
+    if (!line.startsWith("|")) {
+      continue;
+    }
+    const cells = line.split("|").slice(1, -1).map((cell) => cell.trim());
+    if (cells.length !== 2 || cells[0] === "field" || cells[0] === "---") {
+      continue;
+    }
+    rows.set(cells[0], cells[1]);
+  }
+  return rows;
 }
 
 const baseManifest = {
