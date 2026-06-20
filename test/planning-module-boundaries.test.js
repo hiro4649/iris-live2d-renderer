@@ -29,6 +29,14 @@ assert.equal(report.crossDomainDependencyViolationCount, 0);
 assert.equal(report.kindMismatchCount, 0);
 assert.equal(report.currentDomainMismatchCount, 0);
 assert.equal(report.actualPhysicalMoveMismatchCount, 0);
+assert.equal(report.facadeMetadataMismatchCount, 0);
+assert.deepEqual(report.facadeMetadataMismatches, []);
+assert.equal(report.nonFacadeSymbolWithFacadeFileCount, 0);
+assert.deepEqual(report.nonFacadeSymbolWithFacadeFileNames, []);
+assert.equal(report.requiredFacadeSymbolWithoutFacadeFileCount, 0);
+assert.deepEqual(report.requiredFacadeSymbolWithoutFacadeFileNames, []);
+assert.equal(report.multipleFacadeExportCount, 0);
+assert.deepEqual(report.multipleFacadeExports, []);
 assert.equal(report.entries.length, report.symbolCount);
 
 const movedSymbols = new Map([
@@ -621,9 +629,65 @@ assert.match(
 assert.equal(
   syntheticReport(({ manifest, sourceTexts }) => {
     manifest.symbols[0].facadeExportRequired = false;
+    manifest.symbols[0].facadeFile = null;
     sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] = "export {};\n";
   }).status,
   "pass",
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.symbols[0].facadeExportRequired = false;
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] = "export {};\n";
+  }).failures.join("\n"),
+  /facade_file_present_for_non_facade_symbol:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest }) => {
+    manifest.symbols[0].facadeFile = null;
+  }).failures.join("\n"),
+  /facade_file_missing_for_required_facade_symbol:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest }) => {
+    manifest.symbols[0].facadeFile = "src/renderer/cubismLoaderProvisioning.js";
+  }).failures.join("\n"),
+  /facade_file_not_planning_summary:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest }) => {
+    manifest.symbols[0].facadeFile = "src/renderer/planning/notASummary.js";
+  }).failures.join("\n"),
+  /facade_file_not_planning_summary:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] = "export {};\n";
+  }).failures.join("\n"),
+  /facade_export_missing:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.symbols[0].facadeExportRequired = false;
+    manifest.symbols[0].facadeFile = null;
+    sourceTexts["src/renderer/planning/motionDatasetPlanningSummaries.js"] = "export { A_SYMBOL } from \"../cubismLoaderProvisioning.js\";\n";
+  }).failures.join("\n"),
+  /facade_export_present_for_non_facade_symbol:A_SYMBOL/,
+);
+
+assert.match(
+  syntheticReport(({ manifest, sourceTexts }) => {
+    manifest.moduleRegistry = {
+      "src/renderer/planning/otherSummaries.js": "motion_dataset",
+    };
+    sourceTexts["src/renderer/planning/otherSummaries.js"] = "export { A_SYMBOL } from \"../cubismLoaderProvisioning.js\";\n";
+  }).failures.join("\n"),
+  /facade_export_present_in_multiple_facades:A_SYMBOL/,
 );
 
 assert.equal(

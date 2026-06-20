@@ -173,6 +173,27 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
   const facadePublicSymbols = Object.entries(facadePublicNamesByFile)
     .flatMap(([file, names]) => names.map((name) => ({ file, name })))
     .sort((left, right) => left.name.localeCompare(right.name) || left.file.localeCompare(right.file));
+  const facadeExportFilesByName = new Map();
+  for (const { file, name } of facadePublicSymbols) {
+    if (!facadeExportFilesByName.has(name)) facadeExportFilesByName.set(name, []);
+    facadeExportFilesByName.get(name).push(file);
+  }
+  const facadeMetadataMismatches = entries
+    .flatMap((entry) => facadeMetadataMismatchReasons(entry, facadeExportFilesByName.get(entry.name) ?? []))
+    .sort((left, right) => left.name.localeCompare(right.name) || left.reason.localeCompare(right.reason));
+  for (const mismatch of facadeMetadataMismatches) failures.push(`${mismatch.reason}:${mismatch.name}`);
+  const nonFacadeSymbolWithFacadeFileNames = facadeMetadataMismatches
+    .filter((mismatch) => mismatch.reason === "facade_file_present_for_non_facade_symbol")
+    .map((mismatch) => mismatch.name)
+    .sort();
+  const requiredFacadeSymbolWithoutFacadeFileNames = facadeMetadataMismatches
+    .filter((mismatch) => mismatch.reason === "facade_file_missing_for_required_facade_symbol")
+    .map((mismatch) => mismatch.name)
+    .sort();
+  const multipleFacadeExports = facadeMetadataMismatches
+    .filter((mismatch) => mismatch.reason === "facade_export_present_in_multiple_facades")
+    .map((mismatch) => ({ name: mismatch.name, actualFacadeFiles: mismatch.actualFacadeFiles }))
+    .sort((left, right) => left.name.localeCompare(right.name));
   const facadeManifestMismatches = facadePublicSymbols
     .filter(({ file, name }) => {
       const entry = entriesByName.get(name);
@@ -220,6 +241,14 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
     facadePublicNamesByFile,
     facadeManifestMismatchCount: facadeManifestMismatches.length,
     facadeManifestMismatches,
+    facadeMetadataMismatchCount: facadeMetadataMismatches.length,
+    facadeMetadataMismatches,
+    nonFacadeSymbolWithFacadeFileCount: nonFacadeSymbolWithFacadeFileNames.length,
+    nonFacadeSymbolWithFacadeFileNames,
+    requiredFacadeSymbolWithoutFacadeFileCount: requiredFacadeSymbolWithoutFacadeFileNames.length,
+    requiredFacadeSymbolWithoutFacadeFileNames,
+    multipleFacadeExportCount: multipleFacadeExports.length,
+    multipleFacadeExports,
     internalPlanningExportCount: internalPlanningExports.length,
     internalPlanningExports,
     unknownDependencyCount: entries.reduce((count, entry) => count + entry.unknownDependencies.length, 0),
@@ -270,6 +299,53 @@ function discoverPlanningFiles() {
 
 function discoverPlanningFilesFromTexts(sourceTexts) {
   return Object.keys(sourceTexts).filter((file) => file.startsWith(`${PLANNING_DIR}/`) && file.endsWith(".js"));
+}
+
+function facadeMetadataMismatchReasons(entry, actualFacadeFiles) {
+  const reasons = [];
+  if (entry.facadeExportRequired === false) {
+    if (entry.facadeFile !== null) {
+      reasons.push({
+        name: entry.name,
+        reason: "facade_file_present_for_non_facade_symbol",
+        facadeFile: entry.facadeFile,
+        actualFacadeFiles,
+      });
+    }
+    if (actualFacadeFiles.length > 0) {
+      reasons.push({
+        name: entry.name,
+        reason: "facade_export_present_for_non_facade_symbol",
+        facadeFile: entry.facadeFile,
+        actualFacadeFiles,
+      });
+    }
+  } else {
+    if (typeof entry.facadeFile !== "string" || entry.facadeFile.length === 0) {
+      reasons.push({
+        name: entry.name,
+        reason: "facade_file_missing_for_required_facade_symbol",
+        facadeFile: entry.facadeFile ?? null,
+        actualFacadeFiles,
+      });
+    } else if (!entry.facadeFile.startsWith(`${PLANNING_DIR}/`) || !entry.facadeFile.endsWith("Summaries.js")) {
+      reasons.push({
+        name: entry.name,
+        reason: "facade_file_not_planning_summary",
+        facadeFile: entry.facadeFile,
+        actualFacadeFiles,
+      });
+    }
+  }
+  if (actualFacadeFiles.length > 1) {
+    reasons.push({
+      name: entry.name,
+      reason: "facade_export_present_in_multiple_facades",
+      facadeFile: entry.facadeFile ?? null,
+      actualFacadeFiles,
+    });
+  }
+  return reasons;
 }
 
 function analyzeSourceFile(file, source) {
@@ -656,6 +732,10 @@ if (invokedPath && fileURLToPath(import.meta.url) === invokedPath) {
     manifestedButNotLegacyPublicCount: report.manifestedButNotLegacyPublicCount,
     facadePublicSymbolCount: report.facadePublicSymbolCount,
     facadeManifestMismatchCount: report.facadeManifestMismatchCount,
+    facadeMetadataMismatchCount: report.facadeMetadataMismatchCount,
+    nonFacadeSymbolWithFacadeFileCount: report.nonFacadeSymbolWithFacadeFileCount,
+    requiredFacadeSymbolWithoutFacadeFileCount: report.requiredFacadeSymbolWithoutFacadeFileCount,
+    multipleFacadeExportCount: report.multipleFacadeExportCount,
     internalPlanningExportCount: report.internalPlanningExportCount,
     unknownDependencyCount: report.unknownDependencyCount,
     missingDeclaredDependencyCount: report.missingDeclaredDependencyCount,
