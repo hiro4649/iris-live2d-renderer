@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, normalize, posix, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseEsmPublicExportInventory } from "./live2d-esm-export-inventory.mjs";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DEFAULT_MANIFEST_FILE = "docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json";
@@ -145,6 +146,65 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
   const entriesByName = new Map(entries.map((entry) => [entry.name, entry]));
   const legacyPublicNames = sourceRecords[LEGACY_FILE]?.exports ?? new Set();
   const legacyPublicSymbolCount = legacyPublicNames.size;
+  const legacyStaticPublicSymbolCount = sourceRecords[LEGACY_FILE]?.exportInventory?.namedExportNames.length ?? legacyPublicSymbolCount;
+  const legacyExportInventory = sourceRecords[LEGACY_FILE]?.exportInventory ?? null;
+  const motionDatasetPrefixedLegacyPublicSymbols = [...legacyPublicNames]
+    .filter(isMotionDatasetPrefixedPublicName)
+    .sort();
+  const motionDatasetPrefixedLegacyPublicSet = new Set(motionDatasetPrefixedLegacyPublicSymbols);
+  const motionDatasetPrefixedManifestedSymbols = entries
+    .filter((entry) => isMotionDatasetPrefixedPublicName(entry.name))
+    .map((entry) => entry.name)
+    .sort();
+  const motionDatasetPrefixedManifestedSet = new Set(motionDatasetPrefixedManifestedSymbols);
+  const unregisteredMotionDatasetPrefixedLegacyPublicSymbols = motionDatasetPrefixedLegacyPublicSymbols
+    .filter((name) => !motionDatasetPrefixedManifestedSet.has(name))
+    .sort();
+  const motionDatasetPrefixedCrossDomainSymbols = entries
+    .filter((entry) => isMotionDatasetPrefixedPublicName(entry.name))
+    .filter((entry) => entry.targetDomain !== "motion_dataset")
+    .map((entry) => ({
+      name: entry.name,
+      targetDomain: entry.targetDomain,
+      definitionFile: entry.definitionFile,
+      facadeFile: entry.facadeFile,
+    }))
+    .sort((left, right) => left.name.localeCompare(right.name));
+  const motionDatasetDomainLegacyPublicSymbols = entries
+    .filter((entry) => entry.targetDomain === "motion_dataset")
+    .filter((entry) => entry.legacyExportRequired !== false)
+    .map((entry) => entry.name)
+    .sort();
+  const motionDatasetDomainLegacyPublicSet = new Set(motionDatasetDomainLegacyPublicSymbols);
+  const motionDatasetDomainNamingExceptionSymbols = motionDatasetDomainLegacyPublicSymbols
+    .filter((name) => !isMotionDatasetPrefixedPublicName(name))
+    .sort();
+  const manifestedMotionDatasetLegacyPublicMissingSymbols = motionDatasetDomainLegacyPublicSymbols
+    .filter((name) => !legacyPublicNames.has(name))
+    .sort();
+  const motionDatasetEntries = entries
+    .filter((entry) => entry.targetDomain === "motion_dataset")
+    .filter((entry) => entry.legacyExportRequired !== false);
+  const motionDatasetPhysicalMovedSymbolCount = motionDatasetEntries
+    .filter((entry) => entry.actualPhysicalMoveStatus === "physically_moved").length;
+  const motionDatasetAuditedSymbolCount = motionDatasetEntries
+    .filter((entry) => entry.dependencyAuditStatus === "audited").length;
+  const motionDatasetPendingSymbolCount = motionDatasetEntries
+    .filter((entry) => entry.dependencyAuditStatus !== "audited").length;
+  const ambiguousLegacyPlanningCandidates = unregisteredMotionDatasetPrefixedLegacyPublicSymbols
+    .map((name) => ({
+      name,
+      reason: "unregistered_motion_dataset_prefixed_legacy_public_symbol",
+    }));
+  for (const name of unregisteredMotionDatasetPrefixedLegacyPublicSymbols) {
+    failures.push(`unregistered_motion_dataset_prefixed_legacy_public_symbol:${name}`);
+  }
+  for (const name of manifestedMotionDatasetLegacyPublicMissingSymbols) {
+    failures.push(`manifested_motion_dataset_legacy_public_symbol_missing:${name}`);
+  }
+  for (const candidate of ambiguousLegacyPlanningCandidates) {
+    failures.push(`ambiguous_legacy_planning_candidate:${candidate.name}`);
+  }
   const extractedLegacyPublicSymbols = [...legacyPublicNames]
     .filter((name) => {
       const definitions = definitionsByName.get(name) ?? [];
@@ -219,6 +279,7 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
     failures,
     manifestFile: DEFAULT_MANIFEST_FILE,
     symbolCount: entries.length,
+    legacyStaticPublicSymbolCount,
     duplicateDefinitionCount,
     cycleCount: cycles.length,
     cycles,
@@ -230,6 +291,32 @@ export function analyzeLive2dPlanningModuleBoundaries({ manifest, sourceTexts })
     physicallyExtractedModulesImportingMonolithCount: forbiddenMonolithImports.length,
     physicalMovedExportCount,
     legacyPublicSymbolCount,
+    legacyExportInventory,
+    motionDatasetPrefixedLegacyPublicSymbolCount: motionDatasetPrefixedLegacyPublicSymbols.length,
+    motionDatasetPrefixedLegacyPublicSymbols,
+    motionDatasetPrefixedManifestedSymbolCount: motionDatasetPrefixedManifestedSymbols.length,
+    motionDatasetPrefixedManifestedSymbols,
+    unregisteredMotionDatasetPrefixedLegacyPublicSymbolCount: unregisteredMotionDatasetPrefixedLegacyPublicSymbols.length,
+    unregisteredMotionDatasetPrefixedLegacyPublicSymbols,
+    motionDatasetPrefixedCrossDomainSymbolCount: motionDatasetPrefixedCrossDomainSymbols.length,
+    motionDatasetPrefixedCrossDomainSymbols,
+    motionDatasetDomainLegacyPublicSymbolCount: motionDatasetDomainLegacyPublicSymbols.length,
+    motionDatasetDomainLegacyPublicSymbols,
+    motionDatasetDomainNamingExceptionSymbolCount: motionDatasetDomainNamingExceptionSymbols.length,
+    motionDatasetDomainNamingExceptionSymbols,
+    manifestedMotionDatasetLegacyPublicMissingCount: manifestedMotionDatasetLegacyPublicMissingSymbols.length,
+    manifestedMotionDatasetLegacyPublicMissingSymbols,
+    motionDatasetManifestSymbolCount: motionDatasetDomainLegacyPublicSet.size,
+    motionDatasetPhysicalMovedSymbolCount,
+    motionDatasetAuditedSymbolCount,
+    motionDatasetPendingSymbolCount,
+    ambiguousLegacyPlanningCandidateCount: ambiguousLegacyPlanningCandidates.length,
+    ambiguousLegacyPlanningCandidates,
+    motionDatasetLegacyInventoryCoverageStatus: (
+      unregisteredMotionDatasetPrefixedLegacyPublicSymbols.length === 0
+      && manifestedMotionDatasetLegacyPublicMissingSymbols.length === 0
+      && ambiguousLegacyPlanningCandidates.length === 0
+    ) ? "pass" : "fail",
     extractedLegacyPublicSymbolCount: extractedLegacyPublicSymbols.length,
     extractedLegacyPublicSymbols,
     manifestedExtractedLegacyPublicSymbolCount: manifestedExtractedLegacyPublicSymbols.length,
@@ -352,11 +439,13 @@ function facadeMetadataMismatchReasons(entry, actualFacadeFiles) {
 function analyzeSourceFile(file, source) {
   const sanitized = sanitizeSource(source);
   const definitions = topLevelDefinitions(sanitized, source);
+  const exportInventory = parseEsmPublicExportInventory(source);
   return {
     file,
     definitions,
     bodies: new Map(definitions.map((definition) => [definition.name, definition.body])),
-    exports: exportedNames(sanitized),
+    exports: new Set(exportInventory.namedExportNames),
+    exportInventory,
     edges: staticModuleEdges(file, maskCommentsPreserveStrings(source)),
   };
 }
@@ -591,20 +680,6 @@ function semanticKindFor(name, declarationKind) {
   return declarationKind;
 }
 
-function exportedNames(source) {
-  const names = new Set();
-  for (const definition of topLevelDefinitions(source)) {
-    if (definition.exported) names.add(definition.name);
-  }
-  for (const match of source.matchAll(/\bexport\s*\{([\s\S]*?)\}\s*(?:from\s*["'][^"']+["'])?/g)) {
-    for (const rawName of match[1].split(",")) {
-      const name = rawName.trim().split(/\s+as\s+/)[0]?.trim();
-      if (name) names.add(name);
-    }
-  }
-  return names;
-}
-
 function staticModuleEdges(file, source) {
   const edges = [];
   for (const match of source.matchAll(/\bimport\s+(?:[\s\S]*?\s+from\s+)?["']([^"']+)["']/g)) {
@@ -697,6 +772,10 @@ function actualStatusForDefinitionFile(file, definitionCount) {
 function domainForFile(file, registry) {
   if (!file) return null;
   return registry[file] ?? null;
+}
+
+function isMotionDatasetPrefixedPublicName(name) {
+  return name.startsWith("LIVE2D_MOTION_DATASET_") || name.startsWith("createMotionDataset");
 }
 
 function escapeRegExp(value) {

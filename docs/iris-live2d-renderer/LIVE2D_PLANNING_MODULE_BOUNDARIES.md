@@ -23,10 +23,10 @@ This document records the safe planning-module extraction boundary and the depen
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
 | pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-nogo-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-checksum-preflight-baseline-v1.json; test/fixtures/planning/motion-dataset-final-owner-wait-gates-baseline-v1.json |
-| symbolCount | 229 |
+| symbolCount | 285 |
 | physicalMovedExportCount | 150 |
 | auditedSymbolCount | 150 |
-| pendingSymbolCount | 79 |
+| pendingSymbolCount | 135 |
 | unregisteredExtractedLegacyPublicSymbolCount | 0 |
 | manifestedButNotLegacyPublicCount | 0 |
 | facadeManifestMismatchCount | 0 |
@@ -34,6 +34,20 @@ This document records the safe planning-module extraction boundary and the depen
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
+| legacyStaticPublicSymbolCount | 574 |
+| motionDatasetPrefixedLegacyPublicSymbolCount | 204 |
+| motionDatasetPrefixedManifestedSymbolCount | 204 |
+| unregisteredMotionDatasetPrefixedLegacyPublicSymbolCount | 0 |
+| motionDatasetPrefixedCrossDomainSymbolCount | 4 |
+| motionDatasetDomainLegacyPublicSymbolCount | 200 |
+| motionDatasetDomainNamingExceptionSymbolCount | 0 |
+| manifestedMotionDatasetLegacyPublicMissingCount | 0 |
+| motionDatasetManifestSymbolCount | 200 |
+| motionDatasetPhysicalMovedSymbolCount | 148 |
+| motionDatasetAuditedSymbolCount | 148 |
+| motionDatasetPendingSymbolCount | 52 |
+| ambiguousLegacyPlanningCandidateCount | 0 |
+| motionDatasetLegacyInventoryCoverageStatus | pass |
 | planningMonolithImportStatus | facade_compatibility_allowed_before_queue_c1 |
 | runtimeReadinessClaimed | false |
 | productionReadinessClaimed | false |
@@ -44,6 +58,10 @@ This document records the safe planning-module extraction boundary and the depen
 ## Reality Checks
 
 The checker derives its report from actual source text under `src/renderer/cubismLoaderProvisioning.js` and `src/renderer/planning/**/*.js`.
+
+X0R5 closes motion-dataset legacy public inventory coverage by registering all legacy public names discovered with the `LIVE2D_MOTION_DATASET_` and `createMotionDataset` candidate prefixes. The prefixes are discovery signals only and are not domain authority. Explicit facade membership, factory family, direct dependencies, consumer tests, safe-surface role, adjacent manifest symbols, and actual definition purpose decide `targetDomain`.
+
+Names such as `LIVE2D_MOTION_DATASET_RENDERER_READY_*` and `createMotionDatasetRendererReady*` remain explicitly reviewed cross-domain symbols when their semantic role is renderer readiness. They are counted in `motionDatasetPrefixedCrossDomainSymbolCount` and are not counted as motion-dataset pending work. After X0R5, global `pendingSymbolCount` remains the all-domain manifest pending total, while `motionDatasetPendingSymbolCount` is the authority for remaining motion-dataset extraction work.
 
 It measures:
 
