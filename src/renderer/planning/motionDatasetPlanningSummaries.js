@@ -82,4 +82,4 @@ export {
   LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA,
   createMotionDatasetOwnerWaitStatePacketSummary,
   createMotionDatasetPlanningCompletionReviewPacketSummary,
-} from "../cubismLoaderProvisioning.js";
+} from "./motionDatasetOwnerConfirmationWaitGates.js";

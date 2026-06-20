@@ -365,16 +365,20 @@
     {
       "name": "createMotionDatasetOwnerWaitStatePacketSummary",
       "kind": "factory",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
-      "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA",
+        "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS",
+        "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS"
+      ],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "createMotionDatasetParserDryRunEnvelopeSummary",
@@ -397,16 +401,20 @@
     {
       "name": "createMotionDatasetPlanningCompletionReviewPacketSummary",
       "kind": "factory",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
-      "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA",
+        "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_COMPLETED_ARTIFACTS",
+        "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKERS"
+      ],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "createMotionDatasetRealRowAuditManifestSummary",
@@ -1328,16 +1336,16 @@
     {
       "name": "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_ENVELOPE_REQUIRED_INPUTS",
@@ -1384,16 +1392,16 @@
     {
       "name": "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA",
       "kind": "schema",
-      "definitionFile": "src/renderer/cubismLoaderProvisioning.js",
-      "currentDomain": "actual_loader_core",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
       "targetDomain": "motion_dataset",
       "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
       "legacyExportRequired": true,
       "dependencies": [],
-      "sharedDependencyGroup": "none",
-      "physicalMoveStatus": "not_moved",
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
       "facadeExportRequired": true,
-      "dependencyAuditStatus": "pending"
+      "dependencyAuditStatus": "audited"
     },
     {
       "name": "LIVE2D_MOTION_DATASET_REAL_ROW_AUDIT_DATASET_SUMMARY_REQUIRED_FIELDS",
@@ -3219,6 +3227,122 @@
         "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_FILE_IDENTITY_LABELS",
         "LIVE2D_MOTION_DATASET_ROW_FILE_CHECKSUM_PREFLIGHT_REQUIRED_OWNER_CONFIRMATION_REFS"
       ]
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA",
+      "kind": "schema",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_COMPLETED_ARTIFACTS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKERS",
+      "kind": "constant",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
+    },
+    {
+      "name": "createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary",
+      "kind": "factory",
+      "definitionFile": "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js",
+      "currentDomain": "motion_dataset",
+      "targetDomain": "motion_dataset",
+      "facadeFile": "src/renderer/planning/motionDatasetPlanningSummaries.js",
+      "legacyExportRequired": true,
+      "dependencies": [
+        "LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA",
+        "LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES",
+        "LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS"
+      ],
+      "sharedDependencyGroup": "owner_confirmation_wait_gates",
+      "physicalMoveStatus": "physically_moved",
+      "facadeExportRequired": false,
+      "dependencyAuditStatus": "audited"
     }
   ],
   "safety": {
@@ -3245,6 +3369,7 @@
     "src/renderer/planning/motionDatasetOwnerHandoffGates.js": "motion_dataset",
     "src/renderer/planning/motionDatasetOwnerNoGoGates.js": "motion_dataset",
     "src/renderer/planning/motionDatasetActualDataPreauthGates.js": "motion_dataset",
-    "src/renderer/planning/motionDatasetChecksumPreflight.js": "motion_dataset"
+    "src/renderer/planning/motionDatasetChecksumPreflight.js": "motion_dataset",
+    "src/renderer/planning/motionDatasetOwnerConfirmationWaitGates.js": "motion_dataset"
   }
 }
