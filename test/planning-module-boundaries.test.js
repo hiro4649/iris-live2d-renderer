@@ -207,6 +207,19 @@ assert.equal(report.facadeManifestMismatchCount, 0);
 assert.deepEqual(report.facadeManifestMismatches, []);
 assert.equal(report.facadePublicSymbolCount, Object.values(report.facadePublicNamesByFile).reduce((count, names) => count + names.length, 0));
 assert.equal(report.internalPlanningExportCount >= 3, true);
+assert.equal(report.motionDatasetLegacyInventoryCoverageStatus, "pass");
+assert.equal(report.unregisteredMotionDatasetPrefixedLegacyPublicSymbolCount, 0);
+assert.deepEqual(report.unregisteredMotionDatasetPrefixedLegacyPublicSymbols, []);
+assert.equal(report.manifestedMotionDatasetLegacyPublicMissingCount, 0);
+assert.deepEqual(report.manifestedMotionDatasetLegacyPublicMissingSymbols, []);
+assert.equal(report.ambiguousLegacyPlanningCandidateCount, 0);
+assert.deepEqual(report.ambiguousLegacyPlanningCandidates, []);
+assert.equal(report.motionDatasetPrefixedLegacyPublicSymbolCount, report.motionDatasetPrefixedManifestedSymbolCount);
+assert.equal(report.motionDatasetPrefixedCrossDomainSymbolCount, 4);
+assert.equal(report.motionDatasetManifestSymbolCount, 200);
+assert.equal(report.motionDatasetPhysicalMovedSymbolCount, 148);
+assert.equal(report.motionDatasetAuditedSymbolCount, 148);
+assert.equal(report.motionDatasetPendingSymbolCount, 52);
 
 assert.equal(currentMachineCheck.get("checker"), "scripts/check-live2d-planning-module-boundaries.mjs");
 assert.equal(currentMachineCheck.get("checker schema"), report.schema);
@@ -231,9 +244,26 @@ for (const field of [
   "duplicateDefinitionCount",
   "cycleCount",
   "actualDependencyMismatchCount",
+  "legacyStaticPublicSymbolCount",
+  "motionDatasetPrefixedLegacyPublicSymbolCount",
+  "motionDatasetPrefixedManifestedSymbolCount",
+  "unregisteredMotionDatasetPrefixedLegacyPublicSymbolCount",
+  "motionDatasetPrefixedCrossDomainSymbolCount",
+  "motionDatasetDomainLegacyPublicSymbolCount",
+  "motionDatasetDomainNamingExceptionSymbolCount",
+  "manifestedMotionDatasetLegacyPublicMissingCount",
+  "motionDatasetManifestSymbolCount",
+  "motionDatasetPhysicalMovedSymbolCount",
+  "motionDatasetAuditedSymbolCount",
+  "motionDatasetPendingSymbolCount",
+  "ambiguousLegacyPlanningCandidateCount",
 ]) {
   assert.equal(Number(currentMachineCheck.get(field)), report[field], `docs machine summary drifted: ${field}`);
 }
+assert.equal(
+  currentMachineCheck.get("motionDatasetLegacyInventoryCoverageStatus"),
+  report.motionDatasetLegacyInventoryCoverageStatus,
+);
 
 for (const entry of report.entries) {
   assert.equal(entry.actualDefinitionFile, movedSymbols.get(entry.name) ?? "src/renderer/cubismLoaderProvisioning.js");
@@ -862,6 +892,56 @@ assert.equal(
     sourceTexts["src/renderer/planning/motionDatasetPlanningSafety.js"] = "export const INTERNAL_HELPER_SYMBOL = 1;\n";
   }).internalPlanningExports.some((entry) => entry.name === "INTERNAL_HELPER_SYMBOL"),
   true,
+);
+
+assert.match(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] += "export const LIVE2D_MOTION_DATASET_UNREGISTERED_SCHEMA = \"safe_schema\";\n";
+  }).failures.join("\n"),
+  /unregistered_motion_dataset_prefixed_legacy_public_symbol:LIVE2D_MOTION_DATASET_UNREGISTERED_SCHEMA/,
+);
+
+assert.match(
+  syntheticReport(({ sourceTexts }) => {
+    sourceTexts["src/renderer/cubismLoaderProvisioning.js"] += "export function createMotionDatasetUnregisteredSummary() { return {}; }\n";
+  }).failures.join("\n"),
+  /ambiguous_legacy_planning_candidate:createMotionDatasetUnregisteredSummary/,
+);
+
+const rendererReadyPrefixReport = syntheticReport(({ manifest, sourceTexts }) => {
+  const name = "LIVE2D_MOTION_DATASET_RENDERER_READY_SAMPLE_SCHEMA";
+  sourceTexts["src/renderer/cubismLoaderProvisioning.js"] += `export const ${name} = "safe_schema";\n`;
+  manifest.symbols.push({
+    name,
+    kind: "schema",
+    definitionFile: "src/renderer/cubismLoaderProvisioning.js",
+    currentDomain: "actual_loader_core",
+    targetDomain: "renderer_readiness",
+    facadeFile: null,
+    legacyExportRequired: true,
+    dependencies: [],
+    sharedDependencyGroup: "none",
+    physicalMoveStatus: "not_moved",
+    facadeExportRequired: false,
+    dependencyAuditStatus: "pending",
+  });
+});
+assert.equal(rendererReadyPrefixReport.status, "pass");
+assert.equal(rendererReadyPrefixReport.motionDatasetPrefixedCrossDomainSymbolCount, 1);
+assert.equal(rendererReadyPrefixReport.motionDatasetPendingSymbolCount, 1);
+assert.equal(rendererReadyPrefixReport.motionDatasetDomainLegacyPublicSymbols.includes("LIVE2D_MOTION_DATASET_RENDERER_READY_SAMPLE_SCHEMA"), false);
+
+assert.match(
+  syntheticReport(({ manifest }) => {
+    manifest.symbols.push({
+      ...manifest.symbols[0],
+      name: "LIVE2D_MOTION_DATASET_MISSING_PUBLIC_SCHEMA",
+      kind: "schema",
+      facadeExportRequired: false,
+      facadeFile: null,
+    });
+  }).failures.join("\n"),
+  /manifested_motion_dataset_legacy_public_symbol_missing:LIVE2D_MOTION_DATASET_MISSING_PUBLIC_SCHEMA/,
 );
 
 console.log("planning-module-boundaries: pass");

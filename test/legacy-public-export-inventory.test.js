@@ -2,118 +2,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
+import { parseEsmPublicExportInventory } from "../scripts/live2d-esm-export-inventory.mjs";
 import * as cubismLoaderProvisioning from "../src/renderer/cubismLoaderProvisioning.js";
 import fixture from "./fixtures/planning/cubism-loader-provisioning-public-export-inventory-v1.json" with { type: "json" };
 
 const source = readFileSync(fixture.sourceFile, "utf8");
-
-function maskSource(sourceText) {
-  let output = "";
-  let state = "code";
-  let quote = "";
-
-  for (let index = 0; index < sourceText.length; index += 1) {
-    const char = sourceText[index];
-    const next = sourceText[index + 1];
-
-    if (state === "code") {
-      if (char === "/" && next === "/") {
-        output += "  ";
-        index += 1;
-        state = "lineComment";
-        continue;
-      }
-      if (char === "/" && next === "*") {
-        output += "  ";
-        index += 1;
-        state = "blockComment";
-        continue;
-      }
-      if (char === "\"" || char === "'" || char === "`") {
-        quote = char;
-        output += " ";
-        state = "string";
-        continue;
-      }
-      output += char;
-      continue;
-    }
-
-    if (state === "lineComment") {
-      if (char === "\n") {
-        output += "\n";
-        state = "code";
-      } else {
-        output += " ";
-      }
-      continue;
-    }
-
-    if (state === "blockComment") {
-      if (char === "*" && next === "/") {
-        output += "  ";
-        index += 1;
-        state = "code";
-      } else {
-        output += char === "\n" ? "\n" : " ";
-      }
-      continue;
-    }
-
-    if (state === "string") {
-      if (char === "\\") {
-        output += "  ";
-        index += 1;
-        continue;
-      }
-      if (char === quote) {
-        output += " ";
-        state = "code";
-      } else {
-        output += char === "\n" ? "\n" : " ";
-      }
-    }
-  }
-
-  return output;
-}
-
-function parseExportInventory(sourceText) {
-  const code = maskSource(sourceText);
-  const names = new Set();
-  let wildcardExportCount = 0;
-  let defaultExportCount = 0;
-
-  for (const match of code.matchAll(/export\s+(?:const|let|var|function|class)\s+([A-Za-z_$][\w$]*)/gu)) {
-    names.add(match[1]);
-  }
-
-  for (const match of code.matchAll(/export\s*\{([\s\S]*?)\}\s*(?:from\s*[^;]+)?;/gu)) {
-    for (const rawPart of match[1].split(",")) {
-      const part = rawPart.trim();
-      if (!part) {
-        continue;
-      }
-      const aliasParts = part.split(/\s+as\s+/u);
-      names.add((aliasParts[1] || aliasParts[0]).trim());
-    }
-  }
-
-  for (const _match of code.matchAll(/export\s+\*/gu)) {
-    wildcardExportCount += 1;
-  }
-
-  for (const _match of code.matchAll(/export\s+default\b/gu)) {
-    defaultExportCount += 1;
-  }
-
-  return {
-    sortedExportNames: [...names].sort(),
-    exportCount: names.size,
-    wildcardExportCount,
-    defaultExportCount,
-  };
-}
 
 function diffNames(actual, expected) {
   const expectedSet = new Set(expected);
@@ -136,10 +29,13 @@ describe("cubismLoaderProvisioning legacy public export inventory", () => {
   });
 
   it("keeps source-level public export declarations aligned with the baseline", () => {
-    const actualInventory = parseExportInventory(source);
+    const actualInventory = parseEsmPublicExportInventory(source);
+    assert.equal(actualInventory.parseErrorCount, 0);
     assert.equal(actualInventory.defaultExportCount, 0);
     assert.equal(actualInventory.wildcardExportCount, 0);
-    assert.deepEqual(diffNames(actualInventory.sortedExportNames, fixture.sortedExportNames), {
+    assert.equal(actualInventory.namespaceExportCount, 0);
+    assert.deepEqual(actualInventory.duplicateExportNames, []);
+    assert.deepEqual(diffNames(actualInventory.namedExportNames, fixture.sortedExportNames), {
       missing: [],
       unexpected: [],
     });
