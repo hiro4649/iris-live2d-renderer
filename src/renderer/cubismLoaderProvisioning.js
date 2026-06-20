@@ -141,6 +141,20 @@ export {
   createMotionDatasetOwnerSubmissionReadinessLedgerSummary,
   createMotionDatasetFinalActualDataPreauthBlockerGateSummary,
 } from "./planning/motionDatasetActualDataPreauthGates.js";
+export {
+  LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA,
+  LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES,
+  LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS,
+  LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_COMPLETED_ARTIFACTS,
+  LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKERS,
+  createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary,
+  createMotionDatasetOwnerWaitStatePacketSummary,
+  createMotionDatasetPlanningCompletionReviewPacketSummary,
+} from "./planning/motionDatasetOwnerConfirmationWaitGates.js";
 
 
 export {
@@ -229,6 +243,20 @@ import {
   createMotionDatasetOwnerSubmissionReadinessLedgerSummary,
   createMotionDatasetFinalActualDataPreauthBlockerGateSummary,
 } from "./planning/motionDatasetActualDataPreauthGates.js";
+import {
+  LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA,
+  LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES,
+  LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS,
+  LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS,
+  LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA,
+  LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_COMPLETED_ARTIFACTS,
+  LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKERS,
+  createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary,
+  createMotionDatasetOwnerWaitStatePacketSummary,
+  createMotionDatasetPlanningCompletionReviewPacketSummary,
+} from "./planning/motionDatasetOwnerConfirmationWaitGates.js";
 
 
 import {
@@ -356,7 +384,6 @@ export const LIVE2D_GO_NOGO_BLOCKER_RESOLUTION_SCHEMA = "iris_live2d_go_nogo_blo
 
 
 
-export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_owner_confirmation_preflight_envelope_v1";
 export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_row_file_quarantine_staging_envelope_v1";
 export const LIVE2D_MOTION_DATASET_REDACTION_SCAN_EXECUTION_ENVELOPE_STUB_SCHEMA = "iris_live2d_motion_dataset_redaction_scan_execution_envelope_stub_v1";
 export const LIVE2D_MOTION_DATASET_PARSER_DRY_RUN_EXECUTION_REQUEST_ENVELOPE_SCHEMA = "iris_live2d_motion_dataset_parser_dry_run_execution_request_envelope_v1";
@@ -364,9 +391,7 @@ export const LIVE2D_MOTION_DATASET_AUDIT_EXECUTION_REQUEST_ENVELOPE_SCHEMA = "ir
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_TASK_RUNBOOK_NO_ACTION_PACKET_SCHEMA = "iris_live2d_motion_dataset_actual_data_task_runbook_no_action_packet_v1";
 export const LIVE2D_MOTION_DATASET_FINAL_OWNER_ACTUAL_DATA_PACKET_SCHEMA = "iris_live2d_motion_dataset_final_owner_actual_data_packet_v1";
 export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_STATE_LEDGER_SCHEMA = "iris_live2d_motion_dataset_actual_data_freeze_state_ledger_v1";
-export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA = "iris_live2d_motion_dataset_owner_wait_state_packet_v1";
 export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA = "iris_live2d_motion_dataset_readiness_non_sweetening_sweep_v1";
-export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA = "iris_live2d_motion_dataset_planning_completion_review_packet_v1";
 export const LIVE2D_MOTION_DATASET_OWNER_SUBMISSION_FORM_SPEC_SCHEMA = "iris_live2d_motion_dataset_owner_submission_form_spec_v1";
 export const LIVE2D_MOTION_DATASET_REAL_ROW_REDACTION_POLICY_MATRIX_SCHEMA = "iris_live2d_motion_dataset_real_row_redaction_policy_matrix_v1";
 export const LIVE2D_MOTION_DATASET_MOTION_ALLOWLIST_SYNC_REVIEW_SCHEMA = "iris_live2d_motion_dataset_motion_allowlist_sync_review_v1";
@@ -2398,29 +2423,6 @@ export const LIVE2D_MOTION_DATASET_ROW_BODY_PARSER_REJECTION_FIXTURE_PACK_REJECT
   "motion_executable_claim_rejected",
 ]);
 
-export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES = Object.freeze([
-  "actual_row_data_submission",
-  "source_hash_review",
-  "parser_dry_run_review",
-  "redaction_scan_review",
-  "audit_execution_review",
-  "rollback_plan_review",
-  "go_nogo_review",
-  "no_runtime_readiness_claim_review",
-  "no_motion_execution_review",
-]);
-
-export const LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS = Object.freeze([
-  "owner_scope_ref_future",
-  "source_hash_ref_future",
-  "parser_dry_run_ref_future",
-  "redaction_scan_ref_future",
-  "audit_execution_ref_future",
-  "rollback_plan_ref_future",
-  "go_nogo_ref_future",
-  "safe_next_action",
-]);
-
 export const LIVE2D_MOTION_DATASET_ROW_FILE_QUARANTINE_STAGING_REQUIRED_METADATA = Object.freeze([
   "quarantine_id",
   "submission_request_id",
@@ -2586,23 +2588,6 @@ export const LIVE2D_MOTION_DATASET_ACTUAL_DATA_FREEZE_UNFREEZE_CONDITIONS = Obje
 ]);
 
 
-export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS = Object.freeze([
-  "owner_confirmation_scope",
-  "real_row_file_future",
-  "source_hash_future",
-  "declared_row_count_future",
-  "go_nogo_review_future",
-]);
-
-export const LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS = Object.freeze([
-  "parser_dry_run_future",
-  "redaction_scan_future",
-  "audit_execution_future",
-  "fresh_resident_evidence_future",
-  "priority1_review_future",
-]);
-
-
 export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SURFACES = Object.freeze([
   "schema_preflight",
   "synthetic_fixture_pack",
@@ -2653,61 +2638,6 @@ export const LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_FALSE_READY_REJECTIO
   "owner_packet_exists_is_not_confirmation",
   "checked_row_count_zero_blocks_ready",
   "priority1_blocks_ready",
-]);
-
-
-export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_COMPLETED_ARTIFACTS = Object.freeze([
-  "row_schema_preflight",
-  "synthetic_row_fixture_pack",
-  "request_packet",
-  "dry_run_validator",
-  "quarantine_envelope",
-  "owner_handoff_packet",
-  "audit_manifest",
-  "redaction_scanner_fixture_pack",
-  "evidence_link_manifest",
-  "go_nogo_blocker_map",
-  "pre_ingestion_review_packet",
-  "final_dry_run_checklist",
-  "missing_data_gate",
-  "owner_submission_packet",
-  "receipt_stub",
-  "checksum_preflight_manifest",
-  "metadata_validator_stub",
-  "submission_rejection_fixture_pack",
-  "actual_data_task_entry_gate",
-  "parser_contract_stub",
-  "parser_rejection_fixture_pack",
-  "ingestion_audit_trail_stub",
-  "rollback_plan_stub",
-  "parser_dry_run_envelope",
-  "acceptance_criteria_checklist",
-  "owner_handoff_review_packet",
-  "no_go_summary_projection",
-  "submission_readiness_ledger",
-  "preauth_blocker_gate",
-  "owner_confirmation_preflight_envelope",
-  "quarantine_staging_envelope",
-  "redaction_scan_execution_envelope",
-  "parser_execution_request_envelope",
-  "audit_execution_request_envelope",
-  "runbook_no_action_packet",
-  "final_owner_packet",
-  "freeze_state_ledger",
-  "owner_wait_state_packet",
-  "readiness_non_sweetening_sweep",
-]);
-
-export const LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKERS = Object.freeze([
-  "owner_confirmation_missing",
-  "real_row_file_missing",
-  "fresh_resident_evidence_missing",
-  "parser_dry_run_missing",
-  "redaction_scan_missing",
-  "audit_execution_missing",
-  "go_nogo_review_missing",
-  "priority1_blocked",
-  "checked_row_count_zero",
 ]);
 
 
@@ -11341,40 +11271,6 @@ export function createRendererReadyRealEvidenceRequestRejectionFixturePackSummar
   return summary;
 }
 
-export function createMotionDatasetPlanningCompletionReviewPacketSummary(input = {}) {
-  return createMotionDatasetPlanningOnlyGateSummary({
-    schema: LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_PACKET_SCHEMA,
-    statusKey: "motion_dataset_planning_completion_review_packet_status",
-    status: "planning_only_blocked",
-    boundaries: {
-      planning_completion_review_packet_only_boundary: true,
-      no_actual_data_ready_claim_boundary: true,
-      no_owner_confirmation_created_boundary: true,
-      no_real_row_ingestion_boundary: true,
-      planning_completion_review_packet_only: true,
-    },
-    flags: {
-      planning_completion_claims_actual_ready: false,
-      owner_confirmation_confirmed: false,
-      actual_data_task_started: false,
-      actual_ingestion_allowed: false,
-      real_row_data_present: false,
-    },
-    arrays: {
-      required_completed_planning_artifacts: [...LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_COMPLETED_ARTIFACTS],
-      required_unresolved_blockers: [...LIVE2D_MOTION_DATASET_PLANNING_COMPLETION_REVIEW_UNRESOLVED_BLOCKERS],
-    },
-    blockedReasons: [
-      "planning_completion_review_packet_planning_only",
-      "planning_completion_review_packet_no_actual_data_ready_claim",
-      "planning_completion_review_packet_no_owner_confirmation_created",
-      "planning_completion_review_packet_priority1_blocked",
-    ],
-    safeNextAction: "continue_owner_wait_without_actual_data_readiness_claim",
-    context: "motion dataset planning completion review packet summary",
-  }, input);
-}
-
 export function createMotionDatasetReadinessNonSweeteningSweepSummary(input = {}) {
   return createMotionDatasetPlanningOnlyGateSummary({
     schema: LIVE2D_MOTION_DATASET_READINESS_NON_SWEETENING_SWEEP_SCHEMA,
@@ -11405,39 +11301,6 @@ export function createMotionDatasetReadinessNonSweeteningSweepSummary(input = {}
     ],
     safeNextAction: "continue_planning_without_readiness_promotion",
     context: "motion dataset readiness non-sweetening sweep summary",
-  }, input);
-}
-
-export function createMotionDatasetOwnerWaitStatePacketSummary(input = {}) {
-  return createMotionDatasetPlanningOnlyGateSummary({
-    schema: LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_PACKET_SCHEMA,
-    statusKey: "motion_dataset_owner_wait_state_packet_status",
-    status: "planning_only_blocked",
-    boundaries: {
-      owner_wait_state_packet_only_boundary: true,
-      no_owner_confirmation_created_boundary: true,
-      no_actual_data_task_started_boundary: true,
-      owner_wait_state_packet_only: true,
-    },
-    flags: {
-      owner_confirmation_required: true,
-      owner_confirmation_confirmed: false,
-      actual_data_task_started: false,
-      actual_ingestion_allowed: false,
-      real_row_data_present: false,
-    },
-    arrays: {
-      required_waiting_on_owner_items: [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_OWNER_ITEMS],
-      required_waiting_on_system_items: [...LIVE2D_MOTION_DATASET_OWNER_WAIT_STATE_SYSTEM_ITEMS],
-    },
-    blockedReasons: [
-      "owner_wait_state_packet_planning_only",
-      "owner_wait_state_packet_no_owner_confirmation_created",
-      "owner_wait_state_packet_no_actual_data_task_started",
-      "owner_wait_state_packet_priority1_blocked",
-    ],
-    safeNextAction: "wait_for_future_owner_confirmation_and_system_prerequisites",
-    context: "motion dataset owner wait-state packet summary",
   }, input);
 }
 
@@ -11654,35 +11517,6 @@ export function createMotionDatasetRowFileQuarantineStagingEnvelopeSummary(input
     blockedReasons: ["quarantine_staging_envelope_planning_only", "quarantine_staging_envelope_no_quarantine_completed", "quarantine_staging_envelope_no_actual_file_read", "quarantine_staging_envelope_no_real_row_ingestion", "quarantine_staging_envelope_no_row_body_read", "quarantine_staging_envelope_priority1_blocked"],
     safeNextAction: "future_owner_confirmed_quarantine_staging_required_before_file_review",
     context: "motion dataset row file quarantine staging envelope summary",
-  }, input);
-}
-
-export function createMotionDatasetOwnerConfirmationPreflightEnvelopeSummary(input = {}) {
-  return createMotionDatasetPlanningOnlyGateSummary({
-    schema: LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_ENVELOPE_SCHEMA,
-    statusKey: "motion_dataset_owner_confirmation_preflight_envelope_status",
-    status: "planning_only_blocked",
-    boundaries: {
-      owner_confirmation_preflight_envelope_only_boundary: true,
-      no_owner_confirmation_created_boundary: true,
-      no_owner_confirmation_confirmed_boundary: true,
-      no_actual_data_task_started_boundary: true,
-      owner_confirmation_preflight_envelope_only: true,
-    },
-    arrays: {
-      required_future_owner_confirmation_scopes: [...LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_SCOPES],
-      required_future_owner_confirmation_evidence_refs: [...LIVE2D_MOTION_DATASET_OWNER_CONFIRMATION_PREFLIGHT_REQUIRED_EVIDENCE_REFS],
-    },
-    blockedReasons: [
-      "owner_confirmation_preflight_envelope_planning_only",
-      "owner_confirmation_preflight_envelope_no_owner_confirmation_created",
-      "owner_confirmation_preflight_envelope_no_owner_confirmation_confirmed",
-      "owner_confirmation_preflight_envelope_no_actual_data_task_started",
-      "owner_confirmation_preflight_envelope_priority1_blocked",
-      "owner_confirmation_preflight_envelope_no_go_preserved",
-    ],
-    safeNextAction: "future_owner_confirmation_required_before_actual_data_task",
-    context: "motion dataset owner confirmation preflight envelope summary",
   }, input);
 }
 
