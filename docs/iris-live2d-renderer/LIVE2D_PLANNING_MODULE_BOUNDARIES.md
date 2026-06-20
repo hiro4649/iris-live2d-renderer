@@ -22,13 +22,15 @@ This document records the safe planning-module extraction boundary and the depen
 | checker schema | live2d_planning_module_boundary_report_v3 |
 | test | test/planning-module-boundaries.test.js |
 | symbol inventory authority | docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json |
-| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-nogo-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-checksum-preflight-baseline-v1.json |
-| physicalMovedExportCount | 134 |
-| auditedSymbolCount | 134 |
-| pendingSymbolCount | 83 |
+| pre-move behavior baseline | test/fixtures/planning/motion-dataset-core-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-audit-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-parser-audit-stubs-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-handoff-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-owner-nogo-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-actual-data-preauth-gates-baseline-v1.json; test/fixtures/planning/motion-dataset-checksum-preflight-baseline-v1.json; test/fixtures/planning/motion-dataset-final-owner-wait-gates-baseline-v1.json |
+| symbolCount | 229 |
+| physicalMovedExportCount | 150 |
+| auditedSymbolCount | 150 |
+| pendingSymbolCount | 79 |
 | unregisteredExtractedLegacyPublicSymbolCount | 0 |
 | manifestedButNotLegacyPublicCount | 0 |
 | facadeManifestMismatchCount | 0 |
+| facadeMetadataMismatchCount | 0 |
 | actualDependencyMismatchCount | 0 |
 | duplicateDefinitionCount | 0 |
 | cycleCount | 0 |
@@ -199,3 +201,11 @@ X1B2C3B physically extracts the final owner wait-for-data planning closure into 
 The extraction keeps legacy compatibility through `src/renderer/cubismLoaderProvisioning.js` re-exports and intentionally does not expand `src/renderer/planning/motionDatasetPlanningSummaries.js`. These symbols remain legacy-only public compatibility names until a later facade decision.
 
 This module is still planning-only. It does not create or confirm owner confirmation, start or preauthorize an actual data task, accept actual data, ingest rows, read row bodies, read actual files, calculate product hashes, run parser/redaction/audit work, claim runtime readiness, claim production readiness, enable trusted loader state, resolve priority1, or make the motion dataset executable. Fixed safety truth remains priority1 BLOCKED, checked_row_count 0, actual_ingestion_allowed false, go_nogo_status no_go, and motion dataset non-executable.
+
+## X1B2C3BR Final Owner Wait-For-Data Parity Closeout Status
+
+X1B2C3BR closes the parity evidence gap left after the X1B2C3B physical extraction. `test/fixtures/planning/motion-dataset-final-owner-wait-gates-baseline-v1.json` is generated from the PR426 base source SHA `d31d307d6b0f20c51b1b8cc43ca611afdb803e20`, before the final owner wait-for-data closure was moved out of the monolith.
+
+The baseline is synthetic-only and records constant values, freeze status, key order, JSON length, test-only JSON SHA-256 fingerprints, factory object output, field presence, selected safety projection, and input non-mutation for safe metadata cases and unsafe state-promotion attempts. These test-only fingerprints are not product source-hash verification and do not read actual files.
+
+The closeout does not change product implementation source, manifest symbol ownership, public API inventory, facade API inventory, package files, workflows, SDK/vendor files, runtime readiness, production readiness, actual data handling, owner confirmation, trusted loader state, priority1 status, checked row count, or motion dataset executability.
