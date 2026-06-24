@@ -15,7 +15,7 @@ explicitly scopes that evidence. Done means the relevant command was run or the
 reason it could not run is recorded without raw logs or secret-like output.
 
 <!-- CODEX_QUALITY_HARNESS_BEGIN -->
-CODEX_QUALITY_HARNESS_FILE v1.2.8
+CODEX_QUALITY_HARNESS_FILE v1.2.9
 
 ## Active Harness
 
@@ -26,7 +26,7 @@ Truth, trust, security, maintainability, product value, and the smallest correct
 ## Routing
 
 Route routine harness work through the target quality gate and safe summaries. Route product, runtime, security, deployment, wallet/RPC, package, lockfile, or authority changes to their explicit repo profile and evidence lane before acting.
-Active target harness: v1.2.8 / v128.
+Active target harness: v1.2.9 / v128.
 Repository profile: IRIS-live2d-renderer.
 Read first: AGENTS.md, docs/process/CODEX_HARNESS_MANIFEST.json, docs/process/CODEX_V128_SPEC.md, and docs/process/CODEX_ACTIVE_POLICY_INDEX.json when present.
 README, legacy specs, PR history, and full Source HARNESS files are conditional reads only.
@@ -35,7 +35,7 @@ README, legacy specs, PR history, and full Source HARNESS files are conditional 
 
 v1.1.8 Final Decision remains final authority. v1.2.7 receipt-carried continuation, same-head evidence, PR body display-only, validation reuse, Stop Circuit, and rollback compatibility remain preserved.
 Rollback compatibility marker: CODEX_QUALITY_HARNESS_FILE v1.2.7.
-v1.2.8 adds deterministic decision projection and token-minimal loop closure inside the existing target surface. It does not create owner authority.
+v1.2.9 adds deterministic decision projection and token-minimal loop closure inside the existing target surface. It does not create owner authority.
 
 ## Target Footprint
 
@@ -68,3 +68,6 @@ Do not add new P0 artifacts or top-level statuses.
 Do not widen runtime code, or readiness claims.
 
 <!-- CODEX_QUALITY_HARNESS_END -->
+
+
+HARNESS v1.2.9 target rollout: v1.2.8 remains available as rollback compatibility and v1.2.7 remains compatibility-only. No product, runtime, package, lockfile, workflow, deploy, wallet, RPC, or secret scope is authorized by this rollout.
