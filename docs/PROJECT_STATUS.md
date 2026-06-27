@@ -13,7 +13,8 @@ Last updated: 2026-06-27
 
 ## Open PRs
 
-- #434 `[codex] Repair HARNESS v1.3.0 target metadata` from `codex/v130-target-install`
+- #434 `[codex] Repair HARNESS v1.3.0 target metadata` from `codex/v130-target-install`.
+  Read-only comparison confirms #434 changes only `AGENTS.md` and is superseded by the local AUTH1+AUTH2 branch.
 
 ## Harness
 
@@ -101,6 +102,10 @@ Renderer readiness summaries remain blocker and evidence-request planning surfac
   - v129/v128/v127 self-tests now accept the explicit v130 bridge compatibility chain instead of requiring old harness versions to be active.
 - No product extraction work started.
 - No push, PR, PR update, remote CI, or merge attempted.
+- Ran read-only remote integration preflight:
+  - GitHub authentication, repository identity, and write permission verified without printing credential values.
+  - `origin/main` remains `cefc2625b3875681b1f0fbc34124e5c7c91ed5b2`.
+  - Open PR #434 remains open and partial.
 
 ## Remaining Work
 
@@ -116,6 +121,7 @@ Renderer readiness summaries remain blocker and evidence-request planning surfac
 ## Risks
 
 - AUTH2 overlaps open PR #434. A future remote step should supersede or close #434 rather than create duplicate authority repairs.
+- Remote integration must not proceed until quota reset or explicit owner approval for push/PR/remote CI.
 - Current PROJECT docs are newly introduced and must be kept synchronized after every development session.
 
 ## Test Status

@@ -20,6 +20,7 @@
   - updated v129/v128/v127 self-tests to validate explicit v130 bridge compatibility instead of requiring legacy versions to remain active.
 - Confirmed v130/v129/v128/v127 self-tests pass locally after AUTH2 repair.
 - Closed out local validation without remote CI. Product tests, full tracked JS/MJS syntax check, diff check, secret scan, planning boundary checks, facade boundary checks, v130/v129/v128/v127 self-tests, and local target quality gate passed.
+- Ran read-only remote integration preflight. Authentication, repo identity, origin/main, and PR #434 were inspected. No push, PR creation/update, remote CI, review comment, or merge was performed because remote write/CI use remains gated by quota reset or explicit owner approval.
 
 ## Milestone History
 
@@ -33,6 +34,7 @@
 ## Remaining Unresolved Areas
 
 - v1.3.0 authority coherence repair is local-only until owner-approved push/PR/remote CI.
+- PR #434 is superseded by the local AUTH1+AUTH2 candidate but remains open until remote writes are allowed.
 - 40 motion-dataset planning symbols remain pending.
 - Actual Cubism SDK/model/dataset owner decision is not started.
 - Runtime readiness and production readiness remain false.

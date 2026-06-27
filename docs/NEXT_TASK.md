@@ -14,6 +14,7 @@ Prepare planning-only execution request stubs for the remaining motion-dataset p
 
 - AUTH2 local authority coherence repair must remain passing.
 - Push/PR/remote CI remain blocked until owner approval after the GitHub Actions quota reset.
+- PR #434 is superseded by the local branch and must be reconciled before product work.
 - Work remains planning-only and local-only unless owner explicitly approves remote work.
 
 ## Required Files
@@ -90,6 +91,14 @@ node scripts/codex-v127-self-test.mjs
 - Any change would touch forbidden files.
 - Push/PR/remote CI would be needed before owner approval.
 - Open PR #434 makes the same repair and must be reconciled first. Needs verification.
+
+## Remote Integration Plan After Approval
+
+- Sync remote main without resetting the local branch.
+- Push `codex/local-project-docs-authority-bootstrap1` as `codex/project-docs-authority-and-v130-coherence1`.
+- Open one combined PR for AUTH1+AUTH2.
+- Close or supersede #434 only after the replacement PR exists or immediately before replacement PR creation.
+- Run one same-head remote quality gate and perform file-level audit before merge.
 
 ## Expected Risks
 
