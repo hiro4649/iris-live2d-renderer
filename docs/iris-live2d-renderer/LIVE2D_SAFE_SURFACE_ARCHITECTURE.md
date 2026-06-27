@@ -88,6 +88,16 @@ This pack does not claim runtime readiness, does not claim production readiness,
 does not create owner confirmation, does not enable the trusted loader, does not
 resolve priority1, does not change checked row count, and does not make the
 motion dataset executable.
+
+## Routine Documentation Change Boundary
+
+Routine documentation updates may clarify existing safe-surface language when
+they do not alter public keys, schema labels, readiness semantics, owner
+confirmation semantics, runtime behavior, package metadata, deployment paths, or
+secret/RPC handling. Such updates remain explanatory only and must keep the
+renderer evidence, trusted loader, motion dataset, and production readiness
+boundaries unchanged.
+
 ## Real Evidence Owner Handoff Packet Boundary
 
 The real evidence owner handoff packet is a pure safe-summary builder for future owner review. It accepts label-only scope, required evidence, missing evidence, stale evidence, row manifest status, trusted loader status, priority1 status, checked row count, audit reference status, owner action labels, generated-at status, and expiry status. It rejects unsafe fields, unknown fields, prototype pollution keys, raw evidence, raw command material, private paths, endpoint/token/secret labels, raw owner notes, audit bodies, actual probe requests, actual ingestion requests, trusted loader enablement requests, readiness claim requests, owner confirmation requests, package publish requests, and external service requests.
