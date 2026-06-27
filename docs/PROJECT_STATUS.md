@@ -7,8 +7,9 @@ Last updated: 2026-06-27
 - Repository: `hiro4649/iris-live2d-renderer`
 - Current local branch: `codex/local-project-docs-authority-bootstrap1`
 - Latest synced main SHA: `cefc2625b3875681b1f0fbc34124e5c7c91ed5b2`
-- Current local commit SHA at branch start: `cefc2625b3875681b1f0fbc34124e5c7c91ed5b2`
-- Worktree before AUTH1 edits: clean
+- Previous local commit SHA before AUTH2 commit: `54ba7c5ae6a0940d7c1ee69b0bb2b187b5f46b5b`
+- Current local AUTH2 commit SHA: Use `git rev-parse HEAD` for the authoritative self-referential commit SHA.
+- Worktree before AUTH2 edits: clean
 
 ## Open PRs
 
@@ -20,7 +21,7 @@ Last updated: 2026-06-27
 - Manifest active harness: `1.3.0`
 - Manifest target harness: `1.3.0`
 - Active self-test: `v130`
-- Known authority issue: `docs/process/CODEX_V130_SPEC.md` says v1.3.0 is source-core and target repositories remain on v1.2.9, while AGENTS/manifest say v1.3.0 target rollout is active/completed. Needs AUTH2 repair.
+- Authority model: local AUTH2 candidate aligns v1.3.0 as the active metadata bridge target profile. Product/runtime authority remains unchanged from v1.2.9, v1.2.9 remains immediate rollback, v1.2.8 remains blocking compatibility, and v1.2.7 remains readable compatibility.
 
 ## Latest Merged PRs
 
@@ -91,24 +92,30 @@ Renderer readiness summaries remain blocker and evidence-request planning surfac
   - `docs/NEXT_TASK.md`
   - `docs/CHANGELOG.md`
 - Added authority-doc links to planning boundary documentation.
+- Repaired v1.3.0 authority coherence locally:
+  - `AGENTS.md` repository profile now identifies IRIS Live2D Renderer, not FUNKY.
+  - Manifest upgrade path now points to the v129-to-v130 metadata bridge target profile.
+  - Policy profile required reads now point to `CODEX_V130_SPEC.md` and defer v129/v128/v127 compatibility specs.
+  - `CODEX_V130_SPEC.md` now describes this repository's metadata bridge target profile instead of a contradictory source-only/target-not-started state.
+  - v130 self-test now checks repository profile, metadata bridge wording, profile-level policy reads, and forbidden product/runtime/package/workflow diffs.
+  - v129/v128/v127 self-tests now accept the explicit v130 bridge compatibility chain instead of requiring old harness versions to be active.
 - No product extraction work started.
 - No push, PR, PR update, remote CI, or merge attempted.
 
 ## Remaining Work
 
-- Run local AUTH1 validation after docs are written.
-- Commit locally after validation if all checks pass.
+- Commit AUTH2 locally after validation if all checks pass.
 - Wait for owner approval after GitHub Actions quota reset before push/PR/remote CI.
 
 ## Active Blockers
 
 - GitHub Actions quota-control rule blocks push/PR/remote CI for the next 4 days unless owner explicitly approves.
-- v1.3.0 harness authority contradiction requires AUTH2.
+- v1.3.0 AUTH2 is local-only until owner approves push/PR/remote CI after the Actions quota-control window.
 - Runtime/model/dataset owner decision remains blocked.
 
 ## Risks
 
-- AUTH2 may conflict with open PR #434 if both edit AGENTS/manifest/policy files. Needs verification before any future push.
+- AUTH2 overlaps open PR #434. A future remote step should supersede or close #434 rather than create duplicate authority repairs.
 - Current PROJECT docs are newly introduced and must be kept synchronized after every development session.
 
 ## Test Status
@@ -120,11 +127,13 @@ Renderer readiness summaries remain blocker and evidence-request planning surfac
 - `node scripts/check-live2d-planning-module-boundaries.mjs`: PASS
 - `node scripts/check-live2d-planning-facade-boundaries.mjs`: PASS
 - `node scripts/codex-v130-self-test.mjs`: PASS
-- `node scripts/codex-v129-self-test.mjs`: FAIL
-- `node scripts/codex-v128-self-test.mjs`: FAIL
-- `node scripts/codex-v127-self-test.mjs`: FAIL
+- `node scripts/codex-v129-self-test.mjs`: PASS after AUTH2 local repair
+- `node scripts/codex-v128-self-test.mjs`: PASS after AUTH2 local repair
+- `node scripts/codex-v127-self-test.mjs`: PASS after AUTH2 local repair
 
-The v129/v128/v127 compatibility self-test failures are treated as AUTH2 authority-coherence blockers. Needs verification during AUTH2.
+- Changed harness scripts syntax check: PASS
+- Full tracked JS/MJS syntax check: Not completed. The Windows process runner left long-running check processes without progress; changed scripts and main quality-gate script were checked directly.
+- Local target quality gate: Not completed. Multiple stale local quality-gate processes were found and stopped; no remote CI was triggered.
 
 ## CI Status
 
@@ -133,4 +142,4 @@ The v129/v128/v127 compatibility self-test failures are treated as AUTH2 authori
 
 ## Safe Next Task
 
-`LIVE2D-HARNESS-V130-AUTHORITY-COHERENCE-REPAIR1`
+`LIVE2D-MOTION-DATASET-PLANNING-PHYSICAL-EXTRACTION-EXECUTION-REQUEST-STUBS1`

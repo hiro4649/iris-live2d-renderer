@@ -4,35 +4,29 @@ Last updated: 2026-06-27
 
 ## Highest-Priority Next Task
 
-`LIVE2D-HARNESS-V130-AUTHORITY-COHERENCE-REPAIR1`
+`LIVE2D-MOTION-DATASET-PLANNING-PHYSICAL-EXTRACTION-EXECUTION-REQUEST-STUBS1`
 
 ## Goal
 
-Resolve the v1.3.0 authority contradiction before any product planning extraction resumes.
+Prepare planning-only execution request stubs for the remaining motion-dataset physical extraction queue without starting actual data work.
 
-## Root Cause
+## Preconditions
 
-Latest main has mixed authority claims:
-
-- `AGENTS.md` says active target harness is v1.3.0 and lists repository profile as FUNKY.
-- `docs/process/CODEX_HARNESS_MANIFEST.json` says target harness v1.3.0 and target rollout completed.
-- `docs/process/CODEX_V130_SPEC.md` says v1.3.0 is source-core, target repositories remain on v1.2.9, and v1.3.0 target rollout is not started.
-- `docs/process/CODEX_ACTIVE_POLICY_INDEX.json` still has some profile-level required reads pointing at older specs.
+- AUTH2 local authority coherence repair must remain passing.
+- Push/PR/remote CI remain blocked until owner approval after the GitHub Actions quota reset.
+- Work remains planning-only and local-only unless owner explicitly approves remote work.
 
 ## Required Files
 
-- `AGENTS.md`
-- `docs/process/CODEX_HARNESS_MANIFEST.json`
-- `docs/process/CODEX_ACTIVE_POLICY_INDEX.json`
-- `docs/process/CODEX_V130_SPEC.md`
-- `scripts/codex-v130-self-test.mjs`
+- `docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.md`
+- `docs/PROJECT_SPEC.md`
 - `docs/PROJECT_STATUS.md`
 - `docs/NEXT_TASK.md`
 - `docs/CHANGELOG.md`
 
 ## Allowed Files
 
-Same as Required Files.
+Planning docs and project docs only, unless fresh inspection shows an existing planning metadata file is the correct local-only place for execution request stubs.
 
 ## Forbidden Files
 
@@ -48,7 +42,7 @@ Same as Required Files.
 
 ## Implementation Strategy
 
-Use the preferred safe interpretation unless contradicted by fresh owner instruction: v1.3.0 is a source-core metadata bridge, not full target product harness. Align AGENTS, manifest, policy index, v130 spec, self-test, rollback tuple, and documentation so they agree.
+Add planning-only execution request stubs that define what would be requested before physical extraction continues. The stubs should list candidate symbol groups, owner preconditions, forbidden evidence, local validation, and stop conditions. They must not move symbols, ingest data, execute parsers, read SDK/model/dataset files, or claim readiness.
 
 ## Non-Goals
 
@@ -62,14 +56,9 @@ Use the preferred safe interpretation unless contradicted by fresh owner instruc
 
 ## Acceptance Criteria
 
-- Repository profile is IRIS Live2D Renderer, not FUNKY.
-- AGENTS, manifest, policy index, active spec, and active self-test agree.
-- Upgrade path is coherent.
-- Rollback tuple is clear.
-- v130 self-test detects profile-level read drift.
-- v129 rollback evidence remains valid.
-- v128 and v127 compatibility remain valid.
 - No product/runtime/package/workflow changes.
+- Planning stubs are safe-summary-only.
+- No actual data, actual file path, actual file content, parser, redaction, audit, SDK, renderer, or trusted loader execution.
 - Runtime readiness remains false.
 - Production readiness remains false.
 - Trusted loader remains disabled.
@@ -96,7 +85,7 @@ node scripts/codex-v127-self-test.mjs
 
 ## Stop Conditions
 
-- Any required authority file disagrees after repair.
+- AUTH2 authority coherence regresses.
 - Any validation fails without a small understood local fix.
 - Any change would touch forbidden files.
 - Push/PR/remote CI would be needed before owner approval.
@@ -104,13 +93,13 @@ node scripts/codex-v127-self-test.mjs
 
 ## Expected Risks
 
-- Open PR #434 may overlap with this task.
-- v1.3.0 semantics are internally contradictory; do not invent new semantics beyond aligning current authority files.
+- Stubs could accidentally sound like execution approval; wording must keep them as request/preauth planning only.
+- Local-only docs can diverge from remote if other PRs merge during the Actions pause; rebase/supersede plan will be needed later.
 
 ## Estimated Complexity
 
-Medium.
+Small to medium.
 
 ## Next Queue After Merge
 
-`LIVE2D-MOTION-DATASET-PLANNING-PHYSICAL-EXTRACTION-EXECUTION-REQUEST-STUBS1`
+After remote authority docs are merged, continue the remaining 40 motion-dataset planning symbols in the smallest safe physical extraction batch.

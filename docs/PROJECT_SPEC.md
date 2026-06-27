@@ -69,7 +69,7 @@ Model/Cubism asset routes are guarded and remain non-readiness evidence unless a
 - Keep physical extraction mechanical: move definitions, preserve legacy re-exports, and freeze pre-move behavior with synthetic-only fixtures.
 - Keep planning facades explicit so unrelated monolith exports cannot leak into public planning module APIs.
 - Treat test-only JSON SHA-256 fingerprints as parity evidence only, never as product source-hash verification.
-- Treat v1.3.0 authority coherence as unresolved until AUTH2 repairs the AGENTS/manifest/spec/policy contradiction.
+- Treat v1.3.0 as a metadata bridge target profile for this repository only when AGENTS, manifest, policy index, v130 spec, and v130 self-test agree that product/runtime authority remains unchanged.
 
 ## Constraints
 
@@ -133,7 +133,7 @@ Run the narrowest local checks first, then full local tests before final review.
 
 ## Known Limitations
 
-- v1.3.0 harness authority is internally inconsistent on latest main. Needs AUTH2 verification and repair.
+- v1.3.0 harness authority coherence is repaired locally as a candidate state. Remote merge remains pending because GitHub Actions are paused by owner quota-control.
 - Actual rendering remains blocked by null adapter and missing approved runtime/model evidence.
 - Motion dataset work remains planning-only.
 - Remote CI was not run for this local documentation bootstrap due GitHub Actions quota-control rule.
