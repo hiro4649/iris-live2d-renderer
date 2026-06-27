@@ -27,7 +27,7 @@ Truth, trust, security, maintainability, product value, and the smallest correct
 
 Route routine harness work through the target quality gate and safe summaries. Route product, runtime, security, deployment, wallet/RPC, package, lockfile, or authority changes to their explicit repo profile and evidence lane before acting.
 Active target harness: v1.3.0 Core / v130 metadata gate target.
-Repository profile: FUNKY.
+Repository profile: IRIS Live2D Renderer.
 Read first: AGENTS.md, docs/process/CODEX_HARNESS_MANIFEST.json, docs/process/CODEX_V130_SPEC.md, and docs/process/CODEX_ACTIVE_POLICY_INDEX.json when present.
 README, legacy specs, PR history, and full Source HARNESS files are conditional reads only.
 
@@ -35,7 +35,7 @@ README, legacy specs, PR history, and full Source HARNESS files are conditional 
 
 v1.1.8 Final Decision remains final authority. v1.2.7 receipt-carried continuation, same-head evidence, PR body display-only, validation reuse, Stop Circuit, and rollback compatibility remain preserved.
 Rollback compatibility marker: CODEX_QUALITY_HARNESS_FILE v1.2.7.
-v1.3.0 Core installs only the product-heavy target profile and v111-v129 compatibility bridge. v1.2.9 remains immediate rollback, v1.2.8 remains blocking compatibility, and v1.2.7 remains readable compatibility. It does not create owner authority.
+v1.3.0 Core installs only the metadata gate target profile and v111-v129 compatibility bridge. v1.2.9 remains immediate rollback, v1.2.8 remains blocking compatibility, and v1.2.7 remains readable compatibility. It does not create owner authority.
 
 ## Target Footprint
 
@@ -75,4 +75,4 @@ Do not widen runtime code, or readiness claims.
 <!-- CODEX_QUALITY_HARNESS_END -->
 
 
-HARNESS v1.2.9 target rollout: v1.2.8 remains available as rollback compatibility and v1.2.7 remains compatibility-only. No product, runtime, package, lockfile, workflow, deploy, wallet, RPC, or secret scope is authorized by this rollout.
+HARNESS v1.3.0 Core metadata target bridge: v1.2.9 remains immediate rollback, v1.2.8 remains available as blocking compatibility, and v1.2.7 remains readable compatibility. No product, runtime, package, lockfile, workflow, deploy, wallet, RPC, or secret scope is authorized by this bridge.
