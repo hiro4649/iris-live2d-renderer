@@ -19,7 +19,7 @@
   - strengthened v130 self-test coverage for repository profile, metadata bridge wording, policy profile reads, and forbidden product/runtime/package/workflow diffs;
   - updated v129/v128/v127 self-tests to validate explicit v130 bridge compatibility instead of requiring legacy versions to remain active.
 - Confirmed v130/v129/v128/v127 self-tests pass locally after AUTH2 repair.
-- Ran local validation without remote CI. Product tests, diff check, secret scan, planning boundary checks, facade boundary checks, changed harness script syntax checks, and v130/v129/v128/v127 self-tests passed. Full tracked JS/MJS syntax check and local target quality gate did not complete in the local Windows process runner and are recorded as residual verification gaps.
+- Closed out local validation without remote CI. Product tests, full tracked JS/MJS syntax check, diff check, secret scan, planning boundary checks, facade boundary checks, v130/v129/v128/v127 self-tests, and local target quality gate passed.
 
 ## Milestone History
 

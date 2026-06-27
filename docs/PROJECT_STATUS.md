@@ -104,7 +104,7 @@ Renderer readiness summaries remain blocker and evidence-request planning surfac
 
 ## Remaining Work
 
-- Commit AUTH2 locally after validation if all checks pass.
+- AUTH2 local validation closeout completed. Commit only documentation synchronization if it creates a diff.
 - Wait for owner approval after GitHub Actions quota reset before push/PR/remote CI.
 
 ## Active Blockers
@@ -131,9 +131,8 @@ Renderer readiness summaries remain blocker and evidence-request planning surfac
 - `node scripts/codex-v128-self-test.mjs`: PASS after AUTH2 local repair
 - `node scripts/codex-v127-self-test.mjs`: PASS after AUTH2 local repair
 
-- Changed harness scripts syntax check: PASS
-- Full tracked JS/MJS syntax check: Not completed. The Windows process runner left long-running check processes without progress; changed scripts and main quality-gate script were checked directly.
-- Local target quality gate: Not completed. Multiple stale local quality-gate processes were found and stopped; no remote CI was triggered.
+- Full tracked JS/MJS syntax check: PASS, 555 files.
+- Local target quality gate: PASS with branch/head unchanged and safe JSON parseable. Remote evidence was not used.
 
 ## CI Status
 
