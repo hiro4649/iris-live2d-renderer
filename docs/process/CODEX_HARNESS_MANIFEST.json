@@ -1,20 +1,16 @@
 {
-  "marker": "CODEX_QUALITY_HARNESS_FILE v1.2.9",
-  "schemaVersion": "1.2.9",
-  "sourceHarnessVersion": "1.2.9",
-  "harnessVersion": "1.2.9",
-  "activeHarnessVersion": "1.2.9",
-  "targetHarnessVersion": "1.2.9",
+  "marker": "CODEX_QUALITY_HARNESS_FILE v1.3.0",
+  "schemaVersion": "1.3.0",
+  "sourceHarnessVersion": "1.3.0",
+  "harnessVersion": "1.3.0",
+  "activeHarnessVersion": "1.3.0",
+  "targetHarnessVersion": "1.3.0",
   "evidenceSchemaVersion": 6,
-  "profileTemplateVersion": "1.2.1",
-  "compatibleProfileTemplateVersions": [
-    "1.2.0",
-    "1.1.6"
-  ],
+  "profileTemplateVersion": "1.1.6",
   "futureHarnessArtifact": false,
   "upgradePath": "direct_v127_to_v128_complex_target_active_path",
-  "activeSelfTestSuite": "v129",
-  "activeSelfTestStatusKey": "v129SelfTestStatus",
+  "activeSelfTestSuite": "v130",
+  "activeSelfTestStatusKey": "v130SelfTestStatus",
   "legacySelfTests": {
     "v122": "blocking_compatibility",
     "v121": "blocking_compatibility",
@@ -33,30 +29,16 @@
     "v126": "blocking_compatibility",
     "v127": "blocking_compatibility",
     "v128": "blocking_compatibility_rollback",
-    "v129": "blocking_current"
+    "v129": "immediate_rollback",
+    "v130": "blocking_current_active_authority"
   },
   "sourceOnlyRelease": false,
   "targetRollout": "completed",
-  "representativeRealPrValidation": "pass",
-  "representativeRealPrReplay": "pass",
-  "representativeLivePrValidation": "pass",
-  "syntheticRepresentativeValidation": "pass",
-  "representativeProductPrEvidence": {
-    "schema": "live2d_v127_representative_product_pr_evidence_v1",
-    "prNumber": 406,
-    "prHeadSha": "f8fa15a4a96610bb2cf042fc79144dff26c4836b",
-    "workflowRunId": "27813356994",
-    "workflowHeadSha": "f8fa15a4a96610bb2cf042fc79144dff26c4836b",
-    "safeArtifactName": "codex-quality-gate-safe-artifacts",
-    "artifactHeadSha": "f8fa15a4a96610bb2cf042fc79144dff26c4836b",
-    "sameHead": true,
-    "remoteGate": "pass",
-    "finalDecisionConsistency": "pass",
-    "runtimeReadinessClaimed": false,
-    "productionReadinessClaimed": false,
-    "safeSummaryOnly": true
-  },
-  "theme": "Receipt-Carried Continuation and Evidence Compression",
+  "representativeRealPrValidation": "not_started",
+  "representativeRealPrReplay": "required",
+  "representativeLivePrValidation": "required",
+  "syntheticRepresentativeValidation": "required",
+  "theme": "HARNESS v1.3.0 Core Metadata Target Bridge",
   "requiredStatuses": [
     "orchestrationModeStatus",
     "permissionGrantStatus",
@@ -68,14 +50,14 @@
     "finalDecisionPointerStatus"
   ],
   "repoSpecificRegistrations": [
-    "voxweaveReviewEvidenceClassifierStatus",
-    "voxweaveEvidenceClassRegistryStatus",
-    "voxweaveDependencyRootResolverStatus",
-    "voxweaveTerminalNoActionGateStatus",
-    "voxweavePrInventoryHardStopStatus",
-    "voxweaveMainReflectionDryRunStatus",
-    "voxweaveNoDeltaNoPrStatus",
-    "voxweaveBodyOnlyGovernanceLaneStatus",
+    "iris-live2d-rendererReviewEvidenceClassifierStatus",
+    "iris-live2d-rendererEvidenceClassRegistryStatus",
+    "iris-live2d-rendererDependencyRootResolverStatus",
+    "iris-live2d-rendererTerminalNoActionGateStatus",
+    "iris-live2d-rendererPrInventoryHardStopStatus",
+    "iris-live2d-rendererMainReflectionDryRunStatus",
+    "iris-live2d-rendererNoDeltaNoPrStatus",
+    "iris-live2d-rendererBodyOnlyGovernanceLaneStatus",
     "live2dTargetHarnessIsolationStatus",
     "live2dParentWorktreeInvariantStatus",
     "live2dIsolatedWorktreeExecutionStatus",
@@ -145,7 +127,7 @@
     ]
   },
   "sourceProfileStubsV109": {
-    "VOXWEAVE": {
+    "iris-live2d-renderer": {
       "criticalInvariants": [
         "decision_ledger_required",
         "pr_inventory_reduction_required",
@@ -232,7 +214,7 @@
         "keep_priority1_blocked_until_fresh_evidence"
       ]
     },
-    "CRIPTO-TIP": {
+    "iris-live2d-renderer": {
       "criticalInvariants": [
         "safe_ci_failure_artifact_required",
         "crypto_no_custody",
@@ -580,11 +562,9 @@
   "versioning": {
     "activeHarnessVersion": "1.2.7",
     "activeSelfTestSuite": "v127",
-    "activeSelfTestStatusKey": "v127SelfTestStatus",
-    "rollbackAvailable": true,
-    "compatibilityRole": "v127_complex_target_rollback"
+    "compatibility": "readable"
   },
-  "targetRepoProfile": "IRIS-live2d-renderer",
+  "targetRepoProfile": "FUNKY",
   "targetRepository": "hiro4649/iris-live2d-renderer",
   "prBodyMachineEvidence": false,
   "deterministicDecisionProjectionAndTokenMinimalLoopClosure": {
@@ -639,8 +619,7 @@
   "versioningRollback": {
     "activeHarnessVersion": "1.2.8",
     "activeSelfTestSuite": "v128",
-    "activeSelfTestStatusKey": "v128SelfTestStatus",
-    "rollbackAvailable": true
+    "compatibility": "blocking"
   },
   "goalContractedCapabilityRouter": {
     "version": "1.2.9",
@@ -665,6 +644,113 @@
     "workflowChanged": false,
     "productRuntimeMutationCount": 0,
     "authorityCreated": false,
-    "live2dSafetyPreserved": true
-  }
+    "discoFunkySafetyPreserved": true
+  },
+  "currentVersion": "1.3.0",
+  "previousVersion": "1.2.9",
+  "targetProfileClass": "metadata_gate_target",
+  "targetMutationCount": 0,
+  "productRuntimeMutationCount": 0,
+  "productMutationCount": 0,
+  "deployChanged": false,
+  "walletRpcSecretChanged": false,
+  "routineSelectedSkillMax": 0,
+  "routineColdArtifactRead": 0,
+  "routineReviewerFanout": 0,
+  "versionAuthority": {
+    "v130": "blocking_current_active_authority",
+    "v129": "immediate_rollback",
+    "v128": "blocking_compatibility",
+    "v127": "compatibility_readable"
+  },
+  "v129Rollback": {
+    "activeHarnessVersion": "1.2.9",
+    "activeSelfTestSuite": "v129",
+    "rollbackAvailable": true,
+    "targetHarnessVersion": "1.2.9"
+  },
+  "performanceTrack": {
+    "state": "deferred",
+    "authoritative": false,
+    "FableComparatorState": "unavailable",
+    "superiorityClaimState": "not_proven",
+    "sdkTransportState": "not_installed",
+    "sixtyTaskBenchmarkState": "not_required_for_core_activation",
+    "learnedPolicyState": "shadow_only",
+    "skillRuntimeState": "deferred",
+    "dagAgentTeamState": "deferred",
+    "affectsQualityScore": false,
+    "affectsBlockingCount": false,
+    "affectsRequiredChecks": false
+  },
+  "v130CoreTargetProfile": {
+    "state": "active",
+    "profile": "metadata_gate_target",
+    "installsPerformanceTrack": false,
+    "installsFableComparator": false,
+    "installsSdkBenchmarkRunner": false,
+    "installsSixtyTaskBenchmark": false,
+    "installsSkillRuntimeActivation": false,
+    "installsDagAgentTeamRuntime": false,
+    "installsLearnedPolicyActivation": false,
+    "installsCyberSpecialistRuntime": false,
+    "routineColdArtifactRead": 0,
+    "routineSelectedSkillMax": 0,
+    "routineReviewerFanout": 0,
+    "routineOwnerInterruptMax": 0,
+    "authorityCreated": false,
+    "productRuntimeMutationCount": 0
+  },
+  "targetCompatibilityBridge": {
+    "state": "active",
+    "purpose": "preserve_v111_v129_target_compatibility_chain_for_v130_core_metadata_targets",
+    "targetProfile": "metadata_gate_target",
+    "compatibilityChain": {
+      "v111SelfTestStatus": {
+        "required": true,
+        "preserveOrGenerate": true,
+        "missingBlockingForbidden": true,
+        "path": "v111SelfTestStatus",
+        "directProjectionRequired": true,
+        "directProjectionPath": "v111SelfTestStatus",
+        "directProjectionShapeKeys": [
+          "status",
+          "reasonCodes",
+          "blocking",
+          "safeSummary",
+          "nextSafeAction",
+          "safeSummaryOnly"
+        ],
+        "projectionSource": "existing_v111_self_test_report_or_buildDefaultV111Statuses",
+        "projectionOrder": "before_buildTargetModeLegacyCompatibilityReport",
+        "classificationPath": "targetModeLegacyCompatibilityStatus.classifications[]",
+        "forbiddenClassification": "missing_blocking",
+        "requiredClassification": "blocking_current",
+        "requiredEffectiveStatus": "pass",
+        "requiredStatus": "pass"
+      },
+      "v080_v112": "target_shadow_legacy_count_only",
+      "v127": "blocking_compatibility",
+      "v128": "blocking_compatibility_rollback",
+      "v129": "immediate_rollback",
+      "v130": "blocking_current_active_authority"
+    },
+    "forbiddenBypass": [
+      "new_checker",
+      "new_status_family",
+      "new_artifact_family",
+      "threshold_change",
+      "required_check_bypass",
+      "full_quality_gate_bypass",
+      "performance_track_start",
+      "fable_comparator_start",
+      "sdk_benchmark_start",
+      "target_product_code_change",
+      "package_or_lockfile_change",
+      "deploy_wallet_rpc_secret_change"
+    ],
+    "oneRepairMax": true,
+    "sameBlockerAction": "auto_quarantine"
+  },
+  "readonlyHarnessProfile": true
 }
