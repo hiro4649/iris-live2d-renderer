@@ -2,13 +2,16 @@
 
 CODEX_QUALITY_HARNESS_FILE v1.3.0
 
-Source HARNESS v1.3.0 Core is a realistic Source authority release that keeps
-the v1.2.9 target harness in place while reducing avoidable Source-side stalls.
+Source HARNESS v1.3.0 Core is a realistic Source authority release that can
+materialize a metadata bridge target profile without changing product/runtime
+authority.
 
-v1.3.0 Core is the active Source HARNESS release. v1.2.9 remains the immediate
-rollback authority. v1.2.8 remains blocking compatibility. v1.2.7 remains
-readable compatibility. Target repositories remain on target harness v1.2.9,
-and v1.3.0 target rollout is not started.
+v1.3.0 Core is the active HARNESS release for this repository as a metadata
+bridge target profile. v1.2.9 remains the immediate rollback authority. v1.2.8
+remains blocking compatibility. v1.2.7 remains readable compatibility. Product
+code, runtime code, package files, workflows, SDK/vendor files, owner
+confirmation, trusted loader enablement, runtime readiness, and production
+readiness remain unchanged and unauthorized by this rollout.
 
 ## Authority
 
@@ -59,8 +62,9 @@ routine read surface remains 2500 bytes, and Orchestration Capsule budget
 remains 48000 bytes.
 
 The routine read profile is `AGENTS.md`,
-`docs/process/CODEX_HARNESS_MANIFEST.json`, and the compiled instruction
-envelope. v1.3.0, v1.2.9, v1.2.8, and v1.2.7 specs are deferred reads.
+`docs/process/CODEX_HARNESS_MANIFEST.json`,
+`docs/process/CODEX_V130_SPEC.md`, and the compiled instruction envelope.
+v1.2.9, v1.2.8, and v1.2.7 specs are deferred compatibility reads.
 
 ## Practical Core Contracts
 
@@ -87,17 +91,18 @@ runtime remains deferred and Skill performance remains not proven.
 
 ## Target Development Resume
 
-IRIS and FUNKY development may resume under the active v1.2.9 target harness.
-Allowed target work under v1.2.9 includes bug repair, test repair, CI repair,
-small product change, documentation correction, and target-local quality repair.
-Forbidden work remains v1.3.0 target rollout, v1.3.0 Skill install, v1.3.1,
-new benchmark blockers, Fable superiority claims, authority weakening,
+IRIS Live2D Renderer development may resume under the active v1.3.0 Core
+metadata bridge target profile only after repository-local authority documents
+and self-tests agree. Allowed target work remains bug repair, test repair, CI
+repair, small product change, documentation correction, and target-local quality
+repair when separately scoped. Forbidden work remains Skill runtime install,
+v1.3.1, new benchmark blockers, Fable superiority claims, authority weakening,
 required-check bypass, product deploy, and wallet, RPC, or secret mutation.
 
-Target profile strategy is guidance only. The available profiles are
-thin_target, metadata_gate_target, full_quality_gate_target, and
-metadata_gate_target. This guidance does not start target rollout, create target
-PRs, or mutate target repositories.
+Target profile strategy is guidance only unless the manifest explicitly
+materializes it. This repository materializes only the metadata bridge target
+profile. It does not create product authority, runtime authority, target PRs,
+or product/runtime mutation.
 
 ## Performance Track
 
@@ -123,10 +128,12 @@ explicit and non-silent.
 
 ## Activation
 
-Core Activation requires the v1.3.0 active tuple, v1.2.9 immediate rollback,
-v1.2.8 compatibility, v1.2.7 readable compatibility, targetHarnessVersion
-v1.2.9, targetRollout not_started, token-budget compliance, artifact
-consistency, `authorityCreated=false`, and `targetMutationCount=0`.
+Core Activation for this repository requires the v1.3.0 active tuple, v1.2.9
+immediate rollback, v1.2.8 compatibility, v1.2.7 readable compatibility,
+targetHarnessVersion v1.3.0 as a metadata bridge target profile, targetRollout
+completed for metadata only, token-budget compliance, artifact consistency,
+`authorityCreated=false`, `targetProductRuntimeAuthority=unchanged_from_v129`,
+and `targetMutationCount=0`.
 
 The 60-task benchmark, Fable 5 comparison, SDK transport qualification, Skill
 runtime activation, DAG multi-agent runtime, learned orchestration, model

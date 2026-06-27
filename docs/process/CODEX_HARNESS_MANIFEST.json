@@ -6,9 +6,14 @@
   "activeHarnessVersion": "1.3.0",
   "targetHarnessVersion": "1.3.0",
   "evidenceSchemaVersion": 6,
-  "profileTemplateVersion": "1.1.6",
+  "profileTemplateVersion": "1.3.0",
+  "profileTemplateCompatibility": [
+    "1.1.6"
+  ],
   "futureHarnessArtifact": false,
-  "upgradePath": "direct_v127_to_v128_complex_target_active_path",
+  "upgradePath": "direct_v129_to_v130_metadata_bridge_target_profile",
+  "targetHarnessModel": "v130_metadata_bridge_target_profile",
+  "targetProductRuntimeAuthority": "unchanged_from_v129",
   "activeSelfTestSuite": "v130",
   "activeSelfTestStatusKey": "v130SelfTestStatus",
   "legacySelfTests": {
@@ -564,7 +569,7 @@
     "activeSelfTestSuite": "v127",
     "compatibility": "readable"
   },
-  "targetRepoProfile": "FUNKY",
+  "targetRepoProfile": "IRIS Live2D Renderer",
   "targetRepository": "hiro4649/iris-live2d-renderer",
   "prBodyMachineEvidence": false,
   "deterministicDecisionProjectionAndTokenMinimalLoopClosure": {
@@ -644,7 +649,8 @@
     "workflowChanged": false,
     "productRuntimeMutationCount": 0,
     "authorityCreated": false,
-    "discoFunkySafetyPreserved": true
+    "discoFunkySafetyPreserved": true,
+    "live2dSafetyPreserved": true
   },
   "currentVersion": "1.3.0",
   "previousVersion": "1.2.9",
@@ -685,7 +691,8 @@
   },
   "v130CoreTargetProfile": {
     "state": "active",
-    "profile": "metadata_gate_target",
+    "profile": "metadata_bridge_target",
+    "targetProductRuntimeAuthority": "unchanged_from_v129",
     "installsPerformanceTrack": false,
     "installsFableComparator": false,
     "installsSdkBenchmarkRunner": false,

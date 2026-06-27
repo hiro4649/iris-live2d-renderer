@@ -2,6 +2,13 @@
 
 Harness: v1.2.7
 
+Project authority documents:
+
+- `docs/PROJECT_SPEC.md`
+- `docs/PROJECT_STATUS.md`
+- `docs/NEXT_TASK.md`
+- `docs/CHANGELOG.md`
+
 This document records the safe planning-module extraction boundary and the dependency-truth checker used after the first physical planning move. The machine authority is `docs/iris-live2d-renderer/LIVE2D_PLANNING_MODULE_BOUNDARIES.json`; tests may not invent symbol inventory from local constants. This is a planning manifest and source-structure checker only. It does not execute Cubism, load a model, read model files, ingest dataset rows, run parser/redaction/audit work, enable trusted loader, create owner confirmation, or claim runtime or production readiness.
 
 ## Boundary Categories
